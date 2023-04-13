@@ -1,21 +1,57 @@
 version: '3'
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-15}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+  basta:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 48380:8080
+    depends_on:
+      - db
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - .:/var/www/html
+      - .composer:/home/.composer:cached
+    stdin_open: true
+    tty: true
+    networks:
+      - default
+      - pontsun
+
+    labels:
+      - 'traefik.port=8080'
+      - 'traefik.frontend.rule=Host:basta.docker.test'
+      # Traefik v2
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=pontsun'
+      - 'traefik.http.routers.basta.service=basta'
+      - 'traefik.http.routers.basta.entrypoints=https,http'
+      - 'traefik.http.routers.basta.rule=Host(`basta.docker.test`)'
+      - 'traefik.http.services.basta.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.basta.middlewares=https_redirect'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
+
+  db:
+    image: mariadb:10.10
+    environment:
+      - MYSQL_ROOT_PASSWORD=basta
+      - MYSQL_DATABASE=basta
+      - MYSQL_USER=basta
+      - MYSQL_PASSWORD=basta
+    ports:
+      - 49305:3306
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - default
+      - pontsun
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  mariadb:
+
+networks:
+  pontsun:
+    external: true
+
+
+
