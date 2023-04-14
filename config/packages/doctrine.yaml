@@ -16,6 +16,21 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            sluggable:
+                type: attribute # or attribute
+                alias: Gedmo
+                prefix: Gedmo\Sluggable
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Sluggable"
+            blameable:
+                type: attribute # or attribute
+                alias: Gedmo
+                prefix: Gedmo\Blameable
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Blameable"
+            timestampable:
+                type: attribute # or attribute
+                alias: Gedmo
+                prefix: Gedmo\Timestampable
+                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Timestampable"
 
 when@test:
     doctrine:
