@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
@@ -24,7 +25,7 @@ class Article
     private ?string $body = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    private ?string $type = 'article';
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $eventDate = null;
@@ -40,6 +41,16 @@ class Article
     #[ORM\Column]
     private bool $pinned = false;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Gedmo\Timestampable(on: 'create')]
+    private $created;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
+    private $updated;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -139,4 +150,37 @@ class Article
 
         return $this;
     }
+
+    public function getCreated(): \DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(\DateTimeInterface $created): void
+    {
+        $this->created = $created;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): void
+    {
+        $this->updated = $updated;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
 }

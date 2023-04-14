@@ -1,0 +1,35 @@
+# config/packages/sonata_seo.yaml
+
+sonata_seo:
+  encoding: UTF-8
+  page:
+    title: 'Librairie Basta! - Librairies spécialisées en sciences sociales à Lausanne'
+    # title_prefix:  'Prefix |'
+    title_suffix: 'Librairie Basta! - Librairies spécialisées en sciences sociales à Lausanne'
+    default: sonata.seo.page.default
+    metas:
+      name:
+        description: 'Librairie Basta! - Librairies spécialisées en sciences sociales à Lausanne'
+        robots: index, follow
+
+      property:
+        # Facebook application settings
+        #'fb:app_id':          XXXXXX
+        #'fb:admins':          admin1, admin2
+
+        # Open Graph information
+        # see http://developers.facebook.com/docs/opengraphprotocol/#types or http://ogp.me/
+        'og:site_name': 'Librairie Basta! - Librairies spécialisées en sciences sociales à Lausanne'
+        'og:description': 'Librairie Basta! - Librairies spécialisées en sciences sociales à Lausanne'
+
+      http-equiv:
+        'Content-Type': text/html; charset=utf-8
+        #'X-Ua-Compatible':      IE=EmulateIE7
+
+      charset:
+        UTF-8: ''
+
+    head:
+      'xmlns': http://www.w3.org/1999/xhtml
+      'xmlns:og': http://opengraphprotocol.org/schema/
+      #'xmlns:fb':           "http://www.facebook.com/2008/fbml"

@@ -8,6 +8,10 @@
 /var/
 /.composer
 /vendor/
+/public/images/*
+/public/media/cache/*
+!/public/images/.gitkeep
+!/public/media/.gitkeep
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -19,3 +23,14 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
