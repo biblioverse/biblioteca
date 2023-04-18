@@ -12,16 +12,16 @@ liip_imagine:
     thumb:
 
       # adjust the image quality to 75%
-      quality: 100
+      quality: 80
 
       # list of transformations to apply (the "filters")
       filters:
         # create a thumbnail: set size to 120x90 and use the "outbound" mode
         # to crop the image when the size ratio of the input differs
-        thumbnail: { size: [ 200, 200 ], mode: outbound }
+        thumbnail: { size: [ 300, 300 ], mode: outbound }
     big:
       # adjust the image quality to 75%
-      quality: 80
+      quality: 100
 
       filters:
         thumbnail: { size: [ 400, 600 ], mode: outbound }

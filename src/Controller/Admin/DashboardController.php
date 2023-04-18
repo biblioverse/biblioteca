@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\Library;
+use App\Entity\Order;
+use App\Entity\Page;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -62,8 +65,10 @@ class DashboardController extends AbstractDashboardController
 
             MenuItem::section('Blog'),
             MenuItem::linkToCrud('Articles', 'fa fa-tags', Article::class),
-
-            MenuItem::section('Utilisatrices (eurs)'),
+            MenuItem::section('Données de base'),
+            MenuItem::linkToCrud('Points de vente', 'fa fa-book', Library::class),
+            MenuItem::linkToCrud('Pages', 'fa fa-file', Page::class),
+            MenuItem::linkToCrud('Commandes', 'fa fa-money', Order::class),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
         ];
     }

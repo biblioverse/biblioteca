@@ -51,6 +51,7 @@ class CreateUserCommand extends Command
             $plaintextPassword
         );
         $user->setPassword($hashedPassword);
+        $user->setEmail('chauderon@librairiebasta.ch');
 
         $this->userRepository->save($user, true);
 

@@ -33,9 +33,9 @@ class ArticleCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            DateField::new('created')->onlyOnIndex(),
-            TextField::new('title')->setTemplatePath('admin/field/linkedit.html.twig'),
-            TextField::new('heading')
+            DateField::new('created','Créé le')->onlyOnIndex(),
+            TextField::new('title','Titre')->setTemplatePath('admin/field/linkedit.html.twig'),
+            TextField::new('heading','En-tête')
                 ->hideOnIndex(),
             TextEditorField::new('body')
                 ->setRequired(true)
@@ -44,8 +44,8 @@ class ArticleCrudController extends AbstractCrudController
                 ->setUploadDir('public/images')
                 ->setBasePath('/images')
                 ->setUploadedFileNamePattern('[slug]-[randomhash].[extension]'),
-            BooleanField::new('pinned')->renderAsSwitch(false),
-            BooleanField::new('published')->renderAsSwitch(false),
+            BooleanField::new('pinned','Exergue')->renderAsSwitch(false),
+            BooleanField::new('published','Publié')->renderAsSwitch(false),
             ChoiceField::new('type')
                 ->setChoices(['choices' => ['event' => 'event', 'news' => 'news', 'book' => 'book']]),
             DateField::new('eventdate', "Date de l'événement (si c'est un événement)")

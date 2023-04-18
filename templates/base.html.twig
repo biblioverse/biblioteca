@@ -22,7 +22,7 @@
             <div class="order-1  w-full flex-col items-center justify-start md:order-none flex md:w-auto md:flex-1 md:flex-row md:justify-end">
                 <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel="" href="/">Accueil</a>
                 <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500" target="" rel=""
-                   href="/about">Commander</a>
+                   href="{{ path('app_order') }}">Commander</a>
                 <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500" target="" rel=""
                    href="/contact">Nous</a>
             </div>
@@ -39,6 +39,8 @@
                    href="/contact">Dorigny</a>
                 <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
                    href="/contact">Obsession</a>
+                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
+                   href="{{ path('app_search') }}" rel="nofollow">S</a>
             </div>
         </div>
     </nav>

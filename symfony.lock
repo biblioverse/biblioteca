@@ -89,6 +89,18 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "sentry/sentry-symfony": {
+        "version": "4.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "4.6",
+            "ref": "f7b4706a3e8a6f096b7392f3146f4f7f65ff594c"
+        },
+        "files": [
+            "config/packages/sentry.yaml"
+        ]
+    },
     "sonata-project/block-bundle": {
         "version": "4.20",
         "recipe": {

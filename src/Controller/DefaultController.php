@@ -3,12 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Order;
+use App\Form\OrderType;
+use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport\TransportInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -70,6 +77,67 @@ class DefaultController extends AbstractController
 
         return $this->render('default/article.html.twig', [
             'article' => $article,
+        ]);
+    }
+
+    #[Route('/recherche', name: 'app_search')]
+    public function search(EntityManagerInterface $manager, Request $request): Response
+    {
+        $search=$request->query->get('term');
+
+        $articles= [];
+        if($search!==null) {
+            $dql = "SELECT a FROM App:Article a where a.published=1 and (a.title like :search  or a.body like :search) order by a.created desc ";
+            $query = $manager->createQuery($dql);
+            $query->setParameter('search', '%' . $search . '%');
+            $query->setMaxResults(48);
+
+            $articles = $query->getResult();
+        }
+
+        return $this->render('default/search.html.twig', [
+            'articles' => $articles,
+            'term' => $search,
+        ]);
+    }
+
+    #[Route('/commander', name: 'app_order')]
+    public function order(Request $request, OrderRepository $orderRepository, TransportInterface $mailer): Response
+    {
+        $order = new Order();
+        $order->setEmail($this->getUser()->getEmail());
+
+        $form = $this->createForm(OrderType::class, $order);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+
+            $orderRepository->save($order,true);
+
+            $email = (new Email())
+                ->from('noreply@librairiebasta.ch')
+                ->replyTo($order->getEmail())
+                ->to($order->getLibrary()->getEmail())
+                ->subject('#'.$order->getId().' Commande de '.$order->getName())
+                ->html('
+<p><strong>Commande de:</strong> '.htmlentities($order->getName()).'</p>
+<p><strong>E-mail: </strong>'.$order->getEmail().'</p>
+<p><strong>Message:</strong><br>'.nl2br(htmlentities($order->getMessage())).'</p>
+');
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Votre commande a bien été enregistrée');
+
+            return $this->redirectToRoute('app_order');
+        }
+
+
+
+
+        return $this->render('default/order.html.twig', [
+            'form' => $form,
         ]);
     }
 }

@@ -11,6 +11,10 @@
 /public/images/*
 /public/media/cache/*
 !/public/images/.gitkeep
+!/public/images/librairies
+/public/images/librairies/*
+!/public/images/librairies/.gitkeep
+
 !/public/media/.gitkeep
 ###< symfony/framework-bundle ###
 

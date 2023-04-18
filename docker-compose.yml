@@ -47,6 +47,28 @@ services:
       - default
       - pontsun
 
+  mailhog:
+    container_name: "basta_mailhog"
+    image: mailhog/mailhog:latest
+    ports:
+      - '38025:8025'
+      - 1025
+    labels:
+      - 'traefik.enable=true'
+      # traefik v1
+      - 'traefik.docker.network=pontsun'
+      - 'traefik.port=8025'
+      - 'traefik.frontend.rule=Host:basta-mail.docker.test'
+      # traefik v2
+      - 'traefik.http.routers.basta_mail.entrypoints=https,http'
+      - 'traefik.http.routers.basta_mail.middlewares=https_redirect@file'
+      - 'traefik.http.routers.basta_mail.rule=Host(`basta-mail.docker.test`)'
+      - 'traefik.http.services.basta_mail.loadbalancer.server.port=8025'
+    networks:
+      - default
+      - pontsun
+
+
 volumes:
   mariadb:
 

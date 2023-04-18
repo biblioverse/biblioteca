@@ -6,11 +6,13 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /home/.composer
 RUN mkdir -p /home/.composer
 
-RUN apt-get update && apt-get install -y \
+RUN  apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     # Tools
     vim git curl cron wget zip unzip \
     # other
     apt-transport-https \
+    dma  \
     build-essential \
     ca-certificates \
     mariadb-client \
@@ -49,6 +51,8 @@ COPY ./docker/001-basta.conf /etc/apache2/sites-enabled/001-basta.conf
 
 # Run from unprivileged port 8080 only
 RUN sed -e 's/Listen 80/Listen 8080/g' -i /etc/apache2/ports.conf
+
+COPY ./docker/dma.conf /etc/dma/dma.conf
 
 COPY . /var/www/html
 
