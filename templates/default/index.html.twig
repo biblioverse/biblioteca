@@ -1,27 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-    <div class="container px-8 mx-auto xl:px-5  max-w-screen-lg py-5 lg:py-8">
-        <div class="grid gap-10 md:grid-cols-2 lg:gap-10 xl:grid-cols-2 ">
-            {% for article in pinned %}
-                {% include 'article/_teaser.html.twig' %}
-            {% endfor %}
-        </div>
-        <div class="grid mt-10 gap-10 md:grid-cols-2 lg:gap-10 xl:grid-cols-3 ">
+    <ul>
+        {% for article in pinned %}
+            <li>{% include 'article/_teaser.html.twig' %}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        <li>
             {% for article in articles %}
                 {% include 'article/_teaser.html.twig' %}
             {% endfor %}
-        </div>
-
-        <div class="navigation mt-10">
-            {{ knp_pagination_render(articles) }}
-        </div>
-        <div class="count">
-            {{ articles.getTotalItemCount }} articles au total
-        </div>
-        <a href="{{ path('admin') }}">Admin</a>
+        </li>
+    </ul>
+    <div>
+        {{ knp_pagination_render(articles) }}
     </div>
-
+    <div>
+        {{ articles.getTotalItemCount }} articles au total
+    </div>
 
 {% endblock %}

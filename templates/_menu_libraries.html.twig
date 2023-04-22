@@ -1,0 +1,3 @@
+{% for library in libraries %}
+    <a href="{{ path('app_'~library.slug) }}">{{ library.name }}</a>
+{% endfor %}

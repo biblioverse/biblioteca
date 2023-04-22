@@ -26,14 +26,14 @@ class LoginController extends AbstractController
             // the title visible above the login form (define this option only if you are
             // rendering the login template in a regular Symfony controller; when rendering
             // it from an EasyAdmin Dashboard this is automatically set as the Dashboard title)
-            'page_title' => 'Super Libraires',
+            'page_title' => '',
 
             // the string used to generate the CSRF token. If you don't define
             // this parameter, the login form won't include a CSRF token
             'csrf_token_intention' => 'authenticate',
 
             // the label displayed for the username form field (the |trans filter is applied to it)
-            'username_label' => "Non d'utilisatrice(eur)",
+            'username_label' => "Nom d'utilisatrice(eur)",
             'target_path' => $this->generateUrl('admin'),
             // the label displayed for the password form field (the |trans filter is applied to it)
             'password_label' => 'Mot de passe',
@@ -42,13 +42,7 @@ class LoginController extends AbstractController
             'sign_in_label' => 'Accède au monde secret',
 
             // whether to enable or not the "forgot password?" link (default: false)
-            'forgot_password_enabled' => true,
-
-            // the path (i.e. a relative or absolute URL) to visit when clicking the "forgot password?" link (default: '#')
-            //'forgot_password_path' => $this->generateUrl('...', ['...' => '...']),
-
-            // the label displayed for the "forgot password?" link (the |trans filter is applied to it)
-            'forgot_password_label' => "Zut, mais quel est mon mot de passe?",
+            'forgot_password_enabled' => false,
 
             // whether to enable or not the "remember me" checkbox (default: false)
             'remember_me_enabled' => true,
@@ -57,7 +51,7 @@ class LoginController extends AbstractController
             'remember_me_checked' => true,
 
             // the label displayed for the remember me checkbox (the |trans filter is applied to it)
-            'remember_me_label' => 'Souviens-toi de moi, ô ordinateur',
+            'remember_me_label' => 'Se souvenir de moi',
         ]);
     }
 

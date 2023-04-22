@@ -15,38 +15,29 @@
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
-<body class="antialiased text-gray-800">
-<div class="container px-8 mx-auto xl:px-5  max-w-screen-lg py-5 lg:py-8">
-    <nav>
-        <div class="flex flex-wrap justify-between md:flex-nowrap md:gap-10">
-            <div class="order-1  w-full flex-col items-center justify-start md:order-none flex md:w-auto md:flex-1 md:flex-row md:justify-end">
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel="" href="/">Accueil</a>
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500" target="" rel=""
-                   href="{{ path('app_order') }}">Commander</a>
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500" target="" rel=""
-                   href="/contact">Nous</a>
-            </div>
-            <div class="flex w-full content-center justify-between sm:w-full sm:mx-auto">
-                <a class="hover:text-red-500 w-full text-center" href="{{ path('app_homepage') }}">
-                    <h1 class="font-bold text-5xl text-center">BASTA!</h1>
-                    <h2 class="uppercase">Librairies, Lausanne</h2>
-                </a>
-            </div>
-            <div class="order-2 w-full flex-col items-center justify-start md:order-none flex md:w-auto md:flex-1 md:flex-row">
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
-                   href="/contact">Chauderon</a>
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
-                   href="/contact">Dorigny</a>
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
-                   href="/contact">Obsession</a>
-                <a class="px-5 py-2 text-md font-medium text-gray-600 hover:text-red-500 " target="" rel=""
-                   href="{{ path('app_search') }}" rel="nofollow">S</a>
-            </div>
-        </div>
-    </nav>
-</div>
+<body>
 
+<nav>
+    <div>
+        <a href="{{ path('app_homepage') }}">Accueil</a>
+        <a href="{{ path('app_order') }}">Commander</a>
+        <a href="{{ path('app_cooperative') }}">Nous</a>
+    </div>
+    <div>
+        <a href="{{ path('app_homepage') }}">
+            <h1>BASTA!</h1>
+            <h2>Librairies, Lausanne</h2>
+        </a>
+    </div>
+    <div>
+        {{ render(controller('App\\Controller\\DefaultController::libraries')) }}
+        <a href="{{ path('app_search') }}" rel="nofollow">S</a>
+    </div>
+</nav>
 
 {% block body %}{% endblock %}
+<footer>
+    Footer
+</footer>
 </body>
 </html>

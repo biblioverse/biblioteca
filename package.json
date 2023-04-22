@@ -7,10 +7,9 @@
     "@symfony/webpack-encore": "^4.0.0",
     "autoprefixer": "^10.4.14",
     "core-js": "^3.23.0",
-    "postcss": "^8.4.21",
-    "postcss-loader": "^7.2.4",
     "regenerator-runtime": "^0.13.9",
-    "tailwindcss": "^3.3.1",
+    "sass": "^1.62.0",
+    "sass-loader": "^13.2.2",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-notifier": "^1.15.0"
@@ -21,6 +20,6 @@
     "dev-server": "encore dev-server",
     "dev": "encore dev",
     "watch": "encore dev --watch",
-    "build": "encore production --progress"
+    "build": "NODE_ENV=production encore production --progress"
   }
 }

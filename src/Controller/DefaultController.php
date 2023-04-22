@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Library;
 use App\Entity\Order;
 use App\Form\OrderType;
+use App\Repository\LibraryRepository;
 use App\Repository\OrderRepository;
+use App\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,7 +109,6 @@ class DefaultController extends AbstractController
     public function order(Request $request, OrderRepository $orderRepository, TransportInterface $mailer): Response
     {
         $order = new Order();
-        $order->setEmail($this->getUser()->getEmail());
 
         $form = $this->createForm(OrderType::class, $order);
 
@@ -138,6 +141,58 @@ class DefaultController extends AbstractController
 
         return $this->render('default/order.html.twig', [
             'form' => $form,
+        ]);
+    }
+    #[Route('/librairies/chauderon', name: 'app_chauderon', defaults: ['slug'=>'chauderon'])]
+    #[Route('/librairies/dorigny', name: 'app_dorigny', defaults: ['slug'=>'dorigny'])]
+    #[Route('/obsession', name: 'app_obsession', defaults: ['slug'=>'obsession'])]
+    #[Entity('Library', expr: 'repository.find(slug)')]
+    public function library( SeoPageInterface $seo, Library $library): Response
+    {
+        $seo->addTitlePrefix($library->getName());
+
+        $seo->addMeta('name', 'description', $library->getAddress());
+        $seo->addMeta('property', "og:title", $library->getName());
+
+        $order = new Order();
+        $order->setLibrary($library);
+
+        $form = $this->createForm(OrderType::class, $order,[
+            'action' => $this->generateUrl('app_order'),
+        ]);
+
+
+
+        return $this->render('default/library.html.twig', [
+            'library' => $library,
+            'form'=>$form,
+        ]);
+    }
+
+    public function libraries(LibraryRepository $libraryRepository)
+    {
+        $libraries = $libraryRepository->findBy([], orderBy: ['name'=>'ASC']);
+
+        return $this->render(
+            '_menu_libraries.html.twig',
+            ['libraries' => $libraries]
+        );
+    }
+
+
+    #[Route('/cooperative', name: 'app_cooperative')]
+    public function cooperative( SeoPageInterface $seo, PageRepository $pageRepository): Response
+    {
+        $page = $pageRepository->findOneBy([]);
+
+        $seo->addTitlePrefix($page->getTitle());
+        $seo->addMeta('property', "og:title", $page->getTitle());
+
+
+
+
+        return $this->render('default/cooperative.html.twig', [
+            'page'=>$page,
         ]);
     }
 }
