@@ -2,7 +2,6 @@
 # src/EventSubscriber/EasyAdminSubscriber.php
 namespace App\EventSubscriber;
 
-use App\Entity\BlogPost;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
@@ -26,7 +25,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function hashPassword(BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event)
+    public function hashPassword(BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event):void
     {
         $entity = $event->getEntityInstance();
 

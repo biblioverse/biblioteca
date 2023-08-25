@@ -34,7 +34,7 @@ class LoginController extends AbstractController
 
             // the label displayed for the username form field (the |trans filter is applied to it)
             'username_label' => "Nom d'utilisatrice(eur)",
-            'target_path' => $this->generateUrl('admin'),
+            'target_path' => $this->generateUrl('app_homepage'),
             // the label displayed for the password form field (the |trans filter is applied to it)
             'password_label' => 'Mot de passe',
 
@@ -56,7 +56,7 @@ class LoginController extends AbstractController
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['GET'])]
-    public function logout()
+    public function logout(): void
     {
         // controller can be blank: it will never be called!
         throw new \Exception('Don\'t forget to activate logout in security.yaml');

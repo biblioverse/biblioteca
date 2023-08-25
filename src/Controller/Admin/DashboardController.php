@@ -2,15 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Article;
-use App\Entity\Library;
-use App\Entity\Order;
-use App\Entity\Page;
+use App\Entity\Book;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -40,8 +38,7 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
+        /** @var AdminUrlGenerator $adminUrlGenerator */
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         return $this->redirect($adminUrlGenerator->setController(ArticleCrudController::class)->generateUrl());
 
@@ -64,11 +61,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
 
             MenuItem::section('Blog'),
-            MenuItem::linkToCrud('Articles', 'fa fa-tags', Article::class),
+            MenuItem::linkToCrud('Articles', 'fa fa-tags', Book::class),
             MenuItem::section('Données de base'),
-            MenuItem::linkToCrud('Points de vente', 'fa fa-book', Library::class),
-            MenuItem::linkToCrud('Pages', 'fa fa-file', Page::class),
-            MenuItem::linkToCrud('Commandes', 'fa fa-money', Order::class),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
         ];
     }

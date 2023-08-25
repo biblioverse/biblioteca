@@ -1,16 +1,15 @@
 version: '3'
 
 services:
-  basta:
+  biblioteca:
     build:
       dockerfile: Dockerfile
     ports:
-      - 48380:8080
+      - 48480:8080
     depends_on:
       - db
     volumes:
       - .:/var/www/html
-      - ../basta:/var/www/previous
       - .composer:/home/.composer:cached
     stdin_open: true
     tty: true
@@ -20,27 +19,27 @@ services:
 
     labels:
       - 'traefik.port=8080'
-      - 'traefik.frontend.rule=Host:basta.docker.test'
+      - 'traefik.frontend.rule=Host:biblioteca.docker.test'
       # Traefik v2
       - 'traefik.enable=true'
       - 'traefik.docker.network=pontsun'
-      - 'traefik.http.routers.basta.service=basta'
-      - 'traefik.http.routers.basta.entrypoints=https,http'
-      - 'traefik.http.routers.basta.rule=Host(`basta.docker.test`)'
-      - 'traefik.http.services.basta.loadbalancer.server.port=8080'
-      - 'traefik.http.routers.basta.middlewares=https_redirect'
+      - 'traefik.http.routers.biblioteca.service=biblioteca'
+      - 'traefik.http.routers.biblioteca.entrypoints=https,http'
+      - 'traefik.http.routers.biblioteca.rule=Host(`biblioteca.docker.test`)'
+      - 'traefik.http.services.biblioteca.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.biblioteca.middlewares=https_redirect'
       - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
       - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
 
   db:
     image: mariadb:10.10
     environment:
-      - MYSQL_ROOT_PASSWORD=basta
-      - MYSQL_DATABASE=basta
-      - MYSQL_USER=basta
-      - MYSQL_PASSWORD=basta
+      - MYSQL_ROOT_PASSWORD=biblioteca
+      - MYSQL_DATABASE=biblioteca
+      - MYSQL_USER=biblioteca
+      - MYSQL_PASSWORD=biblioteca
     ports:
-      - 49305:3306
+      - 49405:3306
     volumes:
       - mariadb:/var/lib/mysql
     networks:
@@ -48,7 +47,7 @@ services:
       - pontsun
 
   mailhog:
-    container_name: "basta_mailhog"
+    container_name: "biblioteca_mailhog"
     image: mailhog/mailhog:latest
     ports:
       - '38025:8025'
@@ -58,12 +57,12 @@ services:
       # traefik v1
       - 'traefik.docker.network=pontsun'
       - 'traefik.port=8025'
-      - 'traefik.frontend.rule=Host:basta-mail.docker.test'
+      - 'traefik.frontend.rule=Host:biblioteca-mail.docker.test'
       # traefik v2
-      - 'traefik.http.routers.basta_mail.entrypoints=https,http'
-      - 'traefik.http.routers.basta_mail.middlewares=https_redirect@file'
-      - 'traefik.http.routers.basta_mail.rule=Host(`basta-mail.docker.test`)'
-      - 'traefik.http.services.basta_mail.loadbalancer.server.port=8025'
+      - 'traefik.http.routers.biblioteca_mail.entrypoints=https,http'
+      - 'traefik.http.routers.biblioteca_mail.middlewares=https_redirect@file'
+      - 'traefik.http.routers.biblioteca_mail.rule=Host(`biblioteca-mail.docker.test`)'
+      - 'traefik.http.services.biblioteca_mail.loadbalancer.server.port=8025'
     networks:
       - default
       - pontsun

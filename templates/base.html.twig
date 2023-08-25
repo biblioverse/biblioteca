@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html {{ sonata_seo_html_attributes() }}>
-<head {{ sonata_seo_head_attributes() }}>
+<html lang="{{ app.locale }}">
+<head>
     <meta charset="UTF-8">
-    {{ sonata_seo_title() }}
-    {{ sonata_seo_link_canonical() }}
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-    {{ sonata_seo_metadatas() }}
+    <title>{% block title %}Biblioteca{% endblock %}</title>
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -17,23 +15,7 @@
 </head>
 <body>
 
-<nav>
-    <div>
-        <a href="{{ path('app_homepage') }}">Accueil</a>
-        <a href="{{ path('app_order') }}">Commander</a>
-        <a href="{{ path('app_cooperative') }}">Nous</a>
-    </div>
-    <div>
-        <a href="{{ path('app_homepage') }}">
-            <h1>BASTA!</h1>
-            <h2>Librairies, Lausanne</h2>
-        </a>
-    </div>
-    <div>
-        {{ render(controller('App\\Controller\\DefaultController::libraries')) }}
-        <a href="{{ path('app_search') }}" rel="nofollow">S</a>
-    </div>
-</nav>
+
 
 {% block body %}{% endblock %}
 <footer>

@@ -1,0 +1,13 @@
+parameters:
+    tipsOfTheDay: false
+    level: max
+    paths:
+        - src/
+        - tests/
+
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+

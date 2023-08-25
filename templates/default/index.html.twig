@@ -1,23 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <ul>
-        {% for article in pinned %}
-            <li>{% include 'article/_teaser.html.twig' %}</li>
-        {% endfor %}
-    </ul>
-    <ul>
-        <li>
-            {% for article in articles %}
-                {% include 'article/_teaser.html.twig' %}
-            {% endfor %}
-        </li>
-    </ul>
-    <div>
-        {{ knp_pagination_render(articles) }}
-    </div>
-    <div>
-        {{ articles.getTotalItemCount }} articles au total
-    </div>
-
+    Salut
 {% endblock %}

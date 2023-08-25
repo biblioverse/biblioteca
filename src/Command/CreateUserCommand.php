@@ -36,11 +36,22 @@ class CreateUserCommand extends Command
     }
 
 
+    /**
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
+
+        if(!is_string($username)){
+            throw new \Exception('username must be a string');
+        }
+
         $plaintextPassword = $input->getArgument('password');
+        if(!is_string($plaintextPassword)){
+            throw new \Exception('username must be a string');
+        }
 
         $user = new User();
         $user->setUsername($username);
