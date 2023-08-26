@@ -21,13 +21,7 @@ class DashboardController extends AbstractDashboardController
             // the name visible to end users
             ->setTitle('Basta!')
             // you can include HTML contents too (e.g. to link to an image)
-            ->setTitle('B<em>a</em>sta!')
-
-            // by default EasyAdmin displays a black square as its default favicon;
-            // use this method to display a custom favicon: the given path is passed
-            // "as is" to the Twig asset() function:
-            // <link rel="shortcut icon" href="{{ asset('...') }}">
-            ->setFaviconPath('favicon.svg')
+            ->setTitle('Biblioteca')
 
             // set this option if you prefer the page content to span the entire
             // browser width, instead of the default design which sets a max width
@@ -40,7 +34,7 @@ class DashboardController extends AbstractDashboardController
 
         /** @var AdminUrlGenerator $adminUrlGenerator */
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->redirect($adminUrlGenerator->setController(ArticleCrudController::class)->generateUrl());
+        return $this->redirect($adminUrlGenerator->setController(BookCrudController::class)->generateUrl());
 
         // Option 2. You can make your dashboard redirect to different pages depending on the user
         //
@@ -60,10 +54,11 @@ class DashboardController extends AbstractDashboardController
         return [
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
 
-            MenuItem::section('Blog'),
-            MenuItem::linkToCrud('Articles', 'fa fa-tags', Book::class),
-            MenuItem::section('Données de base'),
+            MenuItem::section('Data'),
+            MenuItem::linkToCrud('Books', 'fa fa-tags', Book::class),
+            MenuItem::section('Other'),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
+            MenuItem::linkToRoute('Back', 'fa fa-user', 'app_homepage'),
         ];
     }
 

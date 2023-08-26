@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All series!{% endblock %}
+
+{% block body %}
+
+    <ul>
+    {% for serie in series %}
+        <li>
+            <a href="{{ path('app_series_detail', {slug: serie.serieSlug}) }}">{{ serie.serie }} ({{ serie.booksFinished }}/{{ serie.bookCount }})</a>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -36,6 +38,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    /**
+     * @var Collection<int, BookInteraction>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookInteraction::class, orphanRemoval: true)]
+    private Collection $bookInteractions;
+
+    public function __construct()
+    {
+        $this->bookInteractions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,6 +144,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookInteraction>
+     */
+    public function getBookInteractions(): Collection
+    {
+        return $this->bookInteractions;
+    }
+
+    public function addBookInteraction(BookInteraction $bookInteraction): static
+    {
+        if (!$this->bookInteractions->contains($bookInteraction)) {
+            $this->bookInteractions->add($bookInteraction);
+            $bookInteraction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookInteraction(BookInteraction $bookInteraction): static
+    {
+        if ($this->bookInteractions->removeElement($bookInteraction)) {
+            // set the owning side to null (unless already changed)
+            if ($bookInteraction->getUser() === $this) {
+                $bookInteraction->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All series!{% endblock %}
+
+{% block body %}
+
+    <ul>
+        {% for author in authors %}
+            <li>
+                <a href="{{ path('app_author_detail', {slug: author.authorSlug }) }}">{{ author.mainAuthor }} ({{ author.booksFinished }}/{{ author.bookCount }})</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

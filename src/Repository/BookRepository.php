@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +20,29 @@ class BookRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Book::class);
+    }
+
+    public function getAllBooksQuery():Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->getQuery();
+    }
+    public function getByAuthorQuery(string $authorSlug):Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('b.authorSlug = :authorSlug')
+            ->setParameter('authorSlug', $authorSlug)
+            ->getQuery();
+    }
+    public function getBySerieQuery(string $serieSlug):Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('b.serieSlug = :serieSlug')
+            ->setParameter('serieSlug', $serieSlug)
+            ->getQuery();
     }
 
     public function save(Book $entity, bool $flush = false): void
@@ -39,28 +63,44 @@ class BookRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Article[] Returns an array of Article objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return array<mixed>
+     */
+    public function getAllSeries():array
+    {
+        $qb = $this->createQueryBuilder('serie')
+            ->select('serie.serie')
+            ->addSelect('serie.serieSlug')
+            ->addSelect('COUNT(serie.id) as bookCount')
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
+            ->where('serie.serie IS NOT NULL')
+            ->leftJoin('serie.bookInteractions', 'bookInteraction')
+            ->addGroupBy('serie.serie');
+        $return =  $qb->getQuery()->getResult();
+        if(!is_array($return)){
+            return [];
+        }
+        return $return;
 
-//    public function findOneBySomeField($value): ?Article
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getAllAuthors():array
+    {
+        $qb = $this->createQueryBuilder('author')
+            ->select('author.mainAuthor')
+            ->addSelect('author.authorSlug')
+            ->addSelect('COUNT(author.id) as bookCount')
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
+            ->leftJoin('author.bookInteractions', 'bookInteraction')
+            ->addGroupBy('author.mainAuthor');
+        $return =  $qb->getQuery()->getResult();
+        if(!is_array($return)){
+            return [];
+        }
+        return $return;
+
+    }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b354d7d13af161d6c6b7e223024a9ab",
+    "content-hash": "c211ad112e3de0611cef5a59461eca67",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1796,6 +1796,396 @@
             "time": "2023-06-07T14:49:52+00:00"
         },
         {
+            "name": "james-heinrich/getid3",
+            "version": "v1.9.22",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JamesHeinrich/getID3.git",
+                "reference": "45f20faa0f0a24489740392c5b512ddcc36deccd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/45f20faa0f0a24489740392c5b512ddcc36deccd",
+                "reference": "45f20faa0f0a24489740392c5b512ddcc36deccd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.0"
+            },
+            "suggest": {
+                "ext-SimpleXML": "SimpleXML extension is required to analyze RIFF/WAV/BWF audio files (also requires `ext-libxml`).",
+                "ext-com_dotnet": "COM extension is required when loading files larger than 2GB on Windows.",
+                "ext-ctype": "ctype extension is required when loading files larger than 2GB on 32-bit PHP (also on 64-bit PHP on Windows) or executing `getid3_lib::CopyTagsToComments`.",
+                "ext-dba": "DBA extension is required to use the DBA database as a cache storage.",
+                "ext-exif": "EXIF extension is required for graphic modules.",
+                "ext-iconv": "iconv extension is required to work with different character sets (when `ext-mbstring` is not available).",
+                "ext-json": "JSON extension is required to analyze Apple Quicktime videos.",
+                "ext-libxml": "libxml extension is required to analyze RIFF/WAV/BWF audio files.",
+                "ext-mbstring": "mbstring extension is required to work with different character sets.",
+                "ext-mysql": "MySQL extension is required to use the MySQL database as a cache storage (deprecated in PHP 5.5, removed in PHP >= 7.0, use `ext-mysqli` instead).",
+                "ext-mysqli": "MySQLi extension is required to use the MySQL database as a cache storage.",
+                "ext-rar": "RAR extension is required for RAR archive module.",
+                "ext-sqlite3": "SQLite3 extension is required to use the SQLite3 database as a cache storage.",
+                "ext-xml": "XML extension is required for graphic modules to analyze the XML metadata.",
+                "ext-zlib": "Zlib extension is required for archive modules and compressed metadata."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.9.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "getid3/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-1.0-or-later",
+                "LGPL-3.0-only",
+                "MPL-2.0"
+            ],
+            "description": "PHP script that extracts useful information from popular multimedia file formats",
+            "homepage": "https://www.getid3.org/",
+            "keywords": [
+                "codecs",
+                "php",
+                "tags"
+            ],
+            "support": {
+                "issues": "https://github.com/JamesHeinrich/getID3/issues",
+                "source": "https://github.com/JamesHeinrich/getID3/tree/v1.9.22"
+            },
+            "time": "2022-09-29T16:41:13+00:00"
+        },
+        {
+            "name": "kiwilan/php-archive",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kiwilan/php-archive.git",
+                "reference": "b3540b7acb4b0211259ddc067ded6f59477d0cfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kiwilan/php-archive/zipball/b3540b7acb4b0211259ddc067ded6f59477d0cfb",
+                "reference": "b3540b7acb4b0211259ddc067ded6f59477d0cfb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "smalot/pdfparser": "^2.4",
+                "spatie/temporary-directory": "^2.1",
+                "symfony/process": "^6.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.6",
+                "pestphp/pest": "^2.0",
+                "phpstan/phpstan": "^1.10",
+                "spatie/ray": "^1.28"
+            },
+            "suggest": {
+                "ext-imagick": "*",
+                "ext-rar": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kiwilan\\Archive\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ewilan Rivière",
+                    "email": "ewilan.riviere@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP package to handle archives (.zip, .rar, .tar, .7z) or .pdf with hybrid solution (native/p7zip), designed to works with eBooks (.epub, .cbz, .cbr, .cb7, .cbt).",
+            "homepage": "https://github.com/kiwilan/php-archive",
+            "keywords": [
+                "7z",
+                "7zip",
+                "archive",
+                "cb7",
+                "cbr",
+                "cbt",
+                "cbz",
+                "ebook",
+                "epub",
+                "pdf",
+                "php",
+                "rar",
+                "tar",
+                "zip"
+            ],
+            "support": {
+                "issues": "https://github.com/kiwilan/php-archive/issues",
+                "source": "https://github.com/kiwilan/php-archive/tree/2.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kiwilan",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-08-08T10:16:03+00:00"
+        },
+        {
+            "name": "kiwilan/php-audio",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kiwilan/php-audio.git",
+                "reference": "af14b61c63882c8e73c016848609627ea1ae0aaa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kiwilan/php-audio/zipball/af14b61c63882c8e73c016848609627ea1ae0aaa",
+                "reference": "af14b61c63882c8e73c016848609627ea1ae0aaa",
+                "shasum": ""
+            },
+            "require": {
+                "james-heinrich/getid3": "^1.9",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.2",
+                "pestphp/pest": "^1.20",
+                "spatie/ray": "^1.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kiwilan\\Audio\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ewilan Rivière",
+                    "email": "ewilan.riviere@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP package to parse and update audio files metadata, with `JamesHeinrich/getID3`.",
+            "homepage": "https://github.com/kiwilan/php-audio",
+            "keywords": [
+                "aif",
+                "aifc",
+                "aiff",
+                "alac",
+                "audio",
+                "audiobook",
+                "flac",
+                "id3",
+                "id3v1",
+                "id3v2",
+                "m4a",
+                "m4b",
+                "m4v",
+                "mka",
+                "mkv",
+                "mp3",
+                "mp4",
+                "ogg",
+                "opus",
+                "php",
+                "spx",
+                "tta",
+                "wav",
+                "webm",
+                "wma",
+                "wv"
+            ],
+            "support": {
+                "issues": "https://github.com/kiwilan/php-audio/issues",
+                "source": "https://github.com/kiwilan/php-audio/tree/3.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kiwilan",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-08-08T13:45:17+00:00"
+        },
+        {
+            "name": "kiwilan/php-ebook",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SergioMendolia/php-ebook.git",
+                "reference": "67220383e1e3edebf2208129a0e6195f4bb6ab88"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SergioMendolia/php-ebook/zipball/67220383e1e3edebf2208129a0e6195f4bb6ab88",
+                "reference": "67220383e1e3edebf2208129a0e6195f4bb6ab88",
+                "shasum": ""
+            },
+            "require": {
+                "kiwilan/php-archive": "^2.0.0",
+                "kiwilan/php-audio": "^3.0.0",
+                "kiwilan/php-xml-reader": "^1.0.1",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.7",
+                "pestphp/pest": "^1.20",
+                "pestphp/pest-plugin-parallel": "^1.2",
+                "phpstan/phpstan": "^1.10",
+                "spatie/ray": "^1.28"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kiwilan\\Ebook\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Kiwilan\\Ebook\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-filter": [
+                    "vendor/bin/pest --filter"
+                ],
+                "test-parallel": [
+                    "vendor/bin/pest --parallel"
+                ],
+                "test-coverage": [
+                    "vendor/bin/pest --coverage --min=90"
+                ],
+                "test-coverage-parallel": [
+                    "vendor/bin/pest --parallel --coverage"
+                ],
+                "analyse": [
+                    "vendor/bin/phpstan analyse"
+                ],
+                "format": [
+                    "vendor/bin/pint"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ewilan Rivière",
+                    "email": "ewilan.riviere@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP package to read metadata and extract covers from eBooks (.epub, .cbz, .cbr, .cb7, .cbt, .pdf) and audiobooks (.mp3, .m4a, .m4b, .flac, .ogg).",
+            "homepage": "https://github.com/kiwilan/php-ebook",
+            "keywords": [
+                "book",
+                "calibre",
+                "cb7",
+                "cba",
+                "cbam",
+                "cbr",
+                "cbt",
+                "cbz",
+                "comic",
+                "comicinfo",
+                "cover",
+                "ebook",
+                "epub",
+                "epub2",
+                "epub3",
+                "metadata",
+                "opf",
+                "pdf",
+                "php"
+            ],
+            "support": {
+                "source": "https://github.com/SergioMendolia/php-ebook/tree/main"
+            },
+            "funding": [
+                {
+                    "type": "github",
+                    "url": "https://github.com/kiwilan"
+                }
+            ],
+            "time": "2023-08-26T11:16:19+00:00"
+        },
+        {
+            "name": "kiwilan/php-xml-reader",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kiwilan/php-xml-reader.git",
+                "reference": "6b5df8984deb931db1127f61d0fb1bd2cefbb159"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kiwilan/php-xml-reader/zipball/6b5df8984deb931db1127f61d0fb1bd2cefbb159",
+                "reference": "6b5df8984deb931db1127f61d0fb1bd2cefbb159",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.2",
+                "pestphp/pest": "^1.20",
+                "phpstan/phpstan": "^1.10",
+                "spatie/ray": "^1.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kiwilan\\XmlReader\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ewilan Rivière",
+                    "email": "ewilan.riviere@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP package to read XML with nice API.",
+            "homepage": "https://github.com/kiwilan/php-xml-reader",
+            "keywords": [
+                "php",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/kiwilan/php-xml-reader/issues",
+                "source": "https://github.com/kiwilan/php-xml-reader/tree/1.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kiwilan",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-08-10T12:40:13+00:00"
+        },
+        {
             "name": "knplabs/knp-components",
             "version": "v4.2.0",
             "source": {
@@ -1950,6 +2340,143 @@
             },
             "abandoned": "twig/markdown-extra",
             "time": "2022-01-26T18:46:39+00:00"
+        },
+        {
+            "name": "knplabs/knp-menu",
+            "version": "v3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KnpLabs/KnpMenu.git",
+                "reference": "bf7d89a7ef406fd2ec1aae6f30f722e844bf6d31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KnpLabs/KnpMenu/zipball/bf7d89a7ef406fd2ec1aae6f30f722e844bf6d31",
+                "reference": "bf7d89a7ef406fd2ec1aae6f30f722e844bf6d31",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "conflict": {
+                "twig/twig": "<1.42.3 || >=2,<2.9"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.6",
+                "psr/container": "^1.0",
+                "symfony/http-foundation": "^5.4 || ^6.0",
+                "symfony/phpunit-bridge": "^6.2",
+                "symfony/routing": "^5.4 || ^6.0",
+                "twig/twig": "^2.9 || ^3.0"
+            },
+            "suggest": {
+                "twig/twig": "for the TwigRenderer and the integration with your templates"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Knp\\Menu\\": "src/Knp/Menu"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "KnpLabs",
+                    "homepage": "https://knplabs.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
+                },
+                {
+                    "name": "The Community",
+                    "homepage": "https://github.com/KnpLabs/KnpMenu/contributors"
+                }
+            ],
+            "description": "An object oriented menu library",
+            "homepage": "https://knplabs.com",
+            "keywords": [
+                "menu",
+                "tree"
+            ],
+            "support": {
+                "issues": "https://github.com/KnpLabs/KnpMenu/issues",
+                "source": "https://github.com/KnpLabs/KnpMenu/tree/v3.4.0"
+            },
+            "time": "2023-05-17T18:48:46+00:00"
+        },
+        {
+            "name": "knplabs/knp-menu-bundle",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KnpLabs/KnpMenuBundle.git",
+                "reference": "a0b4224f872d74ae939589eb1ccf0e11291370a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KnpLabs/KnpMenuBundle/zipball/a0b4224f872d74ae939589eb1ccf0e11291370a9",
+                "reference": "a0b4224f872d74ae939589eb1ccf0e11291370a9",
+                "shasum": ""
+            },
+            "require": {
+                "knplabs/knp-menu": "^3.1",
+                "php": "^7.2 || ^8.0",
+                "symfony/framework-bundle": "^3.4 | ^4.4 | ^5.0 | ^6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5 | ^9.5",
+                "symfony/expression-language": "^3.4 | ^4.4 | ^5.0 | ^6.0",
+                "symfony/phpunit-bridge": "^5.2 | ^6.0",
+                "symfony/templating": "^3.4 | ^4.4 | ^5.0 | ^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Knp\\Bundle\\MenuBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Knplabs",
+                    "homepage": "http://knplabs.com"
+                },
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/KnpLabs/KnpMenuBundle/contributors"
+                }
+            ],
+            "description": "This bundle provides an integration of the KnpMenu library",
+            "keywords": [
+                "menu"
+            ],
+            "support": {
+                "issues": "https://github.com/KnpLabs/KnpMenuBundle/issues",
+                "source": "https://github.com/KnpLabs/KnpMenuBundle/tree/v3.2.0"
+            },
+            "time": "2021-10-24T07:53:34+00:00"
         },
         {
             "name": "knplabs/knp-paginator-bundle",
@@ -2880,6 +3407,118 @@
             },
             "abandoned": "Symfony",
             "time": "2023-02-24T14:57:12+00:00"
+        },
+        {
+            "name": "smalot/pdfparser",
+            "version": "v2.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/smalot/pdfparser.git",
+                "reference": "eef0263bbaec86d30801d3551ac83f4e1015d4c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/eef0263bbaec86d30801d3551ac83f4e1015d4c3",
+                "reference": "eef0263bbaec86d30801d3551ac83f4e1015d4c3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-zlib": "*",
+                "php": ">=7.1",
+                "symfony/polyfill-mbstring": "^1.18"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Smalot\\PdfParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastien MALOT",
+                    "email": "sebastien@malot.fr"
+                }
+            ],
+            "description": "Pdf parser library. Can read and extract information from pdf file.",
+            "homepage": "https://www.pdfparser.org",
+            "keywords": [
+                "extract",
+                "parse",
+                "parser",
+                "pdf",
+                "text"
+            ],
+            "support": {
+                "issues": "https://github.com/smalot/pdfparser/issues",
+                "source": "https://github.com/smalot/pdfparser/tree/v2.7.0"
+            },
+            "time": "2023-08-10T06:11:26+00:00"
+        },
+        {
+            "name": "spatie/temporary-directory",
+            "version": "2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/temporary-directory.git",
+                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/0c804873f6b4042aa8836839dca683c7d0f71831",
+                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\TemporaryDirectory\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily create, use and destroy temporary directories",
+            "homepage": "https://github.com/spatie/temporary-directory",
+            "keywords": [
+                "php",
+                "spatie",
+                "temporary-directory"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/temporary-directory/issues",
+                "source": "https://github.com/spatie/temporary-directory/tree/2.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-04-28T07:47:42+00:00"
         },
         {
             "name": "symfony/apache-pack",
@@ -10811,13 +11450,16 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kiwilan/php-ebook": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.1",
         "ext-ctype": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-zip": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

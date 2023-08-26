@@ -8,7 +8,7 @@
 /var/
 /.composer
 /vendor/
-/public/images/*
+
 /public/media/cache/*
 !/public/images/.gitkeep
 !/public/images/librairies
@@ -16,6 +16,11 @@
 !/public/images/librairies/.gitkeep
 
 !/public/media/.gitkeep
+/public/books
+!/public/books/.gitkeep
+/public/covers
+!/public/covers/.gitkeep
+
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

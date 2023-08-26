@@ -1,0 +1,22 @@
+<div class="count">
+    {{ pagination.getTotalItemCount }} Books
+</div>
+        {% if pagination.isSorted('b.title') %} class="sorted"{% endif %}
+            {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
+        {% if pagination.isSorted(['a.created']) %} class="sorted"{% endif %}
+            {{ knp_pagination_sortable(pagination, 'Added date', ['b.created']) }}
+
+<div class="container">
+    <div class="row">
+        {% for book in pagination %}
+            <div class="col-md-4 col-lg-3 col-xl-2 col-sm-6 col-12">
+                {% include 'book/_teaser.html.twig' %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>

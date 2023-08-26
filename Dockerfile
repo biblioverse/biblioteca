@@ -39,6 +39,8 @@ RUN install-php-extensions \
     fileinfo \
     dom \
     gd \
+    rar \
+    imagick \
     calendar
 
 RUN apt-get purge -y --auto-remove

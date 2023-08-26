@@ -1,0 +1,25 @@
+{# @var book App\Entity\Book #}
+<div class="card m-1">
+    {% if book.imageFilename is not null %}
+        <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" class="card-img-top" alt="Picture for {{ book.title }}">
+    {% else %}
+        <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" class="card-img-top" alt="No picture for {{ book.title }}">
+    {% endif %}
+    <div class="card-body">
+        <p class="card-text">
+            {{ book.title }}
+
+            <span class="text-muted">
+                by <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">
+                    {{ book.mainAuthor }}
+                </a>
+            </span>
+        </p>
+
+        {% if book.serie %}
+            <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted small d-block">
+                {{ book.serie }} ({{ book.serieIndex }})
+            </a>
+        {% endif %}
+    </div>
+</div>
