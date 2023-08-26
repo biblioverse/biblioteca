@@ -92,8 +92,11 @@ class Book
     /**
      * @var Collection<int, BookInteraction>
      */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookInteraction::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookInteraction::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $bookInteractions;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $tags = null;
 
     public function __construct()
     {
@@ -391,5 +394,17 @@ class Book
     public function setAuthorSlug(string $authorSlug): void
     {
         $this->authorSlug = $authorSlug;
+    }
+
+    public function getTags(): ?array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?array $tags): static
+    {
+        $this->tags = $tags;
+
+        return $this;
     }
 }

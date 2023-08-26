@@ -5,6 +5,7 @@
             {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
         {% if pagination.isSorted(['a.created']) %} class="sorted"{% endif %}
             {{ knp_pagination_sortable(pagination, 'Added date', ['b.created']) }}
+{{ knp_pagination_filter(pagination,{'b.title':'Title','b.mainAuthor':'mainAuthor','b.serie':'serie'}) }}
 
 <div class="container">
     <div class="row">
@@ -16,7 +17,4 @@
     </div>
 </div>
 
-
-<div class="navigation">
     {{ knp_pagination_render(pagination) }}
-</div>

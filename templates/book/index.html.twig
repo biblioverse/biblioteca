@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            {% if book.imageFilename is not null %}
+                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="card-img-top w-100" alt="Picture for {{ book.title }}">
+            {% else %}
+                <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="No picture for {{ book.title }}">
+            {% endif %}
+        </div>
+        <div class="col-md-9">
+            <table class="table table-striped w-100">
+                <tr>
+                    <th>Author</th><td><a href="{{ path('app_author_detail', {'slug':book.authorSlug}) }}">{{ book.mainAuthor }}</a></td>
+                </tr>
+                <tr>
+                    <th>Summary</th><td>{{ book.summary }}</td>
+                </tr>
+                {% if book.serie is not null %}
+                <tr>
+                    <th>Serie</th><td>
+                        <a href="{{ path('app_series_detail', {'slug':book.serieSlug}) }}">{{ book.serie }}</a>
+                        N°{{ book.serieIndex }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>Publisher</th><td>{{ book.publisher }}</td>
+                </tr>
+                {% if book.publishDate is not null %}
+                <tr>
+                    <th>Publishdate</th><td>{{ book.publishDate|date }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    {% for interaction in book.bookInteractions %}
+                        {% if is_granted('VIEW',interaction) %}
+                            {{ interaction.finished?'Yes':'No' }}
+                        {% endif %}
+                    {% else %}
+                        No
+                    {% endfor %}
+                </tr>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

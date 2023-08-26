@@ -1,9 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Serie {{ name }}{% endblock %}
+{% block title %}Serie {{ serie.serie }}{% endblock %}
 
 {% block body %}
 
-{% include 'book/_list.html.twig' %}
+
+    <div class="progress" role="progressbar" aria-label="Books read" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ serie.booksFinished>0?((serie.booksFinished/serie.bookCount)*100):0 }}%"></div>
+    </div>
+    <p>{{ serie.booksFinished }} books read on a total of {{ serie.bookCount }} books.</p>
+
+    {% include 'book/_list.html.twig' %}
 
 {% endblock %}

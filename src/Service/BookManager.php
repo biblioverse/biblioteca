@@ -59,6 +59,7 @@ class BookManager
         }
 
         $book->setExtension($file->getExtension());
+        $book->setTags($extractedMetadata['tags']);
 
         $book->setBookPath('');
         $book->setBookFilename('');

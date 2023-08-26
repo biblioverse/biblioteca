@@ -1,13 +1,18 @@
 {# @var book App\Entity\Book #}
 <div class="card m-1">
+    <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+
     {% if book.imageFilename is not null %}
         <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" class="card-img-top" alt="Picture for {{ book.title }}">
     {% else %}
         <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" class="card-img-top" alt="No picture for {{ book.title }}">
     {% endif %}
+    </a>
     <div class="card-body">
         <p class="card-text">
-            {{ book.title }}
+            <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+                {{ book.title }}
+            </a>
 
             <span class="text-muted">
                 by <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">

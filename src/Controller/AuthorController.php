@@ -26,16 +26,21 @@ class AuthorController extends AbstractController
     #[Route('/{slug}/{page}', name: 'app_author_detail', requirements: ['page' => '\d+'])]
     public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
     {
+        $authors = $bookRepository->getAllAuthors();
+        $author = array_filter($authors, fn($serie) => $serie['authorSlug'] === $slug);
+
+        $author= current($author);
+
+
         $pagination = $paginator->paginate(
             $bookRepository->getByAuthorQuery($slug),
             $page,
             18
         );
-        /** @var Book $firstBook */
-        $firstBook = current($pagination->getItems());
+
         return $this->render('author/detail.html.twig', [
             'pagination' => $pagination,
-            'name' =>$firstBook->getMainAuthor()
+            'author' =>$author
         ]);
     }
 }

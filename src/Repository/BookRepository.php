@@ -6,6 +6,9 @@ use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
  * @extends ServiceEntityRepository<Book>
@@ -17,9 +20,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private Security $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
         parent::__construct($registry, Book::class);
+        $this->security = $security;
     }
 
     public function getAllBooksQuery():Query
@@ -74,7 +80,8 @@ class BookRepository extends ServiceEntityRepository
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
             ->where('serie.serie IS NOT NULL')
-            ->leftJoin('serie.bookInteractions', 'bookInteraction')
+            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
+            ->setParameter('user', $this->security->getUser())
             ->addGroupBy('serie.serie');
         $return =  $qb->getQuery()->getResult();
         if(!is_array($return)){
@@ -94,7 +101,8 @@ class BookRepository extends ServiceEntityRepository
             ->addSelect('author.authorSlug')
             ->addSelect('COUNT(author.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
-            ->leftJoin('author.bookInteractions', 'bookInteraction')
+            ->leftJoin('author.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user=:user')
+            ->setParameter('user', $this->security->getUser())
             ->addGroupBy('author.mainAuthor');
         $return =  $qb->getQuery()->getResult();
         if(!is_array($return)){

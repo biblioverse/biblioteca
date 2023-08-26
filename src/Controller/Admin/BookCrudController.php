@@ -43,6 +43,7 @@ class BookCrudController extends AbstractCrudController
             TextField::new('publisher',)->hideOnIndex(),
             DateField::new('publishDate',)->hideOnIndex(),
             ArrayField::new('authors',)->setRequired(false)->hideOnIndex(),
+            ArrayField::new('tags',)->setRequired(false),
             DateField::new('created',)->onlyOnIndex(),
 
         ];

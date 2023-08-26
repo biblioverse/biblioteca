@@ -25,6 +25,11 @@ class SerieController extends AbstractController
     #[Route('/{slug}/{page}', name: 'app_series_detail', requirements: ['page' => '\d+'])]
     public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
     {
+        $series = $bookRepository->getAllSeries();
+        $serie = array_filter($series, fn($serie) => $serie['serieSlug'] === $slug);
+
+        $serie= current($serie);
+
         $pagination = $paginator->paginate(
             $bookRepository->getBySerieQuery($slug),
             $page,
@@ -34,7 +39,7 @@ class SerieController extends AbstractController
         $firstBook = current($pagination->getItems());
         return $this->render('serie/detail.html.twig', [
             'pagination' => $pagination,
-            'name' => $firstBook->getSerie(),
+            'serie' => $serie,
         ]);
     }
 }

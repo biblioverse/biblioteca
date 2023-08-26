@@ -1,8 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Author {{ name }}{% endblock %}
+{% block title %}Author {{ author.mainAuthor }}{% endblock %}
 
 {% block body %}
+
+    <div class="progress" role="progressbar" aria-label="Books read" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ author.booksFinished>0?((author.booksFinished/author.bookCount)*100):0 }}%"></div>
+    </div>
+    <p>{{ author.booksFinished }} books read on a total of {{ author.bookCount }} books.</p>
+
 
     {% include 'book/_list.html.twig' %}
 
