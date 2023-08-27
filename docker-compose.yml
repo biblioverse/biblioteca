@@ -2,7 +2,7 @@ version: '3'
 
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:main
+    image: ghcr.io/biblioverse/biblioteca-docker:1.0.2
     ports:
       - 48480:8080
     depends_on:
