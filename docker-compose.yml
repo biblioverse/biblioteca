@@ -2,8 +2,7 @@ version: '3'
 
 services:
   biblioteca:
-    build:
-      dockerfile: Dockerfile
+    image: ghcr.io/biblioverse/biblioteca-container:sha-428c488
     ports:
       - 48480:8080
     depends_on:
