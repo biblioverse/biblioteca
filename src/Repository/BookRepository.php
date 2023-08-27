@@ -7,17 +7,15 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 /**
  * @extends ServiceEntityRepository<Book>
- *
- * @method Book|null find($id, $lockMode = null, $lockVersion = null)
- * @method Book|null findOneBy(array $criteria, array $orderBy = null)
- * @method Book[]    findAll()
- * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
+ * @phpstan-type SeriesType array{ serie:string, serieSlug:string, bookCount:int, booksFinished:int }
+ * @phpstan-type AuthorsType array{ serie:string, authorSlug:string, bookCount:int, booksFinished:int }
+*/
+
+
+
 class BookRepository extends ServiceEntityRepository
 {
     private Security $security;
@@ -70,7 +68,7 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<mixed>
+     * @return array<SeriesType>
      */
     public function getAllSeries():array
     {
@@ -92,7 +90,7 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<mixed>
+     * @return array<AuthorsType>
      */
     public function getAllAuthors():array
     {
