@@ -289,6 +289,20 @@
             "config/packages/security.yaml"
         ]
     },
+    "symfony/stimulus-bundle": {
+        "version": "2.11",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.9",
+            "ref": "05c45071c7ecacc1e48f94bc43c1f8d4405fb2b2"
+        },
+        "files": [
+            "assets/bootstrap.js",
+            "assets/controllers.json",
+            "assets/controllers/hello_controller.js"
+        ]
+    },
     "symfony/translation": {
         "version": "6.2",
         "recipe": {
@@ -326,6 +340,33 @@
         "files": [
             "config/packages/uid.yaml"
         ]
+    },
+    "symfony/ux-autocomplete": {
+        "version": "2.11",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.6",
+            "ref": "07d9602b7231ba355f484305d6cea58310c01741"
+        },
+        "files": [
+            "config/routes/ux_autocomplete.yaml"
+        ]
+    },
+    "symfony/ux-live-component": {
+        "version": "2.11",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.6",
+            "ref": "73e69baf18f47740d6f58688c5464b10cdacae06"
+        },
+        "files": [
+            "config/routes/ux_live_component.yaml"
+        ]
+    },
+    "symfony/ux-twig-component": {
+        "version": "v2.11.0"
     },
     "symfony/validator": {
         "version": "6.2",

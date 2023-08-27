@@ -49,6 +49,27 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    /**
+     * @param string $query
+     * @return array<Book>
+     */
+    public function search(string $query, int $results=5):array
+    {
+        $return = $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('b.serie like :query')
+            ->orWhere('b.title like :query')
+            ->orWhere('b.mainAuthor like :query')
+            ->setParameter('query', "%".$query.'%')
+            ->setMaxResults($results)
+            ->addOrderBy('b.title','ASC')
+            ->getQuery()->getResult();
+        if(!is_array($return)){
+            return [];
+        }
+        return $return;
+    }
+
     public function save(Book $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);

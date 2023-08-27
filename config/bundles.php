@@ -18,4 +18,8 @@ return [
     Knp\Bundle\MarkdownBundle\KnpMarkdownBundle::class => ['all' => true],
     EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class => ['all' => true],
     Knp\Bundle\MenuBundle\KnpMenuBundle::class => ['all' => true],
+    Symfony\UX\TwigComponent\TwigComponentBundle::class => ['all' => true],
+    Symfony\UX\LiveComponent\LiveComponentBundle::class => ['all' => true],
+    Symfony\UX\Autocomplete\AutocompleteBundle::class => ['all' => true],
+    Symfony\UX\StimulusBundle\StimulusBundle::class => ['all' => true],
 ];
