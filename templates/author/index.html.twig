@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}All series!{% endblock %}
+{% block title %}All authors{% endblock %}
 
 {% block body %}
 
+    <div class="count">
+        {{ pagination.getTotalItemCount }} Authors
+    </div>
+
+    {{ knp_pagination_render(pagination) }}
+
     <ul>
-        {% for author in authors %}
+        {% for author in pagination %}
             <li>
-                <a href="{{ path('app_author_detail', {slug: author.authorSlug }) }}">{{ author.mainAuthor }} ({{ author.booksFinished }}/{{ author.bookCount }})</a>
+                {{ component('InlineEditAuthor', {'author':author,'originalAuthor':author}) }}
             </li>
         {% endfor %}
     </ul>
+
+    {{ knp_pagination_render(pagination) }}
 
 {% endblock %}

@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}All series!{% endblock %}
+{% block title %}All series{% endblock %}
 
 {% block body %}
 
     <ul>
     {% for serie in series %}
         <li>
-            <a href="{{ path('app_series_detail', {slug: serie.serieSlug}) }}">{{ serie.serie }} ({{ serie.booksFinished }}/{{ serie.bookCount }})</a>
+            {{ component('InlineEditSerie', {'serie':serie,'originalSerie':serie}) }}
         </li>
     {% endfor %}
     </ul>

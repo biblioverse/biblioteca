@@ -27,7 +27,6 @@ class BookInteractionVoter extends Voter
             return false;
         }
 
-        dump($subject);
         return $subject->getUser() === $user;
     }
 

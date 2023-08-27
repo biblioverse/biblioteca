@@ -1,19 +1,53 @@
 <div class="count">
-    {{ pagination.getTotalItemCount }} Books
+    {{ pagination.getTotalItemCount }}
 </div>
-        {% if pagination.isSorted('b.title') %} class="sorted"{% endif %}
+{{ knp_pagination_filter(pagination, {
+    'b.title': 'Title',
+    'b.mainAuthor': 'Author',
+    'b.serie': 'Serie',
+}) }}
+
+<table class="table-striped table table-bordered table-hover">
+    <tr>
+        {# sorting of properties based on query components #}
+        <th{% if pagination.isSorted('b.title') %} class="sorted"{% endif %}>
             {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
-        {% if pagination.isSorted(['a.created']) %} class="sorted"{% endif %}
-            {{ knp_pagination_sortable(pagination, 'Added date', ['b.created']) }}
+        </th>
+        <th{% if pagination.isSorted('b.mainAuthor') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'Author', 'b.mainAuthor') }}
+        </th>
+        <th{% if pagination.isSorted('b.serie') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'Serie', 'b.serie') }}
+        </th>
+        <th{% if pagination.isSorted('b.serieIndex') %} class="sorted"{% endif %}>
+            {{ knp_pagination_sortable(pagination, 'Serie Index', 'b.serieIndex') }}
+        </th>
+        <th></th>
+    </tr>
 
-<div class="container">
-    <div class="row">
-        {% for book in pagination %}
-            <div class="col-md-4 col-lg-3 col-xl-2 col-sm-6 col-12">
-                {% include 'book/_teaser.html.twig' %}
-            </div>
-        {% endfor %}
-    </div>
-</div>
-
+    {% for book in pagination %}
+        <tr>
+            <td>
+                {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
+            </td>
+            <td>
+                {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor'}) }}
+            </td>
+            <td>
+                {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
+            </td>
+            <td>
+                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
+            </td>
+            <td>
+                <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+                    <i class="fa-solid fa-book-open"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{# display navigation #}
+<div class="navigation">
     {{ knp_pagination_render(pagination) }}
+</div>

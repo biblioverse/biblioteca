@@ -13,13 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthorController extends AbstractController
 {
-    #[Route('/', name: 'app_authors')]
-    public function index(BookRepository $bookRepository): Response
+    #[Route('/{page}', name: 'app_authors', requirements: ['page' => '\d+'])]
+    public function index(BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
     {
         $authors = $bookRepository->getAllAuthors();
 
+        $pagination = $paginator->paginate($authors,$page,300);
+
         return $this->render('author/index.html.twig', [
-            'authors' => $authors,
+            'pagination' => $pagination,
         ]);
     }
 

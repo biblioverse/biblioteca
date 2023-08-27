@@ -1,0 +1,44 @@
+<div {{ attributes }}>
+            <button
+                    data-action="live#action"
+                    data-action-name="toggle"
+                    class="btn p-0"
+                    title="Click to toggle read status"
+            >
+                {% if interaction is not null %}
+                    {% if interaction.finished %}
+                        <span class="badge text-bg-success"><i class="fa-solid fa-check"></i></span>
+                    {% else %}
+                        <span class="badge text-bg-light"><i class="fa-solid fa-book"></i></span>
+                    {% endif %}
+                {% else %}
+                    <span class="badge text-bg-light"><i class="fa-solid fa-book"></i></span>
+                {% endif %}
+                {% if flashMessage %}
+                    <small class="text-muted">{{ flashMessage }}</small>
+                {% endif %}
+            </button>
+
+
+        <button
+                data-action="live#action"
+                data-action-name="toggleFavorite"
+                class="btn p-0"
+                title="Click to toggle favorite"
+        >
+            {% if interaction is not null %}
+                {% if interaction.favorite %}
+                    <span class="badge text-bg-success"><i class="fa-solid fa-heart"></i></span>
+                {% else %}
+                    <span class="badge text-bg-light"><i class="fa-solid fa-heart"></i></span>
+                {% endif %}
+            {% else %}
+                <span class="badge text-bg-light"><i class="fa-solid fa-heart"></i></span>
+            {% endif %}
+            {% if flashMessageFav %}
+                <small class="text-muted">{{ flashMessageFav }}</small>
+            {% endif %}
+
+        </button>
+
+</div>

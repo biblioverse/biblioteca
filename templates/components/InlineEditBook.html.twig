@@ -1,0 +1,42 @@
+<div {{ attributes }}>
+        {% if isEditing %}
+            <form class="row ">
+                <div class="input-group col">
+                    <input
+                            type="text"
+                            data-model="book.{{ field }}"
+                            class="form-control"
+                            autofocus
+                            id="book_{{ book.id }}_{{ field }}"
+                    />
+
+                    <button
+                            data-action="live#action"
+                            data-action-name="prevent|save"
+                            class="btn btn-outline-success"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        {% else %}
+
+
+
+            <button
+                data-action="live#action"
+                data-action-name="activateEditing"
+                class="btn p-0"
+                title="Click to edit!"
+            >
+                {{ attribute(book, "get"~field) }}
+                {% if attribute(book, "get"~field)=='' %}
+                    <i class="fa-solid fa-pencil"></i>
+                {% endif %}
+            </button>
+
+            {% if flashMessage %}
+                    <i class="fa-solid fa-check"></i>
+            {% endif %}
+        {% endif %}
+</div>

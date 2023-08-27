@@ -11,11 +11,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 /**
  * @extends ServiceEntityRepository<Book>
  * @phpstan-type SeriesType array{ serie:string, serieSlug:string, bookCount:int, booksFinished:int }
- * @phpstan-type AuthorsType array{ serie:string, authorSlug:string, bookCount:int, booksFinished:int }
+ * @phpstan-type AuthorsType array{ mainAuthor:string, authorSlug:string, bookCount:int, booksFinished:int }
 */
-
-
-
 class BookRepository extends ServiceEntityRepository
 {
     private Security $security;
@@ -46,6 +43,7 @@ class BookRepository extends ServiceEntityRepository
             ->select('b')
             ->where('b.serieSlug = :serieSlug')
             ->setParameter('serieSlug', $serieSlug)
+            ->addOrderBy('b.serieIndex','ASC')
             ->getQuery();
     }
 

@@ -1,0 +1,12 @@
+{% set allParams=app.request.query.all %}
+
+{% set displayMode = allParams['displayMode']|default('gallery') %}
+<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}">Gallery</a>
+<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}">List</a>
+
+
+{% if displayMode =='gallery' %}
+    {% include 'book/_gallery.html.twig' %}
+{% else %}
+    {% include 'book/_list.html.twig' %}
+{% endif %}

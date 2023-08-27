@@ -22,10 +22,10 @@ class BookInteraction
     private ?Book $book = null;
 
     #[ORM\Column]
-    private ?bool $finished = null;
+    private bool $finished = false;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $rating = null;
+    #[ORM\Column(nullable: false)]
+    private bool $favorite = false;
 
     public function getId(): ?int
     {
@@ -56,7 +56,7 @@ class BookInteraction
         return $this;
     }
 
-    public function isFinished(): ?bool
+    public function isFinished(): bool
     {
         return $this->finished;
     }
@@ -68,15 +68,17 @@ class BookInteraction
         return $this;
     }
 
-    public function getRating(): ?int
+    public function isFavorite(): bool
     {
-        return $this->rating;
+        return $this->favorite;
     }
 
-    public function setRating(?int $rating): static
+    public function setFavorite(bool $favorite): static
     {
-        $this->rating = $rating;
+        $this->favorite = $favorite;
 
         return $this;
     }
+
+
 }
