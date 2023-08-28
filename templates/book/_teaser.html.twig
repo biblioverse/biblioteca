@@ -1,31 +1,25 @@
 {# @var book App\Entity\Book #}
-<div class="card m-1">
-    <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
-
-    {% if book.imageFilename is not null %}
-        <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" class="card-img-top" alt="Picture for {{ book.title }}">
-    {% else %}
-        <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" class="card-img-top" alt="No picture for {{ book.title }}">
-    {% endif %}
-    </a>
-    <div class="card-body">
-        <p class="card-text">
-            <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+<div class=" m-1 mb-4">
+    <a href="{{ path('app_book',{'slug':book.slug,'authorSlug':book.authorSlug,'book':book.id}) }}" class=" small">
+    <div class="book">
+        <div class="book__cover" style="background-image:url('{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}');">
+            <div class="book__detail">
                 {{ book.title }}
-            </a>
-
-            <span class="text-muted">
-                by <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">
-                    {{ book.mainAuthor }}
-                </a>
-            </span>
-        </p>
-
+            </div>
+        </div>
+        <div class="book__page"></div>
+    </div>
+    </a>
+    {{ include('book/_interaction.html.twig') }}
+    <div class="small text-muted">
+        <i class="fa-solid fa-user"></i> <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">
+            {{ book.mainAuthor }}
+        </a>
         {% if book.serie %}
-            <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted small d-block">
-                {{ book.serie }} ({{ book.serieIndex }})
-            </a>
+            <br>
+            <i class="fa-solid fa-hashtag"></i> <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted">
+            {{ book.serie }} ({{ book.serieIndex }})
+        </a>
         {% endif %}
-        {{ include('book/_interaction.html.twig') }}
     </div>
 </div>

@@ -9,10 +9,10 @@
                     {% if interaction.finished %}
                         <span class="badge text-bg-success"><i class="fa-solid fa-check"></i></span>
                     {% else %}
-                        <span class="badge text-bg-light"><i class="fa-solid fa-book"></i></span>
+                        <span class="badge text-bg-dark"><i class="fa-solid fa-book"></i></span>
                     {% endif %}
                 {% else %}
-                    <span class="badge text-bg-light"><i class="fa-solid fa-book"></i></span>
+                    <span class="badge text-bg-dark"><i class="fa-solid fa-book"></i></span>
                 {% endif %}
                 {% if flashMessage %}
                     <small class="text-muted">{{ flashMessage }}</small>
@@ -30,10 +30,10 @@
                 {% if interaction.favorite %}
                     <span class="badge text-bg-success"><i class="fa-solid fa-heart"></i></span>
                 {% else %}
-                    <span class="badge text-bg-light"><i class="fa-solid fa-heart"></i></span>
+                    <span class="badge text-bg-dark"><i class="fa-solid fa-heart"></i></span>
                 {% endif %}
             {% else %}
-                <span class="badge text-bg-light"><i class="fa-solid fa-heart"></i></span>
+                <span class="badge text-bg-dark"><i class="fa-solid fa-heart"></i></span>
             {% endif %}
             {% if flashMessageFav %}
                 <small class="text-muted">{{ flashMessageFav }}</small>

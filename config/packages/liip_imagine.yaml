@@ -10,7 +10,7 @@ liip_imagine:
     thumb:
       quality: 80
       filters:
-        thumbnail: { size: [ 100, 150 ], mode: inbound }
+        thumbnail: { size: [ 150, 230 ], mode: inbound }
     big:
       quality: 100
       filters:

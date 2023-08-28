@@ -10,7 +10,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @extends ServiceEntityRepository<Book>
- * @phpstan-type SeriesType array{ serie:string, serieSlug:string, bookCount:int, booksFinished:int }
+ * @phpstan-type SeriesType array{ serie:string, serieSlug:string, bookCount:int, booksFinished:int, lastBookIndex:int }
  * @phpstan-type AuthorsType array{ mainAuthor:string, authorSlug:string, bookCount:int, booksFinished:int }
 */
 class BookRepository extends ServiceEntityRepository
@@ -95,6 +95,7 @@ class BookRepository extends ServiceEntityRepository
             ->select('serie.serie')
             ->addSelect('serie.serieSlug')
             ->addSelect('COUNT(serie.id) as bookCount')
+            ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
             ->where('serie.serie IS NOT NULL')
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
