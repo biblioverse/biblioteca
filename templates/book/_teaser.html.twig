@@ -10,16 +10,18 @@
         <div class="book__page"></div>
     </div>
     </a>
-    {{ include('book/_interaction.html.twig') }}
     <div class="small text-muted">
-        <i class="fa-solid fa-user"></i> <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">
+        <i class="fa-solid fa-user-pen fa-flip-horizontal"></i></i> <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted text-decoration-none">
             {{ book.mainAuthor }}
         </a>
         {% if book.serie %}
             <br>
-            <i class="fa-solid fa-hashtag"></i> <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted">
+            <i class="fa-solid fa-hashtag"></i> <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted text-decoration-none">
             {{ book.serie }} ({{ book.serieIndex }})
         </a>
         {% endif %}
+    </div>
+    <div class="text-center">
+        {{ include('book/_interaction.html.twig') }}
     </div>
 </div>

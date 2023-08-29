@@ -14,7 +14,7 @@
         "doctrine/orm": "^2.14",
         "easycorp/easyadmin-bundle": "^4.7",
         "gedmo/doctrine-extensions": "^3.11",
-        "kiwilan/php-ebook": "dev-main",
+        "kiwilan/php-ebook": "2.0.20",
         "knplabs/knp-markdown-bundle": "^1.10",
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "^6.2",
@@ -123,11 +123,5 @@
         "phpstan/phpstan-strict-rules": "^1.0",
         "phpstan/phpstan-doctrine": "^1.3",
         "phpstan/phpstan-symfony": "^1.2"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/SergioMendolia/php-ebook"
-        }
-    ]
+    }
 }

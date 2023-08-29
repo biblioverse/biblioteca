@@ -1,44 +1,41 @@
-<div {{ attributes }}>
-            <button
-                    data-action="live#action"
-                    data-action-name="toggle"
-                    class="btn p-0"
-                    title="Click to toggle read status"
-            >
-                {% if interaction is not null %}
-                    {% if interaction.finished %}
-                        <span class="badge text-bg-success"><i class="fa-solid fa-check"></i></span>
-                    {% else %}
-                        <span class="badge text-bg-dark"><i class="fa-solid fa-book"></i></span>
-                    {% endif %}
-                {% else %}
-                    <span class="badge text-bg-dark"><i class="fa-solid fa-book"></i></span>
-                {% endif %}
-                {% if flashMessage %}
-                    <small class="text-muted">{{ flashMessage }}</small>
-                {% endif %}
-            </button>
+<div {{ attributes.defaults(stimulus_controller('inline-edit', { someValue: 'foo'})) }}>
+
+    {% set finished=false %}
+    {% if interaction is not null %}
+        {% if interaction.finished %}
+            {% set finished=true %}
+        {% endif %}
+    {% endif %}
+    <button
+        data-action="live#action"
+        data-action-name="toggle"
+        class="btn btn-link btn-sm text-{{ finished?'success':'secondary' }} text-decoration-none"
+        title="Click to toggle read status"
+    >
+        <i class="fa-solid fa-book"></i>
+        {% if flashMessage %}
+            <small class="text-muted alert-remove">{{ flashMessage }}</small>
+        {% endif %}
+    </button>
 
 
-        <button
-                data-action="live#action"
-                data-action-name="toggleFavorite"
-                class="btn p-0"
-                title="Click to toggle favorite"
-        >
-            {% if interaction is not null %}
-                {% if interaction.favorite %}
-                    <span class="badge text-bg-success"><i class="fa-solid fa-heart"></i></span>
-                {% else %}
-                    <span class="badge text-bg-dark"><i class="fa-solid fa-heart"></i></span>
-                {% endif %}
-            {% else %}
-                <span class="badge text-bg-dark"><i class="fa-solid fa-heart"></i></span>
-            {% endif %}
-            {% if flashMessageFav %}
-                <small class="text-muted">{{ flashMessageFav }}</small>
-            {% endif %}
+    {% set favorite = false %}
+    {% if interaction is not null %}
+        {% if interaction.favorite %}
+            {% set favorite = true %}
+        {% endif %}
+    {% endif %}
+    <button
+        data-action="live#action"
+        data-action-name="toggleFavorite"
+        class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
+        title="Click to toggle favorite"
+    >
+        <i class="fa-solid fa-heart"></i>
+        {% if flashMessageFav %}
+            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
+        {% endif %}
 
-        </button>
+    </button>
 
 </div>

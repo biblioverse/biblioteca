@@ -116,18 +116,9 @@ class BookManager
     public function extractEbookMetadata(SplFileInfo $file):array
     {
         try {
-            if($file->getExtension()==='pdf'){
-                throw new \RuntimeException('PDF not supported yet');
-            }
-            $zip = new ZipArchive();
-            $res = $zip->open($file->getRealPath(), ZipArchive::CHECKCONS);
-            if ($res !== TRUE) {
-                throw match ($res) {
-                    ZipArchive::ER_NOZIP => new RuntimeException('not a zip archive'),
-                    ZipArchive::ER_INCONS => new RuntimeException('consistency check failed'),
-                    ZipArchive::ER_CRC => new RuntimeException('checksum failed'),
-                    default => new RuntimeException('error ' . $res),
-                };
+
+            if(!Ebook::isValid($file->getRealPath())){
+                throw new RuntimeException('Could not read ebook' . $file->getRealPath());
             }
 
             $ebook = Ebook::read($file->getRealPath());
