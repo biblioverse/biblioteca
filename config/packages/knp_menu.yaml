@@ -1,0 +1,6 @@
+# config/packages/knp_menu.yaml
+knp_menu:
+    # use "twig: false" to disable the Twig extension and the TwigRenderer
+
+    twig:
+        template: KnpMenuBundle::menu.html.twig

@@ -29,6 +29,30 @@ class BookRepository extends ServiceEntityRepository
             ->select('b')
             ->getQuery();
     }
+    public function getFavoriteBooksQuery():Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->join('b.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.favorite = true and bookInteraction.user=:user')
+            ->setParameter('user', $this->security->getUser())
+            ->getQuery();
+    }
+    public function getBooksByReadStatus(bool $read):Query
+    {
+        $q = $this->createQueryBuilder('b')
+            ->select('b')
+            ->leftJoin('b.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
+            ->andWhere('bookInteraction.finished = :read');
+
+        if(!$read){
+            $q->orWhere('bookInteraction.finished IS NULL');
+        }
+
+            $q->setParameter('user', $this->security->getUser())
+            ->setParameter('read', (int)$read);
+            ;
+        return $q->getQuery();
+    }
     public function getByAuthorQuery(string $authorSlug):Query
     {
         return $this->createQueryBuilder('b')

@@ -31,7 +31,7 @@
             </div>
         </header>
 
-        <nav class="container-fluid">
+        <ul class="container-fluid">
             <div class="row">
                 <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
                     <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu"
@@ -43,7 +43,7 @@
                         </div>
                         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
 
-                            {{ knp_menu_render('main') }}
+                                {{ knp_menu_render('main',{'currentClass':'active'}) }}
 
                         </div>
                     </div>

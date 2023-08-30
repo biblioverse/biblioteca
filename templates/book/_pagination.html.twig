@@ -1,11 +1,19 @@
 {% set allParams=app.request.query.all %}
 
-{% set displayMode = allParams['displayMode']|default('gallery') %}
-<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}">Gallery</a>
-<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}">List</a>
+<div class="row align-self-end mb-3">
+    <div class="col-12 p-2 text-end">
+        <div class="btn-group">
+            <div class="btn-sm btn btn-outline-dark">
+                {{ pagination.getTotalItemCount }} Books
+            </div>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}"><i class="fa-solid fa-table-cells-large"></i></a>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}"><i class="fa-solid fa-table-list"></i></a>
+        </div>
+    </div>
+</div>
 
 
-{% if displayMode =='gallery' %}
+{% if displayMode.getDisplayMode =='gallery' %}
     {% include 'book/_gallery.html.twig' %}
 {% else %}
     {% include 'book/_list.html.twig' %}

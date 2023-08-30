@@ -16,6 +16,9 @@
         <div class="col-md-9">
             <table class="table table-striped w-100">
                 <tr>
+                    <th>Download</th><td><a href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">Download {{ book.extension }}</a></td>
+                </tr>
+                <tr>
                     <th>Author</th><td><a href="{{ path('app_author_detail', {'slug':book.authorSlug}) }}">{{ book.mainAuthor }}</a></td>
                 </tr>
                 <tr>
@@ -37,15 +40,6 @@
                     <th>Publishdate</th><td>{{ book.publishDate|date }}</td>
                 </tr>
                 {% endif %}
-                <tr>
-                    {% for interaction in book.bookInteractions %}
-                        {% if is_granted('VIEW',interaction) %}
-                            {{ interaction.finished?'Yes':'No' }}
-                        {% endif %}
-                    {% else %}
-                        No
-                    {% endfor %}
-                </tr>
             </table>
             {{ include('book/_interaction.html.twig') }}
 

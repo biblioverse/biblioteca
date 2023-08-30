@@ -1,10 +1,3 @@
-<div class="count">
-    {{ pagination.getTotalItemCount }} Books
-</div>
-        {% if pagination.isSorted('b.title') %} class="sorted"{% endif %}
-            {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
-        {% if pagination.isSorted(['a.created']) %} class="sorted"{% endif %}
-            {{ knp_pagination_sortable(pagination, 'Added date', ['b.created']) }}
 
 <div class="container">
     <div class="row">

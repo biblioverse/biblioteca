@@ -119,7 +119,8 @@ class Book
 
     public function setTitle(string $title): self
     {
-        $this->title = $title;
+
+        $this->title = trim($title);
 
         return $this;
     }
@@ -233,6 +234,7 @@ class Book
 
     public function setSerie(?string $serie): static
     {
+        $serie = trim($serie??'');
         if($serie===''){
             $serie=null;
         }
@@ -260,7 +262,7 @@ class Book
 
     public function setMainAuthor(string $mainAuthor): static
     {
-        $this->mainAuthor = $mainAuthor;
+        $this->mainAuthor = trim($mainAuthor);
 
         return $this;
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44505785422d2bf6f150fce9452d797c",
+    "content-hash": "d30a4e0f616c33f6e67c11fe43432f1c",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -2023,20 +2023,20 @@
         },
         {
             "name": "kiwilan/php-ebook",
-            "version": "2.0.20",
+            "version": "2.1.01",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-ebook.git",
-                "reference": "cef500241d5113e3b124fd329d44e77a64df53e3"
+                "reference": "9068cb8d7e1108852a5d587cc5d5913079de7e8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/cef500241d5113e3b124fd329d44e77a64df53e3",
-                "reference": "cef500241d5113e3b124fd329d44e77a64df53e3",
+                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/9068cb8d7e1108852a5d587cc5d5913079de7e8b",
+                "reference": "9068cb8d7e1108852a5d587cc5d5913079de7e8b",
                 "shasum": ""
             },
             "require": {
-                "kiwilan/php-archive": "^2.0.0",
+                "kiwilan/php-archive": "^2.1.0",
                 "kiwilan/php-audio": "^3.0.0",
                 "kiwilan/php-xml-reader": "^1.0.1",
                 "php": "^8.1"
@@ -2090,7 +2090,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-ebook/issues",
-                "source": "https://github.com/kiwilan/php-ebook/tree/v2.0.20"
+                "source": "https://github.com/kiwilan/php-ebook/tree/v2.1.01"
             },
             "funding": [
                 {
@@ -2098,7 +2098,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-28T08:18:55+00:00"
+            "time": "2023-08-29T07:02:06+00:00"
         },
         {
             "name": "kiwilan/php-xml-reader",
