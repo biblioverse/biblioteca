@@ -16,30 +16,47 @@
         <div class="col-md-9">
             <table class="table table-striped w-100">
                 <tr>
-                    <th>Download</th><td><a href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">Download {{ book.extension }}</a></td>
+                    <th>Download</th>
+                    <td>
+                        <a href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">Download {{ book.extension }}</a>
+                    </td>
                 </tr>
                 <tr>
-                    <th>Author</th><td><a href="{{ path('app_author_detail', {'slug':book.authorSlug}) }}">{{ book.mainAuthor }}</a></td>
+                    <th>Title</th>
+                    <td>
+                        {{ component('InlineEditBook', {'book':book, 'field':'title', inline: true}) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Author</th>
+                    <td>
+                        <a href="{{ path('app_mainAuthor_detail', {'slug':book.authorSlug}) }}">{{ book.mainAuthor }}</a>
+                        {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor', inline: false}) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Summary</th><td>{{ book.summary }}</td>
                 </tr>
-                {% if book.serie is not null %}
                 <tr>
                     <th>Serie</th><td>
-                        <a href="{{ path('app_series_detail', {'slug':book.serieSlug}) }}">{{ book.serie }}</a>
-                        N°{{ book.serieIndex }}
+                        {% if book.serie is not null %}
+                        <a href="{{ path('app_serie_detail', {'slug':book.serieSlug}) }}">{{ book.serie }}</a>
+                        {% endif %}
+                        {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: false}) }}
+                        N°{{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true}) }}
+
                     </td>
                 </tr>
-                {% endif %}
                 <tr>
-                    <th>Publisher</th><td>{{ book.publisher }}</td>
+                    <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', inline: true}) }}</td>
                 </tr>
-                {% if book.publishDate is not null %}
                 <tr>
                     <th>Publishdate</th><td>{{ book.publishDate|date }}</td>
                 </tr>
-                {% endif %}
+                <tr>
+                    <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true}) }}</td>
+                </tr>
+
             </table>
             {{ include('book/_interaction.html.twig') }}
 

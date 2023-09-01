@@ -101,9 +101,16 @@ class Book
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $tags = null;
 
+    #[ORM\Column(nullable: false)]
+    private bool $verified = false;
+
+    #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books')]
+    private Collection $shelves;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
+        $this->shelves = new ArrayCollection();
     }
 
 
@@ -121,6 +128,10 @@ class Book
     {
 
         $this->title = trim($title);
+
+        if($title===''){
+            $this->title='unknown';
+        }
 
         return $this;
     }
@@ -263,6 +274,9 @@ class Book
     public function setMainAuthor(string $mainAuthor): static
     {
         $this->mainAuthor = trim($mainAuthor);
+        if($mainAuthor===''){
+            $this->mainAuthor='unknown';
+        }
 
         return $this;
     }
@@ -416,6 +430,50 @@ class Book
     public function setTags(?array $tags): static
     {
         $this->tags = $tags;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->verified;
+    }
+
+    public function getVerified(): bool
+    {
+        return $this->verified;
+    }
+
+    public function setVerified(bool $verified): static
+    {
+        $this->verified = $verified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Shelf>
+     */
+    public function getShelves(): Collection
+    {
+        return $this->shelves;
+    }
+
+    public function addShelf(Shelf $shelf): static
+    {
+        if (!$this->shelves->contains($shelf)) {
+            $this->shelves->add($shelf);
+            $shelf->addBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShelf(Shelf $shelf): static
+    {
+        if ($this->shelves->removeElement($shelf)) {
+            $shelf->removeBook($this);
+        }
 
         return $this;
     }

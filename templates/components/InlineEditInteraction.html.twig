@@ -1,4 +1,4 @@
-<div {{ attributes.defaults(stimulus_controller('inline-edit', { someValue: 'foo'})) }}>
+<div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
 
     {% set finished=false %}
     {% if interaction is not null %}
@@ -12,7 +12,7 @@
         class="btn btn-link btn-sm text-{{ finished?'success':'secondary' }} text-decoration-none"
         title="Click to toggle read status"
     >
-        <i class="fa-solid fa-book"></i>
+        <i class="bi bi-journal-check"></i>
         {% if flashMessage %}
             <small class="text-muted alert-remove">{{ flashMessage }}</small>
         {% endif %}
@@ -31,7 +31,7 @@
         class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
         title="Click to toggle favorite"
     >
-        <i class="fa-solid fa-heart"></i>
+        <i class="bi bi-heart-fill"></i>
         {% if flashMessageFav %}
             <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
         {% endif %}

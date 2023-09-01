@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pagination.getTotalItemCount }} {{ type }} - Page {{ page }}{% endblock %}
+
+{% block body %}
+
+    <div class="count">
+        {{ pagination.getTotalItemCount }} {{ type }}
+    </div>
+
+    {{ knp_pagination_render(pagination) }}
+
+    <ul class="list-group my-2">
+        {% for item in pagination %}
+            <li class="list-group-item">
+                {{ component('InlineEditGroup', {'type': type ,'item':item,'original': item}) }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {{ knp_pagination_render(pagination) }}
+
+{% endblock %}

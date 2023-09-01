@@ -11,12 +11,12 @@
     </div>
     </a>
     <div class="small text-muted">
-        <i class="fa-solid fa-user-pen fa-flip-horizontal"></i></i> <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted text-decoration-none">
+        <i class="bi bi-person-fill"></i></i> <a href="{{ path('app_mainAuthor_detail',{'slug':book.authorSlug}) }}" class="text-muted text-decoration-none">
             {{ book.mainAuthor }}
         </a>
         {% if book.serie %}
             <br>
-            <i class="fa-solid fa-hashtag"></i> <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted text-decoration-none">
+            <i class="bi bi-list-ol"></i> <a href="{{ path('app_serie_detail',{'slug':book.serieSlug}) }}" class="text-muted text-decoration-none">
             {{ book.serie }} ({{ book.serieIndex }})
         </a>
         {% endif %}

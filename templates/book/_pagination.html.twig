@@ -6,8 +6,8 @@
             <div class="btn-sm btn btn-outline-dark">
                 {{ pagination.getTotalItemCount }} Books
             </div>
-            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}"><i class="fa-solid fa-table-cells-large"></i></a>
-            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}"><i class="fa-solid fa-table-list"></i></a>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}"><i class="bi bi-grid-fill"></i></a>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}"><i class="bi bi-list"></i></a>
         </div>
     </div>
 </div>

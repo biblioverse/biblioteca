@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Author {{ author.mainAuthor }}{% endblock %}
+{% block title %}
+    {{ component('InlineEditGroup',{'type':'mainAuthor','item':author,'original':author, 'link':false}) }}
+{% endblock %}
 
 {% block body %}
 

@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
@@ -15,16 +16,22 @@ class InlineEditBook extends AbstractController
 {
     use DefaultActionTrait;
     use ValidatableComponentTrait;
+    use ComponentToolsTrait;
 
 
-    #[LiveProp(writable: ['title','serie', 'serieIndex', 'mainAuthor'])]
+    #[LiveProp(writable: ['title','serie', 'serieIndex', 'mainAuthor', 'verified', 'publisher', 'verified'])]
     public Book $book;
 
     #[LiveProp()]
     public bool $isEditing = false;
 
+
+
     #[LiveProp()]
     public string $field;
+
+    #[LiveProp()]
+    public bool $inline=true;
 
     public ?string $flashMessage = null;
 
@@ -39,7 +46,7 @@ class InlineEditBook extends AbstractController
     {
 
         $entityManager->flush();
-
+        $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 
 

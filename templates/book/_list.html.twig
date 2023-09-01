@@ -8,6 +8,9 @@
 <table class="table-striped table table-bordered table-hover">
     <tr>
         {# sorting of properties based on query components #}
+        <th style="width:70px">
+
+        </th>
         <th{% if pagination.isSorted('b.title') %} class="sorted"{% endif %}>
             {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
         </th>
@@ -21,10 +24,16 @@
             {{ knp_pagination_sortable(pagination, 'Serie Index', 'b.serieIndex') }}
         </th>
         <th></th>
+        <th></th>
     </tr>
 
     {% for book in pagination %}
         <tr>
+            <td>
+                {% if book.imageFilename is not null %}
+                <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
+                {% endif %}
+            </td>
             <td>
                 {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
             </td>
@@ -38,10 +47,16 @@
                 {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
             </td>
             <td>
+                {% if not book.verified %}
+                    {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
+                {% endif %}
+            </td>
+            <td>
                 <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
-                    <i class="fa-solid fa-book-open"></i>
+                    <i class="bi bi-book"></i>
                 </a>
             </td>
+
         </tr>
     {% endfor %}
 </table>

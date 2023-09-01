@@ -48,4 +48,17 @@ class DefaultController extends AbstractController
         ]);
     }
 
+    #[Route('/unverified/{page}', name: 'app_unverified', requirements: ['page' => '\d+'])]
+    public function unverified(BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
+    {
+        $pagination = $paginator->paginate(
+            $bookRepository->getUnverifiedBooksQuery(),
+            $page,
+            18
+        );
+        return $this->render('default/index.html.twig', [
+            'pagination' => $pagination,
+        ]);
+    }
+
 }

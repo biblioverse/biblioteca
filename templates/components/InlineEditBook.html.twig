@@ -1,22 +1,37 @@
-<div {{ attributes }}>
-        {% if isEditing %}
+<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+{% if isEditing or field=='verified' %}
             <form class="row ">
                 <div class="input-group col">
-                    <input
-                            type="text"
-                            data-model="norender|book.{{ field }}"
-                            class="form-control"
-                            autofocus
-                            id="book_{{ book.id }}_{{ field }}"
-                    />
 
-                    <button
-                            data-action="live#action"
-                            data-action-name="prevent|save"
-                            class="btn btn-outline-success"
-                    >
-                        <i class="fa-solid fa-check"></i>
-                    </button>
+                    {% if field=='verified' %}
+                        <input
+                                data-action="live#action"
+                                type="checkbox"
+                                data-model="book.{{ field }}"
+                                data-action-name="prevent|save"
+                                class="form-check"
+                                autofocus
+                                id="book_{{ book.id }}_{{ field }}"
+                        />
+                    {% else %}
+                        <input
+                                type="text"
+                                data-model="norender|book.{{ field }}"
+                                class="form-control"
+                                autofocus
+                                id="book_{{ book.id }}_{{ field }}"
+                        />
+                    {% endif %}
+
+                    {% if field!='verified' %}
+                        <button
+                                data-action="live#action"
+                                data-action-name="prevent|save"
+                                class="btn btn-outline-success"
+                        >
+                            <i class="bi bi-journal-check"></i>
+                        </button>
+                    {% endif %}
                 </div>
             </form>
         {% else %}
@@ -24,17 +39,20 @@
         <button
             data-action="live#action"
             data-action-name="activateEditing"
-            class="btn p-0"
+            class="btn m-0 p-0"
             title="Click to edit!"
         >
-            {{ attribute(book, "get"~field) }}
-            {% if attribute(book, "get"~field)=='' %}
-                <i class="fa-solid fa-pencil"></i>
+            {% if inline %}
+                {{ attribute(book, "get"~field) }}
+            {% endif %}
+
+            {% if attribute(book, "get"~field)=='' or not inline %}
+                <i class="bi bi-pencil-fill"></i>
             {% endif %}
         </button>
 
         {% if flashMessage %}
-                <i class="fa-solid fa-check"></i>
+                <i class="bi bi-check alert-remove"></i>
         {% endif %}
     {% endif %}
-</div>
+</span>

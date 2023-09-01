@@ -45,9 +45,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookInteraction::class, orphanRemoval: true)]
     private Collection $bookInteractions;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shelf::class, orphanRemoval: true)]
+    private Collection $shelves;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
+        $this->shelves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +176,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($bookInteraction->getUser() === $this) {
                 $bookInteraction->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Shelf>
+     */
+    public function getShelves(): Collection
+    {
+        return $this->shelves;
+    }
+
+    public function addShelf(Shelf $shelf): static
+    {
+        if (!$this->shelves->contains($shelf)) {
+            $this->shelves->add($shelf);
+            $shelf->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShelf(Shelf $shelf): static
+    {
+        if ($this->shelves->removeElement($shelf)) {
+            // set the owning side to null (unless already changed)
+            if ($shelf->getUser() === $this) {
+                $shelf->setUser(null);
             }
         }
 

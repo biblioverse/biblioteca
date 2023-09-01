@@ -16,13 +16,13 @@ class SearchController extends AbstractController
         if($query===null){
             $books=[];
         } else {
-            $books = $bookRepository->search($query, 500);
+            $books = $bookRepository->search($query, 5000);
         }
 
 
         return $this->render('search/index.html.twig', [
             'query' => $query,
-            'pagination' => $paginator->paginate($books, $page,12),
+            'pagination' => $paginator->paginate($books, $page,18),
         ]);
     }
 }

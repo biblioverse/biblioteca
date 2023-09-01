@@ -13,14 +13,14 @@
         </a>
 
         <span class="text-muted">
-                by <a href="{{ path('app_author_detail',{'slug':book.authorSlug}) }}" class="text-muted">
+                by <a href="{{ path('app_mainAuthor_detail',{'slug':book.authorSlug}) }}" class="text-muted">
                     {{ book.mainAuthor }}
                 </a>
         </span>
 
 
         {% if book.serie %}
-            <a href="{{ path('app_series_detail',{'slug':book.serieSlug}) }}" class="text-muted small d-block">
+            <a href="{{ path('app_serie_detail',{'slug':book.serieSlug}) }}" class="text-muted small d-block">
                 {{ book.serie }} ({{ book.serieIndex }})
             </a>
         {% endif %}

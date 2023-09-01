@@ -37,6 +37,13 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('user', $this->security->getUser())
             ->getQuery();
     }
+    public function getUnverifiedBooksQuery():Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('b.verified = false')
+            ->getQuery();
+    }
     public function getBooksByReadStatus(bool $read):Query
     {
         $q = $this->createQueryBuilder('b')
@@ -111,46 +118,35 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<SeriesType>
+     * @return Query
      */
-    public function getAllSeries():array
+    public function getAllSeries():Query
     {
-        $qb = $this->createQueryBuilder('serie')
-            ->select('serie.serie')
-            ->addSelect('serie.serieSlug')
+        return $this->createQueryBuilder('serie')
+            ->select('serie.serie as item')
+            ->addSelect('serie.serieSlug as slug')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
-            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
             ->where('serie.serie IS NOT NULL')
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
             ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('serie.serie');
-        $return =  $qb->getQuery()->getResult();
-        if(!is_array($return)){
-            return [];
-        }
-        return $return;
-
+            ->addGroupBy('serie.serie')->getQuery();
     }
 
     /**
-     * @return array<AuthorsType>
+     * @return Query
      */
-    public function getAllAuthors():array
+    public function getAllAuthors():Query
     {
         $qb = $this->createQueryBuilder('author')
-            ->select('author.mainAuthor')
-            ->addSelect('author.authorSlug')
+            ->select('author.mainAuthor as item')
+            ->addSelect('author.authorSlug as slug')
             ->addSelect('COUNT(author.id) as bookCount')
-            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')//fixme
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
             ->leftJoin('author.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user=:user')
             ->setParameter('user', $this->security->getUser())
             ->addGroupBy('author.mainAuthor');
-        $return =  $qb->getQuery()->getResult();
-        if(!is_array($return)){
-            return [];
-        }
-        return $return;
-
+        return  $qb->getQuery();
     }
 }

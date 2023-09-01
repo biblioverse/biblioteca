@@ -16,23 +16,32 @@ class AuthorController extends AbstractController
     #[Route('/{page}', name: 'app_authors', requirements: ['page' => '\d+'])]
     public function index(BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
     {
-        $authors = $bookRepository->getAllAuthors();
+        $authors = $bookRepository->getAllAuthors()->getResult();
 
-        $pagination = $paginator->paginate($authors,$page,300);
+        $pagination = $paginator->paginate($authors,$page, 18);
 
-        return $this->render('author/index.html.twig', [
+        return $this->render('group/index.html.twig', [
             'pagination' => $pagination,
+            'page'=> $page,
+            'type'=> 'mainAuthor',
         ]);
     }
 
-    #[Route('/{slug}/{page}', name: 'app_author_detail', requirements: ['page' => '\d+'])]
+    #[Route('/{slug}/{page}', name: 'app_mainAuthor_detail', requirements: ['page' => '\d+'])]
     public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
     {
-        $authors = $bookRepository->getAllAuthors();
-        $author = array_filter($authors, fn($serie) => $serie['authorSlug'] === $slug);
+        $authors = $bookRepository->getAllAuthors()->getResult();
+        if(!is_array($authors)){
+            throw $this->createNotFoundException('No authors found');
+        }
+        $author = array_filter($authors, static fn($serie) => $serie['slug'] === $slug);
+
 
         $author= current($author);
 
+        if($author===false){
+            return $this->redirectToRoute('app_authors');
+        }
 
         $pagination = $paginator->paginate(
             $bookRepository->getByAuthorQuery($slug),

@@ -6,7 +6,7 @@
         <link rel="icon"
               href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
 
-        <title>{% block title %}Page{% endblock %} - Biblioteca</title>
+        <title>{{ block('title')|striptags }} - Biblioteca</title>
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -21,7 +21,7 @@
                     <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
                             aria-label="Toggle navigation">
-                            <i class="fa-solid fa-bars"></i>
+                            <i class="bi bi-list"></i>
                     </button>
                 </li>
             </ul>
@@ -51,7 +51,7 @@
 
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">{{ block('title') }}</h1>
+                        <h1 class="h2">{% block title %}Page{% endblock %}</h1>
                     </div>
                     {% for type, messages in app.flashes %}
                         {% for message in messages %}
