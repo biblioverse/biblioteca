@@ -45,6 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookInteraction::class, orphanRemoval: true)]
     private Collection $bookInteractions;
 
+    /**
+     * @var Collection<int, Shelf>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shelf::class, orphanRemoval: true)]
     private Collection $shelves;
 
@@ -202,12 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeShelf(Shelf $shelf): static
     {
-        if ($this->shelves->removeElement($shelf)) {
-            // set the owning side to null (unless already changed)
-            if ($shelf->getUser() === $this) {
-                $shelf->setUser(null);
-            }
-        }
+        $this->shelves->removeElement($shelf);
 
         return $this;
     }

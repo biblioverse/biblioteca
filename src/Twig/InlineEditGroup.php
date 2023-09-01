@@ -11,18 +11,26 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
-
+/**
+ * @phpstan-type GroupType array{ item:string, slug:string, bookCount:int, booksFinished:int }
+ */
 #[AsLiveComponent()]
 class InlineEditGroup extends AbstractController
 {
     use DefaultActionTrait;
     use ValidatableComponentTrait;
 
+    /**
+     * @var GroupType
+     */
     #[LiveProp(writable: ['item'])]
     public array $item;
 
     public bool $link=true;
 
+    /**
+     * @var GroupType
+     */
     #[LiveProp()]
     public array $original;
 

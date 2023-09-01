@@ -104,6 +104,9 @@ class Book
     #[ORM\Column(nullable: false)]
     private bool $verified = false;
 
+    /**
+     * @var Collection<int, Shelf>
+     */
     #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books')]
     private Collection $shelves;
 

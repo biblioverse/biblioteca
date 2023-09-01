@@ -21,7 +21,7 @@ class Shelf
     private User $user;
 
     /**
-     * @var Collection<Book>
+     * @var Collection<int, Book>
      */
     #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'shelves')]
     private Collection $books;
