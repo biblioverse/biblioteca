@@ -18,6 +18,8 @@ class BookFileSystemManager
         '*.epub','*.cbr','*.cbz','*.pdf','*.mobi'
     ];
 
+    public const CHUNK = 65536;
+
     public KernelInterface $appKernel;
     private SluggerInterface $slugger;
 
@@ -100,10 +102,14 @@ class BookFileSystemManager
      */
     public function getFileChecksum(SplFileInfo $file): string
     {
-        $checkSum = sha1_file($file->getRealPath());
-        if($checkSum===false){
-            throw new \RuntimeException('Could not calculate file Checksum');
+        $checkSum = shell_exec('sha1sum -b ' . escapeshellarg($file->getRealPath()));
+
+        if ($checkSum === null || $checkSum === false) {
+            throw new RuntimeException('Could not calculate file Checksum');
         }
+
+        [$checkSum,] = explode(' ', $checkSum);
+
         return $checkSum;
     }
 
