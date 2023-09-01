@@ -102,7 +102,7 @@
         ],
         "test-phpcs": [
             "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src --dry-run --verbose  --config=.php-cs-fixer.dist.php"
+            "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
         ],
         "phpcs": [
             "Composer\\Config::disableProcessTimeout",

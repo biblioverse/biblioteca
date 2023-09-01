@@ -39,7 +39,6 @@ class UploadBookPicture extends AbstractController
     #[LiveAction]
     public function uploadFiles(Request $request, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): void
     {
-
         /** @var UploadedFile $symfonyFile */
         $symfonyFile = $request->files->getIterator()->current();
 
@@ -53,6 +52,5 @@ class UploadBookPicture extends AbstractController
         $this->flashMessage = ' book updated';
 
         $this->dispatchBrowserEvent('manager:flush');
-
     }
 }
