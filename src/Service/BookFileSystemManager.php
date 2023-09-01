@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Book;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -165,9 +166,9 @@ class BookFileSystemManager
         return $this->calculateFileName($book).'.'.$book->getExtension();
     }
 
-    public function getCalculatedImageName(Book $book): string
+    public function getCalculatedImageName(Book $book, string $checksum = ''): string
     {
-        return $this->calculateFileName($book).'.'.$book->getImageExtension();
+        return $checksum.$this->calculateFileName($book).'.'.$book->getImageExtension();
     }
 
     public function renameFiles(Book $book): Book
@@ -222,5 +223,31 @@ class BookFileSystemManager
         }
 
         return $empty;
+    }
+
+    public function uploadBookCover(UploadedFile $file, Book $book): Book
+    {
+        $filesystem = new Filesystem();
+
+        $coverFileName = explode('/', $file->getClientOriginalName());
+        $coverFileName = end($coverFileName);
+        $ext = explode('.', $coverFileName);
+        $ext = end($ext);
+
+        $book->setImageExtension($ext);
+
+        $checksum = (string) md5_file($file->getRealPath());
+
+        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+        $filesystem->rename(
+            $file->getRealPath(),
+            $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
+            true);
+
+        $book->setImagePath($this->getCalculatedImagePath($book, false));
+        $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+        $book->setImageExtension($ext);
+
+        return $book;
     }
 }

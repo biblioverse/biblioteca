@@ -1,0 +1,25 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+    {% if isEditing %}
+        <form class="btn-group">
+
+            <input type="file" name="cover" class="form-control"/>
+            <button data-action="live#action" class="btn btn-sm btn-outline-dark" data-action-name="files|uploadFiles">
+                Upload
+            </button>
+        </form>
+    {% else %}
+
+        <button
+            data-action="live#action"
+            data-action-name="activateEditing"
+            class="btn btn-sm btn-outline-dark"
+            title="Click to upload cover!"
+        >
+            <i class="bi bi-upload"></i> Upload new cover
+        </button>
+
+        {% if flashMessage %}
+            <i class="bi bi-check alert-remove"></i> {{ flashMessage }}
+        {% endif %}
+    {% endif %}
+</span>
