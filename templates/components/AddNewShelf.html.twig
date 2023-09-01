@@ -1,0 +1,32 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+    {% if isEditing %}
+        <form>
+            <div class="input-group">
+                <input
+                    type="text"
+                    data-model="name"
+                    class="form-control"
+                    autofocus
+                />
+                <button
+                    data-action="live#action"
+                    data-action-name="prevent|save"
+                    class="btn btn-outline-success"
+                >
+                    <i class="bi bi-journal-check"></i>
+                </button>
+            </div>
+        </form>
+    {% else %}
+
+        <button
+            data-action="live#action"
+            data-action-name="activateEditing"
+            class="btn btn-sm m-0 p-0"
+            title="Click to add!"
+        >
+            <i class="bi bi-plus"></i> New shelf
+        </button>
+
+    {% endif %}
+</span>
