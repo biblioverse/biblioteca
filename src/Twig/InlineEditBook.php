@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Twig;
 
 use App\Entity\Book;
@@ -18,37 +19,32 @@ class InlineEditBook extends AbstractController
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
 
-
-    #[LiveProp(writable: ['title','serie', 'serieIndex', 'mainAuthor', 'verified', 'publisher', 'verified'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'mainAuthor', 'verified', 'publisher', 'verified'])]
     public Book $book;
 
     #[LiveProp()]
     public bool $isEditing = false;
 
-
-
     #[LiveProp()]
     public string $field;
 
     #[LiveProp()]
-    public bool $inline=true;
+    public bool $inline = true;
 
     public ?string $flashMessage = null;
 
     #[LiveAction]
-    public function activateEditing():void
+    public function activateEditing(): void
     {
         $this->isEditing = true;
     }
 
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager):void
+    public function save(EntityManagerInterface $entityManager): void
     {
-
         $entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
-
 
         $this->flashMessage = ' book updated';
     }

@@ -79,6 +79,4 @@ class BookInteraction
 
         return $this;
     }
-
-
 }

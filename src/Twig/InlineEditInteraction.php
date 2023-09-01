@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Twig;
 
 use App\Entity\Book;
@@ -6,7 +7,6 @@ use App\Entity\BookInteraction;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -19,8 +19,8 @@ class InlineEditInteraction extends AbstractController
     use DefaultActionTrait;
     use ValidatableComponentTrait;
 
-    #[LiveProp(writable: ['finished','favorite'])]
-    public ?BookInteraction $interaction=null;
+    #[LiveProp(writable: ['finished', 'favorite'])]
+    public ?BookInteraction $interaction = null;
 
     #[LiveProp()]
     public User $user;
@@ -30,24 +30,24 @@ class InlineEditInteraction extends AbstractController
     public ?string $flashMessage = null;
     public ?string $flashMessageFav = null;
 
-
-    private function getInteraction(EntityManagerInterface $entityManager):BookInteraction
+    private function getInteraction(EntityManagerInterface $entityManager): BookInteraction
     {
         $interaction = $this->interaction;
-        if($interaction===null) {
+        if (null === $interaction) {
             $bookInteractionRepo = $entityManager->getRepository(BookInteraction::class);
             $interaction = $bookInteractionRepo->findOneBy(['user' => $this->user, 'book' => $this->book]);
-            if ($interaction === null) {
+            if (null === $interaction) {
                 $interaction = new BookInteraction();
                 $interaction->setUser($this->user);
                 $interaction->setBook($this->book);
             }
         }
+
         return $interaction;
     }
 
     #[LiveAction]
-    public function toggle(EntityManagerInterface $entityManager):void
+    public function toggle(EntityManagerInterface $entityManager): void
     {
         $interaction = $this->getInteraction($entityManager);
 
@@ -59,8 +59,9 @@ class InlineEditInteraction extends AbstractController
 
         $this->flashMessage = 'Saved';
     }
+
     #[LiveAction]
-    public function toggleFavorite(EntityManagerInterface $entityManager):void
+    public function toggleFavorite(EntityManagerInterface $entityManager): void
     {
         $interaction = $this->getInteraction($entityManager);
 

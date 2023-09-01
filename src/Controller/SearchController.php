@@ -11,18 +11,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchController extends AbstractController
 {
     #[Route('/search/{query}', name: 'app_search')]
-    public function index( BookRepository $bookRepository, PaginatorInterface $paginator, ?string $query = null,int $page=1): Response
+    public function index(BookRepository $bookRepository, PaginatorInterface $paginator, string $query = null, int $page = 1): Response
     {
-        if($query===null){
-            $books=[];
+        if (null === $query) {
+            $books = [];
         } else {
             $books = $bookRepository->search($query, 5000);
         }
 
-
         return $this->render('search/index.html.twig', [
             'query' => $query,
-            'pagination' => $paginator->paginate($books, $page,18),
+            'pagination' => $paginator->paginate($books, $page, 18),
         ]);
     }
 }

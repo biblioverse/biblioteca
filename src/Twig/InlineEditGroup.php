@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Twig;
 
 use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -26,7 +26,7 @@ class InlineEditGroup extends AbstractController
     #[LiveProp(writable: ['item'])]
     public array $item;
 
-    public bool $link=true;
+    public bool $link = true;
 
     /**
      * @var GroupType
@@ -43,25 +43,25 @@ class InlineEditGroup extends AbstractController
     public ?string $flashMessage = null;
 
     #[LiveAction]
-    public function activateEditing() :void
+    public function activateEditing(): void
     {
         $this->isEditing = true;
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager):void
+    public function save(EntityManagerInterface $entityManager): void
     {
         $thisItem = $this->item;
 
         $bookRepo = $entityManager->getRepository(Book::class);
 
-        $books = $bookRepo->findBy([$this->type=>$this->original['item']]);
+        $books = $bookRepo->findBy([$this->type => $this->original['item']]);
 
-        foreach($books as $book) {
-            switch ($this->type){
+        foreach ($books as $book) {
+            switch ($this->type) {
                 case 'mainAuthor':
                     $book->setMainAuthor($this->item['item']);
                     break;
@@ -75,7 +75,7 @@ class InlineEditGroup extends AbstractController
         $entityManager->flush();
 
         $items = [];
-        switch ($this->type){
+        switch ($this->type) {
             case 'mainAuthor':
                 $items = $bookRepo->getAllAuthors()->getResult();
                 break;
@@ -84,20 +84,17 @@ class InlineEditGroup extends AbstractController
                 break;
         }
 
-        if(!is_array($items)){
-            throw new RuntimeException('No items found');
+        if (!is_array($items)) {
+            throw new \RuntimeException('No items found');
         }
 
-
-        $item = array_filter($items, static function($s) use ($thisItem) {
+        $item = array_filter($items, static function ($s) use ($thisItem) {
             return $s['item'] === $thisItem['item'];
-        } );
+        });
 
-
-
-        $item= current($item);
-        if ($item === false) {
-            throw new RuntimeException($this->type.' not found');
+        $item = current($item);
+        if (false === $item) {
+            throw new \RuntimeException($this->type.' not found');
         }
 
         $this->original = $item;

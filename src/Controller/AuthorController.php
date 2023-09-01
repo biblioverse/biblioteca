@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,36 +9,34 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/authors')]
-
 class AuthorController extends AbstractController
 {
     #[Route('/{page}', name: 'app_authors', requirements: ['page' => '\d+'])]
-    public function index(BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
+    public function index(BookRepository $bookRepository, PaginatorInterface $paginator, int $page = 1): Response
     {
         $authors = $bookRepository->getAllAuthors()->getResult();
 
-        $pagination = $paginator->paginate($authors,$page, 18);
+        $pagination = $paginator->paginate($authors, $page, 18);
 
         return $this->render('group/index.html.twig', [
             'pagination' => $pagination,
-            'page'=> $page,
-            'type'=> 'mainAuthor',
+            'page' => $page,
+            'type' => 'mainAuthor',
         ]);
     }
 
     #[Route('/{slug}/{page}', name: 'app_mainAuthor_detail', requirements: ['page' => '\d+'])]
-    public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page=1): Response
+    public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page = 1): Response
     {
         $authors = $bookRepository->getAllAuthors()->getResult();
-        if(!is_array($authors)){
+        if (!is_array($authors)) {
             throw $this->createNotFoundException('No authors found');
         }
-        $author = array_filter($authors, static fn($serie) => $serie['slug'] === $slug);
+        $author = array_filter($authors, static fn ($serie) => $serie['slug'] === $slug);
 
+        $author = current($author);
 
-        $author= current($author);
-
-        if($author===false){
+        if (false === $author) {
             return $this->redirectToRoute('app_authors');
         }
 
@@ -51,7 +48,7 @@ class AuthorController extends AbstractController
 
         return $this->render('author/detail.html.twig', [
             'pagination' => $pagination,
-            'author' =>$author
+            'author' => $author,
         ]);
     }
 }

@@ -35,7 +35,6 @@ class CreateUserCommand extends Command
             ->addArgument('password', InputArgument::REQUIRED, 'password');
     }
 
-
     /**
      * @throws \Exception
      */
@@ -44,12 +43,12 @@ class CreateUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $username = $input->getArgument('username');
 
-        if(!is_string($username)){
+        if (!is_string($username)) {
             throw new \Exception('username must be a string');
         }
 
         $plaintextPassword = $input->getArgument('password');
-        if(!is_string($plaintextPassword)){
+        if (!is_string($plaintextPassword)) {
             throw new \Exception('username must be a string');
         }
 
@@ -67,7 +66,6 @@ class CreateUserCommand extends Command
         $this->userRepository->save($user, true);
 
         $io->success('User created');
-
 
         return Command::SUCCESS;
     }

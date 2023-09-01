@@ -1,5 +1,7 @@
 <?php
-# src/EventSubscriber/EasyAdminSubscriber.php
+
+// src/EventSubscriber/EasyAdminSubscriber.php
+
 namespace App\EventSubscriber;
 
 use App\Entity\User;
@@ -25,7 +27,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function hashPassword(BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event):void
+    public function hashPassword(BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();
 
@@ -33,7 +35,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $hash = $this->passwordHasher->hashPassword($entity,$entity->getPassword());
+        $hash = $this->passwordHasher->hashPassword($entity, $entity->getPassword());
         $entity->setPassword($hash);
     }
 }

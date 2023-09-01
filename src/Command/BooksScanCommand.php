@@ -2,11 +2,9 @@
 
 namespace App\Command;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookManager;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -37,19 +35,17 @@ class BooksScanCommand extends Command
 
     protected function configure(): void
     {
-
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-
         $io->writeln('Scanning books directory');
 
         $allBooks = $this->bookRepository->findAll();
         $unprocessedBooks = [];
-        foreach ($allBooks as $book){
+        foreach ($allBooks as $book) {
             $unprocessedBooks[$book->getChecksum()] = $book;
         }
         $files = $this->fileSystemManager->getAllBooksFiles();
@@ -58,14 +54,14 @@ class BooksScanCommand extends Command
         $progressBar->start();
         foreach ($files as $file) {
             $progressBar->advance();
-            try{
-                $flush=false;
+            try {
+                $flush = false;
                 $progressBar->setMessage($file->getFilename());
                 $checksum = $this->fileSystemManager->getFileChecksum($file);
                 $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
-                if($book=== null){
+                if (null === $book) {
                     $book = $this->bookManager->createBook($file);
-                    $flush=true;
+                    $flush = true;
                 } else {
                     $previousPath = $book->getBookPath();
                     $previousName = $book->getBookFilename();
@@ -77,12 +73,11 @@ class BooksScanCommand extends Command
 
                 unset($unprocessedBooks[$checksum]);
 
-                if($flush===true) {
+                if (true === $flush) {
                     $this->entityManager->persist($book);
                     $this->entityManager->flush();
                 }
-
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 $io->error($e->getMessage());
                 continue;
             }
@@ -94,7 +89,7 @@ class BooksScanCommand extends Command
 
         $progressBar = new ProgressBar($output, count($unprocessedBooks));
         $progressBar->start();
-        foreach ($unprocessedBooks as $book){
+        foreach ($unprocessedBooks as $book) {
             $progressBar->advance();
             $this->entityManager->remove($book);
         }

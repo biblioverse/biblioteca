@@ -3,19 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Shelf;
-use App\Repository\ShelfRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ShelfController extends AbstractController
 {
-    #[Route('/shelf/{slug}', name: 'app_shelf')]
-    public function index(Shelf $shelf): Response
+    #[Route('/shelf/{slug}/{page}', name: 'app_shelf', requirements: ['page' => '\d+'])]
+    public function index(Shelf $shelf, PaginatorInterface $paginator, int $page = 1): Response
     {
+        $pagination = $paginator->paginate($shelf->getBooks(), $page, 10);
 
         return $this->render('shelf/index.html.twig', [
-            'controller_name' => 'ShelfController',
+            'shelf' => $shelf,
+            'pagination' => $pagination,
         ]);
     }
 }

@@ -12,6 +12,9 @@
             {% else %}
                 <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="No picture for {{ book.title }}">
             {% endif %}
+            {{ include('book/_interaction.html.twig') }}
+
+            {{ component('AddBookToShelf',{'book':book, 'user':app.user}) }}
         </div>
         <div class="col-md-9">
             <table class="table table-striped w-100">
@@ -56,10 +59,7 @@
                 <tr>
                     <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true}) }}</td>
                 </tr>
-
             </table>
-            {{ include('book/_interaction.html.twig') }}
-
         </div>
     </div>
 </div>

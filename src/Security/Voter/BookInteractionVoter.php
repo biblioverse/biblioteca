@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Book;
 use App\Entity\BookInteraction;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -29,6 +28,4 @@ class BookInteractionVoter extends Voter
 
         return $subject->getUser() === $user;
     }
-
-
 }

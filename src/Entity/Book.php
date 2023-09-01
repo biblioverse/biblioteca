@@ -78,7 +78,7 @@ class Book
     private ?\DateTimeInterface $publishDate = null;
 
     /**
-     * @var array <string>
+     * @var array<string>
      */
     #[ORM\Column(type: Types::ARRAY)]
     private array $authors = [];
@@ -87,7 +87,7 @@ class Book
     private string $extension;
 
     #[ORM\Column(length: 5, nullable: true)]
-    private ?string $imageExtension=null;
+    private ?string $imageExtension = null;
 
     /**
      * @var Collection<int, BookInteraction>
@@ -107,7 +107,7 @@ class Book
     /**
      * @var Collection<int, Shelf>
      */
-    #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books')]
+    #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books', cascade: ['persist'])]
     private Collection $shelves;
 
     public function __construct()
@@ -115,7 +115,6 @@ class Book
         $this->bookInteractions = new ArrayCollection();
         $this->shelves = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -129,17 +128,16 @@ class Book
 
     public function setTitle(string $title): self
     {
-
         $this->title = trim($title);
 
-        if($title===''){
-            $this->title='unknown';
+        if ($title === '') {
+            $this->title = 'unknown';
         }
 
         return $this;
     }
 
-    public function getSlug():string
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -248,9 +246,9 @@ class Book
 
     public function setSerie(?string $serie): static
     {
-        $serie = trim($serie??'');
-        if($serie===''){
-            $serie=null;
+        $serie = trim($serie ?? '');
+        if ($serie === '') {
+            $serie = null;
         }
         $this->serie = $serie;
 
@@ -277,8 +275,8 @@ class Book
     public function setMainAuthor(string $mainAuthor): static
     {
         $this->mainAuthor = trim($mainAuthor);
-        if($mainAuthor===''){
-            $this->mainAuthor='unknown';
+        if ($mainAuthor === '') {
+            $this->mainAuthor = 'unknown';
         }
 
         return $this;
@@ -321,7 +319,7 @@ class Book
     }
 
     /**
-     * @return array <string>
+     * @return array<string>
      */
     public function getAuthors(): array
     {

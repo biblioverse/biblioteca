@@ -25,9 +25,10 @@ class Search
      */
     public function getBooks(): array
     {
-        if($this->query===null){
+        if (null === $this->query) {
             return [];
         }
+
         return $this->bookRepository->search($this->query);
     }
 }

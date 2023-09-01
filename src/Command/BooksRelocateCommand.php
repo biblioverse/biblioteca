@@ -4,17 +4,13 @@ namespace App\Command;
 
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
-use App\Service\BookManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
 
 #[AsCommand(
     name: 'books:relocate',
@@ -26,7 +22,7 @@ class BooksRelocateCommand extends Command
     private EntityManagerInterface $entityManager;
     private BookFileSystemManager $fileSystemManager;
 
-    public function __construct(BookFileSystemManager$fileSystemManager, BookRepository $bookRepository, EntityManagerInterface $entityManager)
+    public function __construct(BookFileSystemManager $fileSystemManager, BookRepository $bookRepository, EntityManagerInterface $entityManager)
     {
         parent::__construct();
         $this->bookRepository = $bookRepository;
@@ -36,7 +32,6 @@ class BooksRelocateCommand extends Command
 
     protected function configure(): void
     {
-
     }
 
     /**
@@ -53,11 +48,9 @@ class BooksRelocateCommand extends Command
         foreach ($allBooks as $book) {
             $progressBar->advance();
             try {
-
                 $book = $this->fileSystemManager->renameFiles($book);
                 $this->entityManager->persist($book);
-
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $io->error($e->getMessage());
                 continue;
             }
