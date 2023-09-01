@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -39,9 +40,27 @@ class InlineEditBook extends AbstractController
         $this->isEditing = true;
     }
 
+    /**
+     * @throws \JsonException
+     */
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager): void
+    public function save(Request $request, EntityManagerInterface $entityManager): void
     {
+        $all = $request->request->all();
+        if (!array_key_exists('data', $all)) {
+            return;
+        }
+        if (!is_string($all['data'])) {
+            return;
+        }
+        $data = json_decode($all['data'], true, 512, JSON_THROW_ON_ERROR);
+        if (!is_array($data)) {
+            return;
+        }
+        if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('book.serieIndex', $data['updated']) && '' === $data['updated']['book.serieIndex']) {
+            $this->book->setSerieIndex(null);
+        }
+
         $entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;

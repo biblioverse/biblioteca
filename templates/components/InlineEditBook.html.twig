@@ -13,6 +13,15 @@
                                 autofocus
                                 id="book_{{ book.id }}_{{ field }}"
                         />
+                    {% elseif field=='serieIndex' %}
+                        <input
+                                type="number"
+                                step="1"
+                                data-model="norender|book.{{ field }}"
+                                class="form-control"
+                                autofocus
+                                id="book_{{ book.id }}_{{ field }}"
+                        />
                     {% else %}
                         <input
                                 type="text"
