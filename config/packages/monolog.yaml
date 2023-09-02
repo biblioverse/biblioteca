@@ -6,7 +6,8 @@ monolog:
     handlers:
         main:
             type: rotating_file
-            level: debug
+            level: info
+            channels: [ "!deprecation"]
         console:
             type: console
             process_psr_3_messages: false
