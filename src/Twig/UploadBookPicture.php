@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Entity\Book;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,10 +38,12 @@ class UploadBookPicture extends AbstractController
     }
 
     #[LiveAction]
-    public function uploadFiles(Request $request, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): void
+    public function uploadFiles(Request $request, LoggerInterface $logger, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): void
     {
         /** @var UploadedFile $symfonyFile */
         $symfonyFile = $request->files->getIterator()->current();
+
+        $logger->info('uploading file '.$symfonyFile->getClientOriginalName());
 
         $book = $fileSystemManager->uploadBookCover($symfonyFile, $this->book);
 
