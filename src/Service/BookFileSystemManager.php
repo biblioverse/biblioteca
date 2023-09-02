@@ -151,9 +151,9 @@ class BookFileSystemManager
         if (null !== $book->getSerie()) {
             $expectedFilename .= $book->getSerie().' '.$book->getSerieIndex().' - ';
         }
-        $expectedFilename .= $book->getTitle();
+        $expectedFilename .= $this->slugger->slug($book->getTitle());
 
-        return str_replace('/', '', $expectedFilename);
+        return $this->slugger->slug($expectedFilename);
     }
 
     public function getCalculatedFileName(Book $book): string
