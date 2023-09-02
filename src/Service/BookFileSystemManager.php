@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,15 +16,8 @@ class BookFileSystemManager
         '*.epub', '*.cbr', '*.cbz', '*.pdf', '*.mobi',
     ];
 
-    public const CHUNK = 65536;
-
-    public KernelInterface $appKernel;
-    private SluggerInterface $slugger;
-
-    public function __construct(KernelInterface $appKernel, SluggerInterface $slugger)
+    public function __construct(private KernelInterface $appKernel, private SluggerInterface $slugger, private LoggerInterface $logger)
     {
-        $this->appKernel = $appKernel;
-        $this->slugger = $slugger;
     }
 
     public function getBooksDirectory(): string
@@ -230,6 +224,7 @@ class BookFileSystemManager
         $filesystem = new Filesystem();
 
         $coverFileName = explode('/', $file->getClientOriginalName());
+        $this->logger->info('Upload Started', ['filename' => $file->getClientOriginalName(), 'book' => $book->getTitle()]);
         $coverFileName = end($coverFileName);
         $ext = explode('.', $coverFileName);
         $ext = end($ext);
@@ -243,6 +238,8 @@ class BookFileSystemManager
             $file->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
             true);
+
+        $this->logger->info('Rename file', ['from' => $file->getRealPath(), 'to' => $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum)]);
 
         $book->setImagePath($this->getCalculatedImagePath($book, false));
         $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
