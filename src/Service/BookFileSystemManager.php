@@ -118,11 +118,12 @@ class BookFileSystemManager
         $letter = $author[0];
         $path = [$letter];
 
+        $path[] = $author;
+
         if (null !== $serie) {
             $path[] = $serie;
         }
 
-        $path[] = $author;
         $path[] = $title;
 
         $expectedPath = implode(DIRECTORY_SEPARATOR, $path);
