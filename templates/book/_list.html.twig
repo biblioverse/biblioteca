@@ -14,17 +14,18 @@
         <th{% if pagination.isSorted('b.title') %} class="sorted"{% endif %}>
             {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
         </th>
-        <th{% if pagination.isSorted('b.mainAuthor') %} class="sorted"{% endif %}>
+        <th{% if pagination.isSorted('b.mainAuthor') %} class="sorted"{% endif %}  style="width: 15%">
             {{ knp_pagination_sortable(pagination, 'Author', 'b.mainAuthor') }}
         </th>
-        <th{% if pagination.isSorted('b.serie') %} class="sorted"{% endif %}>
+        <th{% if pagination.isSorted('b.serie') %} class="sorted"{% endif %} style="width: 15%">
             {{ knp_pagination_sortable(pagination, 'Serie', 'b.serie') }}
         </th>
-        <th{% if pagination.isSorted('b.serieIndex') %} class="sorted"{% endif %}>
+        <th{% if pagination.isSorted('b.serieIndex') %} class="sorted"{% endif %}  style="width: 15%">
             {{ knp_pagination_sortable(pagination, 'Serie Index', 'b.serieIndex') }}
         </th>
-        <th></th>
-        <th></th>
+        <th style="width:90px"></th>
+        <th style="width:35px"></th>
+        <th style="width:35px"></th>
     </tr>
 
     {% for book in pagination %}
@@ -45,6 +46,9 @@
             </td>
             <td>
                 {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
+            </td>
+            <td>
+                {% include 'book/_interaction.html.twig' %}
             </td>
             <td>
                 {% if not book.verified %}
