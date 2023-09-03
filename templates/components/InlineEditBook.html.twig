@@ -22,6 +22,18 @@
                                 autofocus
                                 id="book_{{ book.id }}_{{ field }}"
                         />
+                    {% elseif field=='mainAuthor' or field=='serie' %}
+                        <select
+                            class="form-select"
+                            autofocus
+                            id="book_{{ book.id }}_{{ field }}"
+                            data-model="norender|book.{{ field }}"
+                            {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
+                                url: path('app_autocomplete_group', {type: field}),
+                            }) }}
+                        >
+                            <option value="{{ attribute(book, "get"~field) }}" selected>{{ attribute(book, "get"~field) }}</option>
+                        </select>
                     {% else %}
                         <input
                                 type="text"
@@ -51,6 +63,9 @@
             class="btn m-0 p-0"
             title="Click to edit!"
         >
+            {% if field=='serieIndex' %}
+                N°
+            {% endif %}
             {% if inline %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}

@@ -46,7 +46,7 @@ class UploadBookPicture extends AbstractController
         $logger->info('uploading file '.$symfonyFile->getClientOriginalName());
 
         $book = $fileSystemManager->uploadBookCover($symfonyFile, $this->book);
-        $logger->info('save book ', ['path' => $book->getImagePath(),'filename' => $book->getImageFilename()]);
+        $logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
 
         $entityManager->persist($book);
         $entityManager->flush();

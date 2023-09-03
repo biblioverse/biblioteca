@@ -11,8 +11,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 /**
  * @extends ServiceEntityRepository<Book>
  *
- * @phpstan-type SeriesType array{ serie:string, serieSlug:string, bookCount:int, booksFinished:int, lastBookIndex:int }
- * @phpstan-type AuthorsType array{ mainAuthor:string, authorSlug:string, bookCount:int, booksFinished:int }
+ * @phpstan-type GroupType array{ item:string, slug:string, bookCount:int, booksFinished:int, lastBookIndex:int }
  */
 class BookRepository extends ServiceEntityRepository
 {

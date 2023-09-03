@@ -6,8 +6,14 @@
             <div class="input-group mb-3 col">
 
                 <div class="form-floating">
-                    <input type="text" data-model="norender|item.item" class="form-control form-control-lg" autofocus id="group_{{ type }}"/>
-                    <label for="group_{{ type }}">{{ type }}</label>
+                    <select
+                        data-model="norender|item.item"
+                        {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
+                            url: path('app_autocomplete_group', {type: type}),
+                        }) }}
+                    >
+                        <option value="{{ item.item }}" selected>{{ item.item }}</option>
+                    </select>
                 </div>
 
                 <button data-action="live#action" data-action-name="prevent|save" class="btn btn-outline">

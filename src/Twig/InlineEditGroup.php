@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -52,7 +53,7 @@ class InlineEditGroup extends AbstractController
      * @throws \RuntimeException
      */
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager): void
+    public function save(Request $request, EntityManagerInterface $entityManager): void
     {
         $thisItem = $this->item;
 
