@@ -41,7 +41,7 @@ class AutocompleteGroupController extends AbstractController
             $json['results'][] = ['value' => $item['item'], 'text' => $item['item']];
         }
         if (!$exactmatch && strlen($query) > 2) {
-            $json['results'] = [['value' => $query, 'text' => 'New: '.$query]];
+            $json['results'][] = ['value' => $query, 'text' => 'New: '.$query];
         }
 
         return new JsonResponse($json);
