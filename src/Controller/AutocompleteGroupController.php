@@ -29,14 +29,18 @@ class AutocompleteGroupController extends AbstractController
             default => [],
         };
 
+        $exactmatch = false;
         $json = ['results' => []];
         foreach ($group as $item) {
             if (!str_contains(strtolower($item['item']), strtolower($query))) {
                 continue;
             }
+            if (strtolower($item['item']) === strtolower($query)) {
+                $exactmatch = true;
+            }
             $json['results'][] = ['value' => $item['item'], 'text' => $item['item']];
         }
-        if (0 === count($json['results'])) {
+        if (!$exactmatch && strlen($query) > 2) {
             $json['results'] = [['value' => $query, 'text' => 'New: '.$query]];
         }
 

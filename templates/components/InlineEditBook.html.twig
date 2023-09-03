@@ -1,7 +1,7 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
 {% if isEditing or field=='verified' %}
-            <form class="row ">
-                <div class="input-group col">
+            <form>
+                <div class="input-group">
 
                     {% if field=='verified' %}
                         <input
@@ -25,7 +25,6 @@
                     {% elseif field=='mainAuthor' or field=='serie' %}
                         <select
                             class="form-select"
-                            autofocus
                             id="book_{{ book.id }}_{{ field }}"
                             data-model="norender|book.{{ field }}"
                             {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
@@ -61,6 +60,7 @@
             data-action="live#action"
             data-action-name="activateEditing"
             class="btn m-0 p-0"
+            style="text-align: left"
             title="Click to edit!"
         >
             {% if field=='serieIndex' %}
