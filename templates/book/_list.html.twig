@@ -35,17 +35,18 @@
                 <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
                 {% endif %}
             </td>
-            <td>
+            <td colspan="4">
+                <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
-            </td>
-            <td>
+                </div>
+                <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor'}) }}
-            </td>
-            <td>
+                </div>
+                <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
-            </td>
-            <td>
+
                 {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
+                </div>
             </td>
             <td>
                 {% include 'book/_interaction.html.twig' %}

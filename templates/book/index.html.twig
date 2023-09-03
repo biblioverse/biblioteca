@@ -21,7 +21,7 @@
         <div class="col-md-9">
             <table class="table table-striped w-100">
                 <tr>
-                    <th>Download</th>
+                    <th style="width: 150px">Download</th>
                     <td>
                         <a target="_blank" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> Download {{ book.extension }}</a>
                     </td>
@@ -35,8 +35,8 @@
                 <tr>
                     <th>Author</th>
                     <td>
-                        <a href="{{ path('app_mainAuthor_detail', {'slug':book.authorSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
                         {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor'}) }}
+                        <a href="{{ path('app_mainAuthor_detail', {'slug':book.authorSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
                     </td>
                 </tr>
                 <tr>
@@ -44,11 +44,11 @@
                 </tr>
                 <tr>
                     <th>Serie</th><td>
-                        <div class="w-75 d-inline-block">
+                        <div>
+                            {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true}) }}
                             {% if book.serie is not null %}
                                 <a href="{{ path('app_serie_detail', {'slug':book.serieSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
                             {% endif %}
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true}) }}
                         </div>
                         <div class="w-25 d-inline-block">
                             {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true}) }}
