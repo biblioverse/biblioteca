@@ -4,6 +4,8 @@ liip_imagine:
   driver: "imagick"
   default_filter_set_settings:
     format: webp
+  webp:
+    generate: true
 
   filter_sets:
     cache: ~

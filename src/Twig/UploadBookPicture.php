@@ -40,21 +40,30 @@ class UploadBookPicture extends AbstractController
     #[LiveAction]
     public function uploadFiles(Request $request, LoggerInterface $logger, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): void
     {
-        /** @var UploadedFile $symfonyFile */
+        /** @var ?UploadedFile $symfonyFile */
         $symfonyFile = $request->files->getIterator()->current();
 
-        $logger->info('uploading file '.$symfonyFile->getClientOriginalName());
+        if (null === $symfonyFile) {
+            $this->flashMessage = 'No file uploaded';
 
-        $book = $fileSystemManager->uploadBookCover($symfonyFile, $this->book);
-        $logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
+            return;
+        }
 
-        $entityManager->persist($book);
-        $entityManager->flush();
-        $this->dispatchBrowserEvent('manager:flush');
-        $this->isEditing = false;
+        if (UPLOAD_ERR_OK === $symfonyFile->getError()) {
+            $logger->info('uploading file '.$symfonyFile->getClientOriginalName());
 
-        $this->flashMessage = ' book updated';
+            $book = $fileSystemManager->uploadBookCover($symfonyFile, $this->book);
+            $logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
 
-        $this->dispatchBrowserEvent('manager:flush');
+            $entityManager->persist($book);
+            $entityManager->flush();
+            $this->flashMessage = null;
+            $this->isEditing = false;
+
+            return;
+        }
+        $logger->info('Error in file ', ['error' => $symfonyFile->getErrorMessage()]);
+
+        $this->flashMessage = $symfonyFile->getErrorMessage();
     }
 }
