@@ -45,7 +45,8 @@
                 <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
 
-                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
+                <div class="w-25"> {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}</div>
+                    {{ component('FieldGuesser',{'book':book}) }}
                 </div>
             </td>
             <td>

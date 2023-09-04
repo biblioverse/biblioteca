@@ -1,0 +1,18 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+    {% if this.guessAuthor!='' %}
+    <form>
+        <button
+            data-action="live#action"
+            data-action-name="prevent|accept"
+            class="btn btn-sm btn-outline-success"
+        >
+            Author: {{ this.guessAuthor }} //
+            Serie:{{ this.guessSerie }} //
+            Index: {{ this.guessIndex }}
+
+
+            <i class="bi bi-check"></i>
+        </button>
+    </form>
+    {% endif %}
+</span>
