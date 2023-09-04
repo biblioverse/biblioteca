@@ -57,7 +57,7 @@ class UploadBookPicture extends AbstractController
 
             $entityManager->persist($book);
             $entityManager->flush();
-            $this->flashMessage = null;
+            $this->flashMessage = 'Successfully uploaded, please reload the page';
             $this->isEditing = false;
 
             return;
