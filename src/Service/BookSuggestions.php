@@ -44,6 +44,11 @@ class BookSuggestions
 
         $results = $service->volumes->listVolumes($query, $optParams);
 
+        if (0 === $results->getTotalItems()) {
+            $query = 'intitle:"'.$book->getTitle().'"';
+            $results = $service->volumes->listVolumes($query, $optParams);
+        }
+
         foreach ($results->getItems() as $result) {
             $volumeInfo = $result->getVolumeInfo();
 
