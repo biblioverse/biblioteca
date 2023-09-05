@@ -5,10 +5,7 @@
 {% block body %}
     <h1>{{ status_code }} {{ status_text }}</h1>
 
-    <p>
-        The requested page couldn't be located. Checkout for any URL
-        misspelling or <a href="{{ path('app_homepage') }}">return to the homepage</a>.
-    </p>
+    <h2>{{exception.message}}</h2>
     <pre>{{ exception.traceAsString }}</pre>
 
 {% endblock %}
