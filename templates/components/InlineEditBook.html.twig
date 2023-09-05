@@ -22,6 +22,16 @@
                                 autofocus
                                 id="book_{{ book.id }}_{{ field }}"
                         />
+                    {% elseif field=='summary' %}
+                        <textarea
+                                data-model="norender|book.{{ field }}"
+                                class="form-control w-100"
+                                rows="10"
+                                autofocus
+                                id="book_{{ book.id }}_{{ field }}"
+                        >
+                            {{ attribute(book, "get"~field) }}
+                        </textarea>
                     {% elseif field=='mainAuthor' or field=='serie' %}
                         <select
                             class="form-select"
@@ -78,5 +88,17 @@
         {% if flashMessage %}
                 <i class="bi bi-check alert-remove"></i>
         {% endif %}
+    {% endif %}
+
+    {% if not book.verified and suggestions[field] is defined %}
+        {% for key,suggestion in  suggestions[field] %}
+            {% if suggestion != attribute(book, "get"~field) %}
+            <button
+                class="btn btn-outline-secondary btn-sm p-1"
+                data-action="live#action"
+                data-action-name="usesuggestion(field={{ field }}, suggestion={{ key }})"
+            >{{ suggestion }}</button>
+            {% endif %}
+        {% endfor %}
     {% endif %}
 </span>

@@ -248,4 +248,49 @@ class BookFileSystemManager
 
         return $book;
     }
+
+    public function downloadBookCover(Book $book, string $url): Book
+    {
+        $filesystem = new Filesystem();
+
+        $fileContents = file_get_contents($url);
+
+        if (false === $fileContents) {
+            throw new \RuntimeException('Could not download file');
+        }
+        $checksum = md5($fileContents);
+
+        $ext = $this->getImageExtension($url);
+        if (null === $ext) {
+            throw new \RuntimeException('Could not get image extension');
+        }
+        $book->setImageExtension($ext);
+
+        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+
+        $filesystem->dumpFile($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum), $fileContents);
+
+        $book->setImagePath($this->getCalculatedImagePath($book, false));
+        $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+
+        return $book;
+    }
+
+    private function getImageExtension(string $url): ?string
+    {
+        $mimes = [
+            IMAGETYPE_GIF => 'gif',
+            IMAGETYPE_JPEG => 'jpg',
+            IMAGETYPE_PNG => 'png',
+            IMAGETYPE_BMP => 'bmp',
+            IMAGETYPE_WEBP => 'webp',
+        ];
+        $image_type = exif_imagetype($url);
+
+        if (false !== $image_type && array_key_exists($image_type, $mimes)) {
+            return $mimes[$image_type];
+        }
+
+        return null;
+    }
 }

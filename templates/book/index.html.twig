@@ -29,35 +29,37 @@
                 <tr>
                     <th>Title</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title', inline: true}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'title', inline: true, suggestions:suggestions}) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Author</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor'}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor', suggestions:suggestions}) }}
                         <a href="{{ path('app_mainAuthor_detail', {'slug':book.authorSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
                     </td>
                 </tr>
                 <tr>
-                    <th>Summary</th><td>{{ book.summary }}</td>
+                    <th>Summary</th><td>
+                        {{ component('InlineEditBook', {'book':book, 'field':'summary', inline: true, suggestions:suggestions}) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Serie</th><td>
                         <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true}) }}
+                            {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true, suggestions:suggestions}) }}
                             {% if book.serie is not null %}
                                 <a href="{{ path('app_serie_detail', {'slug':book.serieSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
                             {% endif %}
                         </div>
                         <div class="w-25 d-inline-block">
-                            {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true}) }}
+                            {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true, suggestions:suggestions}) }}
                         </div>
 
                     </td>
                 </tr>
                 <tr>
-                    <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', inline: true}) }}</td>
+                    <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', inline: true, suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Publishdate</th><td>
@@ -67,9 +69,25 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true}) }}</td>
+                    <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true, suggestions:suggestions}) }}</td>
                 </tr>
             </table>
+
+            {% if not book.verified %}
+            <div class="row">
+
+                <div class="col-md-12">
+                    <h5>Suggested images</h5>
+                </div>
+                {% for key, image in suggestions.image %}
+                    <div class="col-md-2">
+                        <a href="{{ path('app_book_downloadImage', {'id':book.id, 'image':key }) }}">
+                            <img src="{{ image }}" class="w-100">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -20,11 +21,17 @@ class InlineEditBook extends AbstractController
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'mainAuthor', 'verified', 'publisher', 'verified'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'mainAuthor', 'publisher', 'verified', 'summary'])]
     public Book $book;
 
     #[LiveProp()]
     public bool $isEditing = false;
+
+    /**
+     * @var array<string, array<string, string>>
+     */
+    #[LiveProp()]
+    public array $suggestions = [];
 
     #[LiveProp()]
     public string $field;
@@ -38,6 +45,18 @@ class InlineEditBook extends AbstractController
     public function activateEditing(): void
     {
         $this->isEditing = true;
+    }
+
+    #[LiveAction]
+    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion): void
+    {
+        $this->isEditing = true;
+        $to_call = 'set'.ucfirst($field);
+        $value = $this->suggestions[$field][$suggestion];
+        if (is_callable([$this->book, $to_call])) {
+            /* @phpstan-ignore-next-line */
+            $this->book->$to_call($value);
+        }
     }
 
     /**
