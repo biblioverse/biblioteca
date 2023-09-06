@@ -199,6 +199,8 @@ class BookRepository extends ServiceEntityRepository
             }
         }
 
+        ksort($results);
+
         return $results;
     }
 }

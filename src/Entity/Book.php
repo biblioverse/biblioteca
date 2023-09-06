@@ -123,7 +123,7 @@ class Book
     {
         $this->title = trim($title);
 
-        if ($title === '') {
+        if ('' === $title) {
             $this->title = 'unknown';
         }
 
@@ -240,7 +240,7 @@ class Book
     public function setSerie(?string $serie): static
     {
         $serie = trim($serie ?? '');
-        if ($serie === '') {
+        if ('' === $serie) {
             $serie = null;
         }
         $this->serie = $serie;
@@ -306,6 +306,7 @@ class Book
 
     /**
      * @param array<string> $authors
+     *
      * @return $this
      */
     public function setAuthors(array $authors): static
@@ -317,9 +318,10 @@ class Book
 
     public function addAuthor(string $author): static
     {
-        if (!in_array($author, $this->authors, true)) {
+        if (!in_array($author, $this->authors, true) && '' !== $author) {
             $this->authors[] = $author;
         }
+        $this->authors = array_values($this->authors);
 
         return $this;
     }
@@ -331,25 +333,27 @@ class Book
                 unset($this->authors[$key]);
             }
         }
+        $this->authors = array_values($this->authors);
 
         return $this;
     }
 
     public function addTag(string $tag): static
     {
-        if ($this->tags === null) {
+        if (null === $this->tags) {
             $this->tags = [];
         }
         if (!in_array($tag, $this->tags, true)) {
             $this->tags[] = $tag;
         }
+        $this->tags = array_values($this->tags);
 
         return $this;
     }
 
     public function removeTag(string $tag): static
     {
-        if ($this->tags === null) {
+        if (null === $this->tags) {
             $this->tags = [];
         }
         foreach ($this->tags as $key => $value) {
@@ -357,6 +361,7 @@ class Book
                 unset($this->tags[$key]);
             }
         }
+        $this->tags = array_values($this->tags);
 
         return $this;
     }
@@ -433,6 +438,7 @@ class Book
 
     /**
      * @param array<string>|null $tags
+     *
      * @return $this
      */
     public function setTags(?array $tags): static
