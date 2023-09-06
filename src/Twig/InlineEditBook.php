@@ -21,7 +21,7 @@ class InlineEditBook extends AbstractController
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'mainAuthor', 'publisher', 'verified', 'summary'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags'])]
     public Book $book;
 
     #[LiveProp()]

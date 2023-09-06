@@ -11,7 +11,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 /**
  * @extends ServiceEntityRepository<Book>
  *
- * @phpstan-type GroupType array{ item:string, slug:string, bookCount:int, booksFinished:int, lastBookIndex:int }
+ * @phpstan-type GroupType array{ item:string, bookCount:int, booksFinished:int }
  */
 class BookRepository extends ServiceEntityRepository
 {
@@ -64,12 +64,12 @@ class BookRepository extends ServiceEntityRepository
         return $q->getQuery();
     }
 
-    public function getByAuthorQuery(string $authorSlug): Query
+    public function getByAuthorQuery(string $author): Query
     {
         return $this->createQueryBuilder('b')
             ->select('b')
-            ->where('b.authorSlug = :authorSlug')
-            ->setParameter('authorSlug', $authorSlug)
+            ->where('JSON_CONTAINS(b.authors, :author)=1')
+            ->setParameter('author', json_encode([$author]))
             ->getQuery();
     }
 
@@ -92,7 +92,8 @@ class BookRepository extends ServiceEntityRepository
             ->select('b')
             ->where('b.serie like :query')
             ->orWhere('b.title like :query')
-            ->orWhere('b.mainAuthor like :query')
+            ->orWhere('JSON_CONTAINS(b.authors, :author)=1')
+            ->setParameter('author', json_encode([$query]))
             ->setParameter('query', '%'.$query.'%')
             ->setMaxResults($results)
             ->addOrderBy('b.title', 'ASC')
@@ -136,17 +137,68 @@ class BookRepository extends ServiceEntityRepository
             ->addGroupBy('serie.serie')->getQuery();
     }
 
-    public function getAllAuthors(): Query
+    /**
+     * @return GroupType[]
+     */
+    public function getAllAuthors(): array
     {
+        /** @var GroupType[] $results */
+        $results = [];
         $qb = $this->createQueryBuilder('author')
-            ->select('author.mainAuthor as item')
-            ->addSelect('author.authorSlug as slug')
+            ->select('author.authors as item')
             ->addSelect('COUNT(author.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
             ->leftJoin('author.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user=:user')
             ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('author.mainAuthor');
+            ->addGroupBy('author.authors')
+            ->getQuery();
 
-        return $qb->getQuery();
+        return $this->convertResults($qb->getResult());
+    }
+
+    /**
+     * @return GroupType[]
+     */
+    public function getAllTags(): array
+    {
+        $qb = $this->createQueryBuilder('tag')
+            ->select('tag.tags as item')
+            ->addSelect('COUNT(tag.id) as bookCount')
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
+            ->leftJoin('tag.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user=:user')
+            ->setParameter('user', $this->security->getUser())
+            ->addGroupBy('tag.tags')
+            ->getQuery();
+
+        return $this->convertResults($qb->getResult());
+    }
+
+    /**
+     * @return GroupType[]
+     */
+    private function convertResults(mixed $intermediateResults): array
+    {
+        if (!is_array($intermediateResults)) {
+            return [];
+        }
+        $results = [];
+        foreach ($intermediateResults as $result) {
+            foreach ($result['item'] as $item) {
+                if (!array_key_exists($item, $results)) {
+                    $results[$item] = [
+                        'item' => $item,
+                        'bookCount' => 0,
+                        'booksFinished' => 0,
+                    ];
+                }
+                $results[$item] = [
+                    'item' => $item,
+                    'bookCount' => $result['bookCount'] + $results[$item]['bookCount'],
+                    'booksFinished' => $result['booksFinished'] + $results[$item]['bookCount'],
+                ];
+            }
+        }
+
+        return $results;
     }
 }

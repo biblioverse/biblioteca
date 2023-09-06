@@ -13,7 +13,9 @@
     <ul class="list-group my-2">
         {% for item in pagination %}
             <li class="list-group-item">
-                {{ component('InlineEditGroup', {'type': type ,'item':item,'original': item}) }}
+                <a href="{{ path('app_'~type~'_detail',{slug:item.slug|default(item.item)}) }}">
+                {{ item.item }}
+                </a>
             </li>
         {% endfor %}
     </ul>

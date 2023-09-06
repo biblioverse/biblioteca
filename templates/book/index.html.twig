@@ -33,11 +33,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Author</th>
-                    <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor', suggestions:suggestions}) }}
-                        <a href="{{ path('app_mainAuthor_detail', {'slug':book.authorSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
-                    </td>
+                    <th>Authors</th><td>{{ component('InlineEditBook', {'book':book, 'field':'authors', inline: true, suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Summary</th><td>
@@ -60,6 +56,10 @@
                 </tr>
                 <tr>
                     <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', inline: true, suggestions:suggestions}) }}</td>
+                </tr>
+
+                <tr>
+                    <th>Tags</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', inline: true, suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Publishdate</th><td>

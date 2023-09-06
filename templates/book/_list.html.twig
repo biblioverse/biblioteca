@@ -1,7 +1,7 @@
 
 {{ knp_pagination_filter(pagination, {
     'b.title': 'Title',
-    'b.mainAuthor': 'Author',
+    'b.authors': 'Author',
     'b.serie': 'Serie',
 },[], {'displayMode':displayMode}) }}
 
@@ -14,8 +14,8 @@
         <th{% if pagination.isSorted('b.title') %} class="sorted"{% endif %}>
             {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
         </th>
-        <th{% if pagination.isSorted('b.mainAuthor') %} class="sorted"{% endif %}  style="width: 15%">
-            {{ knp_pagination_sortable(pagination, 'Author', 'b.mainAuthor') }}
+        <th{% if pagination.isSorted('b.authors') %} class="sorted"{% endif %}  style="width: 15%">
+            {{ knp_pagination_sortable(pagination, 'Author', 'b.authors') }}
         </th>
         <th{% if pagination.isSorted('b.serie') %} class="sorted"{% endif %} style="width: 15%">
             {{ knp_pagination_sortable(pagination, 'Serie', 'b.serie') }}
@@ -40,7 +40,7 @@
                 {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
                 </div>
                 <div>
-                {{ component('InlineEditBook', {'book':book, 'field':'mainAuthor'}) }}
+                {{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}
                 </div>
                 <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
@@ -58,7 +58,7 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+                <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
                     <i class="bi bi-book"></i>
                 </a>
             </td>

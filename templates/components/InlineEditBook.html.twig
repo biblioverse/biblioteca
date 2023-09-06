@@ -32,7 +32,7 @@
                         >
                             {{ attribute(book, "get"~field) }}
                         </textarea>
-                    {% elseif field=='mainAuthor' or field=='serie' %}
+                    {% elseif field=='serie' %}
                         <select
                             class="form-select"
                             id="book_{{ book.id }}_{{ field }}"
@@ -42,6 +42,20 @@
                             }) }}
                         >
                             <option value="{{ attribute(book, "get"~field) }}" selected>{{ attribute(book, "get"~field) }}</option>
+                        </select>
+                   {% elseif field=='tags' or field=='authors' %}
+                        <select
+                            multiple
+                            class="form-select"
+                            id="book_{{ book.id }}_{{ field }}"
+                            data-model="norender|book.{{ field }}"
+                            {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
+                                url: path('app_autocomplete_group', {type: field}),
+                            }) }}
+                        >
+                            {% for tag in attribute(book, "get"~field) %}
+                                <option value="{{ tag }}" selected>{{ tag }}</option>
+                            {% endfor %}
                         </select>
                     {% else %}
                         <input
@@ -76,7 +90,10 @@
             {% if field=='serieIndex' %}
                 N°
             {% endif %}
-            {% if inline %}
+
+            {% if field=='authors' or field=='tags' %}
+                {{ attribute(book, "get"~field)|join(', ') }}
+            {% elseif inline %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}
 

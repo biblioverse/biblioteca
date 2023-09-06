@@ -23,7 +23,7 @@ class BookSuggestions
         $suggestions = [
             'image' => [],
             'title' => [],
-            'mainAuthor' => [],
+            'authors' => [],
             'publisher' => [],
             'tags' => [],
             'summary' => [],
@@ -38,7 +38,7 @@ class BookSuggestions
         $client->setDeveloperKey($key);
 
         $service = new Books($client);
-        $query = 'intitle:"'.$book->getTitle().'" inauthor:'.$book->getMainAuthor().'';
+        $query = 'intitle:"'.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors());
         $optParams = [
         ];
 
@@ -71,7 +71,7 @@ class BookSuggestions
             }
             if (null !== $volumeInfo->getAuthors()) {
                 foreach ($volumeInfo->getAuthors() as $author) {
-                    $suggestions['mainAuthor'][$author] = $author;
+                    $suggestions['authors'][$author] = $author;
                 }
             }if (null !== $volumeInfo->getCategories()) {
                 foreach ($volumeInfo->getCategories() as $category) {

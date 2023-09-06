@@ -1,6 +1,6 @@
 {# @var book App\Entity\Book #}
 <div class=" m-1 mb-4">
-    <a href="{{ path('app_book',{'slug':book.slug,'authorSlug':book.authorSlug,'book':book.id}) }}" class=" small">
+    <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
     <div class="book">
         <div class="book__cover" style="background-image:url('{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}');">
             <div class="book__detail">
@@ -11,9 +11,14 @@
     </div>
     </a>
     <div class="small text-muted">
-        <i class="bi bi-person-fill"></i></i> <a href="{{ path('app_mainAuthor_detail',{'slug':book.authorSlug}) }}" class="text-muted text-decoration-none">
-            {{ book.mainAuthor }}
-        </a>
+        <i class="bi bi-person-fill"></i></i>
+
+        {% for author in book.authors %}
+            <a href="{{ path('app_authors_detail',{'slug':author}) }}" class="text-muted text-decoration-none">
+                {{ author }}
+            </a>
+        {% endfor %}
+
         {% if book.serie %}
             <br>
             <i class="bi bi-list-ol"></i> <a href="{{ path('app_serie_detail',{'slug':book.serieSlug}) }}" class="text-muted text-decoration-none">

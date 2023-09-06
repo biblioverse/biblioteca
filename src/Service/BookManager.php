@@ -33,14 +33,20 @@ class BookManager
         $extractedMetadata = $this->extractEbookMetadata($file);
         $book->setTitle($extractedMetadata['title']);
         $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
-        $book->setMainAuthor('unknown');
-        if (null !== $extractedMetadata['main_author']) {
-            $book->setMainAuthor($extractedMetadata['main_author']->getName() ?? 'unknown');
+        if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {
+            $book->addAuthor($extractedMetadata['main_author']->getName());
         }
 
         foreach ($extractedMetadata['authors'] as $author) {
-            $book->addAuthor($author->getName() ?? 'unknown');
+            if ($author->getName() !== null) {
+                $book->addAuthor($author->getName());
+            }
         }
+
+        if (0 === count($book->getAuthors())) {
+            $book->addAuthor('unknown');
+        }
+
         $book->setSummary($extractedMetadata['description']);
         if (null !== $extractedMetadata['serie']) {
             $book->setSerie($extractedMetadata['serie']);

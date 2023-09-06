@@ -25,7 +25,8 @@ class AutocompleteGroupController extends AbstractController
         /** @var array<GroupType> $group */
         $group = match ($type) {
             'serie' => $bookRepository->getAllSeries()->getResult(),
-            'mainAuthor' => $bookRepository->getAllAuthors()->getResult(),
+            'authors' => $bookRepository->getAllAuthors(),
+            'tags' => $bookRepository->getAllTags(),
             default => [],
         };
 

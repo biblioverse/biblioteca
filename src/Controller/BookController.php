@@ -13,12 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/books')]
 class BookController extends AbstractController
 {
-    #[Route('/{authorSlug}/{book}/{slug}', name: 'app_book')]
-    public function index(string $authorSlug, Book $book, string $slug, BookSuggestions $bookSuggestions): Response
+    #[Route('/{book}/{slug}', name: 'app_book')]
+    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions): Response
     {
-        if ($authorSlug !== $book->getAuthorSlug() || $slug !== $book->getSlug()) {
+        if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
-                'authorSlug' => $book->getAuthorSlug(),
                 'book' => $book->getId(),
                 'slug' => $book->getSlug(),
             ], 301);
@@ -48,7 +47,6 @@ class BookController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('app_book', [
-            'authorSlug' => $book->getAuthorSlug(),
             'book' => $book->getId(),
             'slug' => $book->getSlug(),
         ], 301);

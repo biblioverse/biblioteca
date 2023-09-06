@@ -112,7 +112,11 @@ class BookFileSystemManager
 
     private function calculateFilePath(Book $book): string
     {
-        $author = mb_strtolower($this->slugger->slug($book->getMainAuthor()));
+        $main = current($book->getAuthors());
+        if (false === $main) {
+            $main = 'unknown';
+        }
+        $author = mb_strtolower($main);
         $title = mb_strtolower($this->slugger->slug($book->getTitle()));
         $serie = null !== $book->getSerie() ? mb_strtolower($this->slugger->slug($book->getSerie())) : null;
         $letter = $author[0];

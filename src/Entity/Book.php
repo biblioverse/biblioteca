@@ -37,10 +37,6 @@ class Book
     #[Gedmo\Slug(fields: ['serie'], style: 'lower', unique: false)]
     private string $serieSlug;
 
-    #[ORM\Column(length: 128, unique: false)]
-    #[Gedmo\Slug(fields: ['mainAuthor'], style: 'lower', unique: false)]
-    private string $authorSlug;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeInterface $created;
@@ -80,7 +76,7 @@ class Book
     /**
      * @var array<string>
      */
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private array $authors = [];
 
     #[ORM\Column(length: 5)]
@@ -98,7 +94,7 @@ class Book
     /**
      * @var array<string>|null
      */
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $tags = null;
 
     #[ORM\Column(nullable: false)]
@@ -339,7 +335,20 @@ class Book
 
     public function addAuthor(string $author): static
     {
-        $this->authors[] = $author;
+        if (!in_array($author, $this->authors, true)) {
+            $this->authors[] = $author;
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(string $author): static
+    {
+        foreach ($this->authors as $key => $value) {
+            if ($value === $author) {
+                unset($this->authors[$key]);
+            }
+        }
 
         return $this;
     }
@@ -404,16 +413,6 @@ class Book
     public function setSerieSlug(string $serieSlug): void
     {
         $this->serieSlug = $serieSlug;
-    }
-
-    public function getAuthorSlug(): string
-    {
-        return $this->authorSlug;
-    }
-
-    public function setAuthorSlug(string $authorSlug): void
-    {
-        $this->authorSlug = $authorSlug;
     }
 
     /**

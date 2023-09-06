@@ -32,6 +32,10 @@ doctrine:
                 prefix: Gedmo\Timestampable
                 dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Timestampable"
 
+        dql:
+            string_functions:
+                JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
+
 when@test:
     doctrine:
         dbal:

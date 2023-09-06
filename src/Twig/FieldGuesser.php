@@ -29,7 +29,7 @@ class FieldGuesser extends AbstractController
     {
         $this->book->setSerie($this->guessSerie());
         $this->book->setSerieIndex((float) $this->guessIndex());
-        $this->book->setMainAuthor($this->guessAuthor());
+        $this->book->setAuthors([$this->guessAuthor()]);
         $entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
 
@@ -38,7 +38,7 @@ class FieldGuesser extends AbstractController
 
     public function guessSerie(): string
     {
-        $author = $this->book->getMainAuthor();
+        $author = implode($this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[1];
@@ -49,7 +49,7 @@ class FieldGuesser extends AbstractController
 
     public function guessIndex(): string
     {
-        $author = $this->book->getMainAuthor();
+        $author = implode($this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[2];
@@ -60,7 +60,7 @@ class FieldGuesser extends AbstractController
 
     public function guessAuthor(): string
     {
-        $author = $this->book->getMainAuthor();
+        $author = implode($this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[0];

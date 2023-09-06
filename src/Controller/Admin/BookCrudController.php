@@ -35,7 +35,6 @@ class BookCrudController extends AbstractCrudController
             TextEditorField::new('summary')->hideOnIndex(),
             TextField::new('serie'),
             NumberField::new('serieIndex'),
-            TextField::new('mainAuthor'),
             TextField::new('language'),
             TextField::new('publisher')->hideOnIndex(),
             DateField::new('publishDate')->hideOnIndex(),

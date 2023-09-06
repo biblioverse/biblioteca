@@ -8,14 +8,17 @@
         {% endif %}
     </div>
     <div class="col-11">
-        <a href="{{ path('app_book', {'authorSlug':book.authorSlug,'book':book.id, 'slug':book.slug}) }}">
+        <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
             {{ book.title }}
         </a>
 
         <span class="text-muted">
-                by <a href="{{ path('app_mainAuthor_detail',{'slug':book.authorSlug}) }}" class="text-muted">
-                    {{ book.mainAuthor }}
+            by
+            {% for author in book.authors %}
+                <a href="{{ path('app_authors_detail',{'slug':author}) }}" class="text-muted">
+                    {{ author }}
                 </a>
+            {% endfor %}
         </span>
 
 
