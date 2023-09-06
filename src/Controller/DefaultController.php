@@ -21,6 +21,7 @@ class DefaultController extends AbstractController
 
         return $this->render('default/index.html.twig', [
             'pagination' => $pagination,
+            'page' => $page,
         ]);
     }
 
@@ -34,7 +35,7 @@ class DefaultController extends AbstractController
         );
 
         return $this->render('default/index.html.twig', [
-            'pagination' => $pagination,
+            'pagination' => $pagination, 'page' => $page,
         ]);
     }
 
@@ -48,7 +49,7 @@ class DefaultController extends AbstractController
         );
 
         return $this->render('default/index.html.twig', [
-            'pagination' => $pagination,
+            'pagination' => $pagination, 'page' => $page,
         ]);
     }
 
@@ -62,7 +63,7 @@ class DefaultController extends AbstractController
         );
 
         return $this->render('default/index.html.twig', [
-            'pagination' => $pagination,
+            'pagination' => $pagination, 'page' => $page,
         ]);
     }
 }
