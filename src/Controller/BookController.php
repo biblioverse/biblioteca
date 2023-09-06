@@ -23,7 +23,10 @@ class BookController extends AbstractController
             ], 301);
         }
 
-        $suggestions = $bookSuggestions->getSuggestions($book);
+        $suggestions = [];
+        if (!$book->isVerified()) {
+            $suggestions = $bookSuggestions->getSuggestions($book);
+        }
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
