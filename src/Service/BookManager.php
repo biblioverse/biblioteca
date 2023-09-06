@@ -53,7 +53,6 @@ class BookManager
             $book->setSerieIndex($extractedMetadata['serie_index']);
         }
         $book->setPublisher($extractedMetadata['publisher']);
-        $book->setPublishDate($extractedMetadata['publish_date']);
         if (2 === strlen($extractedMetadata['language'] ?? '')) {
             $book->setLanguage($extractedMetadata['language']);
         }
