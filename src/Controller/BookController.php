@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions, BookFileSystemManager $fileSystemManager): Response
+    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
