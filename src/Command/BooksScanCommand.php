@@ -78,8 +78,9 @@ class BooksScanCommand extends Command
                     $this->entityManager->flush();
                 }
             } catch (\Exception $e) {
+                $io->error('died during process of '.$file->getRealPath());
                 $io->error($e->getMessage());
-                continue;
+                throw $e;
             }
         }
         $io->writeln('');
