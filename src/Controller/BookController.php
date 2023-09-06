@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions): Response
+    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions, BookFileSystemManager $fileSystemManager): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -31,7 +31,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/{image}', name: 'app_book_downloadImage')]
+    #[Route('/download-image/{id}/{image}', name: 'app_book_downloadImage')]
     public function downloadImage(Book $book, string $image, BookSuggestions $bookSuggestions, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {
         $suggestions = $bookSuggestions->getSuggestions($book);

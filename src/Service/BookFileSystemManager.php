@@ -116,6 +116,7 @@ class BookFileSystemManager
         if (false === $main) {
             $main = 'unknown';
         }
+        $main = $this->slugger->slug($main);
         $author = mb_strtolower($main);
         $title = mb_strtolower($this->slugger->slug($book->getTitle()));
         $serie = null !== $book->getSerie() ? mb_strtolower($this->slugger->slug($book->getSerie())) : null;
