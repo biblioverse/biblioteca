@@ -31,9 +31,14 @@
     {% for book in pagination %}
         <tr>
             <td>
+                <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
+
                 {% if book.imageFilename is not null %}
-                <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
+                    <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
+                {% else %}
+                    <img class="w-100" src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
                 {% endif %}
+                </a>
             </td>
             <td colspan="4">
                 <div>
