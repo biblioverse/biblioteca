@@ -194,7 +194,7 @@ class BookRepository extends ServiceEntityRepository
                 $results[$item] = [
                     'item' => $item,
                     'bookCount' => $result['bookCount'] + $results[$item]['bookCount'],
-                    'booksFinished' => $result['booksFinished'] + $results[$item]['bookCount'],
+                    'booksFinished' => $result['booksFinished'] + $results[$item]['booksFinished'],
                 ];
             }
         }
