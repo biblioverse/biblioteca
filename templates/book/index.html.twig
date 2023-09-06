@@ -71,11 +71,21 @@
                 <tr>
                     <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true, suggestions:suggestions}) }}</td>
                 </tr>
+                <tr>
+                    <td colspan="2">
+                        <ul class="small">
+                            <li>Book: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
+                            <li>Image: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
+                        </ul>
+                    </td>
+                </tr>
+
             </table>
 
             {% if not book.verified %}
             <div class="row">
 
+                {% if suggestions.image|length >0 %}
                 <div class="col-md-12">
                     <h5>Suggested images</h5>
                 </div>
@@ -86,6 +96,7 @@
                         </a>
                     </div>
                 {% endfor %}
+                {% endif %}
             </div>
             {% endif %}
         </div>
