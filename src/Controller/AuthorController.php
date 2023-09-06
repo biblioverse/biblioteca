@@ -25,11 +25,12 @@ class AuthorController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/{page}', name: 'app_authors_detail', requirements: ['page' => '\d+'])]
+    #[Route('/detail/{slug}/{page}', name: 'app_authors_detail', requirements: ['page' => '\d+'])]
     public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page = 1): Response
     {
         $authors = $bookRepository->getAllAuthors();
 
+        $slug = urldecode($slug);
         $author = $authors[$slug] ?? null;
 
         if (null === $author) {

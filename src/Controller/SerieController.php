@@ -26,7 +26,7 @@ class SerieController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/{page}', name: 'app_serie_detail', requirements: ['page' => '\d+'])]
+    #[Route('/detail/{slug}/{page}', name: 'app_serie_detail', requirements: ['page' => '\d+'])]
     public function detail(string $slug, BookRepository $bookRepository, PaginatorInterface $paginator, int $page = 1): Response
     {
         $series = $bookRepository->getAllSeries()->getResult();
