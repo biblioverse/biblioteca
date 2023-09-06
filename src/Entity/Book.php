@@ -335,6 +335,32 @@ class Book
         return $this;
     }
 
+    public function addTag(string $tag): static
+    {
+        if ($this->tags === null) {
+            $this->tags = [];
+        }
+        if (!in_array($tag, $this->tags, true)) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(string $tag): static
+    {
+        if ($this->tags === null) {
+            $this->tags = [];
+        }
+        foreach ($this->tags as $key => $value) {
+            if ($value === $tag) {
+                unset($this->tags[$key]);
+            }
+        }
+
+        return $this;
+    }
+
     public function getExtension(): string
     {
         return $this->extension;

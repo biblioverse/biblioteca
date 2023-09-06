@@ -55,7 +55,13 @@ class InlineEditBook extends AbstractController
         $value = $this->suggestions[$field][$suggestion];
         if (is_callable([$this->book, $to_call])) {
             /* @phpstan-ignore-next-line */
-            $this->book->$to_call($value);
+            if($field==='tags'){
+                $this->book->addTag($value);
+            }elseif($field==='authors'){
+                $this->book->addAuthor($value);
+            }else {
+                $this->book->$to_call($value);
+            }
         }
     }
 
