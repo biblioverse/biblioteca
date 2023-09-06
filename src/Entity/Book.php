@@ -61,9 +61,6 @@ class Book
     #[ORM\Column(nullable: true)]
     private ?float $serieIndex = null;
 
-    #[ORM\Column(length: 255)]
-    private string $mainAuthor;
-
     #[ORM\Column(length: 2, nullable: true)]
     private ?string $language = null;
 
@@ -259,21 +256,6 @@ class Book
     public function setSerieIndex(?float $serieIndex): static
     {
         $this->serieIndex = $serieIndex;
-
-        return $this;
-    }
-
-    public function getMainAuthor(): string
-    {
-        return $this->mainAuthor;
-    }
-
-    public function setMainAuthor(string $mainAuthor): static
-    {
-        $this->mainAuthor = trim($mainAuthor);
-        if ($mainAuthor === '') {
-            $this->mainAuthor = 'unknown';
-        }
 
         return $this;
     }
