@@ -31,7 +31,7 @@ class TagController extends AbstractController
         $tags = $bookRepository->getAllTags();
 
         $slug = urldecode($slug);
-        dump($slug);
+
         $tag = $tags[$slug] ?? null;
 
         if (null === $tag) {

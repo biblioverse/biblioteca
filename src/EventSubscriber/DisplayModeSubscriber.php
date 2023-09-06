@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class DisplayModeSubscriber implements EventSubscriberInterface
 {
-    private string $displayMode='gallery';
+    private string $displayMode = 'gallery';
 
     public function onKernelRequest(RequestEvent $event): void
     {
