@@ -73,6 +73,15 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function getByTagQuery(string $tag): Query
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('JSON_CONTAINS(b.tags, :tag)=1')
+            ->setParameter('tag', json_encode([$tag]))
+            ->getQuery();
+    }
+
     public function getBySerieQuery(string $serieSlug): Query
     {
         return $this->createQueryBuilder('b')

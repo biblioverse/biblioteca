@@ -36,6 +36,7 @@ final class MenuBuilder
         $menu->addChild('Not read', ['route' => 'app_read', 'routeParameters' => ['read' => 0], ...$this->defaultAttr])->setExtra('icon', 'journal');
         $menu->addChild('Series', ['route' => 'app_serie', ...$this->defaultAttr])->setExtra('icon', 'list');
         $menu->addChild('Authors', ['route' => 'app_authors', ...$this->defaultAttr])->setExtra('icon', 'people-fill');
+        $menu->addChild('Tags', ['route' => 'app_tags', ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         $menu->addChild('Unverified', ['route' => 'app_unverified', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
         $menu->addChild('setting_divider', ['label' => 'Others'])->setExtra('divider', true);
         $menu->addChild('Settings', ['route' => 'admin', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');

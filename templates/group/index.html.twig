@@ -13,7 +13,7 @@
     <ul class="list-group my-2">
         {% for item in pagination %}
             <li class="list-group-item">
-                <a href="{{ path('app_'~type~'_detail',{slug:item.slug|default(item.item)}) }}">
+                <a href="{{ path('app_'~type~'_detail',{slug:item.slug|default(item.item)|url_encode}) }}">
                 {{ item.item }}
                 </a>
             </li>
