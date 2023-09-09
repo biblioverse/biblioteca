@@ -206,7 +206,8 @@ class BookFileSystemManager
             $path = $this->getBooksDirectory();
         }
         $empty = true;
-        $files = glob($path.DIRECTORY_SEPARATOR.'*');
+
+        $files = glob($path.DIRECTORY_SEPARATOR.'{,.}[!.,!..]*', GLOB_MARK | GLOB_BRACE);
         if (false !== $files && count($files) > 0) {
             foreach ($files as $file) {
                 if (is_dir($file)) {
@@ -297,5 +298,14 @@ class BookFileSystemManager
         }
 
         return null;
+    }
+
+    public function deleteBookFiles(Book $book): void
+    {
+        $filesystem = new Filesystem();
+        $filesystem->remove($this->getBooksDirectory().$book->getBookPath().$book->getBookFilename());
+        $filesystem->remove($this->getCoverDirectory().$book->getImagePath().$book->getImageFilename());
+        $this->removeEmptySubFolders($this->getBooksDirectory().$book->getBookPath());
+        $this->removeEmptySubFolders($this->getCoverDirectory().$book->getImagePath());
     }
 }
