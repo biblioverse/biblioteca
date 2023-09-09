@@ -7,6 +7,7 @@ use App\Service\BookFileSystemManager;
 use App\Service\BookSuggestions;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookSuggestions $bookSuggestions): Response
+    public function index(Request $request, Book $book, string $slug, BookSuggestions $bookSuggestions): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -23,8 +24,9 @@ class BookController extends AbstractController
             ], 301);
         }
 
-        $suggestions = [];
-        if (!$book->isVerified()) {
+        $suggestions = BookSuggestions::EMPTY_SUGGESTIONS;
+        $forceSuggestions = (bool) $request->get('refresh', false);
+        if (!$book->isVerified() && $forceSuggestions === true) {
             $suggestions = $bookSuggestions->getSuggestions($book);
         }
 

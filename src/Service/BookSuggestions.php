@@ -12,6 +12,15 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class BookSuggestions
 {
+    public const EMPTY_SUGGESTIONS = [
+        'image' => [],
+        'title' => [],
+        'authors' => [],
+        'publisher' => [],
+        'tags' => [],
+        'summary' => [],
+    ];
+
     public function __construct(private ParameterBagInterface $parameterBag, private SluggerInterface $slugger)
     {
     }
@@ -23,14 +32,7 @@ class BookSuggestions
     {
         $key = $this->parameterBag->get('GOOGLE_API_KEY');
 
-        $suggestions = [
-            'image' => [],
-            'title' => [],
-            'authors' => [],
-            'publisher' => [],
-            'tags' => [],
-            'summary' => [],
-        ];
+        $suggestions = self::EMPTY_SUGGESTIONS;
 
         if ('' === $key || !is_string($key)) {
             return $suggestions;
