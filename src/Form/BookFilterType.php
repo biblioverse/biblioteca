@@ -205,6 +205,14 @@ class BookFilterType extends AbstractType
             },
         ]);
 
+        $builder->add('displayMode', Type\HiddenType::class, [
+            'data' => 'list',
+            'mapped' => false,
+            'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
+
+            },
+        ]);
+
         $builder->add('submit', Type\SubmitType::class, [
             'label' => 'Filter',
             'attr' => [
