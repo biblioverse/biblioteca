@@ -8,17 +8,30 @@
         {{ pagination.getTotalItemCount }} {{ type }}
     </div>
 
+    <form method="get" class="form-inline my-2">
+        <div class="input-group">
+            <input type="text" name="search" id="search" class="form-control" placeholder="Filter" value="{{ search }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
     {{ knp_pagination_render(pagination) }}
 
-    <ul class="list-group my-2">
-        {% for item in pagination %}
-            <li class="list-group-item">
-                <a href="{{ path('app_'~type~'_detail',{slug:item.slug|default(item.item)|url_encode}) }}">
-                {{ item.item }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div style="column-count: 3">
+        <ul class="list-group list-group-flush">
+            {% for item in pagination %}
+                {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
+                {% set class = status==100?'success':(status>0?'warning':'light') %}
+                <li class="list-group-item list-group-item-{{ class }}" >
+                    {% set params = { (type): item.item } %}
+                    <a href="{{ filter_book_url(params) }}">
+                    {{ item.item }}
+                    </a>
+                    <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
     {{ knp_pagination_render(pagination) }}
 

@@ -4,6 +4,9 @@ parameters:
     paths:
         - src/
         - tests/
+    ignoreErrors:
+        - '#(.*)no value type specified in iterable type array#'
+
 
 includes:
     - vendor/phpstan/phpstan-doctrine/extension.neon

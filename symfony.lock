@@ -1,4 +1,7 @@
 {
+    "andanteproject/page-filter-form-bundle": {
+        "version": "1.0.3"
+    },
     "doctrine/annotations": {
         "version": "2.0",
         "recipe": {

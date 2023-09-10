@@ -11,8 +11,12 @@ security:
                 property: username
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|js|media)/
             security: false
+        image_resolver:
+          pattern: ^/media/cache/resolve
+          security:
+            false
         main:
           lazy: true
           provider: app_user_provider

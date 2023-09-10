@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ShelfRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -32,6 +33,9 @@ class Shelf
     #[ORM\Column(length: 128, unique: true, nullable: false)]
     #[Gedmo\Slug(fields: ['name', 'id'], style: 'lower')]
     private string $slug;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $queryString = null;
 
     public function __construct()
     {
@@ -106,5 +110,17 @@ class Shelf
     public function setSlug(string $slug): void
     {
         $this->slug = $slug;
+    }
+
+    public function getQueryString(): ?array
+    {
+        return $this->queryString;
+    }
+
+    public function setQueryString(?array $queryString): static
+    {
+        $this->queryString = $queryString;
+
+        return $this;
     }
 }

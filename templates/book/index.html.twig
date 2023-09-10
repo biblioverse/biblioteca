@@ -45,7 +45,7 @@
                         <div>
                             {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true, suggestions:suggestions}) }}
                             {% if book.serie is not null %}
-                                <a href="{{ path('app_serie_detail', {'slug':book.serieSlug}) }}"><i class="bi bi-box-arrow-right"></i></a>
+                                <a href="{{ filter_book_url({'serie':book.serie}) }}"><i class="bi bi-box-arrow-right"></i></a>
                             {% endif %}
                         </div>
                         <div class="w-25 d-inline-block">

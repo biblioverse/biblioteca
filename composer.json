@@ -9,6 +9,7 @@
         "ext-exif": "*",
         "ext-iconv": "*",
         "ext-zip": "*",
+        "andanteproject/page-filter-form-bundle": "^1.0",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
