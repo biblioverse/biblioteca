@@ -26,9 +26,6 @@ class Book
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $summary = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $eventDate = null;
-
     #[ORM\Column(length: 128, unique: true)]
     #[Gedmo\Slug(fields: ['title', 'id'], style: 'lower')]
     private string $slug;
@@ -138,18 +135,6 @@ class Book
     public function setSlug(string $slug): void
     {
         $this->slug = $slug;
-    }
-
-    public function getEventDate(): ?\DateTimeInterface
-    {
-        return $this->eventDate;
-    }
-
-    public function setEventDate(?\DateTimeInterface $eventDate): self
-    {
-        $this->eventDate = $eventDate;
-
-        return $this;
     }
 
     public function getCreated(): \DateTimeInterface
