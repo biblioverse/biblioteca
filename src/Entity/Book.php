@@ -30,10 +30,6 @@ class Book
     #[Gedmo\Slug(fields: ['title', 'id'], style: 'lower')]
     private string $slug;
 
-    #[ORM\Column(length: 128, unique: false)]
-    #[Gedmo\Slug(fields: ['serie'], style: 'lower', unique: false)]
-    private string $serieSlug;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeInterface $created;
@@ -401,16 +397,6 @@ class Book
         }
 
         return $this;
-    }
-
-    public function getSerieSlug(): string
-    {
-        return $this->serieSlug;
-    }
-
-    public function setSerieSlug(string $serieSlug): void
-    {
-        $this->serieSlug = $serieSlug;
     }
 
     /**

@@ -27,6 +27,7 @@ class AutocompleteGroupController extends AbstractController
             'serie' => $bookRepository->getAllSeries()->getResult(),
             'authors' => $bookRepository->getAllAuthors(),
             'tags' => $bookRepository->getAllTags(),
+            'publisher' => $bookRepository->getAllPublisherss()->getResult(),
             default => [],
         };
 
@@ -41,7 +42,7 @@ class AutocompleteGroupController extends AbstractController
             }
             $json['results'][] = ['value' => $item['item'], 'text' => $item['item']];
         }
-        if (!$exactmatch && strlen($query) > 2) {
+        if (!$exactmatch && strlen($query) > 2 && $request->get('create', true) === true) {
             $json['results'][] = ['value' => $query, 'text' => 'New: '.$query];
         }
 

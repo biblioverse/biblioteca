@@ -4,8 +4,76 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5027203782f84e98244f6fc42910d068",
+    "content-hash": "fe8e1b02dc8d8a2ffd767b2414d31183",
     "packages": [
+        {
+            "name": "andanteproject/page-filter-form-bundle",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andanteproject/page-filter-form-bundle.git",
+                "reference": "8455670ba8fe3485ae14d0d76ed401cbafce2172"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andanteproject/page-filter-form-bundle/zipball/8455670ba8fe3485ae14d0d76ed401cbafce2172",
+                "reference": "8455670ba8fe3485ae14d0d76ed401cbafce2172",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0",
+                "symfony/form": "^4.0 || ^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "friendsofphp/php-cs-fixer": "^3.4",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpstan/phpstan-symfony": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "roave/security-advisories": "dev-master",
+                "symfony/framework-bundle": "^4.0 | ^5.0 | ^6.0",
+                "symfony/yaml": "^5.2"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Andante\\PageFilterFormBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andante Project",
+                    "homepage": "https://github.com/andanteproject"
+                },
+                {
+                    "name": "Cristoforo Cervino",
+                    "homepage": "https://github.com/cristoforocervino"
+                }
+            ],
+            "description": "A Symfony Bundle to simplify the handling of page filters for lists/tables in admin panels.",
+            "keywords": [
+                "PHP7",
+                "admin-panel",
+                "filters",
+                "form",
+                "php",
+                "php74",
+                "symfony",
+                "symfony-bundle",
+                "symfony-form"
+            ],
+            "support": {
+                "issues": "https://github.com/andanteproject/page-filter-form-bundle/issues",
+                "source": "https://github.com/andanteproject/page-filter-form-bundle/tree/1.0.3"
+            },
+            "time": "2023-08-28T15:56:25+00:00"
+        },
         {
             "name": "behat/transliterator",
             "version": "v1.5.0",
@@ -13809,5 +13877,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

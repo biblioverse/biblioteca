@@ -3,6 +3,8 @@ twig:
     globals:
         displayMode: "@app.display_mode_subscriber"  #The id of your service
 
+    form_themes: ['bootstrap_5_layout.html.twig']
+
 when@test:
     twig:
         strict_variables: true

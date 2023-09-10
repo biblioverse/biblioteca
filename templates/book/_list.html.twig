@@ -1,27 +1,23 @@
-
-{{ knp_pagination_filter(pagination, {
-    'b.title': 'Title',
-    'b.authors': 'Author',
-    'b.serie': 'Serie',
-},[], {'displayMode':displayMode}) }}
-
+{# display navigation #}
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
 <table class="table-striped table table-bordered table-hover">
     <tr>
         {# sorting of properties based on query components #}
         <th style="width:70px">
-
         </th>
-        <th{% if pagination.isSorted('b.title') %} class="sorted"{% endif %}>
-            {{ knp_pagination_sortable(pagination, 'Title', 'b.title') }}
+        <th>
+            Title
         </th>
-        <th{% if pagination.isSorted('b.authors') %} class="sorted"{% endif %}  style="width: 15%">
-            {{ knp_pagination_sortable(pagination, 'Author', 'b.authors') }}
+        <th style="width: 15%">
+            Author
         </th>
-        <th{% if pagination.isSorted('b.serie') %} class="sorted"{% endif %} style="width: 15%">
-            {{ knp_pagination_sortable(pagination, 'Serie', 'b.serie') }}
+        <th style="width: 15%">
+            Serie
         </th>
-        <th{% if pagination.isSorted('b.serieIndex') %} class="sorted"{% endif %}  style="width: 15%">
-            {{ knp_pagination_sortable(pagination, 'Serie Index', 'b.serieIndex') }}
+        <th style="width: 15%">
+            Index
         </th>
         <th style="width:90px"></th>
         <th style="width:35px"></th>

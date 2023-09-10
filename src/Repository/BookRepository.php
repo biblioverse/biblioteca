@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -23,120 +24,18 @@ class BookRepository extends ServiceEntityRepository
         $this->security = $security;
     }
 
-    public function getAllBooksQuery(): Query
+    public function getAllBooksQueryBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->getQuery();
-    }
-
-    public function getFavoriteBooksQuery(): Query
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->join('b.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.favorite = true and bookInteraction.user=:user')
-            ->setParameter('user', $this->security->getUser())
-            ->getQuery();
-    }
-
-    public function getUnverifiedBooksQuery(): Query
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->where('b.verified = false')
-            ->getQuery();
-    }
-
-    public function getBooksByReadStatus(bool $read): Query
-    {
-        $q = $this->createQueryBuilder('b')
-            ->select('b')
-            ->leftJoin('b.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
-            ->andWhere('bookInteraction.finished = :read');
-
-        if (!$read) {
-            $q->orWhere('bookInteraction.finished IS NULL');
-        }
-
-        $q->setParameter('user', $this->security->getUser())
-        ->setParameter('read', (int) $read);
-
-        return $q->getQuery();
-    }
-
-    public function getByAuthorQuery(string $author): Query
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->where('JSON_CONTAINS(b.authors, :author)=1')
-            ->setParameter('author', json_encode([$author]))
-            ->getQuery();
-    }
-
-    public function getByTagQuery(string $tag): Query
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->where('JSON_CONTAINS(b.tags, :tag)=1')
-            ->setParameter('tag', json_encode([$tag]))
-            ->getQuery();
-    }
-
-    public function getBySerieQuery(string $serieSlug): Query
-    {
-        return $this->createQueryBuilder('b')
-            ->select('b')
-            ->where('b.serieSlug = :serieSlug')
-            ->setParameter('serieSlug', $serieSlug)
-            ->addOrderBy('b.serieIndex', 'ASC')
-            ->getQuery();
-    }
-
-    /**
-     * @return array<Book>
-     */
-    public function search(string $query, int $results = 5): array
-    {
-        $return = $this->createQueryBuilder('b')
-            ->select('b')
-            ->where('b.serie like :query')
-            ->orWhere('b.title like :query')
-            ->orWhere('JSON_CONTAINS(b.authors, :author)=1')
-            ->setParameter('author', json_encode([$query]))
-            ->setParameter('query', '%'.$query.'%')
-            ->setMaxResults($results)
-            ->addOrderBy('b.title', 'ASC')
-            ->getQuery()->getResult();
-        if (!is_array($return)) {
-            return [];
-        }
-
-        return $return;
-    }
-
-    public function save(Book $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Book $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->createQueryBuilder('book')
+            ->select('book')
+            ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
+            ->setParameter('user', $this->security->getUser());
     }
 
     public function getAllSeries(): Query
     {
         return $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
-            ->addSelect('serie.serieSlug as slug')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
@@ -144,6 +43,18 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
             ->setParameter('user', $this->security->getUser())
             ->addGroupBy('serie.serie')->getQuery();
+    }
+
+    public function getAllPublishers(): Query
+    {
+        return $this->createQueryBuilder('publisher')
+            ->select('publisher.publisher as item')
+            ->addSelect('COUNT(publisher.id) as bookCount')
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
+            ->where('publisher.publisher IS NOT NULL')
+            ->leftJoin('publisher.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
+            ->setParameter('user', $this->security->getUser())
+            ->addGroupBy('publisher.publisher')->getQuery();
     }
 
     /**

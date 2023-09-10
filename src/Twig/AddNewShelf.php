@@ -30,6 +30,9 @@ class AddNewShelf extends AbstractController
     public string $name = '';
 
     #[LiveProp()]
+    public ?array $currentFilters =null;
+
+    #[LiveProp()]
     public User $user;
 
     #[LiveAction]
@@ -62,4 +65,36 @@ class AddNewShelf extends AbstractController
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
     }
+
+    #[LiveAction]
+    public function saveFilters(EntityManagerInterface $entityManager): void
+    {
+        if (null === $this->shelf) {
+            $this->shelf = new Shelf();
+        }
+
+        $this->name = trim($this->name);
+        if ('' === $this->name) {
+            return;
+        }
+
+        $this->shelf->setName($this->name);
+        $this->shelf->setUser($this->user);
+
+        foreach ($this->currentFilters as $key => $value) {
+            if (is_array($value)) {
+                $this->currentFilters[$key] = implode(',', $value);
+            }
+        }
+
+        $this->shelf->setQueryString($this->currentFilters);
+
+        $entityManager->persist($this->shelf);
+        $entityManager->flush();
+
+        $this->dispatchBrowserEvent('manager:flush');
+        $this->isEditing = false;
+    }
+
+
 }
