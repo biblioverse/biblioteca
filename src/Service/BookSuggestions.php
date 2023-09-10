@@ -40,7 +40,7 @@ class BookSuggestions
 
         $cache = new FilesystemAdapter();
 
-        $query = 'intitle:"'.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors());
+        $query = 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().' '.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors());
 
         $cacheKey = $this->slugger->slug($query);
 
@@ -58,7 +58,7 @@ class BookSuggestions
             $results = $service->volumes->listVolumes($query, $optParams);
 
             if (0 === $results->getTotalItems()) {
-                $query = 'intitle:"'.$book->getTitle().'"';
+                $query = 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().' '.$book->getTitle().'"';
                 $results = $service->volumes->listVolumes($query, $optParams);
             }
 
