@@ -1,0 +1,38 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+{% if isEditing %}
+    <form class="input-group">
+            <select
+                multiple
+                class="form-select form-select-sm"
+                id="books_{{ field }}"
+                data-model="fieldValue"
+                {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
+                    url: path('app_autocomplete_group', {type: field}),
+                }) }}
+            ></select>
+            <button
+                data-action="live#action"
+                data-action-name="prevent|save"
+                class="btn btn-sm btn-outline-danger"
+            >
+                <i class="bi bi-journal-check"></i> Override {{ field }} for {{ books|length }} books
+            </button>
+    </form>
+{% else %}
+
+    <button
+        data-action="live#action"
+        data-action-name="activateEditing"
+        class="btn btn-sm btn-outline-dark"
+        style="text-align: left"
+        title="Click to edit!"
+    >
+        Edit {{ field }}
+    </button>
+
+    {% if flashMessage %}
+        <i class="bi bi-check alert-remove"></i>
+    {% endif %}
+{% endif %}
+
+</span>

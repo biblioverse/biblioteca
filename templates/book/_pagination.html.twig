@@ -1,6 +1,6 @@
 {% set allParams=app.request.query.all %}
 
-<div class="row align-self-end mb-3">
+<div class="row align-self-end mb-0">
     <div class="col-12 p-2 text-end">
         <div class="btn-group">
             <div class="btn-sm btn btn-outline-dark">
@@ -11,6 +11,14 @@
         </div>
     </div>
 </div>
+<div class="row align-self-end mb-3">
+    <div class="col-12 py-0 px-2 text-end">
+        {{ component('InlineEditMultiple', {books: pagination.items, field:'authors', fieldValue:[]}) }}
+        {{ component('InlineEditMultiple', {books: pagination.items, field:'serie', fieldValue:[]}) }}
+        {{ component('InlineEditMultiple', {books: pagination.items, field:'tags', fieldValue:[]}) }}
+    </div>
+</div>
+
 
 
 {% if displayMode.getDisplayMode =='gallery' %}
