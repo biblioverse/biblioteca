@@ -190,18 +190,24 @@ class BookFilterType extends AbstractType
             'choices' => [
                 'title' => 'title',
                 'id' => 'id',
-                'publishDate' => 'publishDate',
                 'serieIndex' => 'serieIndex',
-                'created' => 'created',
             ],
             'data' => 'title',
-            'expanded' => true,
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
+                $params = $qb->getParameters()->toArray();
+                $params = array_filter($params, static function ($param) {
+                    return $param->getName() === 'serie0';
+                });
+                if (count($params) > 0) {
+                    $orderByValue = 'serieIndex';
+                }
                 if ($orderByValue === null) {
                     $orderByValue = 'title';
                 }
                 $qb->orderBy('book.'.$orderByValue, 'ASC');
+                $qb->addOrderBy('book.serieIndex', 'ASC');
+                $qb->addOrderBy('book.id', 'ASC');
             },
         ]);
 
@@ -209,7 +215,6 @@ class BookFilterType extends AbstractType
             'data' => 'list',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
-
             },
         ]);
 
