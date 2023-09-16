@@ -304,8 +304,11 @@ class BookFileSystemManager
     {
         $filesystem = new Filesystem();
         $filesystem->remove($this->getBooksDirectory().$book->getBookPath().$book->getBookFilename());
-        $filesystem->remove($this->getCoverDirectory().$book->getImagePath().$book->getImageFilename());
         $this->removeEmptySubFolders($this->getBooksDirectory().$book->getBookPath());
-        $this->removeEmptySubFolders($this->getCoverDirectory().$book->getImagePath());
+
+        if ($book->getImageFilename() !== null && $book->getImageFilename() !== '') {
+            $filesystem->remove($this->getCoverDirectory().$book->getImagePath().$book->getImageFilename());
+            $this->removeEmptySubFolders($this->getCoverDirectory().$book->getImagePath());
+        }
     }
 }
