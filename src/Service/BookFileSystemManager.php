@@ -211,24 +211,20 @@ class BookFileSystemManager
         }
         $empty = true;
 
-        $finder = new Finder();
-
-        $files = $finder->in($path)->ignoreDotFiles(true)->files();
-        $directories = $finder->in($path)->ignoreDotFiles(true)->directories();
-
-        if ($files->count() > 0 || $directories->count() > 0) {
-            $empty = false;
-        }
-
-        foreach ($directories as $directory) {
-            if (!$this->removeEmptySubFolders($directory->getRealPath())) {
-                $empty = false;
+        $files = glob($path.DIRECTORY_SEPARATOR.'{,.}[!.,!..]*', GLOB_MARK | GLOB_BRACE);
+        if (false !== $files && count($files) > 0) {
+            foreach ($files as $file) {
+                if (is_dir($file)) {
+                    if (!$this->removeEmptySubFolders($file)) {
+                        $empty = false;
+                    }
+                } else {
+                    $empty = false;
+                }
             }
         }
-
-        if ($empty) {
-            $fs = new Filesystem();
-            $fs->remove($path);
+        if ($empty && is_dir($path) && $path !== $this->getBooksDirectory()) {
+            rmdir($path);
         }
 
         return $empty;
