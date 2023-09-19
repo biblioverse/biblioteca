@@ -124,7 +124,7 @@ class BookFileSystemManager
         $author = mb_strtolower($main);
         $title = mb_strtolower($this->slugger->slug($book->getTitle()));
         $serie = null !== $book->getSerie() ? mb_strtolower($this->slugger->slug($book->getSerie())) : null;
-        $letter = substr($main, 0, 1);
+        $letter = mb_strtolower(substr($main, 0, 1));
         $path = [$letter];
 
         $path[] = $author;
