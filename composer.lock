@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe8e1b02dc8d8a2ffd767b2414d31183",
+    "content-hash": "2b73405f6a5be0438d968be9cc0bbf6b",
     "packages": [
         {
             "name": "andanteproject/page-filter-form-bundle",
@@ -1863,6 +1863,58 @@
                 }
             ],
             "time": "2023-09-06T13:16:12+00:00"
+        },
+        {
+            "name": "gemorroj/archive7z",
+            "version": "5.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Gemorroj/Archive7z.git",
+                "reference": "e7733839542fc8b7b7a7106327ae9c00e8a09c80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Gemorroj/Archive7z/zipball/e7733839542fc8b7b7a7106327ae9c00e8a09c80",
+                "reference": "e7733839542fc8b7b7a7106327ae9c00e8a09c80",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.2",
+                "symfony/process": "^5.4||^6.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpstan/phpstan": "^1.0",
+                "phpunit/phpunit": "^9.5.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Archive7z\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Gemorroj"
+                }
+            ],
+            "description": "7z cli wrapper",
+            "keywords": [
+                "7-zip",
+                "7z",
+                "7zip",
+                "archive",
+                "p7zip"
+            ],
+            "support": {
+                "issues": "https://github.com/Gemorroj/Archive7z/issues",
+                "source": "https://github.com/Gemorroj/Archive7z/tree/5.6.0"
+            },
+            "time": "2023-07-03T17:03:31+00:00"
         },
         {
             "name": "google/apiclient",

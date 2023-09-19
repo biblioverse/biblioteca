@@ -16,6 +16,7 @@
         "doctrine/orm": "^2.14",
         "easycorp/easyadmin-bundle": "^4.7",
         "gedmo/doctrine-extensions": "^3.11",
+        "gemorroj/archive7z": "^5.6",
         "google/apiclient": "^2.15",
         "kiwilan/php-ebook": "^2.0",
         "knplabs/knp-markdown-bundle": "^1.10",
@@ -60,7 +61,8 @@
         "symfony/webpack-encore-bundle": "^2.0",
         "symfony/yaml": "^6.2",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "ext-imagick": "*"
     },
     "config": {
         "allow-plugins": {

@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use Archive7z\Archive7z;
+use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -52,7 +54,9 @@ class BookFileSystemManager
     public function getBookFile(Book $book): \SplFileInfo
     {
         $finder = new Finder();
-        $finder->files()->name($book->getBookFilename())->in($this->getBooksDirectory().$book->getBookPath());
+        $filename = str_replace(['[', ']'], '*', $book->getBookFilename());
+
+        $finder->files()->name($filename)->in($this->getBooksDirectory().$book->getBookPath());
         $return = iterator_to_array($finder->getIterator());
 
         if (0 === count($return)) {
@@ -120,7 +124,7 @@ class BookFileSystemManager
         $author = mb_strtolower($main);
         $title = mb_strtolower($this->slugger->slug($book->getTitle()));
         $serie = null !== $book->getSerie() ? mb_strtolower($this->slugger->slug($book->getSerie())) : null;
-        $letter = $author[0];
+        $letter = substr($main, 0, 1);
         $path = [$letter];
 
         $path[] = $author;
@@ -207,20 +211,24 @@ class BookFileSystemManager
         }
         $empty = true;
 
-        $files = glob($path.DIRECTORY_SEPARATOR.'{,.}[!.,!..]*', GLOB_MARK | GLOB_BRACE);
-        if (false !== $files && count($files) > 0) {
-            foreach ($files as $file) {
-                if (is_dir($file)) {
-                    if (!$this->removeEmptySubFolders($file)) {
-                        $empty = false;
-                    }
-                } else {
-                    $empty = false;
-                }
+        $finder = new Finder();
+
+        $files = $finder->in($path)->ignoreDotFiles(true)->files();
+        $directories = $finder->in($path)->ignoreDotFiles(true)->directories();
+
+        if ($files->count() > 0 || $directories->count() > 0) {
+            $empty = false;
+        }
+
+        foreach ($directories as $directory) {
+            if (!$this->removeEmptySubFolders($directory->getRealPath())) {
+                $empty = false;
             }
         }
+
         if ($empty) {
-            rmdir($path);
+            $fs = new Filesystem();
+            $fs->remove($path);
         }
 
         return $empty;
@@ -310,5 +318,97 @@ class BookFileSystemManager
             $filesystem->remove($this->getCoverDirectory().$book->getImagePath().$book->getImageFilename());
             $this->removeEmptySubFolders($this->getCoverDirectory().$book->getImagePath());
         }
+    }
+
+    public function extractCover(Book $book): Book
+    {
+        $filesystem = new Filesystem();
+        $bookFile = $this->getBookFile($book);
+        switch ($book->getExtension()) {
+            case 'epub':
+                $ebook = Ebook::read($bookFile->getRealPath());
+                if ($ebook === null) {
+                    break;
+                }
+                $cover = $ebook->getCover();
+
+                if ($cover === null || $cover->getPath() === null) {
+                    break;
+                }
+                $coverContent = $cover->getContent();
+
+                $coverFileName = explode('/', $cover->getPath());
+                $coverFileName = end($coverFileName);
+                $ext = explode('.', $coverFileName);
+                $book->setImageExtension(end($ext));
+
+                $coverPath = $this->getCalculatedImagePath($book, true);
+                $coverFileName = $this->getCalculatedImageName($book);
+
+                $filesystem = new Filesystem();
+                $filesystem->mkdir($coverPath);
+
+                $coverFile = file_put_contents($coverPath.$coverFileName, $coverContent);
+
+                if (false !== $coverFile) {
+                    $book->setImagePath($this->getCalculatedImagePath($book, false));
+                    $book->setImageFilename($coverFileName);
+                }
+                break;
+            case 'cbr':
+            case 'cbz':
+                $archive = new Archive7z($bookFile->getRealPath());
+                $entries = [];
+                foreach ($archive->getEntries() as $entry) {
+                    if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
+                        $entries[] = $entry->getPath();
+                    }
+                }
+                ksort($entries);
+                if (count($entries) === 0) {
+                    break;
+                }
+
+                $archive->setOutputDirectory('/tmp')->extractEntry($entries[0]); // extract the archive
+
+                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+                $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+                $filesystem->rename(
+                    '/tmp/'.$entries[0],
+                    $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
+                    true);
+
+                $book->setImagePath($this->getCalculatedImagePath($book, false));
+                $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+                $book->setImageExtension('jpg');
+
+                break;
+            case 'pdf':
+                $checksum = md5(''.time());
+
+                try {
+                    $im = new \Imagick($bookFile->getRealPath().'[0]'); // 0-first page, 1-second page
+                } catch (\Exception $e) {
+                    $this->logger->error('Could not extract cover', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
+                    break;
+                }
+
+                $im->setImageColorspace(255); // prevent image colors from inverting
+                $im->setImageFormat('jpeg');
+                $im->thumbnailImage(300, 460); // width and height
+                $book->setImageExtension('jpg');
+                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+                $im->writeImage($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum));
+                $im->clear();
+                $im->destroy();
+                $book->setImagePath($this->getCalculatedImagePath($book, false));
+                $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+
+                break;
+            default:
+                throw new \RuntimeException('Extension not implemented');
+        }
+
+        return $book;
     }
 }

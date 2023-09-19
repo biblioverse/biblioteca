@@ -6,7 +6,6 @@ use App\Entity\Book;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
 use Kiwilan\Ebook\Tools\BookAuthor;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -62,34 +61,8 @@ class BookManager
 
         $book->setBookPath('');
         $book->setBookFilename('');
-        $book = $this->updateBookLocation($book, $file);
 
-        /** @var ?EbookCover $cover */
-        $cover = $extractedMetadata['cover'];
-
-        if (null !== $cover && null !== $cover->getPath()) {
-            $coverContent = $cover->getContent();
-
-            $coverFileName = explode('/', $cover->getPath());
-            $coverFileName = end($coverFileName);
-            $ext = explode('.', $coverFileName);
-            $book->setImageExtension(end($ext));
-
-            $coverPath = $this->fileSystemManager->getCalculatedImagePath($book, true);
-            $coverFileName = $this->fileSystemManager->getCalculatedImageName($book);
-
-            $filesystem = new Filesystem();
-            $filesystem->mkdir($coverPath);
-
-            $coverFile = file_put_contents($coverPath.$coverFileName, $coverContent);
-
-            if (false !== $coverFile) {
-                $book->setImagePath($this->fileSystemManager->getCalculatedImagePath($book, false));
-                $book->setImageFilename($coverFileName);
-            }
-        }
-
-        return $book;
+        return $this->updateBookLocation($book, $file);
     }
 
     public function updateBookLocation(Book $book, \SplFileInfo $file): Book
@@ -138,7 +111,7 @@ class BookManager
         }
 
         return [
-            'title' => $ebook->getTitle() ?? $file->getFilename(), // string
+            'title' => $ebook->getTitle() ?? $file->getBasename('.'.$file->getExtension()), // string
             'authors' => $ebook->getAuthors(), // BookAuthor[] (`name`: string, `role`: string)
             'main_author' => $ebook->getAuthorMain(), // ?BookAuthor => First BookAuthor (`name`: string, `role`: string)
             'description' => $ebook->getDescription(), // ?string
