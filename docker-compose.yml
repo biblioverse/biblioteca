@@ -4,7 +4,7 @@ services:
   biblioteca:
     image: ghcr.io/biblioverse/biblioteca-docker:1.0.6
     ports:
-      - 48480:8080
+      - "48480:8080"
     depends_on:
       - db
     volumes:
@@ -38,34 +38,12 @@ services:
       - MYSQL_USER=biblioteca
       - MYSQL_PASSWORD=biblioteca
     ports:
-      - 49405:3306
+      - "49405:3306"
     volumes:
       - mariadb:/var/lib/mysql
     networks:
       - default
       - pontsun
-
-  mailhog:
-    container_name: "biblioteca_mailhog"
-    image: mailhog/mailhog:latest
-    ports:
-      - '38025:8025'
-      - 1025
-    labels:
-      - 'traefik.enable=true'
-      # traefik v1
-      - 'traefik.docker.network=pontsun'
-      - 'traefik.port=8025'
-      - 'traefik.frontend.rule=Host:biblioteca-mail.docker.test'
-      # traefik v2
-      - 'traefik.http.routers.biblioteca_mail.entrypoints=https,http'
-      - 'traefik.http.routers.biblioteca_mail.middlewares=https_redirect@file'
-      - 'traefik.http.routers.biblioteca_mail.rule=Host(`biblioteca-mail.docker.test`)'
-      - 'traefik.http.services.biblioteca_mail.loadbalancer.server.port=8025'
-    networks:
-      - default
-      - pontsun
-
 
 volumes:
   mariadb:
