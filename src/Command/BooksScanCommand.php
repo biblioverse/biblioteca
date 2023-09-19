@@ -57,6 +57,17 @@ class BooksScanCommand extends Command
             try {
                 $flush = false;
                 $progressBar->setMessage($file->getFilename());
+                $book = $this->bookRepository->findOneBy(
+                    [
+                        'bookPath' => $this->fileSystemManager->getFolderName($file),
+                        'bookFilename' => $file->getFilename(),
+                    ]);
+
+                if (null !== $book) {
+                    unset($unprocessedBooks[$book->getChecksum()]);
+                    continue;
+                }
+
                 $checksum = $this->fileSystemManager->getFileChecksum($file);
                 $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
                 if (null === $book) {
