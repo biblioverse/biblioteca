@@ -60,7 +60,7 @@ class BooksExtractCoverCommand extends Command
             /* @var Book $book */
             $progressBar->advance();
 
-            if ($force === true || $book->getImageFilename() === null || !$fs->exists($book->getImagePath().$book->getImageFilename())) {
+            if ($force === true || $book->getImageFilename() === null || !$fs->exists($this->fileSystemManager->getCoverDirectory().$book->getImagePath().$book->getImageFilename())) {
                 try {
                     $book = $this->fileSystemManager->extractCover($book);
                     $this->entityManager->persist($book);
