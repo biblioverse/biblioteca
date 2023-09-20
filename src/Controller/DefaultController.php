@@ -28,6 +28,10 @@ class DefaultController extends AbstractController
             18
         );
 
+        if ($page > ($pagination->getTotalItemCount() / 18) + 1) {
+            return $this->redirectToRoute('app_homepage', ['page' => 1, ...$request->query->all()]);
+        }
+
         return $this->render('default/index.html.twig', [
             'pagination' => $pagination,
             'page' => $page,

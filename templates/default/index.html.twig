@@ -14,7 +14,7 @@
                 </li>
             </ul>
     {% endif %}
-    <details {% if pagination.getTotalItemCount==0 %}open{% endif %}>
+    <details {% if pagination.getTotalItemCount==0 %}open="open"{% endif %}>
         <summary>Filters</summary>
         {{ form_start(form, {'action': path('app_homepage',{'page':1})}) }}
         <div class="row">
