@@ -361,7 +361,9 @@ class BookFileSystemManager
 
                 sort($entries);
 
-                $entries = array_values(array_filter($entries));
+                $entries = array_values(array_filter($entries, static function ($entry) {
+                    return preg_match('/\.(jpg|jpeg|png|gif)$/i', $entry);
+                }));
                 if (count($entries) === 0) {
                     break;
                 }
