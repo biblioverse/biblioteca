@@ -369,23 +369,28 @@ class BookFileSystemManager
                 }
                 $cover = current($entries);
 
-                shell_exec('unrar e "'.$bookFile->getRealPath().'" "'.$cover.'" /tmp -y');
+                $expl = explode('.', $cover);
+                $coverFile = explode('/', $cover);
+                $coverFile = end($coverFile);
+                $ext = end($expl);
+                $book->setImageExtension($ext);
+
+                shell_exec('unrar e -ep "'.$bookFile->getRealPath().'" "'.$cover.'" -op"/tmp/" -y');
 
                 $filesystem->mkdir($this->getCalculatedImagePath($book, true));
                 try {
-                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$cover));
+                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$coverFile));
                 } catch (\Exception $e) {
                     $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
                     $checksum = md5(''.time());
                 }
                 $filesystem->rename(
-                    '/tmp/'.$cover,
+                    '/tmp/'.$coverFile,
                     $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
                     true);
 
                 $book->setImagePath($this->getCalculatedImagePath($book, false));
                 $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
-                $book->setImageExtension('jpg');
 
                 break;
             case 'pdf':
