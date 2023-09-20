@@ -64,6 +64,7 @@ class BooksExtractCoverCommand extends Command
                 try {
                     $book = $this->fileSystemManager->extractCover($book);
                     $this->entityManager->persist($book);
+                    $this->entityManager->flush();
                 } catch (\Exception $e) {
                     $io->error($e->getMessage());
                     continue;
