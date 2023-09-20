@@ -354,13 +354,19 @@ class BookFileSystemManager
             case 'cbr':
             case 'cbz':
                 $archive = new Archive7z($bookFile->getRealPath());
+
+                if(!$archive->isValid()) {
+                    break;
+                }
+
                 $entries = [];
                 foreach ($archive->getEntries() as $entry) {
                     if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
                         $entries[] = $entry->getPath();
                     }
                 }
-                ksort($entries);
+
+                sort($entries);
                 if (count($entries) === 0) {
                     break;
                 }
