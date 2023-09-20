@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Book;
-use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -353,36 +352,32 @@ class BookFileSystemManager
                 break;
             case 'cbr':
             case 'cbz':
-                $archive = new Archive7z($bookFile->getRealPath());
+                $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
 
-                if (!$archive->isValid()) {
+                if (!is_string($return)) {
                     break;
                 }
-
-                $entries = [];
-
-                foreach ($archive->getEntries() as $entry) {
-                    if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
-                        $entries[] = $entry->getPath();
-                    }
-                }
+                $entries = explode(PHP_EOL, $return);
 
                 sort($entries);
+
+                $entries = array_values(array_filter($entries));
                 if (count($entries) === 0) {
                     break;
                 }
+                $cover = current($entries);
 
-                $archive->setOutputDirectory('/tmp')->extractEntry($entries[0]); // extract the archive
+                shell_exec('unrar e "'.$bookFile->getRealPath().'" "'.$cover.'" /tmp/');
 
                 $filesystem->mkdir($this->getCalculatedImagePath($book, true));
                 try {
-                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$cover));
                 } catch (\Exception $e) {
                     $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
                     $checksum = md5(''.time());
                 }
                 $filesystem->rename(
-                    '/tmp/'.$entries[0],
+                    '/tmp/'.$cover,
                     $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
                     true);
 
