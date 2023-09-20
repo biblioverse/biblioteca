@@ -355,7 +355,7 @@ class BookFileSystemManager
             case 'cbz':
                 $archive = new Archive7z($bookFile->getRealPath());
 
-                if(!$archive->isValid()) {
+                if (!$archive->isValid()) {
                     break;
                 }
 
