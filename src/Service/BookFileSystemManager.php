@@ -360,6 +360,7 @@ class BookFileSystemManager
                 }
 
                 $entries = [];
+
                 foreach ($archive->getEntries() as $entry) {
                     if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
                         $entries[] = $entry->getPath();
@@ -374,7 +375,12 @@ class BookFileSystemManager
                 $archive->setOutputDirectory('/tmp')->extractEntry($entries[0]); // extract the archive
 
                 $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-                $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+                try {
+                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+                } catch (\Exception $e) {
+                    $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
+                    $checksum = md5(''.time());
+                }
                 $filesystem->rename(
                     '/tmp/'.$entries[0],
                     $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
