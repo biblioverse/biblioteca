@@ -22,6 +22,7 @@ class DefaultController extends AbstractController
 
         $form = $this->createAndHandleFilter(BookFilterType::class, $qb, $request);
 
+
         $pagination = $paginator->paginate(
             $qb->getQuery(),
             $page,
