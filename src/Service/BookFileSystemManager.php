@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -355,42 +356,10 @@ class BookFileSystemManager
                 $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
 
                 if (!is_string($return)) {
+                    $book = $this->extractFromGeneralArchive($bookFile, $book);
                     break;
                 }
-                $entries = explode(PHP_EOL, $return);
-
-                sort($entries);
-
-                $entries = array_values(array_filter($entries, static function ($entry) {
-                    return str_ends_with($entry, '.jpg') || str_ends_with($entry, '.jpeg') || str_ends_with($entry, '.png');
-                }));
-                if (count($entries) === 0) {
-                    break;
-                }
-                $cover = current($entries);
-
-                $expl = explode('.', $cover);
-                $coverFile = explode('/', $cover);
-                $coverFile = end($coverFile);
-                $ext = end($expl);
-                $book->setImageExtension($ext);
-
-                shell_exec('unrar e -ep "'.$bookFile->getRealPath().'" "'.$cover.'" -op"/tmp/" -y');
-
-                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-                try {
-                    $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$coverFile));
-                } catch (\Exception $e) {
-                    $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
-                    $checksum = md5(''.time());
-                }
-                $filesystem->rename(
-                    '/tmp/'.$coverFile,
-                    $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
-                    true);
-
-                $book->setImagePath($this->getCalculatedImagePath($book, false));
-                $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+                $book = $this->extractFromRarArchive($bookFile, $book);
 
                 break;
             case 'pdf':
@@ -418,6 +387,95 @@ class BookFileSystemManager
             default:
                 throw new \RuntimeException('Extension not implemented');
         }
+
+        return $book;
+    }
+
+    private function extractFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
+    {
+        $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+
+        if (!is_string($return)) {
+            $this->logger->error('not a string', ['book' => $bookFile->getRealPath(), 'return' => $return]);
+
+            return $book;
+        }
+        $entries = explode(PHP_EOL, $return);
+
+        sort($entries);
+
+        $entries = array_values(array_filter($entries, static function ($entry) {
+            return str_ends_with($entry, '.jpg') || str_ends_with($entry, '.jpeg') || str_ends_with($entry, '.png');
+        }));
+        if (count($entries) === 0) {
+            $this->logger->error('no errors');
+
+            return $book;
+        }
+        $cover = current($entries);
+
+        $expl = explode('.', $cover);
+        $coverFile = explode('/', $cover);
+        $coverFile = end($coverFile);
+        $ext = end($expl);
+        $book->setImageExtension($ext);
+
+        shell_exec('unrar e -ep "'.$bookFile->getRealPath().'" "'.$cover.'" -op"/tmp/" -y');
+
+        $filesystem = new Filesystem();
+        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+        try {
+            $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$coverFile));
+        } catch (\Exception $e) {
+            $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
+            $checksum = md5(''.time());
+        }
+        $filesystem->rename(
+            '/tmp/'.$coverFile,
+            $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
+            true);
+
+        $book->setImagePath($this->getCalculatedImagePath($book, false));
+        $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+
+        return $book;
+    }
+
+    private function extractFromGeneralArchive(\SplFileInfo $bookFile, Book $book): Book
+    {
+        $archive = new Archive7z($bookFile->getRealPath());
+
+        if (!$archive->isValid()) {
+            return $book;
+        }
+
+        $entries = [];
+        foreach ($archive->getEntries() as $entry) {
+            if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
+                $entries[] = $entry->getPath();
+            }
+        }
+        ksort($entries);
+
+        sort($entries);
+
+        if (count($entries) === 0) {
+            return $book;
+        }
+
+        $archive->setOutputDirectory('/tmp')->extractEntry($entries[0]); // extract the archive
+
+        $filesystem = new Filesystem();
+        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+        $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+        $filesystem->rename(
+            '/tmp/'.$entries[0],
+            $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
+            true);
+
+        $book->setImagePath($this->getCalculatedImagePath($book, false));
+        $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+        $book->setImageExtension('jpg');
 
         return $book;
     }
