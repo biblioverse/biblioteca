@@ -367,7 +367,7 @@ class BookFileSystemManager
                 }
                 $cover = current($entries);
 
-                shell_exec('unrar e "'.$bookFile->getRealPath().'" "'.$cover.'" /tmp/');
+                shell_exec('unrar e "'.$bookFile->getRealPath().'" "'.$cover.'" /tmp -y');
 
                 $filesystem->mkdir($this->getCalculatedImagePath($book, true));
                 try {
