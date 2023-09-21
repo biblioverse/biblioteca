@@ -32,7 +32,7 @@ class BookFilterType extends AbstractType
 
         $builder->add('serieIndexGTE', Type\SearchType::class, [
             'required' => false,
-            'mapped'=>false,
+            'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
                     $qb->andWhere('book.serieIndex >= :indexGTE');
@@ -43,7 +43,7 @@ class BookFilterType extends AbstractType
 
         $builder->add('serieIndexLTE', Type\SearchType::class, [
             'required' => false,
-            'mapped'=>false,
+            'mapped' => false,
 
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
@@ -241,6 +241,26 @@ class BookFilterType extends AbstractType
                         break;
                     case 'unverified':
                         $qb->andWhere('book.verified = false');
+                        break;
+                }
+            },
+        ]);
+
+        $builder->add('picture', Type\ChoiceType::class, [
+            'choices' => [
+                'Any' => '',
+                'Has picture' => 'with',
+                'No picture' => 'without',
+            ],
+            'required' => false,
+            'mapped' => false,
+            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
+                switch ($readValue) {
+                    case 'with':
+                        $qb->andWhere('book.imageFilename is not null');
+                        break;
+                    case 'without':
+                        $qb->andWhere('book.imageFilename is null');
                         break;
                 }
             },

@@ -16,6 +16,7 @@ class FilteredBookUrlGenerator
         'serie' => '',
         'publisher' => '',
         'read' => '',
+        'picture' => '',
         'favorite' => '',
         'verified' => '',
         'orderBy' => 'title',
