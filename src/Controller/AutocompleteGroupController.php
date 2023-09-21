@@ -42,6 +42,9 @@ class AutocompleteGroupController extends AbstractController
             }
             $json['results'][] = ['value' => $item['item'], 'text' => $item['item']];
         }
+        if (($type !== 'authors') && $query === '' && $request->get('create', true) !== true) {
+            $json['results'][] = ['value' => 'no_'.$type, 'text' => '[No '.$type.' defined]'];
+        }
         if (!$exactmatch && strlen($query) > 2 && $request->get('create', true) === true) {
             $json['results'][] = ['value' => $query, 'text' => 'New: '.$query];
         }

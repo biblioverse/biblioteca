@@ -33,7 +33,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Authors</th><td>{{ component('InlineEditBook', {'book':book, 'field':'authors', inline: true, suggestions:suggestions}) }}</td>
+                    <th>Authors</th>
+                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors', inline: false, suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Summary</th><td>
@@ -48,9 +49,11 @@
                                 <a href="{{ filter_book_url({'serie':book.serie}) }}"><i class="bi bi-box-arrow-right"></i></a>
                             {% endif %}
                         </div>
-                        <div class="w-25 d-inline-block">
-                            {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true, suggestions:suggestions}) }}
-                        </div>
+                        {% if book.serie is not null %}
+                            <div class="w-25 d-inline-block">
+                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true, suggestions:suggestions}) }}
+                            </div>
+                        {% endif %}
 
                     </td>
                 </tr>
@@ -59,7 +62,7 @@
                 </tr>
 
                 <tr>
-                    <th>Tags</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', inline: true, suggestions:suggestions}) }}</td>
+                    <th>Tags</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', inline: false, suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Publishdate</th><td>

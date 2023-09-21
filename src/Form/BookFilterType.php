@@ -30,6 +30,29 @@ class BookFilterType extends AbstractType
             },
         ]);
 
+        $builder->add('serieIndexGTE', Type\SearchType::class, [
+            'required' => false,
+            'mapped'=>false,
+            'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
+                if ($searchValue !== null) {
+                    $qb->andWhere('book.serieIndex >= :indexGTE');
+                    $qb->setParameter('indexGTE', $searchValue);
+                }
+            },
+        ]);
+
+        $builder->add('serieIndexLTE', Type\SearchType::class, [
+            'required' => false,
+            'mapped'=>false,
+
+            'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
+                if ($searchValue !== null) {
+                    $qb->andWhere('book.serieIndex <= :indexLTE');
+                    $qb->setParameter('indexLTE', $searchValue);
+                }
+            },
+        ]);
+
         $builder->add('authors', Type\TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
@@ -54,6 +77,31 @@ class BookFilterType extends AbstractType
             },
         ]);
 
+        $builder->add('authorsNot', Type\TextType::class, [
+            'autocomplete' => true,
+            'tom_select_options' => [
+                'create' => false,
+            ],
+            'mapped' => false,
+            'label' => 'Author not in',
+            'required' => false,
+            'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'authors', 'create' => false]),
+            'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
+                if ($searchValue === null || $searchValue === '') {
+                    return;
+                }
+                $authors = explode(',', $searchValue);
+
+                $orModule = $qb->expr()->orX();
+
+                foreach ($authors as $key => $author) {
+                    $orModule->add('JSON_CONTAINS(book.authors, :authorNot'.$key.')=0');
+                    $qb->setParameter('authorNot'.$key, json_encode([$author]));
+                }
+                $qb->andWhere($orModule);
+            },
+        ]);
+
         $builder->add('tags', Type\TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
@@ -71,8 +119,12 @@ class BookFilterType extends AbstractType
                 $orModule = $qb->expr()->orX();
 
                 foreach ($tags as $key => $tag) {
-                    $orModule->add('JSON_CONTAINS(book.tags, :tag'.$key.')=1');
-                    $qb->setParameter('tag'.$key, json_encode([$tag]));
+                    if ($tag === 'no_tags') {
+                        $orModule->add('book.tags = \'[]\'');
+                    } else {
+                        $orModule->add('JSON_CONTAINS(book.tags, :tag'.$key.')=1');
+                        $qb->setParameter('tag'.$key, json_encode([$tag]));
+                    }
                 }
                 $qb->andWhere($orModule);
             },
@@ -95,8 +147,12 @@ class BookFilterType extends AbstractType
                 $orModule = $qb->expr()->orX();
 
                 foreach ($series as $key => $serie) {
-                    $orModule->add('book.serie=:serie'.$key);
-                    $qb->setParameter('serie'.$key, $serie);
+                    if ($serie === 'no_serie') {
+                        $orModule->add('book.serie = \'[]\'');
+                    } else {
+                        $orModule->add('book.serie=:serie'.$key);
+                        $qb->setParameter('serie'.$key, $serie);
+                    }
                 }
                 $qb->andWhere($orModule);
             },
@@ -119,8 +175,12 @@ class BookFilterType extends AbstractType
                 $orModule = $qb->expr()->orX();
 
                 foreach ($publishers as $key => $publisher) {
-                    $orModule->add('book.publisher=:publisher'.$key);
-                    $qb->setParameter('publisher'.$key, $publisher);
+                    if ($publisher === 'no_publisher') {
+                        $orModule->add('book.publisher = \'[]\'');
+                    } else {
+                        $orModule->add('book.publisher=:publisher'.$key);
+                        $qb->setParameter('publisher'.$key, $publisher);
+                    }
                 }
                 $qb->andWhere($orModule);
             },
@@ -189,10 +249,12 @@ class BookFilterType extends AbstractType
         $builder->add('orderBy', Type\ChoiceType::class, [
             'choices' => [
                 'title' => 'title',
+                'created' => 'created',
+                'updated' => 'updated',
                 'id' => 'id',
                 'serieIndex' => 'serieIndex',
             ],
-            'data' => 'title',
+            'data' => 'created',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
                 $params = $qb->getParameters()->toArray();
@@ -203,7 +265,7 @@ class BookFilterType extends AbstractType
                     $orderByValue = 'serieIndex';
                 }
                 if ($orderByValue === null) {
-                    $orderByValue = 'title';
+                    $orderByValue = 'created';
                 }
                 $qb->orderBy('book.'.$orderByValue, 'ASC');
                 $qb->addOrderBy('book.serieIndex', 'ASC');

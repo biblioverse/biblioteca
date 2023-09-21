@@ -30,29 +30,35 @@
         </div>
         <div class="row">
             <div class="col-md-3">
+                {{ form_row(form.authorsNot) }}
+            </div>
+            <div class="col-md-3">
                 {{ form_row(form.tags) }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 {{ form_row(form.favorite) }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 {{ form_row(form.verified) }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 {{ form_row(form.read) }}
             </div>
         </div>
         <div class="row">
+            <div class="col-md-3">
+                {{ form_row(form.serieIndexGTE) }}
+            </div>
+            <div class="col-md-3">
+                {{ form_row(form.serieIndexLTE) }}
+            </div>
+
             <div class="col-md-3">
                 {{ form_row(form.publisher) }}
             </div>
             <div class="col-md-3">
                 {{ form_row(form.orderBy) }}
 
-            </div>
-            <div class="col-md-3">
-            </div>
-            <div class="col-md-3">
             </div>
         </div>
         {{ form_rest(form) }}

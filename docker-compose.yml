@@ -43,7 +43,6 @@ services:
       - mariadb:/var/lib/mysql
     networks:
       - default
-      - pontsun
 
 volumes:
   mariadb:

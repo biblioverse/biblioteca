@@ -9,6 +9,9 @@ class FilteredBookUrlGenerator
     public const FIELDS_DEFAULT_VALUE = [
         'title' => '',
         'authors' => [],
+        'authorsNot' => [],
+        'serieIndexLTE' => '',
+        'serieIndexGTE' => '',
         'tags' => [],
         'serie' => '',
         'publisher' => '',
@@ -52,7 +55,7 @@ class FilteredBookUrlGenerator
         foreach (self::FIELDS_DEFAULT_VALUE as $key => $value) {
             if (array_key_exists($key, $queryParams)) {
                 $value = $queryParams[$key];
-                if (($key === 'authors' || $key === 'tags') && is_string($value)) {
+                if (($key === 'authors' || $key === 'authorsNot' || $key === 'tags') && is_string($value)) {
                     $value = array_filter(explode(',', $value));
                 }
             }

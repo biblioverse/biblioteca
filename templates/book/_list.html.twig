@@ -44,9 +44,11 @@
                 {{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}
                 </div>
                 <div>
-                {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
+                    {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
 
-                <div class="w-25"> {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}</div>
+                    {% if book.serie is not null %}
+                        <div class="w-25"> {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}</div>
+                    {% endif %}
                     {{ component('FieldGuesser',{'book':book}) }}
                 </div>
             </td>
