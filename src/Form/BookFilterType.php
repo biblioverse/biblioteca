@@ -148,7 +148,7 @@ class BookFilterType extends AbstractType
 
                 foreach ($series as $key => $serie) {
                     if ($serie === 'no_serie') {
-                        $orModule->add('book.serie = \'[]\'');
+                        $orModule->add('book.serie is null');
                     } else {
                         $orModule->add('book.serie=:serie'.$key);
                         $qb->setParameter('serie'.$key, $serie);
