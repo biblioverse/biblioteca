@@ -45,9 +45,6 @@
                     <th>Serie</th><td>
                         <div>
                             {{ component('InlineEditBook', {'book':book, 'field':'serie', suggestions:suggestions}) }}
-                            {% if book.serie is not null %}
-                                <a href="{{ filter_book_url({'serie':book.serie}) }}"><i class="bi bi-box-arrow-right"></i></a>
-                            {% endif %}
                         </div>
                         {% if book.serie is not null %}
                             <div class="w-25 d-inline-block">

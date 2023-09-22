@@ -25,8 +25,12 @@
             {{ book.serie }} ({{ book.serieIndex }})
         </a>
         {% endif %}
+        {% if not book.verified %}
+            {{ component('InlineEditBook', {'book':book, 'field':'verified', suggestions:[]}) }}
+        {% endif %}
     </div>
     <div class="text-center">
         {{ include('book/_interaction.html.twig') }}
+
     </div>
 </div>

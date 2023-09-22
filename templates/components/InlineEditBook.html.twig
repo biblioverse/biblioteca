@@ -85,13 +85,24 @@
                 N°
             {% endif %}
 
-            {% if field=='authors' or field=='tags' %}
+            {% if field=='authors' %}
                 {% set authors = attribute(book, "get"~field) %}
                 {% for author in authors %}
-                    <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
+                    <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-decoration-none p-1">
                 <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
             </a>
                 {% endfor %}
+            {% elseif field=='tags' %}
+                {% set tags = attribute(book, "get"~field) %}
+                {% for tag in tags %}
+                    <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none p-1">
+                <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+            </a>
+                {% endfor %}
+            {% elseif field=='serie' and book.serie is not null %}
+                <a href="{{ filter_book_url({'serie':[book.serie]}) }}" class="text-decoration-none p-1">
+                     <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
+                </a>
             {% else %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}
