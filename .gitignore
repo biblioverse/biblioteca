@@ -9,7 +9,7 @@
 /.composer
 /vendor/
 docker-compose.override.yml
-
+/backups/*.sql
 /public/media/cache/*
 !/public/images/.gitkeep
 !/public/images/librairies

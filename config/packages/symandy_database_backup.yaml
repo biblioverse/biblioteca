@@ -1,0 +1,8 @@
+symandy_database_backup:
+  backups:
+    app:
+      connection:
+        url: "%env(DATABASE_URL)%"
+      strategy:
+          max_files: 5
+          backup_directory: "%kernel.project_dir%/backups"

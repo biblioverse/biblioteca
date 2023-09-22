@@ -23,4 +23,5 @@ return [
     Symfony\UX\Autocomplete\AutocompleteBundle::class => ['all' => true],
     Symfony\UX\StimulusBundle\StimulusBundle::class => ['all' => true],
     Andante\PageFilterFormBundle\AndantePageFilterFormBundle::class => ['all' => true],
+    Symandy\DatabaseBackupBundle\SymandyDatabaseBackupBundle::class => ['all' => true],
 ];
