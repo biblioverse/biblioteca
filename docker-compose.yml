@@ -3,7 +3,6 @@ version: '3'
 services:
   biblioteca:
     image: ghcr.io/biblioverse/biblioteca-docker:1.0.6
-    entrypoint: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
     ports:
       - "48480:8080"
     depends_on:
