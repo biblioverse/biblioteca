@@ -40,6 +40,9 @@ class AddBookToShelf extends AbstractController
         $shelfRepository = $entityManager->getRepository(Shelf::class);
 
         $this->shelves = $shelfRepository->findBy(['user' => $security->getUser()]);
+        $this->shelves = array_filter($this->shelves, static function ($item) {
+            return $item->getQueryString() === null;
+        });
     }
 
     #[LiveAction]
