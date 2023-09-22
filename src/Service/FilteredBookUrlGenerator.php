@@ -19,7 +19,7 @@ class FilteredBookUrlGenerator
         'picture' => '',
         'favorite' => '',
         'verified' => '',
-        'orderBy' => 'title',
+        'orderBy' => '',
         'submit' => '',
     ];
 
@@ -36,6 +36,9 @@ class FilteredBookUrlGenerator
         foreach ($values as $key => $value) {
             if (!array_key_exists($key, self::FIELDS_DEFAULT_VALUE)) {
                 throw new \RuntimeException('Invalid key '.$key);
+            }
+            if (is_array($value)) {
+                $value = implode(',', $value);
             }
             $params[$key] = $value;
         }

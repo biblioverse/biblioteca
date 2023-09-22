@@ -29,50 +29,43 @@
                 <tr>
                     <th>Title</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title', inline: true, suggestions:suggestions}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'title', suggestions:suggestions}) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Authors</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors', inline: false, suggestions:suggestions}) }}</td>
+                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors',  suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <th>Summary</th><td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'summary', inline: true, suggestions:suggestions}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'summary', suggestions:suggestions}) }}
                     </td>
                 </tr>
                 <tr>
                     <th>Serie</th><td>
                         <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie', inline: true, suggestions:suggestions}) }}
+                            {{ component('InlineEditBook', {'book':book, 'field':'serie', suggestions:suggestions}) }}
                             {% if book.serie is not null %}
                                 <a href="{{ filter_book_url({'serie':book.serie}) }}"><i class="bi bi-box-arrow-right"></i></a>
                             {% endif %}
                         </div>
                         {% if book.serie is not null %}
                             <div class="w-25 d-inline-block">
-                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', inline: true, suggestions:suggestions}) }}
+                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', suggestions:suggestions}) }}
                             </div>
                         {% endif %}
 
                     </td>
                 </tr>
                 <tr>
-                    <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', inline: true, suggestions:suggestions}) }}</td>
+                    <th>Publisher</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', suggestions:suggestions}) }}</td>
                 </tr>
 
                 <tr>
-                    <th>Tags</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', inline: false, suggestions:suggestions}) }}</td>
+                    <th>Tags</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
-                    <th>Publishdate</th><td>
-                        {% if book.publishDate is not null %}
-                        {{ book.publishDate|date('d.m.Y') }}
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', inline: true, suggestions:suggestions}) }}</td>
+                    <th>Verified</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>
                     <td colspan="2">

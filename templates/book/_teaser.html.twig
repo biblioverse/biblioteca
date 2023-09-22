@@ -11,11 +11,11 @@
     </div>
     </a>
     <div class="small text-muted">
-        <i class="bi bi-person-fill"></i></i>
+
 
         {% for author in book.authors %}
-            <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none">
-                {{ author }}
+            <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
+                <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
             </a>
         {% endfor %}
 

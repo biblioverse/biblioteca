@@ -80,6 +80,21 @@
             </form>
         {% else %}
 
+
+            {% if field=='serieIndex' %}
+                N°
+            {% endif %}
+
+            {% if field=='authors' or field=='tags' %}
+                {% set authors = attribute(book, "get"~field) %}
+                {% for author in authors %}
+                    <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
+                <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+            </a>
+                {% endfor %}
+            {% else %}
+                {{ attribute(book, "get"~field) }}
+            {% endif %}
         <button
             data-action="live#action"
             data-action-name="activateEditing"
@@ -87,19 +102,7 @@
             title="Click to edit!"
             style="  -webkit-user-select: text; -moz-user-select: text;-ms-user-select: text;user-select: text;"
         >
-            {% if field=='serieIndex' %}
-                N°
-            {% endif %}
-
-            {% if field=='authors' or field=='tags' %}
-                {{ attribute(book, "get"~field)|join(', ') }}
-            {% elseif inline %}
-                {{ attribute(book, "get"~field) }}
-            {% endif %}
-
-            {% if attribute(book, "get"~field)=='' or not inline %}
-                <i class="bi bi-pencil-fill"></i>
-            {% endif %}
+            <i class="bi bi-pencil-fill"></i>
         </button>
 
         {% if flashMessage %}

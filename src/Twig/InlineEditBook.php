@@ -36,9 +36,6 @@ class InlineEditBook extends AbstractController
     #[LiveProp()]
     public string $field;
 
-    #[LiveProp()]
-    public bool $inline = true;
-
     public ?string $flashMessage = null;
 
     #[LiveAction]

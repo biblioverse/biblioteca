@@ -33,6 +33,7 @@ class BookFilterType extends AbstractType
         $builder->add('serieIndexGTE', Type\SearchType::class, [
             'required' => false,
             'mapped' => false,
+            'label' => 'Index >=',
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
                     $qb->andWhere('book.serieIndex >= :indexGTE');
@@ -44,10 +45,10 @@ class BookFilterType extends AbstractType
         $builder->add('serieIndexLTE', Type\SearchType::class, [
             'required' => false,
             'mapped' => false,
-
+            'label' => 'Index <=',
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
-                    $qb->andWhere('book.serieIndex <= :indexLTE');
+                    $qb->andWhere('book.serieIndex <= :indexLTE or book.serieIndex is null');
                     $qb->setParameter('indexLTE', $searchValue);
                 }
             },
@@ -274,18 +275,18 @@ class BookFilterType extends AbstractType
                 'id' => 'id',
                 'serieIndex' => 'serieIndex',
             ],
-            'data' => 'created',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
-                $params = $qb->getParameters()->toArray();
-                $params = array_filter($params, static function ($param) {
-                    return $param->getName() === 'serie0';
-                });
-                if (count($params) > 0) {
-                    $orderByValue = 'serieIndex';
-                }
                 if ($orderByValue === null) {
-                    $orderByValue = 'created';
+                    $params = $qb->getParameters()->toArray();
+                    $params = array_filter($params, static function ($param) {
+                        return $param->getName() === 'serie0';
+                    });
+                    if (count($params) > 0) {
+                        $orderByValue = 'serieIndex';
+                    } else {
+                        $orderByValue = 'title';
+                    }
                 }
                 $qb->orderBy('book.'.$orderByValue, 'ASC');
                 $qb->addOrderBy('book.serieIndex', 'ASC');
