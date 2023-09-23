@@ -1,5 +1,11 @@
 {# @var book App\Entity\Book #}
-<div class=" m-1 mb-4">
+{% set read = false %}
+{% for interaction in book.bookInteractions %}
+    {% if interaction.user.id == app.user.id and interaction.finished %}
+        {% set read = true %}
+    {% endif %}
+{% endfor %}
+<div class=" m-1 mb-4" style="{{ read?'opacity:0.7;' }}">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
     <div class="book">
         <div class="book__cover" style="background-image:url('{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}');">
@@ -11,8 +17,6 @@
     </div>
     </a>
     <div class="small text-muted">
-
-
         {% for author in book.authors %}
             <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
                 <i class="bi bi-person-fill"></i>&nbsp;{{ author }}

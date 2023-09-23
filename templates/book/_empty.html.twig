@@ -1,0 +1,22 @@
+{# @var book App\Entity\Book #}
+<div class=" m-1 mb-4">
+    <div class="book">
+        <div class="book__cover" style="background-image:url('{{ asset('images/blank.jpg')|imagine_filter('thumb') }}');">
+            <div class="book__detail text-danger text-warning">
+                Missing book
+            </div>
+        </div>
+        <div class="book__page"></div>
+    </div>
+    <div class="small text-muted">
+        {% if serie %}
+            <br>
+            <i class="bi bi-list-ol"></i> <a href="{{ filter_book_url({'serie':serie}) }}" class="text-muted text-decoration-none">
+            {{ serie }} ({{ index }})
+        </a>
+        {% endif %}
+    </div>
+    <div class="text-center">
+
+    </div>
+</div>

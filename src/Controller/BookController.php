@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookSuggestions;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Request $request, Book $book, string $slug, BookSuggestions $bookSuggestions): Response
+    public function index(Request $request, Book $book, string $slug, BookSuggestions $bookSuggestions, BookRepository $bookRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -44,8 +45,29 @@ class BookController extends AbstractController
             ])
             ->getForm();
 
+        $serie = [];
+        $serieMax = 0;
+        if ($book->getSerie() !== null) {
+            $booksInSerie = $bookRepository->findBy(['serie' => $book->getSerie()], ['serieIndex' => 'ASC']);
+            foreach ($booksInSerie as $bookInSerie) {
+                $index = $bookInSerie->getSerieIndex();
+                if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
+                    $index = '?';
+                }
+                $serie[$index] = $serie[$index] ?? [];
+                $serie[$index][] = $bookInSerie;
+            }
+            $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));
+
+            $serieMax = max($keys);
+            dump($serieMax);
+        }
+
         return $this->render('book/index.html.twig', [
             'book' => $book,
+            'serie' => $serie,
+            'serieMax' => $serieMax,
+
             'suggestions' => $suggestions,
             'form' => $form->createView(),
         ]);
