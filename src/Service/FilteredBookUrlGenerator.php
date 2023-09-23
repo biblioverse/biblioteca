@@ -18,6 +18,7 @@ class FilteredBookUrlGenerator
         'read' => '',
         'picture' => '',
         'favorite' => '',
+        'extension' => '',
         'verified' => '',
         'orderBy' => '',
         'submit' => '',
