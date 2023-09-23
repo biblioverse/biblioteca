@@ -284,7 +284,7 @@ class Book
     public function getAuthors(): array
     {
         return array_map(static function ($item) {
-            return ucwords(strtolower($item, self::UCWORDS_SEPARATORS));
+            return ucwords(strtolower($item), self::UCWORDS_SEPARATORS);
         }, $this->authors);
     }
 
