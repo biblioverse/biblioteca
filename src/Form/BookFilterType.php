@@ -207,6 +207,25 @@ class BookFilterType extends AbstractType
             },
         ]);
 
+        $builder->add('extension', Type\ChoiceType::class, [
+            'choices' => [
+                'Any' => '',
+                'epub' => 'epub',
+                'cbr' => 'cbr',
+                'cbz' => 'cbz',
+                'pdf' => 'pdf',
+            ],
+            'required' => false,
+            'mapped' => false,
+            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
+
+                if ($readValue !== null) {
+                    $qb->andWhere($qb->expr()->like('book.extension', ':extension'));
+                    $qb->setParameter('extension', $readValue);
+                }
+            },
+        ]);
+
         $builder->add('favorite', Type\ChoiceType::class, [
             'choices' => [
                 'Any' => '',
