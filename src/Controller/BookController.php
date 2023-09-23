@@ -60,7 +60,6 @@ class BookController extends AbstractController
             $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));
 
             $serieMax = max($keys);
-            dump($serieMax);
         }
 
         return $this->render('book/index.html.twig', [
