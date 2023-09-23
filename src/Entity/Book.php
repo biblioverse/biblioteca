@@ -313,7 +313,7 @@ class Book
     public function removeAuthor(string $author): static
     {
         foreach ($this->authors as $key => $value) {
-            if ($value === $author) {
+            if (strtolower($value) === strtolower($author)) {
                 unset($this->authors[$key]);
             }
         }
