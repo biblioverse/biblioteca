@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
+    public const UCWORDS_SEPARATORS = " \t\r\n\f\v-.'";
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -282,9 +283,9 @@ class Book
      */
     public function getAuthors(): array
     {
-        return array_map(static function($item){
-            return ucwords(strtolower($item), " \t\r\n\f\v-.");
-        },$this->authors);
+        return array_map(static function ($item) {
+            return ucwords(strtolower($item, self::UCWORDS_SEPARATORS));
+        }, $this->authors);
     }
 
     /**
@@ -302,7 +303,7 @@ class Book
     public function addAuthor(string $author): static
     {
         if (!in_array($author, $this->authors, true) && '' !== $author) {
-            $this->authors[] = ucwords(strtolower($author), " \t\r\n\f\v-.");
+            $this->authors[] = ucwords(strtolower($author), self::UCWORDS_SEPARATORS);
         }
         $this->authors = array_values($this->authors);
 
