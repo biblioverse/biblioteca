@@ -218,7 +218,6 @@ class BookFilterType extends AbstractType
             'required' => false,
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
-
                 if ($readValue !== null && $readValue !== '') {
                     $qb->andWhere($qb->expr()->like('book.extension', ':extension'));
                     $qb->setParameter('extension', $readValue);
