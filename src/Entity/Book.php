@@ -282,7 +282,9 @@ class Book
      */
     public function getAuthors(): array
     {
-        return $this->authors;
+        return array_map(static function($item){
+            return ucwords(strtolower($item), " \t\r\n\f\v-.");
+        },$this->authors);
     }
 
     /**
@@ -300,7 +302,7 @@ class Book
     public function addAuthor(string $author): static
     {
         if (!in_array($author, $this->authors, true) && '' !== $author) {
-            $this->authors[] = $author;
+            $this->authors[] = ucwords(strtolower($author), " \t\r\n\f\v-.");
         }
         $this->authors = array_values($this->authors);
 
@@ -314,6 +316,7 @@ class Book
                 unset($this->authors[$key]);
             }
         }
+
         $this->authors = array_values($this->authors);
 
         return $this;

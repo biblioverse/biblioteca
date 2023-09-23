@@ -71,8 +71,8 @@ class BookFilterType extends AbstractType
                 $orModule = $qb->expr()->orX();
 
                 foreach ($authors as $key => $author) {
-                    $orModule->add('JSON_CONTAINS(book.authors, :author'.$key.')=1');
-                    $qb->setParameter('author'.$key, json_encode([$author]));
+                    $orModule->add('JSON_CONTAINS(lower(book.authors), :author'.$key.')=1');
+                    $qb->setParameter('author'.$key, json_encode([strtolower($author)]));
                 }
                 $qb->andWhere($orModule);
             },
@@ -96,8 +96,8 @@ class BookFilterType extends AbstractType
                 $orModule = $qb->expr()->orX();
 
                 foreach ($authors as $key => $author) {
-                    $orModule->add('JSON_CONTAINS(book.authors, :authorNot'.$key.')=0');
-                    $qb->setParameter('authorNot'.$key, json_encode([$author]));
+                    $orModule->add('JSON_CONTAINS(lower(book.authors), :authorNot'.$key.')=0');
+                    $qb->setParameter('authorNot'.$key, json_encode([strtolower($author)]));
                 }
                 $qb->andWhere($orModule);
             },
