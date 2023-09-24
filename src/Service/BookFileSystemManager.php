@@ -405,7 +405,7 @@ class BookFileSystemManager
         sort($entries);
 
         $entries = array_values(array_filter($entries, static function ($entry) {
-            return str_ends_with($entry, '.jpg') || str_ends_with($entry, '.jpeg') || str_ends_with($entry, '.png');
+            return str_ends_with($entry, '.jpg') || str_ends_with($entry, '.JPG') || str_ends_with($entry, '.jpeg') || str_ends_with($entry, '.png');
         }));
         if (count($entries) === 0) {
             $this->logger->error('no errors');
