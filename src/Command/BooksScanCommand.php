@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookManager;
@@ -102,8 +103,12 @@ class BooksScanCommand extends Command
         $progressBar = new ProgressBar($output, count($unprocessedBooks));
         $progressBar->start();
         foreach ($unprocessedBooks as $book) {
+            /* @var Book $book */
             $progressBar->advance();
-            $this->entityManager->remove($book);
+            if (!str_starts_with($book->getTitle(), '[Missing File] ')) {
+                $book->setTitle('[Missing File] '.$book->getTitle());
+                $this->entityManager->flush();
+            }
         }
         $progressBar->finish();
         $io->writeln('Removing books...');
