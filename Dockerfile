@@ -1,1 +1,1 @@
-FROM ghcr.io/biblioverse/biblioteca-docker:1.0.7
+FROM ghcr.io/biblioverse/biblioteca-docker:1.0.8
