@@ -22,8 +22,6 @@ class LoginController extends AbstractController
             // parameters usually defined in Symfony login forms
             'error' => $error,
             'last_username' => $lastUsername,
-
-
         ]);
     }
 

@@ -39,13 +39,16 @@ class UserController extends AbstractController
             'help' => 'Required for new users',
         ]);
 
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            if (!is_string($plainPassword)) {
+                throw new \RuntimeException('Password must be a string');
+            }
             $user->setPassword($this->passwordHasher->hashPassword(
                 $user,
-                $form->get('plainPassword')->getData()
+                $plainPassword
             ));
             $entityManager->persist($user);
             $entityManager->flush();
@@ -66,10 +69,15 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('plainPassword')->getData() !== null) {
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            if ($plainPassword !== null) {
+                if (!is_string($plainPassword)) {
+                    throw new \RuntimeException('Password must be a string');
+                }
                 $user->setPassword($this->passwordHasher->hashPassword(
                     $user,
-                    $form->get('plainPassword')->getData()
+                    $plainPassword
                 ));
             }
 
@@ -87,7 +95,11 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        $token = $request->request->get('_token');
+        if (!is_string($token)) {
+            throw new \RuntimeException('Token must be a string');
+        }
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $token)) {
             $entityManager->remove($user);
             $entityManager->flush();
         }

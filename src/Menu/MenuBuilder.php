@@ -39,7 +39,7 @@ final class MenuBuilder
 
         $user = $this->security->getUser();
 
-        if($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
         }
 
