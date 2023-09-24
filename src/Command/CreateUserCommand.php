@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
-    name: 'app:create-user',
+    name: 'app:create-admin-user',
     description: 'Add a short description for your command',
 )]
 class CreateUserCommand extends Command
@@ -61,7 +61,7 @@ class CreateUserCommand extends Command
             $plaintextPassword
         );
         $user->setPassword($hashedPassword);
-        $user->setEmail('chauderon@librairiebasta.ch');
+        $user->setRoles(['ROLE_ADMIN']);
 
         $this->userRepository->save($user, true);
 

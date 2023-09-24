@@ -39,6 +39,10 @@ final class MenuBuilder
 
         $user = $this->security->getUser();
 
+        if($this->security->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+        }
+
         if ($user instanceof User && $user->getShelves()->count() > 0) {
             $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
             foreach ($user->getShelves() as $shelf) {

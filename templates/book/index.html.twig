@@ -75,7 +75,7 @@
 
             </table>
 
-            {% if not book.verified %}
+            {% if not book.verified and is_granted('EDIT', book) %}
             <div class="row">
 
                 {% if suggestions.image|length >0 %}

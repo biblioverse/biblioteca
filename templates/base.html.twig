@@ -1,71 +1,54 @@
-<!doctype html>
-<html lang="{{ app.locale }}" data-bs-theme="auto">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon"
-              href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+{% extends 'bare.html.twig' %}
+{% block content %}
+<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="{{ path('app_homepage') }}">Biblioteca</a>
 
-        <title>{{ block('title')|striptags }} - Biblioteca</title>
+    <ul class="navbar-nav flex-row d-md-none">
+        <li class="nav-item text-nowrap">
+            <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <i class="bi bi-list"></i>
+            </button>
+        </li>
+    </ul>
+</header>
 
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="{{ path('app_homepage') }}">Biblioteca</a>
+<nav class="container-fluid">
+    <div class="row">
+        <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+            <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu"
+                 aria-labelledby="sidebarMenuLabel">
+                <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
 
-            <ul class="navbar-nav flex-row d-md-none">
-                <li class="nav-item text-nowrap">
-                    <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
-                            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                            <i class="bi bi-list"></i>
-                    </button>
-                </li>
-            </ul>
-        </header>
-
-        <nav class="container-fluid">
-            <div class="row">
-                <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
-                    <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu"
-                         aria-labelledby="sidebarMenuLabel">
-                        <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-
-                            {{ knp_menu_render('main',{'currentClass':'active'}) }}
-                            <div class="p-2 text-center text-muted w-100">
-                                {{ component('AddNewShelf',{'user':app.user,'shelf':null}) }}
-                            </div>
-                        </div>
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="sidebarMenuLabel">Biblioteca</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
-                                    aria-label="Close"></button>
-                        </div>
+                    {{ knp_menu_render('main',{'currentClass':'active'}) }}
+                    <div class="p-2 text-center text-muted w-100">
+                        {{ component('AddNewShelf',{'user':app.user,'shelf':null}) }}
                     </div>
                 </div>
-
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">{% block title %}Page{% endblock %}</h1>
-                    </div>
-                    {% for type, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-
-                    {% block body %}{% endblock %}
-
-                </main>
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarMenuLabel">Biblioteca</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
+                            aria-label="Close"></button>
+                </div>
             </div>
-        </nav>
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </body>
-</html>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{% block title %}Page{% endblock %}</h1>
+            </div>
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+
+        </main>
+    </div>
+</nav>
+{% endblock %}

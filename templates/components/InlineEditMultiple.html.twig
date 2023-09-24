@@ -1,5 +1,5 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
-{% if isEditing %}
+{% if isEditing and is_granted('ROLE_ADMIN') %}
     <form class="input-group">
             <select
                 multiple
@@ -18,7 +18,7 @@
                 <i class="bi bi-journal-check"></i> Override {{ field }} for {{ books|length }} books
             </button>
     </form>
-{% else %}
+{% elseif is_granted('ROLE_ADMIN') %}
 
     <button
         data-action="live#action"

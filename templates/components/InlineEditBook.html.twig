@@ -1,5 +1,5 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
-{% if isEditing or field=='verified' %}
+{% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
             <form>
                 <div class="input-group">
 
@@ -106,22 +106,24 @@
             {% else %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}
-        <button
-            data-action="live#action"
-            data-action-name="activateEditing"
-            class="btn m-0 p-0"
-            title="Click to edit!"
-            style="  -webkit-user-select: text; -moz-user-select: text;-ms-user-select: text;user-select: text;"
-        >
-            <i class="bi bi-pencil-fill"></i>
-        </button>
+            {% if is_granted('EDIT', book) %}
+                <button
+                    data-action="live#action"
+                    data-action-name="activateEditing"
+                    class="btn m-0 p-0"
+                    title="Click to edit!"
+                    style="  -webkit-user-select: text; -moz-user-select: text;-ms-user-select: text;user-select: text;"
+                >
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+            {% endif %}
 
         {% if flashMessage %}
                 <i class="bi bi-check alert-remove"></i>
         {% endif %}
     {% endif %}
 
-    {% if not book.verified and suggestions[field] is defined %}
+    {% if not book.verified and suggestions[field] is defined and is_granted('EDIT', book) %}
         {% for key,suggestion in  suggestions[field] %}
             {% if suggestion != attribute(book, "get"~field) %}
             <button

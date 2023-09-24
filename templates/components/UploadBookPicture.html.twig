@@ -1,5 +1,5 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
-    {% if isEditing %}
+    {% if isEditing and is_granted('EDIT', book) %}
         <div class="btn-group mt-2">
 
             <input type="file" name="cover" class="form-control"/>
@@ -7,7 +7,7 @@
                 Upload
             </button>
         </div>
-    {% else %}
+    {% elseif is_granted('EDIT', book) %}
 
         <button
             data-action="live#action"
