@@ -95,6 +95,19 @@ class BookController extends AbstractController
         ], 301);
     }
 
+    #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
+    public function extractCover(Book $book, BookSuggestions $bookSuggestions, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
+    {
+        $book = $fileSystemManager->extractCover($book);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_book', [
+            'book' => $book->getId(),
+            'slug' => $book->getSlug(),
+        ], 301);
+    }
+
     #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
     public function deleteBook(int $id, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {

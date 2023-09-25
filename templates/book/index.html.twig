@@ -91,8 +91,11 @@
                 {% endfor %}
                 {% endif %}
 
-                <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">Search cover on google images</a>
-                <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'refresh':true}) }}">Get Suggestions from Books API</a>
+                <div class="btn-group btn-group-sm my-3">
+                    <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">Search cover on google images</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'refresh':true}) }}">Get Suggestions from Books API</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ path('app_extractCover', {'id':book.id}) }}">Try to extract cover from file</a>
+                </div>
             </div>
             {% endif %}
             {% if serie|length > 0 %}
