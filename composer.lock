@@ -8814,7 +8814,7 @@
         },
         {
             "name": "symfony/stimulus-bundle",
-            "version": "v2.11.1",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stimulus-bundle.git",
@@ -8862,7 +8862,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.11.1"
+                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.12.0"
             },
             "funding": [
                 {
@@ -13802,5 +13802,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
