@@ -18,6 +18,7 @@ class BookFileSystemManager
         '*.epub', '*.cbr', '*.cbz', '*.pdf', '*.mobi',
     ];
 
+    public const VALID_COVER_EXTENSIONS=['jpg','jpeg','png','gif'];
     public function __construct(private KernelInterface $appKernel, private SluggerInterface $slugger, private LoggerInterface $logger)
     {
     }
@@ -390,7 +391,6 @@ class BookFileSystemManager
 
         return $book;
     }
-
     private function extractFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
     {
         $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
@@ -405,7 +405,13 @@ class BookFileSystemManager
         sort($entries);
 
         $entries = array_values(array_filter($entries, static function ($entry) {
-            return str_ends_with($entry, '.jpg') || str_ends_with($entry, '.JPG') || str_ends_with($entry, '.jpeg') || str_ends_with($entry, '.png');
+            foreach (self::VALID_COVER_EXTENSIONS as $extension) {
+                if (str_ends_with(strtolower($entry), '.'.$extension)) {
+                    return true;
+                }
+            }
+
+            return false;
         }));
         if (count($entries) === 0) {
             $this->logger->error('no errors');
@@ -451,8 +457,10 @@ class BookFileSystemManager
 
         $entries = [];
         foreach ($archive->getEntries() as $entry) {
-            if (str_contains($entry->getPath(), '.jpg') || str_contains($entry->getPath(), '.jpeg')) {
-                $entries[] = $entry->getPath();
+            foreach (self::VALID_COVER_EXTENSIONS as $extension) {
+                if (str_ends_with(strtolower($entry->getPath()), '.'.$extension)) {
+                    $entries[] = $entry->getPath();
+                }
             }
         }
         ksort($entries);
