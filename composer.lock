@@ -2449,16 +2449,16 @@
         },
         {
             "name": "kiwilan/php-archive",
-            "version": "2.1.01",
+            "version": "2.1.02",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-archive.git",
-                "reference": "e43ca65d1f57e895a6ea2bdfc24951daee36e084"
+                "reference": "f65f9b39afb1337b958a54915534fd9f6de88eaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-archive/zipball/e43ca65d1f57e895a6ea2bdfc24951daee36e084",
-                "reference": "e43ca65d1f57e895a6ea2bdfc24951daee36e084",
+                "url": "https://api.github.com/repos/kiwilan/php-archive/zipball/f65f9b39afb1337b958a54915534fd9f6de88eaa",
+                "reference": "f65f9b39afb1337b958a54915534fd9f6de88eaa",
                 "shasum": ""
             },
             "require": {
@@ -2514,7 +2514,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-archive/issues",
-                "source": "https://github.com/kiwilan/php-archive/tree/v2.1.01"
+                "source": "https://github.com/kiwilan/php-archive/tree/v2.1.02"
             },
             "funding": [
                 {
@@ -2522,20 +2522,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-30T11:28:56+00:00"
+            "time": "2023-09-20T12:18:44+00:00"
         },
         {
             "name": "kiwilan/php-audio",
-            "version": "3.0.0",
+            "version": "3.0.02",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-audio.git",
-                "reference": "af14b61c63882c8e73c016848609627ea1ae0aaa"
+                "reference": "4b7557e4a4bef15a283625b20aff86a3b6c78995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-audio/zipball/af14b61c63882c8e73c016848609627ea1ae0aaa",
-                "reference": "af14b61c63882c8e73c016848609627ea1ae0aaa",
+                "url": "https://api.github.com/repos/kiwilan/php-audio/zipball/4b7557e4a4bef15a283625b20aff86a3b6c78995",
+                "reference": "4b7557e4a4bef15a283625b20aff86a3b6c78995",
                 "shasum": ""
             },
             "require": {
@@ -2596,7 +2596,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-audio/issues",
-                "source": "https://github.com/kiwilan/php-audio/tree/3.0.0"
+                "source": "https://github.com/kiwilan/php-audio/tree/v3.0.02"
             },
             "funding": [
                 {
@@ -2604,26 +2604,26 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-08T13:45:17+00:00"
+            "time": "2023-09-21T07:13:57+00:00"
         },
         {
             "name": "kiwilan/php-ebook",
-            "version": "2.1.02",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-ebook.git",
-                "reference": "5917e47a9a6a88884cfed433a7d7264a58c0e2ac"
+                "reference": "884a43cf40ba49e80b0a07009fbe5e124b2ba18f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/5917e47a9a6a88884cfed433a7d7264a58c0e2ac",
-                "reference": "5917e47a9a6a88884cfed433a7d7264a58c0e2ac",
+                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/884a43cf40ba49e80b0a07009fbe5e124b2ba18f",
+                "reference": "884a43cf40ba49e80b0a07009fbe5e124b2ba18f",
                 "shasum": ""
             },
             "require": {
-                "kiwilan/php-archive": "^2.1.01",
-                "kiwilan/php-audio": "^3.0.0",
-                "kiwilan/php-xml-reader": "^1.0.1",
+                "kiwilan/php-archive": "^2.1.02",
+                "kiwilan/php-audio": "^3.0.01",
+                "kiwilan/php-xml-reader": "^1.0.11",
                 "php": "^8.1"
             },
             "require-dev": {
@@ -2650,10 +2650,13 @@
                     "role": "Developer"
                 }
             ],
-            "description": "PHP package to read metadata and extract covers from eBooks (.epub, .cbz, .cbr, .cb7, .cbt, .pdf) and audiobooks (.mp3, .m4a, .m4b, .flac, .ogg).",
+            "description": "PHP package to read metadata and extract covers from eBooks, comics and audiobooks.",
             "homepage": "https://github.com/kiwilan/php-ebook",
             "keywords": [
                 "CBA",
+                "audiobook",
+                "azw",
+                "azw3",
                 "book",
                 "calibre",
                 "cb7",
@@ -2668,14 +2671,16 @@
                 "epub",
                 "epub2",
                 "epub3",
+                "fb2",
                 "metadata",
+                "mobi",
                 "opf",
                 "pdf",
                 "php"
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-ebook/issues",
-                "source": "https://github.com/kiwilan/php-ebook/tree/v2.1.02"
+                "source": "https://github.com/kiwilan/php-ebook/tree/v2.2.0"
             },
             "funding": [
                 {
@@ -2683,20 +2688,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-30T11:40:15+00:00"
+            "time": "2023-09-24T13:51:32+00:00"
         },
         {
             "name": "kiwilan/php-xml-reader",
-            "version": "1.0.1",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-xml-reader.git",
-                "reference": "6b5df8984deb931db1127f61d0fb1bd2cefbb159"
+                "reference": "c271326317195cbcfb7ebef74e7ecf3dce59ce26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-xml-reader/zipball/6b5df8984deb931db1127f61d0fb1bd2cefbb159",
-                "reference": "6b5df8984deb931db1127f61d0fb1bd2cefbb159",
+                "url": "https://api.github.com/repos/kiwilan/php-xml-reader/zipball/c271326317195cbcfb7ebef74e7ecf3dce59ce26",
+                "reference": "c271326317195cbcfb7ebef74e7ecf3dce59ce26",
                 "shasum": ""
             },
             "require": {
@@ -2733,7 +2738,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-xml-reader/issues",
-                "source": "https://github.com/kiwilan/php-xml-reader/tree/1.0.1"
+                "source": "https://github.com/kiwilan/php-xml-reader/tree/v1.0.11"
             },
             "funding": [
                 {
@@ -2741,7 +2746,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-10T12:40:13+00:00"
+            "time": "2023-09-20T10:38:26+00:00"
         },
         {
             "name": "knplabs/knp-components",
@@ -4579,16 +4584,16 @@
         },
         {
             "name": "spatie/temporary-directory",
-            "version": "2.1.2",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/temporary-directory.git",
-                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831"
+                "reference": "efc258c9f4da28f0c7661765b8393e4ccee3d19c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/0c804873f6b4042aa8836839dca683c7d0f71831",
-                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831",
+                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/efc258c9f4da28f0c7661765b8393e4ccee3d19c",
+                "reference": "efc258c9f4da28f0c7661765b8393e4ccee3d19c",
                 "shasum": ""
             },
             "require": {
@@ -4624,7 +4629,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/temporary-directory/issues",
-                "source": "https://github.com/spatie/temporary-directory/tree/2.1.2"
+                "source": "https://github.com/spatie/temporary-directory/tree/2.2.0"
             },
             "funding": [
                 {
@@ -4636,7 +4641,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-04-28T07:47:42+00:00"
+            "time": "2023-09-25T07:13:36+00:00"
         },
         {
             "name": "symandy/database-backup-bundle",
@@ -13802,5 +13807,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
