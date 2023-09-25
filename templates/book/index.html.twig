@@ -100,7 +100,7 @@
             {% endif %}
             {% if serie|length > 0 %}
                 <div>
-                    {% if serieMax>1 %}
+                    {% if serieMax>=1 %}
                         <h5>Books in serie</h5>
                         <div class="row">
                             {% for index in 1..serieMax %}
