@@ -100,26 +100,28 @@
             {% endif %}
             {% if serie|length > 0 %}
                 <div>
-                    <h5>Books in serie</h5>
-                    <div class="row">
-                    {% for index in 1..serieMax %}
-                        <div class="col-4 col-md-2">
-                            {% if (serie[index] is not defined or serie[index]|length>1) %}
-                                <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
-                                {% if (serie[index] is not defined) %}Missing book{% endif %}
-                                {% if (serie[index] is defined and serie[index]|length>1) %}Multiple books with same index{% endif %}
-                                </span>
-                            {% endif %}
-                            {% if serie[index] is defined %}
-                                {% for indexBook in serie[index] %}
-                                        {% include 'book/_teaser.html.twig' with {book:indexBook} %}
-                                {% endfor %}
-                            {% else %}
-                                    {% include 'book/_empty.html.twig' with {serie:book.serie, index:index} %}
-                            {% endif %}
+                    {% if serieMax>1 %}
+                        <h5>Books in serie</h5>
+                        <div class="row">
+                            {% for index in 1..serieMax %}
+                                <div class="col-4 col-md-2">
+                                    {% if (serie[index] is not defined or serie[index]|length>1) %}
+                                        <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
+                                        {% if (serie[index] is not defined) %}Missing book{% endif %}
+                                        {% if (serie[index] is defined and serie[index]|length>1) %}Multiple books with same index{% endif %}
+                                        </span>
+                                    {% endif %}
+                                    {% if serie[index] is defined %}
+                                        {% for indexBook in serie[index] %}
+                                                {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                                        {% endfor %}
+                                    {% else %}
+                                            {% include 'book/_empty.html.twig' with {serie:book.serie, index:index} %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                    </div>
+                    {% endif %}
                     {% if serie['?'] is defined %}
                         <h5>Other Books</h5>
                         <div class="row">
