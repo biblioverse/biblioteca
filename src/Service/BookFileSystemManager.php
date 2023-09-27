@@ -18,7 +18,8 @@ class BookFileSystemManager
         '*.epub', '*.cbr', '*.cbz', '*.pdf', '*.mobi',
     ];
 
-    public const VALID_COVER_EXTENSIONS=['jpg','jpeg','png','gif'];
+    public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif'];
+
     public function __construct(private KernelInterface $appKernel, private SluggerInterface $slugger, private LoggerInterface $logger)
     {
     }
@@ -391,6 +392,7 @@ class BookFileSystemManager
 
         return $book;
     }
+
     private function extractFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
     {
         $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');

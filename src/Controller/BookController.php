@@ -64,11 +64,13 @@ class BookController extends AbstractController
             }
         }
 
+        $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
+
         return $this->render('book/index.html.twig', [
             'book' => $book,
             'serie' => $serie,
             'serieMax' => $serieMax,
-
+            'sameAuthor' => $sameAuthorBooks,
             'suggestions' => $suggestions,
             'form' => $form->createView(),
         ]);
