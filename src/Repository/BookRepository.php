@@ -53,7 +53,7 @@ class BookRepository extends ServiceEntityRepository
             return [];
         }
 
-        $items = array_filter($results, static fn ($result) => $result->getId() !== $book->getId());
+        $items = array_filter($results, static fn ($result) => $result->getId() !== $book->getId() && ($result->getSerie() === null || $book->getSerie() !== $result->getSerie()));
 
         if (count($items) === 0) {
             return [];
