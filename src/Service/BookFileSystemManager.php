@@ -98,9 +98,9 @@ class BookFileSystemManager
      */
     public function getFileChecksum(\SplFileInfo $file): string
     {
-        $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
+        $checkSum=sha1_file($file->getRealPath());
 
-        if (null === $checkSum || false === $checkSum) {
+        if (false === $checkSum) {
             throw new \RuntimeException('Could not calculate file Checksum');
         }
 
@@ -421,6 +421,8 @@ class BookFileSystemManager
             return $book;
         }
         $cover = current($entries);
+        $expl = explode('.', $cover);
+        $ext = end($expl);
 
         $expl = explode('.', $cover);
         $coverFile = explode('/', $cover);
@@ -428,18 +430,36 @@ class BookFileSystemManager
         $ext = end($expl);
         $book->setImageExtension($ext);
 
-        shell_exec('unrar e -ep "'.$bookFile->getRealPath().'" "'.$cover.'" -op"/tmp/" -y');
-
         $filesystem = new Filesystem();
+        $filesystem->mkdir('/tmp/cover');
+
+        shell_exec('unrar e -ep '.escapeshellarg($bookFile->getRealPath()).' '.escapeshellarg($cover).' -op"/tmp/cover" -y');
+
+        $finder = new Finder();
+        $finder->in('/tmp/cover')->name('*')->files();
+
+        foreach ($finder->getIterator() as $item){
+            $file=$item;
+            $filesystem->rename(
+                $item->getRealPath(),
+                '/tmp/cover/cover.'.$ext,
+                true);
+            $file = new \SplFileInfo('/tmp/cover/cover.'.$ext);
+        }
+
+        if($file===null){
+            return $book;
+        }
+
         $filesystem->mkdir($this->getCalculatedImagePath($book, true));
         try {
-            $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$coverFile));
+            $checksum = $this->getFileChecksum($file);
         } catch (\Exception $e) {
             $this->logger->error('Could not calculate checksum', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
             $checksum = md5(''.time());
         }
         $filesystem->rename(
-            '/tmp/'.$coverFile,
+            $file->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
             true);
 
@@ -465,21 +485,33 @@ class BookFileSystemManager
                 }
             }
         }
-        ksort($entries);
-
         sort($entries);
 
         if (count($entries) === 0) {
             return $book;
         }
 
-        $archive->setOutputDirectory('/tmp')->extractEntry($entries[0]); // extract the archive
-
         $filesystem = new Filesystem();
+
+        $filesystem->mkdir('/tmp/cover');
+
+        $archive->setOutputDirectory('/tmp/cover')->extractEntry($entries[0]); // extract the archive
+
+        $finder = new Finder();
+        $finder->in('/tmp/cover')->name('*')->files();
+
+        $item=null;
+        foreach ($finder->getIterator() as $item){
+            $file=$item;
+        }
+        if($item===null){
+            return $book;
+        }
+
         $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-        $checksum = $this->getFileChecksum(new \SplFileInfo('/tmp/'.$entries[0]));
+        $checksum = $this->getFileChecksum($item);
         $filesystem->rename(
-            '/tmp/'.$entries[0],
+            $item->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
             true);
 
