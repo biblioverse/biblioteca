@@ -98,7 +98,7 @@ class BookFileSystemManager
      */
     public function getFileChecksum(\SplFileInfo $file): string
     {
-        $checkSum=sha1_file($file->getRealPath());
+        $checkSum = sha1_file($file->getRealPath());
 
         if (false === $checkSum) {
             throw new \RuntimeException('Could not calculate file Checksum');
@@ -438,8 +438,8 @@ class BookFileSystemManager
         $finder = new Finder();
         $finder->in('/tmp/cover')->name('*')->files();
 
-        foreach ($finder->getIterator() as $item){
-            $file=$item;
+        $file = null;
+        foreach ($finder->getIterator() as $item) {
             $filesystem->rename(
                 $item->getRealPath(),
                 '/tmp/cover/cover.'.$ext,
@@ -447,7 +447,7 @@ class BookFileSystemManager
             $file = new \SplFileInfo('/tmp/cover/cover.'.$ext);
         }
 
-        if($file===null){
+        if ($file === null) {
             return $book;
         }
 
@@ -500,11 +500,13 @@ class BookFileSystemManager
         $finder = new Finder();
         $finder->in('/tmp/cover')->name('*')->files();
 
-        $item=null;
-        foreach ($finder->getIterator() as $item){
-            $file=$item;
+        $file = null;
+
+        foreach ($finder->getIterator() as $item) {
+            $file = $item;
         }
-        if($item===null){
+
+        if ($file === null) {
             return $book;
         }
 
