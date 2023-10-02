@@ -21,6 +21,7 @@
         "kiwilan/php-ebook": "^2.0",
         "knplabs/knp-markdown-bundle": "^1.10",
         "knplabs/knp-menu-bundle": "^3.2",
+        "acseo/typesense-bundle": "dev-master",
         "knplabs/knp-paginator-bundle": "^6.2",
         "liip/imagine-bundle": "^2.10",
         "phpdocumentor/reflection-docblock": "^5.3",
@@ -131,6 +132,12 @@
             "require": "^6.2"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/SergioMendolia/TypesenseBundle"
+        }
+    ],
     "require-dev": {
         "roave/security-advisories": "dev-latest"
         ,

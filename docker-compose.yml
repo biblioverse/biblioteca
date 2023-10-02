@@ -46,8 +46,19 @@ services:
     networks:
       - default
 
+  typesense:
+      image: typesense/typesense:0.25.1
+      restart: on-failure
+      ports:
+        - 8983
+        - "8108:8108"
+      volumes:
+        - searchdata:/data
+      command: '--data-dir /data --api-key=xyz --enable-cors'
+
 volumes:
   mariadb:
+  searchdata:
 
 networks:
   pontsun:

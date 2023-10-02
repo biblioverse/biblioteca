@@ -7,17 +7,12 @@
     >
 
     {% if computed.books|length > 0 %}
-        <ul data-loading="addClass(opacity-50)" class="position-absolute bg-dark-subtle text-light w-100 p-2">
+        <ul data-loading="addClass(opacity-50)" class="position-absolute bg-dark-subtle text-light w-100 vh-100 overflow-scroll p-2">
             {% for book in computed.books %}
                 <li class="p-1">
                     {{ include('book/_search.html.twig') }}
                 </li>
             {% endfor %}
-            {% if computed.books|length == 5 %}
-                <li class="p-1">
-                    <a href="{{ path('app_search', {'query':query}) }}">View all results...</a>
-                </li>
-            {% endif %}
         </ul>
     {% endif %}
 </div>

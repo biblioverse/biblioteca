@@ -19,6 +19,9 @@ security:
             false
         main:
           lazy: true
+          remember_me:
+            secret: '%kernel.secret%' # required
+            lifetime: 604800 # 1 week in seconds
           provider: app_user_provider
           logout:
             path: app_logout

@@ -1,0 +1,46 @@
+# config/packages/acseo_typesense.yml
+acseo_typesense:
+  # Typesense host settings
+  typesense:
+    url: '%env(resolve:TYPESENSE_URL)%'
+    key: '%env(resolve:TYPESENSE_KEY)%'
+  collections:
+    books:
+      entity: 'App\Entity\Book'
+      fields:
+        id:
+          name: id
+          type: primary
+        title:
+          name: title
+          type: string
+        sortable_id:
+          entity_attribute: id             # Entity attribute name forced
+          name: sortable_id                # Typesense field name
+          type: int32
+        serie:
+          name: serie
+          type: string
+          optional: true
+        publisher:
+          name: publisher
+          type: string
+          optional: true
+        extension:
+          name: extension
+          type: string
+        authors:
+          name: authors
+          type: array
+        tags:
+          name: tags
+          type: array
+          optional: true
+      default_sorting_field: sortable_id
+      symbols_to_index: ['+']
+      finders:
+        books_autocomplete:
+          finder_parameters:
+            query_by: title,serie,publisher,extension,authors,tags
+            limit: 10
+            num_typos: 2
