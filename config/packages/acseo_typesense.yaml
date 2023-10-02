@@ -31,10 +31,10 @@ acseo_typesense:
           type: string
         authors:
           name: authors
-          type: array
+          type: collection
         tags:
           name: tags
-          type: array
+          type: collection
           optional: true
       default_sorting_field: sortable_id
       symbols_to_index: ['+']
