@@ -3,9 +3,26 @@
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} {{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 
 {% block body %}
+<style>
+    .bg-cover {
+        position: relative;
+    }
 
-<div class="container">
-    <div class="row">
+    .bg-cover::before {
+        content: "";
+        position: absolute;
+        opacity:0.2;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}");
+        background-size: cover;
+        filter: blur(50px);
+    }
+</style>
+
+    <div class="row bg-cover">
         <div class="col-md-3">
             {% if book.imageFilename is not null %}
                 <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="card-img-top w-100" alt="Picture for {{ book.title }}">
@@ -149,6 +166,5 @@
             {{ form(form) }}
         </div>
     </div>
-</div>
 
 {% endblock %}
