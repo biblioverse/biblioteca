@@ -287,14 +287,20 @@ class BookFilterType extends AbstractType
 
         $builder->add('orderBy', Type\ChoiceType::class, [
             'choices' => [
-                'title' => 'title',
-                'created' => 'created',
-                'updated' => 'updated',
-                'id' => 'id',
-                'serieIndex' => 'serieIndex',
+                'created (ASC)' => 'created-asc',
+                'created (DESC)' => 'created-desc',
+                'title (ASC)' => 'title-asc',
+                'title (DESC)' => 'title-desc',
+                'updated (ASC)' => 'updated-asc',
+                'updated (DESC)' => 'updated-desc',
+                'id (ASC)' => 'id-asc',
+                'id (DESC)' => 'id-desc',
+                'serieIndex (ASC)' => 'serieIndex-asc',
+                'serieIndex (DESC)' => 'serieIndex-desc',
             ],
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
+                $direction = 'ASC';
                 if ($orderByValue === null) {
                     $params = $qb->getParameters()->toArray();
                     $params = array_filter($params, static function ($param) {
@@ -303,10 +309,14 @@ class BookFilterType extends AbstractType
                     if (count($params) > 0) {
                         $orderByValue = 'serieIndex';
                     } else {
-                        $orderByValue = 'title';
+                        $orderByValue = 'created';
+                        $direction = 'DESC';
                     }
+                }else {
+                    [$orderByValue, $direction] = explode('-', $orderByValue);
                 }
-                $qb->orderBy('book.'.$orderByValue, 'ASC');
+
+                $qb->orderBy('book.'.$orderByValue, $direction);
                 $qb->addOrderBy('book.serieIndex', 'ASC');
                 $qb->addOrderBy('book.id', 'ASC');
             },
