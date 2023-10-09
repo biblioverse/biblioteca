@@ -312,7 +312,7 @@ class BookFilterType extends AbstractType
                         $orderByValue = 'created';
                         $direction = 'DESC';
                     }
-                }else {
+                } else {
                     [$orderByValue, $direction] = explode('-', $orderByValue);
                 }
 

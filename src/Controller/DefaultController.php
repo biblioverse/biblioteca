@@ -23,8 +23,9 @@ class DefaultController extends AbstractController
 
         $form = $this->createAndHandleFilter(BookFilterType::class, $qb, $request);
 
-        if($request->getQueryString()===null){
+        if ($request->getQueryString() === null) {
             $modifiedParams = $filteredBookUrlGenerator->getParametersArrayForCurrent();
+
             return $this->redirectToRoute('app_homepage', ['page' => 1, ...$modifiedParams]);
         }
 
