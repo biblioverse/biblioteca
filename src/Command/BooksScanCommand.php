@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookManager;
@@ -44,11 +43,6 @@ class BooksScanCommand extends Command
 
         $io->writeln('Scanning books directory');
 
-        $allBooks = $this->bookRepository->findAll();
-        $unprocessedBooks = [];
-        foreach ($allBooks as $book) {
-            $unprocessedBooks[$book->getChecksum()] = $book;
-        }
         $files = $this->fileSystemManager->getAllBooksFiles();
         $progressBar = new ProgressBar($output, iterator_count($files));
         $progressBar->setFormat('very_verbose');
@@ -65,7 +59,6 @@ class BooksScanCommand extends Command
                     ]);
 
                 if (null !== $book) {
-                    unset($unprocessedBooks[$book->getChecksum()]);
                     continue;
                 }
 
@@ -83,8 +76,6 @@ class BooksScanCommand extends Command
                     }
                 }
 
-                unset($unprocessedBooks[$checksum]);
-
                 if (true === $flush) {
                     $this->entityManager->persist($book);
                     $this->entityManager->flush();
@@ -99,21 +90,6 @@ class BooksScanCommand extends Command
         $io->writeln('Persisting books...');
         $this->entityManager->flush();
         $progressBar->finish();
-
-        $progressBar = new ProgressBar($output, count($unprocessedBooks));
-        $progressBar->start();
-        foreach ($unprocessedBooks as $book) {
-            /* @var Book $book */
-            $progressBar->advance();
-            if (!str_starts_with($book->getTitle(), '[Missing File] ')) {
-                $book->setTitle('[Missing File] '.$book->getTitle());
-                $this->entityManager->flush();
-            }
-        }
-        $progressBar->finish();
-        $io->writeln('Removing books...');
-
-        $this->entityManager->flush();
 
         $io->success('Done!');
 
