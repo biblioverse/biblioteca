@@ -5,12 +5,22 @@
         {% set read = true %}
     {% endif %}
 {% endfor %}
+
+{% if book.extension in ['epub','mobi'] %}
+    {% set icon='bi-file-text-fill' %}
+{% elseif book.extension=='pdf' %}
+    {% set icon='bi-file-pdf-fill' %}
+{% elseif book.extension in ['cbr','cbz'] %}
+    {% set icon='bi-file-image-fill' %}
+{% else %}
+    {% set icon='bi-file-binary-fill' %}
+{% endif %}
 <div class=" m-1 mb-4" style="{{ read?'opacity:0.4;' }}">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
     <div class="book">
         <div class="book__cover" style="background-image:url('{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}');">
             <div class="book__detail">
-                {{ book.title }}
+                <i class="bi {{ icon }}"></i> {{ book.title }}
             </div>
         </div>
         <div class="book__page"></div>
