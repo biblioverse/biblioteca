@@ -18,7 +18,8 @@
 <div class=" m-1 mb-4" style="{{ read?'opacity:0.4;' }}">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
     <div class="book">
-        <div class="book__cover" style="background-image:url('{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}');">
+        <div class="book__cover">
+            <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}"  alt="{{ book.title }}"/>
             <div class="book__detail">
                 <i class="bi {{ icon }}"></i> {{ book.title }}
             </div>
