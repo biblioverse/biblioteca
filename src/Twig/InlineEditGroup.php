@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Entity\Book;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,6 +51,7 @@ class InlineEditGroup extends AbstractController
         $qb->andWhere('JSON_CONTAINS(lower(book.'.$this->field.'), :value)=1');
         $qb->setParameter('value', json_encode([strtolower($this->existingValue)], JSON_THROW_ON_ERROR));
 
+        /** @var Book[] $books */
         $books = $qb->getQuery()->getResult();
 
         foreach ($books as $book) {

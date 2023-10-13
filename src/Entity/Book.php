@@ -339,6 +339,10 @@ class Book
 
     public function removeTag(string $tag): static
     {
+        if (null === $this->tags) {
+            $this->tags = [];
+        }
+
         foreach ($this->tags as $key => $value) {
             if (strtolower($value) === strtolower($tag)) {
                 unset($this->tags[$key]);
