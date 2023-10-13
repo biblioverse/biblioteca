@@ -1,0 +1,38 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit-group')) }}>
+{% if isEditing and is_granted('ROLE_ADMIN') %}
+    <form class="input-group">
+        <select
+            class="form-select form-select-sm"
+            id="books_{{ field }}"
+            data-model="fieldValue"
+            {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
+                url: path('app_autocomplete_group', {type: field}),
+            }) }}
+        >
+            <option value="{{ fieldValue }}" selected>{{ fieldValue }}</option>
+        </select>
+        <button
+            data-action="live#action"
+            data-action-name="prevent|save"
+            class="btn btn-sm btn-outline-danger"
+        >
+            <i class="bi bi-journal-check"></i> Rename {{ field }}
+        </button>
+    </form>
+{% elseif is_granted('ROLE_ADMIN') %}
+
+    <button
+        data-action="live#action"
+        data-action-name="activateEditing"
+        class="btn btn-sm btn-link d-inline-block"
+        title="Click to edit!"
+    >
+        <i class="bi bi-journal-check"></i>
+    </button>
+
+    {% if flashMessage %}
+        <i class="bi bi-check alert-remove"></i>
+    {% endif %}
+{% endif %}
+
+</span>

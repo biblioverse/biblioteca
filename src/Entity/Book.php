@@ -328,8 +328,9 @@ class Book
         if (null === $this->tags) {
             $this->tags = [];
         }
-        if (!in_array($tag, $this->tags, true)) {
-            $this->tags[] = $tag;
+
+        if (!in_array($tag, $this->tags, true) && '' !== $tag) {
+            $this->tags[] = ucwords(strtolower($tag), self::UCWORDS_SEPARATORS);
         }
         $this->tags = array_values($this->tags);
 
@@ -338,14 +339,12 @@ class Book
 
     public function removeTag(string $tag): static
     {
-        if (null === $this->tags) {
-            $this->tags = [];
-        }
         foreach ($this->tags as $key => $value) {
-            if ($value === $tag) {
+            if (strtolower($value) === strtolower($tag)) {
                 unset($this->tags[$key]);
             }
         }
+
         $this->tags = array_values($this->tags);
 
         return $this;

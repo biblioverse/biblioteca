@@ -123,8 +123,8 @@ class BookFilterType extends AbstractType
                     if ($tag === 'no_tags') {
                         $orModule->add('book.tags = \'[]\'');
                     } else {
-                        $orModule->add('JSON_CONTAINS(book.tags, :tag'.$key.')=1');
-                        $qb->setParameter('tag'.$key, json_encode([$tag]));
+                        $orModule->add('JSON_CONTAINS(lower(book.tags), :tag'.$key.')=1');
+                        $qb->setParameter('tag'.$key, json_encode([strtolower($tag)]));
                     }
                 }
                 $qb->andWhere($orModule);

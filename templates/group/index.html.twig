@@ -16,23 +16,20 @@
     </form>
 
     {{ knp_pagination_render(pagination) }}
-
-    <div style="column-count: 3">
-        <ul class="list-group list-group-flush">
+        <div class="row">
             {% for item in pagination %}
                 {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
                 {% set class = status==100?'success':(status>0?'warning':'secondary') %}
-                <li class="list-group-item list-group-item-{{ class }} p-0 border-1" >
+                <div class="bg-{{ class }}-subtle col-md-4 p-2 border-3 border-{{ class }}">
                     {% set params = { (type): item.item } %}
-                    <a href="{{ filter_book_url(params) }}" class="d-block p-3">
+                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
                     {{ item.item }}
                         <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
-                </li>
+                    {{ component('InlineEditGroup', {'existingValue':item.item,'fieldValue':item.item, 'field':type}) }}
+                </div>
             {% endfor %}
-        </ul>
-    </div>
-
+        </div>
     {{ knp_pagination_render(pagination) }}
 
 {% endblock %}
