@@ -72,8 +72,9 @@ class BooksTagCommand extends Command
             if ($summary !== '' && ($book->getSummary() === null || $book->getSummary() === '')) {
                 $book->setSummary($summary);
             }
+            $this->entityManager->flush();
+
         }
-        $this->entityManager->flush();
 
         $progressBar->finish();
 
