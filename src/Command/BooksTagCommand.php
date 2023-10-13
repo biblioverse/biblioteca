@@ -59,6 +59,7 @@ class BooksTagCommand extends Command
             $progressBar->advance();
 
             if ($book->getTags() !== null && count($book->getTags()) > 0) {
+                $io->writeln('skipping '.$book->getTitle());
                 continue;
             }
 
@@ -66,10 +67,13 @@ class BooksTagCommand extends Command
             if (count($suggestions['tags']) === 0) {
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
-            $book->setTags(array_values($suggestions['tags']));
-
+            if(count($suggestions['tags']) > 0){
+                $io->writeln('- tags found for '.$book->getTitle());
+                $book->setTags(array_values($suggestions['tags']));
+            }
             $summary = count($suggestions['summary']) > 0 ? current($suggestions['summary']) : '';
             if ($summary !== '' && ($book->getSummary() === null || $book->getSummary() === '')) {
+                $io->writeln('- summary found for '.$book->getTitle());
                 $book->setSummary($summary);
             }
             $this->entityManager->flush();
