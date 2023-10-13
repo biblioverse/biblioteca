@@ -125,7 +125,7 @@
 
     {% if not book.verified and suggestions[field] is defined and is_granted('EDIT', book) %}
         {% for key,suggestion in  suggestions[field] %}
-            {% if suggestion != attribute(book, "get"~field) %}
+            {% if suggestion != attribute(book, "get"~field) and suggestion not in attribute(book, "get"~field) %}
             <button
                 class="btn btn-outline-secondary btn-sm p-1"
                 data-action="live#action"
