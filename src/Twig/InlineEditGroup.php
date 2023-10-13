@@ -2,9 +2,7 @@
 
 namespace App\Twig;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -35,7 +33,6 @@ class InlineEditGroup extends AbstractController
 
     public ?string $flashMessage = null;
 
-
     #[LiveAction]
     public function activateEditing(): void
     {
@@ -48,7 +45,6 @@ class InlineEditGroup extends AbstractController
     #[LiveAction]
     public function save(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
     {
-
         $qb = $bookRepository->createQueryBuilder('book')
             ->select('book');
         $qb->andWhere('JSON_CONTAINS(lower(book.'.$this->field.'), :value)=1');
@@ -60,13 +56,13 @@ class InlineEditGroup extends AbstractController
             switch ($this->field) {
                 case 'authors':
                     $book->removeAuthor($this->existingValue);
-                    if($this->fieldValue !== ''){
+                    if ($this->fieldValue !== '') {
                         $book->addAuthor($this->fieldValue);
                     }
                     break;
                 case 'tags':
                     $book->removeTag($this->existingValue);
-                    if($this->fieldValue !== ''){
+                    if ($this->fieldValue !== '') {
                         $book->addTag($this->fieldValue);
                     }
                     break;
