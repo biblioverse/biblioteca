@@ -140,7 +140,7 @@ class BookRepository extends ServiceEntityRepository
         foreach ($intermediateResults as $result) {
             foreach ($result['item'] as $item) {
                 $key = ucwords(strtolower($item), Book::UCWORDS_SEPARATORS);
-                if (!array_key_exists($item, $results)) {
+                if (!array_key_exists($key, $results)) {
                     $results[$key] = [
                         'item' => $key,
                         'bookCount' => 0,
