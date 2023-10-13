@@ -66,7 +66,7 @@ class BooksTagCommand extends Command
             if (count($suggestions['tags']) === 0) {
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
-            $book->setTags($suggestions['tags']);
+            $book->setTags(array_values($suggestions['tags']));
 
             $summary = count($suggestions['summary']) > 0 ? current($suggestions['summary']) : '';
             if ($summary !== '' && ($book->getSummary() === null || $book->getSummary() === '')) {
