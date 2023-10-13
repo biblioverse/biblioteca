@@ -27,9 +27,12 @@ class BookController extends AbstractController
         }
 
         $suggestions = BookSuggestions::EMPTY_SUGGESTIONS;
-        $forceSuggestions = (bool) $request->get('refresh', false);
-        if (!$book->isVerified() && $forceSuggestions === true) {
-            $suggestions = $bookSuggestions->getSuggestions($book);
+        $google = (bool) $request->get('google', false);
+        $openLibraries = (bool) $request->get('openlib', false);
+        if (!$book->isVerified() && $google === true) {
+            $suggestions = $bookSuggestions->getGoogleSuggestions($book);
+        }elseif (!$book->isVerified() && $openLibraries === true) {
+            $suggestions = $bookSuggestions->getCategorySuggestions($book);
         }
 
         $form = $this->createFormBuilder()

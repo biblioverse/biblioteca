@@ -28,7 +28,41 @@ class BookSuggestions
     /**
      * @return array<string[]>
      */
-    public function getSuggestions(Book $book): array
+    public function getCategorySuggestions(Book $book): array
+    {
+        $key = $this->parameterBag->get('GOOGLE_API_KEY');
+
+        $suggestions = self::EMPTY_SUGGESTIONS;
+
+        if ('' === $key || !is_string($key)) {
+            return $suggestions;
+        }
+
+        $mainAuthor = current($book->getAuthors());
+
+        $query = ['q'=>'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields'=>'title,author_name,key,cover_i,subject'];
+
+        $client = new \GuzzleHttp\Client();
+
+
+        $results = $client->request('GET','https://openlibrary.org/search.json', ['query'=>$query])->getBody()->getContents();
+
+        $results = json_decode($results, true);
+
+        foreach ($results['docs'] as $result) {
+
+            foreach ($result['subject'] as $category) {
+                $suggestions['tags'][$category] = $category;
+            }
+
+        }
+        return $suggestions;
+    }
+
+    /**
+     * @return array<string[]>
+     */
+    public function getGoogleSuggestions(Book $book): array
     {
         $key = $this->parameterBag->get('GOOGLE_API_KEY');
 
