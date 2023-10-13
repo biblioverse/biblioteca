@@ -53,8 +53,10 @@ class BookSuggestions
                 return $suggestions;
             }
             foreach ($results['docs'] as $result) {
-                foreach ($result['subject'] as $category) {
-                    $suggestions['tags'][$category] = $category;
+                if(is_array($result['subject'])){
+                    foreach ($result['subject'] as $category) {
+                        $suggestions['tags'][$category] = $category;
+                    }
                 }
             }
 
