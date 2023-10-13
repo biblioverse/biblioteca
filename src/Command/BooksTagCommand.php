@@ -29,6 +29,7 @@ class BooksTagCommand extends Command
     protected function configure(): void
     {
         $this
+            ->addOption('allow-google', 'f', InputOption::VALUE_NONE, 'Force the extraction of the cover')
             ->addArgument('book-id', InputOption::VALUE_REQUIRED, 'Which book to extract the cover from, use "all" for all books')
         ;
     }
@@ -37,6 +38,7 @@ class BooksTagCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $bookId = $input->getArgument('book-id');
+        $allowGoogle = $input->getOption('allow-google');
         if ($bookId === 'all') {
             $books = $this->bookRepository->findAll();
         } else {
@@ -66,7 +68,7 @@ class BooksTagCommand extends Command
             $io->writeln('looking for suggestions for '.$book->getTitle());
 
             $suggestions = $this->bookSuggestions->getCategorySuggestions($book);
-            if (count($suggestions['tags']) === 0) {
+            if (count($suggestions['tags']) === 0 && $allowGoogle === true) {
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
             if(count($suggestions['tags']) > 0){
