@@ -40,22 +40,23 @@ class BookSuggestions
 
         $mainAuthor = current($book->getAuthors());
 
-        $query = ['q'=>'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields'=>'title,author_name,key,cover_i,subject'];
+        $query = ['q' => 'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields' => 'title,author_name,key,cover_i,subject'];
 
         $client = new \GuzzleHttp\Client();
 
-
-        $results = $client->request('GET','https://openlibrary.org/search.json', ['query'=>$query])->getBody()->getContents();
+        $results = $client->request('GET', 'https://openlibrary.org/search.json', ['query' => $query])->getBody()->getContents();
 
         $results = json_decode($results, true);
 
+        if (!is_array($results) || !array_key_exists('docs', $results)) {
+            return $suggestions;
+        }
         foreach ($results['docs'] as $result) {
-
             foreach ($result['subject'] as $category) {
                 $suggestions['tags'][$category] = $category;
             }
-
         }
+
         return $suggestions;
     }
 

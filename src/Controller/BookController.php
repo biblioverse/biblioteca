@@ -31,7 +31,7 @@ class BookController extends AbstractController
         $openLibraries = (bool) $request->get('openlib', false);
         if (!$book->isVerified() && $google === true) {
             $suggestions = $bookSuggestions->getGoogleSuggestions($book);
-        }elseif (!$book->isVerified() && $openLibraries === true) {
+        } elseif (!$book->isVerified() && $openLibraries === true) {
             $suggestions = $bookSuggestions->getCategorySuggestions($book);
         }
 
@@ -82,7 +82,7 @@ class BookController extends AbstractController
     #[Route('/download-image/{id}/{image}', name: 'app_book_downloadImage')]
     public function downloadImage(Book $book, string $image, BookSuggestions $bookSuggestions, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {
-        $suggestions = $bookSuggestions->getSuggestions($book);
+        $suggestions = $bookSuggestions->getGoogleSuggestions($book);
 
         $url = $suggestions['image'][$image] ?? null;
 
