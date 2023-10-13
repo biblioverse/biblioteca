@@ -63,17 +63,19 @@ class BooksTagCommand extends Command
                 continue;
             }
 
+            $io->writeln('looking for suggestions for '.$book->getTitle());
+
             $suggestions = $this->bookSuggestions->getCategorySuggestions($book);
             if (count($suggestions['tags']) === 0) {
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
             if(count($suggestions['tags']) > 0){
-                $io->writeln('- tags found for '.$book->getTitle());
+                $io->writeln('- tags found');
                 $book->setTags(array_values($suggestions['tags']));
             }
             $summary = count($suggestions['summary']) > 0 ? current($suggestions['summary']) : '';
             if ($summary !== '' && ($book->getSummary() === null || $book->getSummary() === '')) {
-                $io->writeln('- summary found for '.$book->getTitle());
+                $io->writeln('- summary found');
                 $book->setSummary($summary);
             }
             $this->entityManager->flush();
