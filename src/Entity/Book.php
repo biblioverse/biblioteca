@@ -325,12 +325,13 @@ class Book
 
     public function addTag(string $tag): static
     {
+        $tag = ucwords(strtolower($tag), self::UCWORDS_SEPARATORS);
         if (null === $this->tags) {
             $this->tags = [];
         }
 
-        if (!in_array($tag, $this->tags, true) && '' !== $tag) {
-            $this->tags[] = ucwords(strtolower($tag), self::UCWORDS_SEPARATORS);
+        if ('' !== $tag && !in_array($tag, $this->tags, true)) {
+            $this->tags[] = $tag;
         }
         $this->tags = array_values($this->tags);
 

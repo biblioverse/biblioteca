@@ -30,34 +30,36 @@ class BookSuggestions
      */
     public function getCategorySuggestions(Book $book): array
     {
-        $key = $this->parameterBag->get('GOOGLE_API_KEY');
-
-        $suggestions = self::EMPTY_SUGGESTIONS;
-
-        if ('' === $key || !is_string($key)) {
-            return $suggestions;
-        }
+        $cache = new FilesystemAdapter();
 
         $mainAuthor = current($book->getAuthors());
 
         $query = ['q' => 'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields' => 'title,author_name,key,cover_i,subject'];
 
-        $client = new \GuzzleHttp\Client();
+        $cacheKey = $this->slugger->slug('openlib-'.implode('-', $query));
 
-        $results = $client->request('GET', 'https://openlibrary.org/search.json', ['query' => $query])->getBody()->getContents();
+        return $cache->get($cacheKey, function (ItemInterface $item) use ($query): array {
+            $item->expiresAfter(3600);
 
-        $results = json_decode($results, true);
+            $client = new \GuzzleHttp\Client();
 
-        if (!is_array($results) || !array_key_exists('docs', $results)) {
-            return $suggestions;
-        }
-        foreach ($results['docs'] as $result) {
-            foreach ($result['subject'] as $category) {
-                $suggestions['tags'][$category] = $category;
+            $results = $client->request('GET', 'https://openlibrary.org/search.json', ['query' => $query])->getBody()->getContents();
+
+            $results = json_decode($results, true);
+
+            $suggestions = self::EMPTY_SUGGESTIONS;
+
+            if (!is_array($results) || !array_key_exists('docs', $results)) {
+                return $suggestions;
             }
-        }
+            foreach ($results['docs'] as $result) {
+                foreach ($result['subject'] as $category) {
+                    $suggestions['tags'][$category] = $category;
+                }
+            }
 
-        return $suggestions;
+            return $suggestions;
+        });
     }
 
     /**

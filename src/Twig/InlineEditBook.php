@@ -45,7 +45,7 @@ class InlineEditBook extends AbstractController
     }
 
     #[LiveAction]
-    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion): void
+    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion, EntityManagerInterface $entityManager): void
     {
         $this->isEditing = true;
         $to_call = 'set'.ucfirst($field);
@@ -60,6 +60,11 @@ class InlineEditBook extends AbstractController
                 $this->book->$to_call($value);
             }
         }
+        $entityManager->flush();
+        $this->dispatchBrowserEvent('manager:flush');
+        $this->isEditing = false;
+
+        $this->flashMessage = ' book updated';
     }
 
     /**
