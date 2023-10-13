@@ -39,6 +39,7 @@ class BooksTagCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $bookId = $input->getArgument('book-id');
         $allowGoogle = $input->getOption('allow-google');
+
         if ($bookId === 'all') {
             $books = $this->bookRepository->findAll();
         } else {
@@ -71,7 +72,7 @@ class BooksTagCommand extends Command
             if (count($suggestions['tags']) === 0 && $allowGoogle === true) {
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
-            if(count($suggestions['tags']) > 0){
+            if (count($suggestions['tags']) > 0) {
                 $io->writeln('- tags found');
                 $book->setTags(array_values($suggestions['tags']));
             }
@@ -81,7 +82,6 @@ class BooksTagCommand extends Command
                 $book->setSummary($summary);
             }
             $this->entityManager->flush();
-
         }
 
         $progressBar->finish();
