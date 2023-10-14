@@ -29,7 +29,7 @@ class BooksTagCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('allow-google', 'f', InputOption::VALUE_NONE, 'Force the extraction of the cover')
+            ->addOption('allow-google', 'g', InputOption::VALUE_NONE, 'Force the extraction of the cover')
             ->addArgument('book-id', InputOption::VALUE_REQUIRED, 'Which book to extract the cover from, use "all" for all books')
         ;
     }
@@ -41,7 +41,7 @@ class BooksTagCommand extends Command
         $allowGoogle = $input->getOption('allow-google');
 
         if ($bookId === 'all') {
-            $books = $this->bookRepository->findAll();
+            $books = $this->bookRepository->findBy([], ['updated' => 'ASC']);
         } else {
             $books = $this->bookRepository->findBy(['id' => $bookId]);
         }
