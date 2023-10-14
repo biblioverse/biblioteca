@@ -24,11 +24,23 @@
     <button
         data-action="live#action"
         data-action-name="activateEditing"
-        class="btn btn-sm btn-link d-inline-block"
+        class="btn btn-sm btn-link d-inline"
         title="Click to edit!"
     >
         <i class="bi bi-journal-check"></i>
     </button>
+
+    <form class="input-group d-inline">
+        <button
+            data-action="live#action"
+            data-action-name="prevent|remove"
+            class="btn btn-sm btn-link d-inline"
+            onclick="return confirm('Are you sure?')"
+        >
+            <i class="bi bi-trash-fill"></i>
+        </button>
+    </form>
+
 
     {% if flashMessage %}
         <i class="bi bi-check alert-remove"></i>

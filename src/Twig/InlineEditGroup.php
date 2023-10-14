@@ -44,6 +44,15 @@ class InlineEditGroup extends AbstractController
      * @throws \JsonException
      */
     #[LiveAction]
+    public function remove(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
+    {
+        $this->fieldValue='';
+        $this->save($bookRepository, $entityManager);
+    }
+    /**
+     * @throws \JsonException
+     */
+    #[LiveAction]
     public function save(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
     {
         $qb = $bookRepository->createQueryBuilder('book')
