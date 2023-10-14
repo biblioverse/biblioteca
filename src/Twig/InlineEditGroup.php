@@ -46,9 +46,10 @@ class InlineEditGroup extends AbstractController
     #[LiveAction]
     public function remove(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
     {
-        $this->fieldValue='';
+        $this->fieldValue = '';
         $this->save($bookRepository, $entityManager);
     }
+
     /**
      * @throws \JsonException
      */
