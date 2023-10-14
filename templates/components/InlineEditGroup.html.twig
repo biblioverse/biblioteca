@@ -19,6 +19,15 @@
             <i class="bi bi-journal-check"></i> Rename {{ field }}
         </button>
     </form>
+    <form class="input-group d-inline">
+        <button
+            data-action="live#action"
+            data-action-name="prevent|remove"
+            class="btn btn-sm btn-link d-inline"
+        >
+            <i class="bi bi-trash-fill"></i>
+        </button>
+    </form>
 {% elseif is_granted('ROLE_ADMIN') %}
 
     <button
@@ -29,17 +38,6 @@
     >
         <i class="bi bi-journal-check"></i>
     </button>
-
-    <form class="input-group d-inline">
-        <button
-            data-action="live#action"
-            data-action-name="prevent|remove"
-            class="btn btn-sm btn-link d-inline"
-            onclick="return confirm('Are you sure?')"
-        >
-            <i class="bi bi-trash-fill"></i>
-        </button>
-    </form>
 
 
     {% if flashMessage %}
