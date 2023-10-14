@@ -4,7 +4,7 @@
 
             <input type="file" name="cover" class="form-control"/>
             <button data-action="live#action" class="btn btn-sm btn-outline-dark" data-action-name="files|uploadFiles">
-                Upload
+                {{ 'upload'|trans }}
             </button>
         </div>
     {% elseif is_granted('EDIT', book) %}
@@ -15,11 +15,12 @@
             class="btn btn-sm btn-outline-dark"
             title="Click to upload cover!"
         >
-            <i class="bi bi-upload"></i> Upload new cover
+            <i class="bi bi-upload"></i> {{ 'upload.cover'|trans }}
         </button>
 
 
-    {% endif %}       {% if flashMessage %}
+    {% endif %}
+    {% if flashMessage %}
         <div class="alert alert-danger mt-3">
              {{ flashMessage }}
             </div>

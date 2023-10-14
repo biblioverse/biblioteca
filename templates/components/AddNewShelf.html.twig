@@ -24,7 +24,7 @@
                     data-action-name="prevent|saveFilters"
                     class="btn btn-outline-success"
                 >
-                    <i class="bi bi-journal-check"></i> Save current filtering
+                    <i class="bi bi-journal-check"></i> {{ 'save.current.filtering'|trans }}
                 </button>
                 {% endif %}
             </div>
@@ -39,11 +39,11 @@
         >
             <i class="bi bi-plus"></i>
             {% if currentFilters is null %}
-                New shelf
+                {{ 'new.shelf'|trans }}
             {% endif %}
 
             {% if currentFilters is not null %}
-                Save current filtering
+                {{ 'save.current.filtering'|trans }}
             {% endif %}
         </button>
 

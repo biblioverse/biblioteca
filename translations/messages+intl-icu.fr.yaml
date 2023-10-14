@@ -1,0 +1,32 @@
+missing.book: Livre manquant
+title: Titre
+author: Auteur
+serie: Serie
+index: Index
+books: Livres
+download: Télécharger
+picture.for: 'Image de '
+no.picture.for: 'Pas d''image pour '
+authors: Auteurs
+summary: Descriptions
+publisher: Edition
+tags: Etiquettes
+verified: Vérification
+book: Livre
+image: Image
+suggested.images: 'Images suggérées'
+search.google.images: 'Chercher la couverture sur Google images'
+google.books.api: 'Suggestions de Books API'
+openlibrary.api: 'Suggestions de OpenLibrary API'
+extract.from-file: 'Extraire la couverture du fichier'
+other.books: 'Autres livres'
+save.current.filtering: 'Enregistrer le filtrage'
+new.shelf: 'Nouvelle étagère'
+rename: Renommer
+upload: Téléverser
+page: Page
+search: Recherche
+upload.cover: Téléverser la couverture
+books.in.serie: Livres dans la série
+books.same.index: Livres avec le même numéro
+books.same.author: Livres du même auteur

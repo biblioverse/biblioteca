@@ -4,7 +4,7 @@
     <div class="col-12 p-2 text-end">
         <div class="btn-group">
             <div class="btn-sm btn btn-outline-dark">
-                {{ pagination.getTotalItemCount }} Books
+                {{ pagination.getTotalItemCount }} {{ 'books'|trans }}
             </div>
             <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'gallery'})) }}"><i class="bi bi-grid-fill"></i></a>
             <a class="btn btn-sm btn-outline-primary" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(allParams)|merge({'displayMode':'list'})) }}"><i class="bi bi-list"></i></a>

@@ -1,0 +1,32 @@
+page: Page
+search: Search
+save.current.filtering: Save current filtering
+new.shelf: New Shelf
+author: Author
+serie: Serie
+index: Index
+rename: Rename
+upload: Upload
+upload.cover: Upload cover
+picture.for: Pictore for
+no.picture.for: __no.picture.for
+download: Download
+title: Title
+authors: Authors
+summary: Summary
+publisher: Publisher
+tags: Tags
+verified: Verified
+book: Book
+image: Image
+suggested.images: Suggested images
+search.google.images: Search on Google Images
+google.books.api: Suggestions from Google Books
+openlibrary.api: Suggestions from OpenLibrary
+extract.from-file: Extract cover from file
+books.in.serie: Books in serie
+books.same.index: Books with same index
+other.books: Other books
+books.same.author: Book with same author
+missing.book: Missing Book
+books: Books

@@ -13,14 +13,14 @@
 
                     {% if app.user %}
                         <div class="mb-3">
-                            You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                            {{ 'logged.in.as'|trans({}, 'security') }} {{ app.user.username }}, <a href="{{ path('app_logout') }}">{{ 'logout'|trans({}, 'security') }}</a>
                         </div>
                     {% endif %}
 
-                    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-                    <label for="inputEmail">Email</label>
+                    <h1 class="h3 mb-3 font-weight-normal">{{ 'please.sign.in'|trans({}, 'security') }}</h1>
+                    <label for="inputEmail">{{ 'email'|trans({}, 'security') }}</label>
                     <input type="text" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" required autofocus>
-                    <label for="inputPassword">Password</label>
+                    <label for="inputPassword">{{ 'password'|trans({}, 'security') }}</label>
                     <input type="password" name="_password" id="inputPassword" class="form-control" required>
 
                     <input type="hidden" name="_csrf_token"
@@ -29,13 +29,13 @@
 
                     <div class="checkbox mb-3">
                         <label>
-                            <input type="checkbox" name="_remember_me"> Remember me
+                            <input type="checkbox" name="_remember_me"> {{ 'remember.me'|trans({}, 'security') }}
                         </label>
                     </div>
 
 
                     <button class="btn btn-lg btn-primary" type="submit">
-                        Sign in
+                        {{ 'sign.in'|trans({}, 'security') }}
                     </button>
                 </form>
             </div>
