@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Form\BookFilterType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class FilteredBookUrlGenerator
@@ -39,7 +40,7 @@ class FilteredBookUrlGenerator
                 throw new \RuntimeException('Invalid key '.$key);
             }
             if (is_array($value)) {
-                $value = implode(',', $value);
+                $value = implode(BookFilterType::AUTOCOMPLETE_DELIMITER, $value);
             }
             $params[$key] = $value;
         }
@@ -61,7 +62,7 @@ class FilteredBookUrlGenerator
             if (array_key_exists($key, $queryParams)) {
                 $value = $queryParams[$key];
                 if (($key === 'authors' || $key === 'authorsNot' || $key === 'tags') && is_string($value)) {
-                    $value = array_filter(explode(',', $value));
+                    $value = array_filter(explode(BookFilterType::AUTOCOMPLETE_DELIMITER, $value));
                 }
             }
 

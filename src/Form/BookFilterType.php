@@ -12,6 +12,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class BookFilterType extends AbstractType
 {
+    public const AUTOCOMPLETE_DELIMITER = '🪓';
+
     public function __construct(private RouterInterface $router)
     {
     }
@@ -58,6 +60,7 @@ class BookFilterType extends AbstractType
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
+                'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
             'required' => false,
@@ -66,7 +69,7 @@ class BookFilterType extends AbstractType
                 if ($searchValue === null || $searchValue === '') {
                     return;
                 }
-                $authors = explode(',', $searchValue);
+                $authors = explode(self::AUTOCOMPLETE_DELIMITER, $searchValue);
 
                 $orModule = $qb->expr()->orX();
 
@@ -82,6 +85,7 @@ class BookFilterType extends AbstractType
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
+                'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
             'label' => 'Author not in',
@@ -91,7 +95,7 @@ class BookFilterType extends AbstractType
                 if ($searchValue === null || $searchValue === '') {
                     return;
                 }
-                $authors = explode(',', $searchValue);
+                $authors = explode(self::AUTOCOMPLETE_DELIMITER, $searchValue);
 
                 $orModule = $qb->expr()->orX();
 
@@ -107,6 +111,7 @@ class BookFilterType extends AbstractType
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
+                'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
             'required' => false,
@@ -115,7 +120,7 @@ class BookFilterType extends AbstractType
                 if ($searchValue === null || $searchValue === '') {
                     return;
                 }
-                $tags = explode(',', $searchValue);
+                $tags = explode(self::AUTOCOMPLETE_DELIMITER, $searchValue);
 
                 $orModule = $qb->expr()->orX();
 
@@ -135,6 +140,7 @@ class BookFilterType extends AbstractType
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
+                'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
             'required' => false,
@@ -143,7 +149,7 @@ class BookFilterType extends AbstractType
                 if ($searchValue === null || $searchValue === '') {
                     return;
                 }
-                $series = explode(',', $searchValue);
+                $series = explode(self::AUTOCOMPLETE_DELIMITER, $searchValue);
 
                 $orModule = $qb->expr()->orX();
 
@@ -163,6 +169,7 @@ class BookFilterType extends AbstractType
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
+                'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
             'required' => false,
@@ -171,7 +178,7 @@ class BookFilterType extends AbstractType
                 if ($searchValue === null || $searchValue === '') {
                     return;
                 }
-                $publishers = explode(',', $searchValue);
+                $publishers = explode(self::AUTOCOMPLETE_DELIMITER, $searchValue);
 
                 $orModule = $qb->expr()->orX();
 
