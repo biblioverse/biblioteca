@@ -46,45 +46,61 @@ class BooksTagCommand extends Command
             $books = $this->bookRepository->findBy(['id' => $bookId]);
         }
 
+
+        $untaggedBooks = [];
+        foreach ($books as $book){
+            /* @var Book $book */
+            if ($book->getTags() === null || count($book->getTags()) === 0 || $book->getSummary() === null || $book->getSummary() === '') {
+                $untaggedBooks[] = $book;
+            }
+        }
+
+        shuffle($untaggedBooks);
+
         if (count($books) === 0) {
             $io->error('No books found');
 
             return Command::FAILURE;
         }
 
-        $io->note(sprintf('Processing: %s book(s)', count($books)));
+        $io->note(sprintf('Processing: %s book(s)', count($untaggedBooks)));
 
-        $progressBar = new ProgressBar($output, count($books));
-        $progressBar->start();
-        $fs = new Filesystem();
-        foreach ($books as $book) {
+        foreach ($untaggedBooks as $book) {
             /* @var Book $book */
-            $progressBar->advance();
 
             if ($book->getTags() !== null && count($book->getTags()) > 0) {
                 $io->writeln('skipping '.$book->getTitle());
                 continue;
             }
 
-            $io->writeln('looking for suggestions for '.$book->getTitle());
+            $io->writeln('Querying for '.$book->getTitle().($book->getSerie()!==null?' ('.$book->getSerie().')':''));
 
             $suggestions = $this->bookSuggestions->getCategorySuggestions($book);
             if (count($suggestions['tags']) === 0 && $allowGoogle === true) {
+                $io->writeln(' - Could not find results, trying google');
                 $suggestions = $this->bookSuggestions->getGoogleSuggestions($book);
             }
             if (count($suggestions['tags']) > 0) {
-                $io->writeln('- tags found');
+                $io->writeln(' ✓ tags found');
                 $book->setTags(array_values($suggestions['tags']));
             }
+
             $summary = count($suggestions['summary']) > 0 ? current($suggestions['summary']) : '';
             if ($summary !== '' && ($book->getSummary() === null || $book->getSummary() === '')) {
-                $io->writeln('- summary found');
+                $io->writeln(' ✓ summary found');
                 $book->setSummary($summary);
             }
+
+            if($book->getTags()===[]){
+                $book->addTag('No data on OpenLibrary');
+                if($allowGoogle === true){
+                    $book->addTag('No data on Google');
+                }
+            }
+
             $this->entityManager->flush();
         }
 
-        $progressBar->finish();
 
         return Command::SUCCESS;
     }
