@@ -91,6 +91,7 @@
 
                 <div class="btn-group btn-group-sm my-3">
                     <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
+                    <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.goodreads.com/search?q={{ book.title~" "~book.authors|join(" ")|url_encode }}">{{ 'search.goodreads'|trans }}</a>
                     <a class="btn btn-sm btn-outline-primary" href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'google':true}) }}">{{ 'google.books.api'|trans }}</a>
                     <a class="btn btn-sm btn-outline-primary" href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'openlib':true}) }}">{{ 'openlibrary.api'|trans }}</a>
                     <a class="btn btn-sm btn-outline-primary" href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'extract.from-file'|trans }}</a>

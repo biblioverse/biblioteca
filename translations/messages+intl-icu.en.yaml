@@ -21,6 +21,7 @@ book: Book
 image: Image
 suggested.images: Suggested images
 search.google.images: Search on Google Images
+search.goodreads: 'Search on Goodreads'
 google.books.api: Suggestions from Google Books
 openlibrary.api: Suggestions from OpenLibrary
 extract.from-file: Extract cover from file

@@ -16,6 +16,7 @@ book: Livre
 image: Image
 suggested.images: 'Images suggérées'
 search.google.images: 'Chercher la couverture sur Google images'
+search.goodreads: 'Chercher sur Goodreads'
 google.books.api: 'Suggestions de Books API'
 openlibrary.api: 'Suggestions de OpenLibrary API'
 extract.from-file: 'Extraire la couverture du fichier'

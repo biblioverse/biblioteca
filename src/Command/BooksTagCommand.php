@@ -8,12 +8,10 @@ use App\Service\BookSuggestions;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
 
 #[AsCommand(
     name: 'books:tag',
@@ -46,9 +44,8 @@ class BooksTagCommand extends Command
             $books = $this->bookRepository->findBy(['id' => $bookId]);
         }
 
-
         $untaggedBooks = [];
-        foreach ($books as $book){
+        foreach ($books as $book) {
             /* @var Book $book */
             if ($book->getTags() === null || count($book->getTags()) === 0) {
                 $untaggedBooks[] = $book;
@@ -73,7 +70,7 @@ class BooksTagCommand extends Command
                 continue;
             }
 
-            $io->writeln('Querying for '.$book->getTitle().($book->getSerie()!==null?' ('.$book->getSerie().')':''));
+            $io->writeln('Querying for '.$book->getTitle().($book->getSerie() !== null ? ' ('.$book->getSerie().')' : ''));
 
             $suggestions = $this->bookSuggestions->getCategorySuggestions($book);
             if (count($suggestions['tags']) === 0 && $allowGoogle === true) {
@@ -91,16 +88,15 @@ class BooksTagCommand extends Command
                 $book->setSummary($summary);
             }
 
-            if($book->getTags()===[]){
+            if ($book->getTags() === []) {
                 $book->addTag('No data on OpenLibrary');
-                if($allowGoogle === true){
+                if ($allowGoogle === true) {
                     $book->addTag('No data on Google');
                 }
             }
 
             $this->entityManager->flush();
         }
-
 
         return Command::SUCCESS;
     }
