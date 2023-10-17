@@ -50,7 +50,7 @@ class BooksTagCommand extends Command
         $untaggedBooks = [];
         foreach ($books as $book){
             /* @var Book $book */
-            if ($book->getTags() === null || count($book->getTags()) === 0 || $book->getSummary() === null || $book->getSummary() === '') {
+            if ($book->getTags() === null || count($book->getTags()) === 0) {
                 $untaggedBooks[] = $book;
             }
         }
