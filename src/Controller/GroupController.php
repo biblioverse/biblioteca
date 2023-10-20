@@ -21,6 +21,11 @@ class GroupController extends AbstractController
     public function groups(Request $request, string $type, int $page = 1): Response
     {
         $group = [];
+        $incomplete = $request->get('incomplete', 0);
+        if (!is_numeric($incomplete)) {
+            throw new RuntimeException('Invalid incomplete type');
+        }
+        $incomplete = (int) $incomplete;
         switch ($type) {
             case 'authors':
                 $group = $this->bookRepository->getAllAuthors();
@@ -32,10 +37,13 @@ class GroupController extends AbstractController
                 $group = $this->bookRepository->getAllPublishers()->getResult();
                 break;
             case 'serie':
+                if ($incomplete === 1) {
+                    $group = $this->bookRepository->getIncompleteSeries()->getResult();
+                    break;
+                }
                 $group = $this->bookRepository->getAllSeries()->getResult();
                 break;
         }
-
         $search = $request->get('search', '');
 
         if (!is_string($search)) {
@@ -50,13 +58,13 @@ class GroupController extends AbstractController
                 return str_contains(strtolower($item['item']), strtolower($search));
             });
         }
-
         $pagination = $this->paginator->paginate($group, $page, 300);
 
         return $this->render('group/index.html.twig', [
             'pagination' => $pagination,
             'page' => $page,
             'type' => $type,
+            'incomplete' => $incomplete,
             'search' => $search,
         ]);
     }

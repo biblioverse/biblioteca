@@ -11,6 +11,7 @@
     <form method="get" class="form-inline my-2">
         <div class="input-group">
             <input type="text" name="search" id="search" class="form-control" placeholder="Filter" value="{{ search }}">
+            <input type="hidden" name="incomplete" value="{{ incomplete }}">
             <button type="submit" class="btn btn-primary">{{ 'search'|trans }}</button>
         </div>
     </form>
@@ -31,5 +32,12 @@
             {% endfor %}
         </div>
     {{ knp_pagination_render(pagination) }}
+
+    {% if type=='serie' %}
+    <div class="btn-group">
+        <a class="btn btn-outline-primary" href="{{ path('app_groups',{'type':'serie', 'page':1, 'incomplete':0}) }}">All series</a>
+        <a class="btn btn-outline-primary" href="{{ path('app_groups',{'type':'serie', 'page':1, 'incomplete':1}) }}">Incomplete series</a>
+    </div>
+    {% endif %}
 
 {% endblock %}
