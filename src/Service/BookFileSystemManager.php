@@ -98,8 +98,9 @@ class BookFileSystemManager
      */
     public function getFileChecksum(\SplFileInfo $file): string
     {
-        $checkSum = sha1_file($file->getRealPath());
-
+        $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
+        $checkSum = explode(' ', $checkSum);
+        $checkSum = $checkSum[0];
         if (false === $checkSum) {
             throw new \RuntimeException('Could not calculate file Checksum');
         }
