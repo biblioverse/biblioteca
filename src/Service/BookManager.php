@@ -62,6 +62,8 @@ class BookManager
         $book->setBookPath('');
         $book->setBookFilename('');
 
+        $extractedMetadata= null;
+
         return $this->updateBookLocation($book, $file);
     }
 
@@ -95,6 +97,7 @@ class BookManager
                 throw new \RuntimeException('Could not read ebook');
             }
         } catch (\Exception $e) {
+            $ebook= null;
             return [
                 'title' => $file->getFilename(),
                 'authors' => [new BookAuthor('unknown')], // BookAuthor[] (`name`: string, `role`: string)
@@ -110,7 +113,7 @@ class BookManager
             ];
         }
 
-        return [
+        $data = [
             'title' => $ebook->getTitle() ?? $file->getBasename('.'.$file->getExtension()), // string
             'authors' => $ebook->getAuthors(), // BookAuthor[] (`name`: string, `role`: string)
             'main_author' => $ebook->getAuthorMain(), // ?BookAuthor => First BookAuthor (`name`: string, `role`: string)
@@ -123,5 +126,7 @@ class BookManager
             'serie_index' => $ebook->getVolume(), // ?int => `calibre:series_index` in EPUB, `number` in CBA
             'cover' => $ebook->getCover(), //  ?EbookCover => cover of book
         ];
+        $ebook = null;
+        return $data;
     }
 }

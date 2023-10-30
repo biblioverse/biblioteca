@@ -45,7 +45,7 @@ class BooksScanCommand extends Command
 
         $files = $this->fileSystemManager->getAllBooksFiles();
         $progressBar = new ProgressBar($output, iterator_count($files));
-        $progressBar->setFormat('very_verbose');
+        $progressBar->setFormat('debug');
         $progressBar->start();
         foreach ($files as $file) {
             $progressBar->advance();
@@ -85,12 +85,13 @@ class BooksScanCommand extends Command
                 $io->error($e->getMessage());
                 throw $e;
             }
+            $book=null;
+            gc_collect_cycles();
         }
         $io->writeln('');
         $io->writeln('Persisting books...');
         $this->entityManager->flush();
         $progressBar->finish();
-
         $io->success('Done!');
 
         return Command::SUCCESS;
