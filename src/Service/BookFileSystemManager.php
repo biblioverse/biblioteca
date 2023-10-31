@@ -99,15 +99,12 @@ class BookFileSystemManager
     public function getFileChecksum(\SplFileInfo $file): string
     {
         $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
-        $checkSum = explode(' ', $checkSum);
-        $checkSum = $checkSum[0];
-        if (false === $checkSum) {
+        if (!is_string($checkSum)) {
             throw new \RuntimeException('Could not calculate file Checksum');
         }
+        $checkSum = explode(' ', $checkSum);
 
-        [$checkSum] = explode(' ', $checkSum);
-
-        return $checkSum;
+        return $checkSum[0];
     }
 
     public function getFolderName(\SplFileInfo $file, bool $absolute = false): string

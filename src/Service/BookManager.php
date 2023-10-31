@@ -62,7 +62,7 @@ class BookManager
         $book->setBookPath('');
         $book->setBookFilename('');
 
-        $extractedMetadata= null;
+        $extractedMetadata = null;
 
         return $this->updateBookLocation($book, $file);
     }
@@ -97,7 +97,8 @@ class BookManager
                 throw new \RuntimeException('Could not read ebook');
             }
         } catch (\Exception $e) {
-            $ebook= null;
+            $ebook = null;
+
             return [
                 'title' => $file->getFilename(),
                 'authors' => [new BookAuthor('unknown')], // BookAuthor[] (`name`: string, `role`: string)
@@ -127,6 +128,7 @@ class BookManager
             'cover' => $ebook->getCover(), //  ?EbookCover => cover of book
         ];
         $ebook = null;
+
         return $data;
     }
 }

@@ -85,7 +85,7 @@ class BooksScanCommand extends Command
                 $io->error($e->getMessage());
                 throw $e;
             }
-            $book=null;
+            $book = null;
             gc_collect_cycles();
         }
         $io->writeln('');
