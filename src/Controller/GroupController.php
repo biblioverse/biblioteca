@@ -71,11 +71,7 @@ class GroupController extends AbstractController
 
     public function firstBook(array $item, string $type, BookRepository $bookRepository): Response
     {
-        if ($type !== 'authors') {
-            $books = $bookRepository->findBy([$type => $item['item']], ['title' => 'ASC']);
-        } else {
-            $books = $bookRepository->findByAuthor($item['item']);
-        }
+        $books = $bookRepository->findBy([$type => $item['item']], ['serieIndex' => 'ASC'],);
 
         return $this->render('group/_teaser.html.twig', ['books' => $books]);
     }
