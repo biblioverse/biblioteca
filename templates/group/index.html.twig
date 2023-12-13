@@ -28,7 +28,7 @@
                         {{ item.item }}
                         <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
-                    {% if type=='serie' or type=='authors' %}
+                    {% if type=='serie' %}
                     {{ render(controller(
                         'App\\Controller\\GroupController::firstBook',
                         { 'item': item, 'type': type }

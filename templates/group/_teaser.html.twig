@@ -12,13 +12,16 @@
 
         {% if previousRead == true and read==false  %}
             {% set status = 'currentBook' %}
+            {% set zindex = 9999 %}
         {% elseif previousRead == false  %}
             {% set status = 'nextBook' %}
+            {% set zindex = 9998-book.serieIndex %}
         {% else  %}
             {% set status = 'previousBook' %}
+            {% set zindex = book.serieIndex %}
         {% endif %}
 
-        <div class="{{ status }} h-auto" style="left:{{ book.serieIndex *6 }}px">
+        <div class="{{ status }} h-auto" style="left:{{ book.serieIndex *6 }}px; z-index: {{ zindex }}">
             <div class="book h-100">
                 <div class="book__cover">
                     <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}"  alt="{{ book.title }}"/>
