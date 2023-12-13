@@ -35,26 +35,3 @@
         {% set previousRead = read %}
     {% endfor %}
 </div>
-<style>
-    .booksInGroup{
-        width: 100%;
-        height: 150px;
-        position:relative;
-    }
-    .previousBook,.currentBook,.nextBook{
-        width:auto;
-        height: 150px !important;
-        position:absolute;
-    }
-    .previousBook {
-        opacity: 0.1;
-    }
-    .currentBook {
-        z-index: 999;
-
-    }
-    .nextBook {
-        opacity: 0.2;
-    }
-
-</style>
