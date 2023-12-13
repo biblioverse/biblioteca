@@ -19,15 +19,21 @@
     {{ knp_pagination_render(pagination) }}
         <div class="row">
             {% for item in pagination %}
+
                 {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
                 {% set class = status==100?'success':(status>0?'warning':'secondary') %}
-                <div class="bg-{{ class }}-subtle col-md-4 p-2 border-3 border-{{ class }}">
+                <div class="bg-{{ class }}-subtle col-md-4 p-3 border-3 border-{{ class }}">
                     {% set params = { (type): item.item } %}
-                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
-                    {{ item.item }}
+                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none text-center w-100">
+                        {{ item.item }}
                         <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
-                    {{ component('InlineEditGroup', {'existingValue':item.item,'fieldValue':item.item, 'field':type}) }}
+                    {% if type=='serie' or type=='authors' %}
+                    {{ render(controller(
+                        'App\\Controller\\GroupController::firstBook',
+                        { 'item': item, 'type': type }
+                    )) }}
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

@@ -58,7 +58,7 @@ class GroupController extends AbstractController
                 return str_contains(strtolower($item['item']), strtolower($search));
             });
         }
-        $pagination = $this->paginator->paginate($group, $page, 300);
+        $pagination = $this->paginator->paginate($group, $page, 150);
 
         return $this->render('group/index.html.twig', [
             'pagination' => $pagination,
@@ -67,5 +67,16 @@ class GroupController extends AbstractController
             'incomplete' => $incomplete,
             'search' => $search,
         ]);
+    }
+
+    public function firstBook(array $item, string $type, BookRepository $bookRepository): Response
+    {
+        if ($type !== 'authors') {
+            $books = $bookRepository->findBy([$type => $item['item']], ['title' => 'ASC']);
+        } else {
+            $books = $bookRepository->findByAuthor($item['item']);
+        }
+
+        return $this->render('group/_teaser.html.twig', ['books' => $books]);
     }
 }

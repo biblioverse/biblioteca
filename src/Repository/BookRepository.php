@@ -67,6 +67,20 @@ class BookRepository extends ServiceEntityRepository
         return array_filter($items, static fn ($key) => in_array($key, $randed, true), ARRAY_FILTER_USE_KEY);
     }
 
+    public function findByAuthor(string $author): mixed
+    {
+        $qb = $this->getAllBooksQueryBuilder();
+
+        $orModule = $qb->expr()->orX();
+
+        $orModule->add('JSON_CONTAINS(lower(book.authors), :author)=1');
+        $qb->setParameter('author', json_encode([strtolower($author)]));
+
+        $qb->andWhere($orModule);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function getAllSeries(): Query
     {
         return $this->createQueryBuilder('serie')
