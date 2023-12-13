@@ -45,28 +45,27 @@
         <a class="btn btn-outline-primary" href="{{ path('app_groups',{'type':'serie', 'page':1, 'incomplete':1}) }}">Incomplete series</a>
     </div>
     {% endif %}
+    <style>
+        .booksInGroup{
+            width: 100%;
+            height: 150px;
+            position:relative;
+        }
+        .previousBook,.currentBook,.nextBook{
+            width:auto;
+            height: 150px !important;
+            position:absolute;
+        }
+        .previousBook {
+            opacity: 0.4;
+        }
+        .currentBook {
+            z-index: 999;
 
+        }
+        .nextBook {
+            opacity: 0.6;
+        }
+
+    </style>
 {% endblock %}
-<style>
-    .booksInGroup{
-        width: 100%;
-        height: 150px;
-        position:relative;
-    }
-    .previousBook,.currentBook,.nextBook{
-        width:auto;
-        height: 150px !important;
-        position:absolute;
-    }
-    .previousBook {
-        opacity: 0.4;
-    }
-    .currentBook {
-        z-index: 999;
-
-    }
-    .nextBook {
-        opacity: 0.6;
-    }
-
-</style>
