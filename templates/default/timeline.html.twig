@@ -4,6 +4,16 @@
 {% block body %}
 
 
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link {{ withDate?'active'}}" aria-current="page" href="{{ path('app_timeline',{withDate:1}) }}">With date</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ not withDate?'active' }}" href="{{ path('app_timeline',{withDate:0}) }}">Without date</a>
+        </li>
+    </ul>
+
     {% set lastDate = null %}
     <div class="row">
     {% for book in books %}

@@ -49,12 +49,14 @@ class DefaultController extends AbstractController
     #[Route('/timeline/', name: 'app_timeline')]
     public function timeline(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
     {
-        $qb = $bookRepository->getReadBooks();
+        $withDate = (bool) $request->get('withDate', true);
+        $qb = $bookRepository->getReadBooks($withDate);
 
         $books = $qb->getQuery()->getResult();
 
         return $this->render('default/timeline.html.twig', [
             'books' => $books,
+            'withDate' => $withDate,
         ]);
     }
 }

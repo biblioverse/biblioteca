@@ -32,14 +32,21 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('user', $this->security->getUser());
     }
 
-    public function getReadBooks(): QueryBuilder
+    public function getReadBooks(bool $withDate = true): QueryBuilder
     {
-        return $this->createQueryBuilder('book')
+        $qb = $this->createQueryBuilder('book')
             ->select('book')
             ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
             ->where('bookInteraction.finished = true')
             ->orderBy('bookInteraction.finishedDate', 'DESC')
             ->setParameter('user', $this->security->getUser());
+        if ($withDate) {
+            $qb->andWhere('bookInteraction.finishedDate is not null');
+        } else {
+            $qb->andWhere('bookInteraction.finishedDate is null');
+        }
+
+        return $qb;
     }
 
     /**
