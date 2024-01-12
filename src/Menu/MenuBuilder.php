@@ -32,6 +32,7 @@ final class MenuBuilder
 
         $menu->setChildrenAttribute('class', 'nav flex-column');
         $menu->addChild('All Books', ['route' => 'app_homepage', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
+        $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
         $menu->addChild('Series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
         $menu->addChild('Authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'people-fill');
         $menu->addChild('Tags', ['route' => 'app_groups', 'routeParameters' => ['type' => 'tags'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');

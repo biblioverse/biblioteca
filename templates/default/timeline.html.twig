@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Timeline{% endblock %}
+{% block body %}
+
+
+    {% set lastDate = null %}
+    <div class="row">
+    {% for book in books %}
+        {% set date=null %}
+        {% for interaction in book.bookInteractions %}
+            {% if interaction.user.id == app.user.id and interaction.finished %}
+                {% set date = interaction.finishedDate %}
+            {% endif %}
+        {% endfor %}
+
+
+        {% if date is null %}
+            {% set newDate='Not set' %}
+        {% else %}
+            {% set newDate = date|date('Y') %}
+        {% endif %}
+
+        {% if newDate!=lastDate %}
+            {% set lastDate = newDate %}
+            </div>
+            <div class="row">
+            <div class="col-12">
+                <h2>{{ newDate }}</h2>
+            </div>
+        {% endif %}
+        <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
+            {% if date is not null %}
+                <div class="text-center text-success">
+                    <em>{{ date|date('j F Y') }}</em>
+                </div>
+            {% endif %}
+            {% include 'book/_teaser.html.twig' %}
+
+        </div>
+    {% endfor %}
+    </div>{% endblock %}

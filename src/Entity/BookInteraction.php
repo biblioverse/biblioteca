@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BookInteractionRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookInteractionRepository::class)]
@@ -26,6 +27,9 @@ class BookInteraction
 
     #[ORM\Column(nullable: false)]
     private bool $favorite = false;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $finishedDate = null;
 
     public function getId(): ?int
     {
@@ -76,6 +80,18 @@ class BookInteraction
     public function setFavorite(bool $favorite): static
     {
         $this->favorite = $favorite;
+
+        return $this;
+    }
+
+    public function getFinishedDate(): ?\DateTimeInterface
+    {
+        return $this->finishedDate;
+    }
+
+    public function setFinishedDate(?\DateTimeInterface $finishedDate): static
+    {
+        $this->finishedDate = $finishedDate;
 
         return $this;
     }

@@ -45,4 +45,16 @@ class DefaultController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/timeline/', name: 'app_timeline')]
+    public function timeline(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
+    {
+        $qb = $bookRepository->getReadBooks();
+
+        $books = $qb->getQuery()->getResult();
+
+        return $this->render('default/timeline.html.twig', [
+            'books' => $books,
+        ]);
+    }
 }

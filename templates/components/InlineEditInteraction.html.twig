@@ -1,6 +1,8 @@
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
 
     {% set finished=false %}
+    {% set modalId=unique_id('interaction-', false) %}
+
     {% if interaction is not null %}
         {% if interaction.finished %}
             {% set finished=true %}
@@ -38,4 +40,27 @@
 
     </button>
 
+    <button class="btn btn-link btn-sm text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#{{ modalId}}" type="button"
+            data-toggle="tooltip" data-placement="bottom" >
+        <i class="bi bi-box-arrow-up-right"></i>
+    </button>
+
+    {% component BootstrapModal with {id: modalId} %}
+        {% block modal_header %}
+            <h5>{{ book.title }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% endblock %}
+        {% block modal_body %}
+
+            {{ form(form,{
+                attr: {
+                    'novalidate': true,
+                    'class': '',
+                    'data-action': 'live#action',
+                    'data-action-name': 'prevent|saveInteraction',
+                }
+            }) }}
+        {% endblock %}
+
+    {% endcomponent %}
 </div>

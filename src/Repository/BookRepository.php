@@ -32,6 +32,16 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('user', $this->security->getUser());
     }
 
+    public function getReadBooks(): QueryBuilder
+    {
+        return $this->createQueryBuilder('book')
+            ->select('book')
+            ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
+            ->where('bookInteraction.finished = true')
+            ->orderBy('bookInteraction.finishedDate', 'DESC')
+            ->setParameter('user', $this->security->getUser());
+    }
+
     /**
      * @return Book[]
      */
