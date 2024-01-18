@@ -1,6 +1,9 @@
+parameters:
+    'env(TRUSTED_PROXIES)': 'REMOTE_ADDR'
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
     #csrf_protection: true
     http_method_override: false
     handle_all_throwables: true
