@@ -34,6 +34,12 @@ class Shelf
     #[Gedmo\Slug(fields: ['name', 'id'], style: 'lower')]
     private string $slug;
 
+    /**
+     * @var Collection<int, Kobo>
+     */
+    #[ORM\ManyToMany(targetEntity: Kobo::class, mappedBy: 'shelves')]
+    private Collection $kobos;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $queryString = null;
 
@@ -123,5 +129,41 @@ class Shelf
         $this->queryString = $queryString;
 
         return $this;
+    }
+
+    /**
+     * @param Collection<int, Kobo> $collection
+     */
+    public function setKobos(Collection $collection): self
+    {
+        $this->kobos = $collection;
+
+        return $this;
+    }
+
+    public function addKobo(Kobo $kobo): self
+    {
+        if (!$this->kobos->contains($kobo)) {
+            $this->kobos->add($kobo);
+        }
+
+        return $this;
+    }
+
+    public function removeKobo(Kobo $kobo): self
+    {
+        if (!$this->kobos->contains($kobo)) {
+            $this->kobos->add($kobo);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Kobo>
+     */
+    public function getKobos(): Collection
+    {
+        return $this->kobos;
     }
 }
