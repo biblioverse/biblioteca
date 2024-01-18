@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Entity(repositoryClass: ShelfRepository::class)]
 class Shelf
 {
+    use UuidGeneratorTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,9 +44,21 @@ class Shelf
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $queryString = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: 'create')]
+    private ?\DateTimeInterface $created = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
+    private ?\DateTimeInterface $updated = null;
+
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, nullable: true)]
+    private ?string $uuid = null;
+
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->uuid = $this->generateUuid();
     }
 
     public function getId(): int
@@ -165,5 +178,39 @@ class Shelf
     public function getKobos(): Collection
     {
         return $this->kobos;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): void
+    {
+        $this->updated = $updated;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(?\DateTimeInterface $created): void
+    {
+        $this->created = $created;
+    }
+
+    public function getUuid(): ?string
+    {
+        if ($this->uuid === null) {
+            $this->uuid = $this->generateUuid();
+        }
+
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): void
+    {
+        $this->uuid = $uuid;
     }
 }
