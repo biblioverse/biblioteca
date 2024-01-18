@@ -65,6 +65,60 @@ class BookFileSystemManager
         return $iterator;
     }
 
+    public function getBookFilename(Book $book): string
+    {
+        $paths = [$this->getBooksDirectory(), $book->getBookPath(), $book->getBookFilename()];
+
+        return $this->handlePath($paths);
+    }
+
+    public function getCoverFilename(Book $book): ?string
+    {
+        $paths = [$this->getCoverDirectory(), $book->getImagePath(), $book->getImageFilename()];
+        if (in_array(null, $paths, true)) {
+            return null;
+        }
+
+        return $this->handlePath($paths);
+    }
+
+    public function getBookSize(Book $book): ?int
+    {
+        if (!$this->fileExist($book)) {
+            return null;
+        }
+
+        $size = filesize($this->getBookFilename($book));
+
+        return $size === false ? null : $size;
+    }
+
+    public function getCoverSize(Book $book): ?int
+    {
+        if (!$this->coverExist($book)) {
+            return null;
+        }
+
+        $filename = $this->getCoverFilename($book);
+        $size = $filename === null ? false : filesize($filename);
+
+        return $size === false ? null : $size;
+    }
+
+    public function fileExist(Book $book): bool
+    {
+        $path = $this->getBookFilename($book);
+
+        return file_exists($path);
+    }
+
+    public function coverExist(Book $book): bool
+    {
+        $cover = $this->getCoverFilename($book);
+
+        return !($cover === null) && file_exists($cover);
+    }
+
     /**
      * @throws \Exception
      */
@@ -533,6 +587,7 @@ class BookFileSystemManager
     private function getReaderFolder(): string
     {
         $user = $this->security->getUser();
+
         return $this->publicDir.'/tmp/reader/'.$user?->getUserIdentifier();
     }
 
