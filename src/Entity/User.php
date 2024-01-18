@@ -89,10 +89,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $theme = null;
 
+    /**
+     * @var Collection<int, Kobo>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Kobo::class, orphanRemoval: true)]
+    private Collection $kobos;
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
         $this->shelves = new ArrayCollection();
+        $this->kobos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -367,5 +373,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->theme = $theme;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int,Kobo>
+     */
+    public function getKobos(): Collection
+    {
+        return $this->kobos;
     }
 }

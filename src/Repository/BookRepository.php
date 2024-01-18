@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\Kobo;
+use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -305,5 +307,89 @@ class BookRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->_em->flush();
+    }
+
+    /**
+     * @param Kobo $kobo
+     * @param SyncToken $syncToken
+     * @return array<int, Book>
+     */
+    public function getChangedBooks(Kobo $kobo, SyncToken $syncToken, int $firstResult, int $maxResults): array
+    {
+        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+        $qb->orderBy('book.updated', 'ASC');
+        /** @var Book[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    public function getChangedBooksCount(Kobo $kobo, SyncToken $syncToken): int
+    {
+        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb->select('count(book.id) as nb');
+
+        return (int) $qb->getQuery()->getSingleColumnResult();
+    }
+
+    private function getChangedBooksQueryBuilder(Kobo $kobo, SyncToken $syncToken): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('book', 'koboSyncedBooks', 'bookInteractions')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.kobos', 'kobo')
+            ->leftJoin('book.bookInteractions', 'bookInteractions')
+            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.kobo = :kobo')
+            ->where('kobo.id = :id')
+            ->andWhere('book.extension = :extension')
+            ->setParameter('id', $kobo->getId())
+            ->setParameter('kobo', $kobo)
+            ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
+
+        if ($syncToken->lastCreated !== null) {
+            $qb->andWhere('book.created > :lastCreated');
+            $qb->orWhere($qb->expr()->orX(
+                $qb->expr()->isNull('koboSyncedBooks.created is null'),
+                $qb->expr()->isNull('koboSyncedBooks.created > :lastCreated'),
+            ))
+            ->setParameter('lastCreated', $syncToken->lastCreated);
+        }
+
+        if ($syncToken->lastModified !== null) {
+            $qb->andWhere($qb->expr()->orX(
+                'book.lastModified > :lastModified',
+                'book.lastCreated  > :lastModified',
+                'koboSyncedBooks.updated > :lastModified',
+                $qb->expr()->isNull('koboSyncedBooks.updated'),
+            ));
+            $qb->setParameter('lastModified', $syncToken->lastModified);
+        }
+
+        $qb->orderBy('book.book.updated');
+        if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
+            $qb->orderBy('bookInteractions.updated', 'ASC');
+            $qb->addOrderBy('bookInteractions.finished', 'ASC');
+        }
+
+        return $qb;
+    }
+
+    public function findByIdAndKobo(int $bookId, Kobo $kobo): ?Book
+    {
+        /** @var Book|null $result */
+        $result = $this->createQueryBuilder('book')
+            ->select('book')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.kobos', 'kobo')
+            ->where('kobo.id = :koboId')
+            ->andWhere('book.id = :bookId')
+            ->setParameter('koboId', $kobo->getId())
+            ->setParameter('bookId', $bookId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $result;
     }
 }

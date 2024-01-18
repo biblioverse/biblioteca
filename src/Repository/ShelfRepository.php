@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Kobo;
 use App\Entity\Shelf;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,4 +46,37 @@ class ShelfRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findByKoboAndId(Kobo $kobo, string $shelfId): ?Shelf
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->join('shelf.kobo', 'kobo')
+            ->where('kobo.id = :koboId')
+            ->setParameter('koboId', $kobo->getId())
+            ->andWhere('shelf.id = :shelfId')
+            ->setParameter('shelfId', $shelfId)
+            ->setMaxResults(1);
+
+        /** @var Shelf|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result;
+    }
+
+    public function findByKoboAndName(Kobo $kobo, mixed $name): ?Shelf
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->join('shelf.kobo', 'kobo')
+            ->where('kobo.id = :id')
+            ->setParameter('id', $kobo->getId())
+            ->andWhere('shelf.name = :name')
+            ->setParameter('name', $name)
+            ->setMaxResults(1);
+
+        /** @var Shelf|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result;
+    }
 }
