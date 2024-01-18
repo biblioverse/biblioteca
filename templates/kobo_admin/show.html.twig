@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kobo{% endblock %}
+
+{% block body %}
+    <h1>Kobo</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ kobo.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ kobo.name }}</td>
+            </tr>
+            <tr>
+                <th>AccessKey</th>
+                <td>{{ kobo.accessKey }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_kobo_admin_index') }}">back to list</a>
+
+    <a href="{{ path('app_kobo_admin_edit', {'id': kobo.id}) }}">edit</a>
+
+    {{ include('kobo_admin/_delete_form.html.twig') }}
+{% endblock %}
