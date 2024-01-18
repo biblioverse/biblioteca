@@ -47,6 +47,12 @@ class Kobo
     #[ORM\OneToMany(mappedBy: 'kobo', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
+    /**
+     * @var bool
+     */
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $forceSync = false;
+
     public function __construct()
     {
         $this->shelves = new ArrayCollection();
@@ -142,6 +148,18 @@ class Kobo
                 $koboSyncedBook->setKobo(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isForceSync(): bool
+    {
+        return $this->forceSync;
+    }
+
+    public function setForceSync(bool $forceSync): self
+    {
+        $this->forceSync = $forceSync;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Kobo;
 use App\Entity\Shelf;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -78,5 +79,57 @@ class ShelfRepository extends ServiceEntityRepository
         $result = $qb->getQuery()->getOneOrNullResult();
 
         return $result;
+    }
+
+    /**
+     * @param Kobo $kobo
+     * @param \App\Kobo\SyncToken $syncToken
+     * @return array<Shelf>
+     */
+    public function getShelvesToSync(Kobo $kobo, \App\Kobo\SyncToken $syncToken): array
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->join('shelf.kobos', 'kobo')
+            ->where('kobo.id = :id')
+            ->setParameter('id', $kobo->getId());
+
+        if ($syncToken->tagLastModified !== null) {
+            $qb->andWhere($qb->expr()->orX(
+                'shelf.updated > :tagLastModified',
+                'shelf.created > :tagLastModified'
+            ))
+                ->setParameter('tagLastModified', $syncToken->tagLastModified);
+        }
+
+        /** @var Shelf[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByKoboAndUUid(Kobo $kobo, string $uuid): ?Shelf
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->join('shelf.kobos', 'kobo')
+            ->where('kobo.id = :id')
+            ->andWhere('shelf.uuid = :uuid')
+            ->setParameter('id', $kobo->getId())
+            ->setMaxResults(1)
+            ->setParameter('uuid', $uuid);
+
+        /** @var Shelf|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result;
+    }
+
+    public function flush(): void
+    {
+        $this->_em->flush();
     }
 }
