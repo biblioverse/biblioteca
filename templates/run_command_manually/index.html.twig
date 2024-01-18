@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Run a command manually{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+
+    {% for description, command in commands %}
+    <ul>
+        <li><a href="{{ path('run_command', {'name' : command.action}) }}">Run <code>{{ description }}</code></a></li>
+    </ul>
+    {% endfor %}
+
+</div>
+{% endblock %}
