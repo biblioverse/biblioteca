@@ -48,7 +48,7 @@ services:
       - default
 
   typesense:
-      image: typesense/typesense:0.25.1
+      image: typesense/typesense:0.26.0.rc46
       restart: on-failure
       ports:
         - 8983

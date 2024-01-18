@@ -51,3 +51,7 @@ yarn-error.log
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+
+# Custom docker override for https://github.com/typesense/typesense/issues/1351
+typesense/*
