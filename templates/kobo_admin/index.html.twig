@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kobo index{% endblock %}
+
+{% block body %}
+    <h1>Kobo index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>AccessKey</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for kobo in kobos %}
+            <tr>
+                <td>{{ kobo.id }}</td>
+                <td>{{ kobo.name }}</td>
+                <td>{{ kobo.accessKey }}</td>
+                <td>
+                    <a href="{{ path('app_kobo_admin_show', {'id': kobo.id}) }}">show</a>
+                    <a href="{{ path('app_kobo_admin_edit', {'id': kobo.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_kobo_admin_new') }}">Create new</a>
+{% endblock %}
