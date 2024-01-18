@@ -110,7 +110,7 @@ class Book
     /**
      * @var Collection<int, KoboSyncedBook>
      */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: KoboSyncedBook::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
     public function __construct()

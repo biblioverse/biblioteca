@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\Kobo;
 use App\Entity\KoboSyncedBook;
+use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,7 +49,7 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function updateSyncedBooks(\App\Entity\Kobo $kobo, array $books, \App\Kobo\SyncToken $syncToken): void
+    public function updateSyncedBooks(Kobo $kobo, array $books, SyncToken $syncToken): void
     {
         $updatedAt = $syncToken->lastModified ?? new \DateTime();
 
@@ -99,5 +101,20 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             $this->_em->persist($object);
         }
         $this->_em->flush();
+    }
+
+    public function deleteAllSyncedBooks(Kobo $kobo): int
+    {
+        $query = $this->createQueryBuilder('koboSyncedBook')
+            ->delete()
+            ->where('koboSyncedBook.kobo = :kobo')
+            ->setParameter('kobo', $kobo)
+            ->getQuery();
+
+        /** @var int $result */
+        $result = $query
+            ->getResult();
+
+        return $result;
     }
 }
