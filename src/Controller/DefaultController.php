@@ -19,14 +19,12 @@ class DefaultController extends AbstractController
     #[Route('/', name: 'app_dashboard')]
     public function index(BookRepository $bookRepository): Response
     {
-
-        $exts =$bookRepository->countBooks(false);
-        $types =$bookRepository->countBooks(true);
-
+        $exts = $bookRepository->countBooks(false);
+        $types = $bookRepository->countBooks(true);
 
         return $this->render('default/dashboard.html.twig', [
-            'extensions'=>$exts,
-            'types'=>$types,
+            'extensions' => $exts,
+            'types' => $types,
         ]);
     }
 

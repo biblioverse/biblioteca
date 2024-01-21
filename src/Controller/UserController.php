@@ -34,16 +34,14 @@ class UserController extends AbstractController
     public function profile(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, Security $security): Response
     {
         $user = $security->getUser();
-        if(!$user instanceof User) {
+        if (!$user instanceof User) {
             throw new \RuntimeException('User must be an instance of User');
         }
         $form = $this->createForm(ProfileType::class, $user);
 
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $entityManager->persist($user);
             $entityManager->flush();
 

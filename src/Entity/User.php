@@ -45,22 +45,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shelf::class, orphanRemoval: true)]
     private Collection $shelves;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displaySeries = true;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displayAuthors = true;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displayTags = true;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displayPublishers = true;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displayTimeline = true;
 
-    #[ORM\Column(options: ["default" => true])]
+    #[ORM\Column(options: ['default' => true])]
     private bool $displayAllBooks = true;
 
     public function __construct()

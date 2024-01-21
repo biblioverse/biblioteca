@@ -31,34 +31,31 @@ final class MenuBuilder
         $menu = $this->factory->createItem('root');
         $user = $this->security->getUser();
 
-        if(!$user instanceof User) {
+        if (!$user instanceof User) {
             return $menu;
         }
 
         $menu->setChildrenAttribute('class', 'nav flex-column');
         $menu->addChild('Home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
 
-        if($user->isDisplayAllBooks()) {
+        if ($user->isDisplayAllBooks()) {
             $menu->addChild('All Books', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
         }
-        if($user->isDisplayTimeline()) {
+        if ($user->isDisplayTimeline()) {
             $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
         }
-        if($user->isDisplaySeries()) {
+        if ($user->isDisplaySeries()) {
             $menu->addChild('Series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
         }
-        if($user->isDisplayAuthors()) {
+        if ($user->isDisplayAuthors()) {
             $menu->addChild('Authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'people-fill');
         }
-        if($user->isDisplayTags()) {
+        if ($user->isDisplayTags()) {
             $menu->addChild('Tags', ['route' => 'app_groups', 'routeParameters' => ['type' => 'tags'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-        if($user->isDisplayPublishers()) {
+        if ($user->isDisplayPublishers()) {
             $menu->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-
-
-
 
         if ($user->getShelves()->count() > 0) {
             $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
@@ -80,7 +77,7 @@ final class MenuBuilder
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
         }
-        $menu->addChild('Logout', ['route' => 'app_logout',...$this->defaultAttr])->setExtra('icon', 'door-closed');
+        $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         return $menu;
     }

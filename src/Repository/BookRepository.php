@@ -118,7 +118,7 @@ class BookRepository extends ServiceEntityRepository
         return array_column($results, 'year');
     }
 
-    public function countBooks($group=false): array
+    public function countBooks(bool $group = false): array
     {
         $qb = $this->createQueryBuilder('book')
             ->select('book.extension, count(book.extension) as nb')
@@ -131,12 +131,12 @@ class BookRepository extends ServiceEntityRepository
         }
 
         $types = [];
-        if($group) {
+        if ($group) {
             foreach ($results as $result) {
                 $type = self::extensionToType($result['extension']);
                 $types[$type] = $result['nb'];
             }
-        }else{
+        } else {
             foreach ($results as $result) {
                 $types[$result['extension']] = $result['nb'];
             }
@@ -144,7 +144,6 @@ class BookRepository extends ServiceEntityRepository
 
         return $types;
     }
-
 
     /**
      * @return Book[]
