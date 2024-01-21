@@ -55,7 +55,7 @@ class BookRepository extends ServiceEntityRepository
 
     public static function extensionToType(string $extension): string
     {
-        return match ($extension) {
+        return match (strtolower($extension)) {
             'pdf' => 'pdf',
             'epub', 'mobi' => 'book',
             'cbr', 'cba', 'cbz', 'cbt', 'cb7' => 'comic',
@@ -69,7 +69,7 @@ class BookRepository extends ServiceEntityRepository
             return ['pdf', 'epub', 'mobi', 'cbr', 'cba', 'cbz', 'cbt', 'cb7'];
         }
 
-        return match ($type) {
+        return match (strtolower($type)) {
             'pdf' => ['pdf'],
             'book' => ['epub', 'mobi'],
             'comic' => ['cbr', 'cba', 'cbz', 'cbt', 'cb7'],
