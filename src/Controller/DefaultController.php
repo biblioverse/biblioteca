@@ -16,8 +16,22 @@ class DefaultController extends AbstractController
 {
     use PageFilterFormTrait;
 
-    #[Route('/{page}', name: 'app_homepage', requirements: ['page' => '\d+'])]
-    public function index(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
+    #[Route('/', name: 'app_dashboard')]
+    public function index(BookRepository $bookRepository): Response
+    {
+
+        $exts =$bookRepository->countBooks(false);
+        $types =$bookRepository->countBooks(true);
+
+
+        return $this->render('default/dashboard.html.twig', [
+            'extensions'=>$exts,
+            'types'=>$types,
+        ]);
+    }
+
+    #[Route('/all/{page}', name: 'app_allbooks', requirements: ['page' => '\d+'])]
+    public function allbooks(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
     {
         $qb = $bookRepository->getAllBooksQueryBuilder();
 
@@ -26,7 +40,7 @@ class DefaultController extends AbstractController
         if ($request->getQueryString() === null) {
             $modifiedParams = $filteredBookUrlGenerator->getParametersArrayForCurrent();
 
-            return $this->redirectToRoute('app_homepage', ['page' => 1, ...$modifiedParams]);
+            return $this->redirectToRoute('app_allbooks', ['page' => 1, ...$modifiedParams]);
         }
 
         $pagination = $paginator->paginate(
@@ -36,7 +50,7 @@ class DefaultController extends AbstractController
         );
 
         if ($page > ($pagination->getTotalItemCount() / 18) + 1) {
-            return $this->redirectToRoute('app_homepage', ['page' => 1, ...$request->query->all()]);
+            return $this->redirectToRoute('app_allbooks', ['page' => 1, ...$request->query->all()]);
         }
 
         return $this->render('default/index.html.twig', [

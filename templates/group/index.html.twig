@@ -11,7 +11,6 @@
     <form method="get" class="form-inline my-2">
         <div class="input-group">
             <input type="text" name="search" id="search" class="form-control" placeholder="Filter" value="{{ search }}">
-            <input type="hidden" name="incomplete" value="{{ incomplete }}">
             <button type="submit" class="btn btn-primary">{{ 'search'|trans }}</button>
         </div>
     </form>
@@ -19,53 +18,18 @@
     {{ knp_pagination_render(pagination) }}
         <div class="row">
             {% for item in pagination %}
-
                 {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
                 {% set class = status==100?'success':(status>0?'warning':'secondary') %}
-                <div class="bg-{{ class }}-subtle col-md-4 p-3 border-3 border-{{ class }}">
+                <div class="bg-{{ class }}-subtle col-md-4 p-2 border-3 border-{{ class }}">
                     {% set params = { (type): item.item } %}
-                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none text-center w-100">
-                        {{ item.item }}
+                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
+                    {{ item.item }}
                         <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
-                    {% if type=='serie' %}
-                    {{ render(controller(
-                        'App\\Controller\\GroupController::firstBook',
-                        { 'item': item, 'type': type }
-                    )) }}
-                    {% endif %}
+                    {{ component('InlineEditGroup', {'existingValue':item.item,'fieldValue':item.item, 'field':type}) }}
                 </div>
             {% endfor %}
         </div>
     {{ knp_pagination_render(pagination) }}
 
-    {% if type=='serie' %}
-    <div class="btn-group">
-        <a class="btn btn-outline-primary" href="{{ path('app_groups',{'type':'serie', 'page':1, 'incomplete':0}) }}">All series</a>
-        <a class="btn btn-outline-primary" href="{{ path('app_groups',{'type':'serie', 'page':1, 'incomplete':1}) }}">Incomplete series</a>
-    </div>
-    {% endif %}
-    <style>
-        .booksInGroup{
-            width: 100%;
-            height: 150px;
-            position:relative;
-        }
-        .previousBook,.currentBook,.nextBook{
-            width:auto;
-            height: 150px !important;
-            position:absolute;
-        }
-        .previousBook {
-            opacity: 0.4;
-        }
-        .currentBook {
-            z-index: 999;
-
-        }
-        .nextBook {
-            opacity: 0.6;
-        }
-
-    </style>
 {% endblock %}

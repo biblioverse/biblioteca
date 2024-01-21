@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ProfileType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,31 @@ class UserController extends AbstractController
     {
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/profile', name: 'app_user_profile')]
+    public function profile(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, Security $security): Response
+    {
+        $user = $security->getUser();
+        if(!$user instanceof User) {
+            throw new \RuntimeException('User must be an instance of User');
+        }
+        $form = $this->createForm(ProfileType::class, $user);
+
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_user_profile', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('user/profile.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
@@ -90,20 +117,5 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form,
         ]);
-    }
-
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $token = $request->request->get('_token');
-        if (!is_string($token)) {
-            throw new \RuntimeException('Token must be a string');
-        }
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $token)) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }

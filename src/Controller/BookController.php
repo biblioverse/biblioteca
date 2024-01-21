@@ -127,6 +127,6 @@ class BookController extends AbstractController
 
         $this->addFlash('success', 'Book deleted');
 
-        return $this->redirectToRoute('app_homepage');
+        return $this->redirectToRoute('app_allbooks');
     }
 }

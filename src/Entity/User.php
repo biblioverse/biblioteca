@@ -45,6 +45,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shelf::class, orphanRemoval: true)]
     private Collection $shelves;
 
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displaySeries = true;
+
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displayAuthors = true;
+
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displayTags = true;
+
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displayPublishers = true;
+
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displayTimeline = true;
+
+    #[ORM\Column(options: ["default" => true])]
+    private bool $displayAllBooks = true;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -177,6 +195,78 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeShelf(Shelf $shelf): static
     {
         $this->shelves->removeElement($shelf);
+
+        return $this;
+    }
+
+    public function isDisplaySeries(): bool
+    {
+        return $this->displaySeries;
+    }
+
+    public function setDisplaySeries(bool $displaySeries): static
+    {
+        $this->displaySeries = $displaySeries;
+
+        return $this;
+    }
+
+    public function isDisplayAuthors(): bool
+    {
+        return $this->displayAuthors;
+    }
+
+    public function setDisplayAuthors(bool $displayAuthors): static
+    {
+        $this->displayAuthors = $displayAuthors;
+
+        return $this;
+    }
+
+    public function isDisplayTags(): bool
+    {
+        return $this->displayTags;
+    }
+
+    public function setDisplayTags(bool $displayTags): static
+    {
+        $this->displayTags = $displayTags;
+
+        return $this;
+    }
+
+    public function isDisplayPublishers(): bool
+    {
+        return $this->displayPublishers;
+    }
+
+    public function setDisplayPublishers(bool $displayPublishers): static
+    {
+        $this->displayPublishers = $displayPublishers;
+
+        return $this;
+    }
+
+    public function isDisplayTimeline(): bool
+    {
+        return $this->displayTimeline;
+    }
+
+    public function setDisplayTimeline(bool $displayTimeline): static
+    {
+        $this->displayTimeline = $displayTimeline;
+
+        return $this;
+    }
+
+    public function isDisplayAllBooks(): bool
+    {
+        return $this->displayAllBooks;
+    }
+
+    public function setDisplayAllBooks(bool $displayAllBooks): static
+    {
+        $this->displayAllBooks = $displayAllBooks;
 
         return $this;
     }

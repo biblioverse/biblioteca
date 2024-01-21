@@ -16,7 +16,7 @@
     {% endif %}
     <details {% if pagination.getTotalItemCount==0 %}open="open"{% endif %}>
         <summary>Filters</summary>
-        {{ form_start(form, {'action': path('app_homepage',{'page':1})}) }}
+        {{ form_start(form, {'action': path('app_allbooks',{'page':1})}) }}
         <div class="row">
             <div class="col-md-4">
                 {{ form_row(form.title) }}

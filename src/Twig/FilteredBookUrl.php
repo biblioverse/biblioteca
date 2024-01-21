@@ -27,7 +27,7 @@ class FilteredBookUrl extends AbstractExtension
     {
         $params = $this->filteredBookUrlGenerator->getParametersArray($params);
 
-        return $this->router->generate('app_homepage', $params);
+        return $this->router->generate('app_allbooks', $params);
     }
 
     public function currentPageParams(bool $onlyModified = false): array
