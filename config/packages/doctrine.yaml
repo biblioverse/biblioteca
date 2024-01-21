@@ -35,7 +35,8 @@ doctrine:
         dql:
             string_functions:
                 JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
-
+                MONTH: DoctrineExtensions\Query\Mysql\Month
+                YEAR: DoctrineExtensions\Query\Mysql\Year
 when@test:
     doctrine:
         dbal:

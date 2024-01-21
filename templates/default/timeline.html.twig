@@ -3,50 +3,24 @@
 {% block title %}My Timeline{% endblock %}
 {% block body %}
 
+    <div class="btn-group">
+        {% for availableYear in years %}
+            <a href="{{ path('app_timeline', {'year': availableYear??'null', 'type':type??'null'}) }}" class="btn {{ year==availableYear?'active'}} btn-secondary">{{ availableYear??'None' }}</a>
+        {% endfor %}
+    </div>
 
+    <div class="btn-group" >
+        <a href="{{ path('app_timeline', {'year': year??'null', 'type':'all'}) }}" class="btn {{ 'all'==type?'active'}} btn-secondary">All</a>
+        {% for availableType in types %}
+            <a href="{{ path('app_timeline', {'year': year??'null', 'type':availableType}) }}" class="btn {{ type==availableType?'active'}} btn-secondary">{{ availableType }}</a>
+        {% endfor %}
+    </div>
 
-    <ul class="nav nav-pills mb-3">
-        <li class="nav-item">
-            <a class="nav-link {{ withDate?'active'}}" aria-current="page" href="{{ path('app_timeline',{withDate:1}) }}">With date</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ not withDate?'active' }}" href="{{ path('app_timeline',{withDate:0}) }}">Without date</a>
-        </li>
-    </ul>
-
-    {% set lastDate = null %}
+    <h1 class="my-4">Timeline for {{ year }}: {{ books|length }} {{ type }}</h1>
     <div class="row">
     {% for book in books %}
-        {% set date=null %}
-        {% for interaction in book.bookInteractions %}
-            {% if interaction.user.id == app.user.id and interaction.finished %}
-                {% set date = interaction.finishedDate %}
-            {% endif %}
-        {% endfor %}
-
-
-        {% if date is null %}
-            {% set newDate='Not set' %}
-        {% else %}
-            {% set newDate = date|date('Y') %}
-        {% endif %}
-
-        {% if newDate!=lastDate %}
-            {% set lastDate = newDate %}
-            </div>
-            <div class="row">
-            <div class="col-12">
-                <h2>{{ newDate }}</h2>
-            </div>
-        {% endif %}
         <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
-            {% if date is not null %}
-                <div class="text-center text-success">
-                    <em>{{ date|date('j F Y') }}</em>
-                </div>
-            {% endif %}
             {% include 'book/_teaser.html.twig' %}
-
         </div>
     {% endfor %}
     </div>{% endblock %}

@@ -32,7 +32,7 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('user', $this->security->getUser());
     }
 
-    public function getReadBooks(bool $withDate = true): QueryBuilder
+    public function getReadBooks(?string $year, string $type): QueryBuilder
     {
         $qb = $this->createQueryBuilder('book')
             ->select('book')
@@ -40,13 +40,82 @@ class BookRepository extends ServiceEntityRepository
             ->where('bookInteraction.finished = true')
             ->orderBy('bookInteraction.finishedDate', 'DESC')
             ->setParameter('user', $this->security->getUser());
-        if ($withDate) {
-            $qb->andWhere('bookInteraction.finishedDate is not null');
-        } else {
+
+        if ($year === null) {
             $qb->andWhere('bookInteraction.finishedDate is null');
+        } else {
+            $qb->andWhere('YEAR(bookInteraction.finishedDate) = :year')
+                ->setParameter('year', $year);
         }
+        $qb->andWhere('book.extension in(:type)')
+            ->setParameter('type', self::extensionsFromType($type));
 
         return $qb;
+    }
+
+    public static function extensionToType(string $extension): string
+    {
+        return match ($extension) {
+            'pdf' => 'pdf',
+            'epub', 'mobi' => 'book',
+            'cbr', 'cba', 'cbz', 'cbt', 'cb7' => 'comic',
+            default => 'unknown-'.$extension,
+        };
+    }
+
+    public static function extensionsFromType(string $type): array
+    {
+        if ($type === 'all') {
+            return ['pdf', 'epub', 'mobi', 'cbr', 'cba', 'cbz', 'cbt', 'cb7'];
+        }
+
+        return match ($type) {
+            'pdf' => ['pdf'],
+            'book' => ['epub', 'mobi'],
+            'comic' => ['cbr', 'cba', 'cbz', 'cbt', 'cb7'],
+            default => [],
+        };
+    }
+
+    public function getReadTypes(): array
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('book.extension')
+            ->distinct(true)
+            ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
+            ->where('bookInteraction.finished = true')
+            ->orderBy('bookInteraction.finishedDate', 'DESC')
+            ->setParameter('user', $this->security->getUser());
+        $extensions = $qb->getQuery()->getResult();
+        if (!is_array($extensions)) {
+            return [];
+        }
+        $extensions = array_column($extensions, 'extension');
+        $types = [];
+        foreach ($extensions as $extension) {
+            $type = self::extensionToType($extension);
+            $types[$type] = $type;
+        }
+
+        return $types;
+    }
+
+    public function getReadYears(): array
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('YEAR(bookInteraction.finishedDate) as year')
+            ->distinct(true)
+            ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
+            ->where('bookInteraction.finished = true')
+            ->orderBy('bookInteraction.finishedDate', 'DESC')
+            ->setParameter('user', $this->security->getUser());
+
+        $results = $qb->getQuery()->getResult();
+        if (!is_array($results)) {
+            return [];
+        }
+
+        return array_column($results, 'year');
     }
 
     /**

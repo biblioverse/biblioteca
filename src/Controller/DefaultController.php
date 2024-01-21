@@ -46,17 +46,40 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/timeline/', name: 'app_timeline')]
-    public function timeline(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
+    #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]
+    public function timeline(?string $type, ?string $year, Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
     {
-        $withDate = (bool) $request->get('withDate', true);
-        $qb = $bookRepository->getReadBooks($withDate);
+        if ($type === null) {
+            $redirectType = 'all';
+        } else {
+            $redirectType = $type;
+        }
+        if ($year === null) {
+            $redirectYear = date('Y');
+        } else {
+            $redirectYear = $year;
+        }
+        if ($redirectYear !== $year || $redirectType !== $type) {
+            return $this->redirectToRoute('app_timeline', ['type' => $redirectType, 'year' => $redirectYear]);
+        }
+
+        if ($year === 'null') {
+            $year = null;
+        }
+
+        $qb = $bookRepository->getReadBooks($year, $type);
+
+        $types = $bookRepository->getReadTypes();
+        $years = $bookRepository->getReadYears();
 
         $books = $qb->getQuery()->getResult();
 
         return $this->render('default/timeline.html.twig', [
             'books' => $books,
-            'withDate' => $withDate,
+            'year' => $year,
+            'type' => $type,
+            'types' => $types,
+            'years' => $years,
         ]);
     }
 }

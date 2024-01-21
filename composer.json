@@ -12,6 +12,7 @@
         "ext-zip": "*",
         "acseo/typesense-bundle": "dev-master",
         "andanteproject/page-filter-form-bundle": "^1.0",
+        "beberlei/doctrineextensions": "^1.3",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
