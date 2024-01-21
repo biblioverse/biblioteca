@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\BookRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +23,16 @@ class AutocompleteGroupController extends AbstractController
             return new JsonResponse(['results' => []]);
         }
 
+        $json = ['results' => []];
+
+        if ($type === 'ageCategory') {
+            foreach (User::AGE_CATEGORIES as $ageCategory => $ageCategoryId) {
+                $json['results'][] = ['value' => $ageCategoryId, 'text' => $ageCategory];
+            }
+
+            return new JsonResponse($json);
+        }
+
         /** @var array<GroupType> $group */
         $group = match ($type) {
             'serie' => $bookRepository->getAllSeries()->getResult(),
@@ -32,7 +43,6 @@ class AutocompleteGroupController extends AbstractController
         };
 
         $exactmatch = false;
-        $json = ['results' => []];
 
         if ($type !== 'authors' && $query === '' && $request->get('create', true) !== true) {
             $json['results'][] = ['value' => 'no_'.$type, 'text' => '[No '.$type.' defined]'];

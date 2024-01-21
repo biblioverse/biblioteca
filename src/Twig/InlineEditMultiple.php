@@ -28,6 +28,9 @@ class InlineEditMultiple extends AbstractController
     #[LiveProp(writable: true)]
     public array $fieldValue;
 
+    #[LiveProp(writable: true)]
+    public ?int $fieldValueInt = null;
+
     #[LiveProp()]
     public bool $isEditing = false;
 
@@ -58,6 +61,11 @@ class InlineEditMultiple extends AbstractController
                     break;
                 case 'serie':
                     $book->setSerie(implode(',', $this->fieldValue));
+                    break;
+                case 'ageCategory':
+                    $value = $this->fieldValueInt;
+                    $book->setAgeCategory($value);
+
                     break;
                 default:
                     throw new \RuntimeException('Field not implemented for multiple edition');
