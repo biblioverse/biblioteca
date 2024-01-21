@@ -134,11 +134,11 @@ class BookRepository extends ServiceEntityRepository
         if ($group) {
             foreach ($results as $result) {
                 $type = self::extensionToType($result['extension']);
-                $types[$type] = $types[$type]??0 + $result['nb'];
+                $types[$type] = ($types[$type] ?? 0) + $result['nb'];
             }
         } else {
             foreach ($results as $result) {
-                $types[$result['extension']] = $types[$result['extension']]??0 + $result['nb'];
+                $types[$result['extension']] = ($types[$result['extension']] ?? 0) + $result['nb'];
             }
         }
 
