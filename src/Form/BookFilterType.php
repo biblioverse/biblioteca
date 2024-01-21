@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Book;
+use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
@@ -228,6 +229,22 @@ class BookFilterType extends AbstractType
                 if ($readValue !== null && $readValue !== '') {
                     $qb->andWhere($qb->expr()->like('book.extension', ':extension'));
                     $qb->setParameter('extension', $readValue);
+                }
+            },
+        ]);
+
+        $builder->add('age', Type\ChoiceType::class, [
+            'choices' => User::AGE_CATEGORIES + ['Not set' => 'null'],
+            'required' => false,
+            'mapped' => false,
+            'expanded' => true,
+            'multiple' => true,
+            'target_callback' => function (QueryBuilder $qb, array $readValue): void {
+                if (in_array('null', $readValue, true)) {
+                    $qb->andWhere('book.ageCategory is null');
+                } elseif (count($readValue) > 0) {
+                    $qb->andWhere($qb->expr()->in('book.ageCategory', ':ageCategory'));
+                    $qb->setParameter('ageCategory', $readValue);
                 }
             },
         ]);

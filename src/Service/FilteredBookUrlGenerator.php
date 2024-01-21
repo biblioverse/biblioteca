@@ -22,6 +22,7 @@ class FilteredBookUrlGenerator
         'extension' => '',
         'verified' => '',
         'orderBy' => '',
+        'age' => [],
         'submit' => '',
     ];
 

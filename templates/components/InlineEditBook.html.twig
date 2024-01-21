@@ -60,6 +60,18 @@
                                 <option value="{{ tag }}" selected>{{ tag }}</option>
                             {% endfor %}
                         </select>
+                    {% elseif field=='ageCategory' %}
+                        <select
+                            class="form-select"
+                            id="book_{{ book.id }}_{{ field }}"
+                            data-model="norender|book.{{ field }}"
+                        >
+
+                            {% for value,ageCat in constant('App\\Entity\\User::AGE_CATEGORIES') %}
+                                <option value="{{ ageCat }}" {{ value==book.ageCategory??'selected' }}>{{ value }}</option>
+                            {% endfor %}
+                            <option value="">Not set</option>
+                        </select>
                     {% else %}
                         <input
                                 type="text"
@@ -106,6 +118,12 @@
                 <a href="{{ filter_book_url({'serie':[book.serie]}) }}" class="text-decoration-none p-1">
                      <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
                 </a>
+            {% elseif field=='ageCategory' %}
+                {% for key, value in constant('App\\Entity\\User::AGE_CATEGORIES')|filter((v,k)=>v==book.ageCategory) %}
+                    {{ key }}
+                {% else %}
+                    -
+                {% endfor %}
             {% else %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}

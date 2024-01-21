@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +24,8 @@ class UserType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
             ])
+            ->add('birthday', BirthdayType::class, ['widget' => 'single_text'])
+            ->add('maxAgeCategory', ChoiceType::class, ['choices' => User::AGE_CATEGORIES])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'required' => false,

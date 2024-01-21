@@ -57,6 +57,10 @@
                 </tr>
 
                 <tr>
+                    <th>{{ 'Age'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}</td>
+                </tr>
+
+                <tr>
                     <th>{{ 'tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', suggestions:suggestions}) }}</td>
                 </tr>
                 <tr>

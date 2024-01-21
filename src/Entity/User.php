@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,6 +14,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const AGE_CATEGORIES = [
+        '0-10 ans' => '1',
+        '11-15 ans' => '3',
+        '16-18 ans' => '4',
+        '18 ans et+' => '5',
+    ];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -62,6 +69,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(options: ['default' => true])]
     private bool $displayAllBooks = true;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $birthday = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $maxAgeCategory = null;
 
     public function __construct()
     {
@@ -267,6 +280,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDisplayAllBooks(bool $displayAllBooks): static
     {
         $this->displayAllBooks = $displayAllBooks;
+
+        return $this;
+    }
+
+    public function getBirthday(): ?\DateTimeInterface
+    {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?\DateTimeInterface $birthday): static
+    {
+        $this->birthday = $birthday;
+
+        return $this;
+    }
+
+    public function getMaxAgeCategory(): ?int
+    {
+        return $this->maxAgeCategory;
+    }
+
+    public function setMaxAgeCategory(?int $maxAgeCategory): static
+    {
+        $this->maxAgeCategory = $maxAgeCategory;
 
         return $this;
     }

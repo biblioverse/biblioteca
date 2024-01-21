@@ -97,6 +97,9 @@ class Book
     #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books', cascade: ['persist'])]
     private Collection $shelves;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $ageCategory = null;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -467,6 +470,18 @@ class Book
         if ($this->shelves->removeElement($shelf)) {
             $shelf->removeBook($this);
         }
+
+        return $this;
+    }
+
+    public function getAgeCategory(): ?int
+    {
+        return $this->ageCategory;
+    }
+
+    public function setAgeCategory(?int $ageCategory): static
+    {
+        $this->ageCategory = $ageCategory;
 
         return $this;
     }

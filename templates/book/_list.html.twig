@@ -51,6 +51,9 @@
                     {% endif %}
                     {{ component('FieldGuesser',{'book':book}) }}
                 </div>
+                <div>
+                    {{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}
+                </div>
             </td>
             <td>
                 {% include 'book/_interaction.html.twig' %}
