@@ -15,10 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const AGE_CATEGORIES = [
-        '0-10 ans' => '1',
-        '11-15 ans' => '3',
-        '16-18 ans' => '4',
-        '18 ans et+' => '5',
+        'E (Everyone)' => '1',
+        'E10+ (10 and more)' => '2',
+        'T (13 and more)' => '3',
+        'M (17 and more)' => '4',
+        'A (Adults only)' => '5',
     ];
     #[ORM\Id]
     #[ORM\GeneratedValue]
