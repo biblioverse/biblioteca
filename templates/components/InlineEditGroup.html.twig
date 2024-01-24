@@ -19,15 +19,6 @@
             <i class="bi bi-journal-check"></i> {{ 'rename'|trans }} {{ field }}
         </button>
     </form>
-    <form class="input-group d-inline">
-        <button
-            data-action="live#action"
-            data-action-name="prevent|remove"
-            class="btn btn-sm btn-link d-inline"
-        >
-            <i class="bi bi-trash-fill"></i>
-        </button>
-    </form>
 {% elseif is_granted('ROLE_ADMIN') %}
 
     <button
@@ -43,6 +34,15 @@
     {% if flashMessage %}
         <i class="bi bi-check alert-remove"></i>
     {% endif %}
+    <form class="input-group d-inline">
+        <button
+            data-action="live#action"
+            data-action-name="prevent|remove"
+            class="btn btn-sm btn-link d-inline"
+        >
+            <i class="bi bi-trash-fill"></i>
+        </button>
+    </form>
 {% endif %}
 
 </span>
