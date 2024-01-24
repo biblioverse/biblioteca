@@ -72,7 +72,7 @@ class BookController extends AbstractController
         $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
 
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename();
-        $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename()!==$book->getBookPath().$book->getBookFilename();
+        $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename() !== $book->getBookPath().$book->getBookFilename();
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
@@ -145,18 +145,18 @@ class BookController extends AbstractController
         $bookFiles = iterator_to_array($bookFiles);
 
         $consume = $request->get('consume');
-        if($consume!==null) {
+        if ($consume !== null) {
             foreach ($bookFiles as $bookFile) {
-                if($bookFile->getRealPath()!==$consume) {
+                if ($bookFile->getRealPath() !== $consume) {
                     continue;
                 }
-                $childProcess = new Process(['/var/www/html/bin/console', 'books:scan','--book-path', $bookFile->getRealPath()]);
+                $childProcess = new Process(['/var/www/html/bin/console', 'books:scan', '--book-path', $bookFile->getRealPath()]);
 
                 $childProcess->start();
 
                 $childProcess->wait();
 
-                $childProcess = new Process(['/var/www/html/bin/console', 'books:extract-cover','all']);
+                $childProcess = new Process(['/var/www/html/bin/console', 'books:extract-cover', 'all']);
 
                 $childProcess->start();
 
@@ -165,18 +165,18 @@ class BookController extends AbstractController
                 $this->addFlash('success', 'Book '.$bookFile->getFilename().' consumed');
 
                 return $this->redirectToRoute('app_book_consume');
-
             }
         }
 
         $delete = $request->get('delete');
-        if($delete!==null) {
+        if ($delete !== null) {
             foreach ($bookFiles as $bookFile) {
-                if($bookFile->getRealPath()!==$delete) {
+                if ($bookFile->getRealPath() !== $delete) {
                     continue;
                 }
                 unlink($bookFile->getRealPath());
                 $this->addFlash('success', 'Book '.$bookFile->getFilename().' deleted');
+
                 return $this->redirectToRoute('app_book_consume');
             }
         }
@@ -185,7 +185,6 @@ class BookController extends AbstractController
             'books' => $bookFiles,
         ]);
     }
-
 
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
     public function relocate(Book $book, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): Response
@@ -196,9 +195,7 @@ class BookController extends AbstractController
 
         return $this->redirectToRoute('app_book', [
             'book' => $book->getId(),
-            'slug'=> $book->getSlug(),
+            'slug' => $book->getSlug(),
         ]);
     }
-
-
 }

@@ -37,12 +37,12 @@ class BookFileSystemManager
     /**
      * @return \Iterator<\SplFileInfo>
      */
-    public function getAllBooksFiles(bool $onlyConsumeDirectory=false): \Iterator
+    public function getAllBooksFiles(bool $onlyConsumeDirectory = false): \Iterator
     {
         try {
             $finder = new Finder();
             $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS);
-            if($onlyConsumeDirectory) {
+            if ($onlyConsumeDirectory) {
                 $finder->in($this->getBooksDirectory().'/consume');
             } else {
                 $finder->in($this->getBooksDirectory());

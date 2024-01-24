@@ -9,21 +9,18 @@ use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
 use Kiwilan\Ebook\Tools\BookAuthor;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * @phpstan-type MetadataType array{ title:string, authors: BookAuthor[], main_author: ?BookAuthor, description: ?string, publisher: ?string, publish_date: ?\DateTime, language: ?string, tags: string[], serie:?string, serie_index: ?int, cover: ?EbookCover }
  */
 class BookManager
 {
-
-    public function __construct(private KernelInterface $appKernel, private BookFileSystemManager $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
+    public function __construct(private BookFileSystemManager $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
     {
     }
 
@@ -137,12 +134,12 @@ class BookManager
         return $data;
     }
 
-    public function consumeBooks(array $files, ?InputInterface $input=null, ?OutputInterface $output=null):void
+    public function consumeBooks(array $files, InputInterface $input = null, OutputInterface $output = null): void
     {
-        if($output===null) {
+        if ($output === null) {
             $output = new NullOutput();
         }
-        if($input===null) {
+        if ($input === null) {
             $input = new StringInput('');
         }
         $io = new SymfonyStyle($input, $output);
@@ -157,16 +154,11 @@ class BookManager
                 $book = $this->consumeBook($file);
                 $progressBar->setMessage($file->getFilename());
 
-                if ($book===null) {
-                    continue;
-                }
-
                 $this->entityManager->persist($book);
                 $this->entityManager->flush();
-
             } catch (\Exception $e) {
-                $output->error('died during process of '.$file->getRealPath());
-                $output->error($e->getMessage());
+                $io->error('died during process of '.$file->getRealPath());
+                $io->error($e->getMessage());
                 throw $e;
             }
             $book = null;
@@ -175,7 +167,7 @@ class BookManager
         $progressBar->finish();
     }
 
-    public function consumeBook(\SplFileInfo $file):Book
+    public function consumeBook(\SplFileInfo $file): Book
     {
         $book = $this->bookRepository->findOneBy(
             [

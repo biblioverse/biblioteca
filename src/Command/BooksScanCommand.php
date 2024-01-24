@@ -2,13 +2,11 @@
 
 namespace App\Command;
 
-use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,8 +36,12 @@ class BooksScanCommand extends Command
 
         $io->writeln('Scanning books directory');
 
-        if($input->getOption('book-path') !== null) {
-            $info = new \SplFileInfo($input->getOption('book-path'));
+        if ($input->getOption('book-path') !== null) {
+            $path = $input->getOption('book-path');
+            if (!is_string($path)) {
+                throw new \Exception('Invalid path');
+            }
+            $info = new \SplFileInfo($path);
             $book = $this->bookManager->consumeBook($info);
             $this->entityManager->persist($book);
             $this->entityManager->flush();
