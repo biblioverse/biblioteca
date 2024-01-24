@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}
+Consume books
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="mb-0">Books in consume folder</h1>
+    <div class="text-muted small mb-3">Book placed in the public/books/consume folder will be listed here</div>
+
+    <div class="row">
+        <div class="col-12">
+
+            <table class="table table-bordered table-striped table-hover">
+                <tr>
+                    <th>Book</th>
+                    <th>Size</th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                {% for path,book in books %}
+                    <tr>
+                        <td>{{ book.basename }}</td>
+                        <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ path('app_book_consume', {'consume': book.realPath}) }}" class="btn btn-primary">Consume</a>
+                                <a href="{{ path('app_book_consume', {'delete': book.realPath}) }}" class="btn btn-primary">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">No books in consume folder</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
+

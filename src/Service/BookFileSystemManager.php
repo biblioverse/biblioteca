@@ -37,11 +37,16 @@ class BookFileSystemManager
     /**
      * @return \Iterator<\SplFileInfo>
      */
-    public function getAllBooksFiles(): \Iterator
+    public function getAllBooksFiles(bool $onlyConsumeDirectory=false): \Iterator
     {
         try {
             $finder = new Finder();
-            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->in($this->getBooksDirectory());
+            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS);
+            if($onlyConsumeDirectory) {
+                $finder->in($this->getBooksDirectory().'/consume');
+            } else {
+                $finder->in($this->getBooksDirectory());
+            }
             $iterator = $finder->getIterator();
         } catch (\Exception $e) {
             $iterator = new \ArrayIterator();
@@ -185,7 +190,8 @@ class BookFileSystemManager
             $filesystem->rename(
                 $this->getBooksDirectory().$book->getBookPath().$book->getBookFilename(),
                 $this->getCalculatedFilePath($book, true).$this->getCalculatedFileName($book),
-                true);
+                true
+            );
 
             $book->setBookPath($this->getCalculatedFilePath($book, false));
             $book->setBookFilename($this->getCalculatedFileName($book));
@@ -196,7 +202,8 @@ class BookFileSystemManager
             $filesystem->rename(
                 $this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename(),
                 $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book),
-                true);
+                true
+            );
 
             $book->setImagePath($this->getCalculatedImagePath($book, false));
             $book->setImageFilename($this->getCalculatedImageName($book));
@@ -249,7 +256,8 @@ class BookFileSystemManager
         $filesystem->rename(
             $file->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
-            true);
+            true
+        );
 
         $this->logger->info('Rename file', ['from' => $file->getRealPath(), 'to' => $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum)]);
 
@@ -442,7 +450,8 @@ class BookFileSystemManager
             $filesystem->rename(
                 $item->getRealPath(),
                 '/tmp/cover/cover.'.$ext,
-                true);
+                true
+            );
             $file = new \SplFileInfo('/tmp/cover/cover.'.$ext);
         }
 
@@ -460,7 +469,8 @@ class BookFileSystemManager
         $filesystem->rename(
             $file->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
-            true);
+            true
+        );
 
         $book->setImagePath($this->getCalculatedImagePath($book, false));
         $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
@@ -514,7 +524,8 @@ class BookFileSystemManager
         $filesystem->rename(
             $item->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
-            true);
+            true
+        );
 
         $book->setImagePath($this->getCalculatedImagePath($book, false));
         $book->setImageFilename($this->getCalculatedImageName($book, $checksum));

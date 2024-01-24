@@ -21,6 +21,8 @@ docker-compose.override.yml
 !/public/books/.gitkeep
 /public/covers
 !/public/covers/.gitkeep
+/public/books/consume
+!/public/books/consume/.gitkeep
 
 ###< symfony/framework-bundle ###
 

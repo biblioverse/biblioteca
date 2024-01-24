@@ -3,9 +3,18 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Repository\BookRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
 use Kiwilan\Ebook\Tools\BookAuthor;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -13,13 +22,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class BookManager
 {
-    public KernelInterface $appKernel;
-    private BookFileSystemManager $fileSystemManager;
 
-    public function __construct(KernelInterface $appKernel, BookFileSystemManager $fileSystemManager)
+    public function __construct(private KernelInterface $appKernel, private BookFileSystemManager $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
     {
-        $this->appKernel = $appKernel;
-        $this->fileSystemManager = $fileSystemManager;
     }
 
     /**
@@ -130,5 +135,68 @@ class BookManager
         $ebook = null;
 
         return $data;
+    }
+
+    public function consumeBooks(array $files, ?InputInterface $input=null, ?OutputInterface $output=null):void
+    {
+        if($output===null) {
+            $output = new NullOutput();
+        }
+        if($input===null) {
+            $input = new StringInput('');
+        }
+        $io = new SymfonyStyle($input, $output);
+
+        $progressBar = new ProgressBar($output, count($files));
+
+        $progressBar->setFormat('debug');
+        $progressBar->start();
+        foreach ($files as $file) {
+            $progressBar->advance();
+            try {
+                $book = $this->consumeBook($file);
+                $progressBar->setMessage($file->getFilename());
+
+                if ($book===null) {
+                    continue;
+                }
+
+                $this->entityManager->persist($book);
+                $this->entityManager->flush();
+
+            } catch (\Exception $e) {
+                $output->error('died during process of '.$file->getRealPath());
+                $output->error($e->getMessage());
+                throw $e;
+            }
+            $book = null;
+            gc_collect_cycles();
+        }
+        $progressBar->finish();
+    }
+
+    public function consumeBook(\SplFileInfo $file):Book
+    {
+        $book = $this->bookRepository->findOneBy(
+            [
+                'bookPath' => $this->fileSystemManager->getFolderName($file),
+                'bookFilename' => $file->getFilename(),
+            ]
+        );
+
+        if (null !== $book) {
+            return $book;
+        }
+
+        $checksum = $this->fileSystemManager->getFileChecksum($file);
+        $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
+
+        if (null === $book) {
+            $book = $this->createBook($file);
+        } else {
+            $book = $this->updateBookLocation($book, $file);
+        }
+
+        return $book;
     }
 }
