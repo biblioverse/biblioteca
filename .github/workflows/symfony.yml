@@ -42,5 +42,5 @@ jobs:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
       run: |
         bin/console doctrine:schema:create --env=test
-        bin/console doctrine:schema:update --force --env=test
+        bin/console doctrine:schema:update --force --complete --env=test
         composer test
