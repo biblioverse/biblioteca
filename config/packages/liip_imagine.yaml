@@ -6,7 +6,8 @@ liip_imagine:
     format: webp
   webp:
     generate: true
-
+  twig:
+    mode: "lazy"
   filter_sets:
     cache: ~
     thumb:

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Twig;
+namespace App\Twig\Components;
 
 use App\Entity\Shelf;
 use App\Entity\User;
