@@ -3,31 +3,34 @@
 namespace App\Controller;
 
 use App\Entity\Kobo;
+use App\Kobo\DownloadHelper;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponseFactory;
+use App\Repository\BookRepository;
 use App\Repository\KoboRepository;
 use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-#[Security('is_granted("ROLE_KOBO")')]
 class KoboImageController extends AbstractController
 {
     public function __construct(
         protected KoboRepository $koboRepository,
         protected KoboStoreProxy $koboStoreProxy,
+        protected BookRepository $bookRepository,
         protected KoboProxyConfiguration $koboProxyConfiguration,
         protected KoboSyncTokenExtractor $koboSyncTokenExtractor,
         protected ShelfRepository $shelfRepository,
         protected LoggerInterface $logger,
+        protected DownloadHelper $downloadHelper,
         protected SyncResponseFactory $syncResponseFactory)
     {
     }
@@ -35,18 +38,24 @@ class KoboImageController extends AbstractController
     /**
      * @throws GuzzleException
      */
-    #[Route('/{ImageId}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image')]
-    public function image(Request $request, Kobo $kobo): Response
+    #[Route('/{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality', defaults: ['isGreyscale' => false])]
+    #[Route('//{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality_bad', defaults: ['isGreyscale' => false])]
+    #[Route('/{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image')]
+    #[Route('//{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image_bad')]
+    public function imageQuality(Request $request, Kobo $kobo, string $uuid, int $width, int $height, string $isGreyscale): Response
     {
-        return $this->koboStoreProxy->proxy($request);
-    }
+        $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);
+        $book = $this->bookRepository->findByUuidAndKobo($uuid, $kobo);
+        if ($book === null) {
+            if ($this->koboStoreProxy->isEnabled()) {
+                return $this->koboStoreProxy->proxy($request);
+            }
 
-    /**
-     * @throws GuzzleException
-     */
-    #[Route('/{ImageId}/{width}/{height}/false/image.jpg', name: 'image_quality')]
-    public function imageQuality(Request $request, Kobo $kobo): Response
-    {
-        return $this->koboStoreProxy->proxy($request);
+            return new JsonResponse(['error' => 'not found'], 404);
+        }
+
+        $asAttachment = str_contains((string) $request->headers->get('User-Agent'), 'Kobo');
+
+        return $this->downloadHelper->getCoverResponse($book, $width, $height, $isGreyscale, $asAttachment);
     }
 }
