@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,11 +34,20 @@ class BooksCheckCommand extends Command
 
         $io->writeln('Checking Books');
 
+        /** @var Book[] $books */
         $books = $this->bookRepository->findAll();
         $progressBar = new ProgressBar($output, count($books));
         $progressBar->setFormat('very_verbose');
         $progressBar->start();
         foreach ($books as $book) {
+            // Trigger uuid generation
+            try {
+                $book->getUuid();
+                $this->bookRepository->flush();
+            } catch (\Exception $e) {
+                $io->warning($e->getMessage());
+            }
+
             $progressBar->advance();
 
             try {

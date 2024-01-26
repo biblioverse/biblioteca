@@ -301,4 +301,9 @@ class BookRepository extends ServiceEntityRepository
 
         return $results;
     }
+
+    public function flush(): void
+    {
+        $this->_em->flush();
+    }
 }

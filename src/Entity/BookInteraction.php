@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BookInteractionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: BookInteractionRepository::class)]
 class BookInteraction
@@ -30,6 +31,14 @@ class BookInteraction
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $finishedDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => '2024-01-12 00:00:00'])]
+    #[Gedmo\Timestampable(on: 'create', )]
+    private \DateTimeInterface $created;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['default' => '2024-01-12 00:00:00'])]
+    #[Gedmo\Timestampable(on: 'update')]
+    private ?\DateTimeInterface $updated;
 
     public function getId(): ?int
     {
@@ -94,5 +103,15 @@ class BookInteraction
         $this->finishedDate = $finishedDate;
 
         return $this;
+    }
+
+    public function getCreated(): \DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
     }
 }
