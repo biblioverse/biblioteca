@@ -12,11 +12,15 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
+    use UuidGeneratorTrait;
     public const UCWORDS_SEPARATORS = " \t\r\n\f\v-.'";
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, nullable: true)]
+    private ?string $uuid = null;
 
     #[ORM\Column(length: 255)]
     private string $title;
@@ -31,11 +35,11 @@ class Book
     #[Gedmo\Slug(fields: ['title', 'id'], style: 'lower')]
     private string $slug;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeInterface $created;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeInterface $updated;
 
@@ -484,5 +488,17 @@ class Book
         $this->ageCategory = $ageCategory;
 
         return $this;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getUuid(): string
+    {
+        if ($this->uuid === null) {
+            $this->uuid = $this->generateUuid();
+        }
+
+        return $this->uuid;
     }
 }
