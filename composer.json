@@ -21,7 +21,6 @@
         "gemorroj/archive7z": "^5.6",
         "google/apiclient": "^2.15",
         "kiwilan/php-ebook": "^2.0",
-        "knplabs/knp-markdown-bundle": "^1.10",
         "knplabs/knp-menu-bundle": "^3.2",
         "knplabs/knp-paginator-bundle": "^6.2",
         "liip/imagine-bundle": "^2.10",

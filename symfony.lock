@@ -65,9 +65,6 @@
             "config/packages/google_apiclient.yaml"
         ]
     },
-    "knplabs/knp-markdown-bundle": {
-        "version": "1.10.0"
-    },
     "knplabs/knp-menu-bundle": {
         "version": "v3.2.0"
     },
