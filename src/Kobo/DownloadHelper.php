@@ -5,6 +5,7 @@ namespace App\Kobo;
 use App\Entity\Book;
 use App\Entity\Kobo;
 use App\Exception\BookFileNotFound;
+use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Service\BookFileSystemManager;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -12,7 +13,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DownloadHelper
 {
-    public function __construct(private readonly BookFileSystemManager $fileSystemManager, protected UrlGeneratorInterface $urlGenerator)
+    public function __construct(
+        private readonly BookFileSystemManager $fileSystemManager,
+        private readonly CoverTransformer $coverTransformer,
+        protected UrlGeneratorInterface $urlGenerator)
     {
     }
 
@@ -45,6 +49,35 @@ class DownloadHelper
      * @return StreamedResponse
      * @throws NotFoundHttpException
      */
+    public function getCoverResponse(Book $book, int $width, int $height, bool $grayscale = false, bool $asAttachement = true): StreamedResponse
+    {
+        $coverPath = $this->fileSystemManager->getCoverPath($book);
+        if (false === $this->fileSystemManager->coverExist($book)) {
+            throw new BookFileNotFound($coverPath);
+        }
+        $response = new StreamedResponse(function () use ($coverPath, $width, $height, $grayscale) {
+            $this->coverTransformer->streamFile($coverPath, $width, $height, $grayscale);
+        }, 200);
+
+        match ($book->getImageExtension()) {
+            'jpg' => $response->headers->set('Content-Type', 'image/jpeg'),
+            'jpeg' => $response->headers->set('Content-Type', 'image/jpeg'),
+            'png' => $response->headers->set('Content-Type', 'image/png'),
+            'gif' => $response->headers->set('Content-Type', 'image/gif'),
+            default => $response->headers->set('Content-Type', 'application/octet-stream'),
+        };
+
+        if ($asAttachement) {
+            $filename = $book->getImageFilename().'.'.$book->getImageExtension();
+            $encodedFilename = rawurlencode($filename);
+            $simpleName = rawurlencode(sprintf('book-cover--%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
+            $response->headers->set('Content-Disposition',
+                sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
+        }
+
+        return $response;
+    }
+
     public function getResponse(Book $book): StreamedResponse
     {
         $bookPath = $this->getBookPath($book);
