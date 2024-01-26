@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Twig;
+namespace App\Twig\Components;
 
 use App\Entity\Book;
 use App\Entity\Shelf;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Exception\RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -53,7 +52,7 @@ class AddBookToShelf extends AbstractController
         $shelf = $shelfRepository->find($shelfId);
 
         if (null === $shelf) {
-            throw new RuntimeException('Shelf not found');
+            throw new \RuntimeException('Shelf not found');
         }
 
         $this->book->addShelf($shelf);
