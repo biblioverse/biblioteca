@@ -15,7 +15,7 @@ class FilteredBookUrl extends AbstractExtension
     {
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('filter_book_url', [$this, 'filteredBookUrl']),
