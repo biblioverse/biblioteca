@@ -359,15 +359,15 @@ class BookRepository extends ServiceEntityRepository
 
         if ($syncToken->lastModified !== null) {
             $qb->andWhere($qb->expr()->orX(
-                'book.lastModified > :lastModified',
-                'book.lastCreated  > :lastModified',
+                'book.updated > :lastModified',
+                'book.created  > :lastModified',
                 'koboSyncedBooks.updated > :lastModified',
                 $qb->expr()->isNull('koboSyncedBooks.updated'),
             ));
             $qb->setParameter('lastModified', $syncToken->lastModified);
         }
 
-        $qb->orderBy('book.book.updated');
+        $qb->orderBy('book.updated');
         if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
             $qb->orderBy('bookInteractions.updated', 'ASC');
             $qb->addOrderBy('bookInteractions.finished', 'ASC');
@@ -387,6 +387,23 @@ class BookRepository extends ServiceEntityRepository
             ->andWhere('book.id = :bookId')
             ->setParameter('koboId', $kobo->getId())
             ->setParameter('bookId', $bookId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $result;
+    }
+
+    public function findByUuidAndKobo(string $bookUuid, Kobo $kobo): ?Book
+    {
+        /** @var Book|null $result */
+        $result = $this->createQueryBuilder('book')
+            ->select('book')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.kobos', 'kobo')
+            ->where('kobo.id = :koboId')
+            ->andWhere('book.uuid = :bookUuid')
+            ->setParameter('koboId', $kobo->getId())
+            ->setParameter('bookUuid', $bookUuid)
             ->getQuery()
             ->getOneOrNullResult();
 

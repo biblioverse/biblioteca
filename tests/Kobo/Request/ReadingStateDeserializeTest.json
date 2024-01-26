@@ -1,0 +1,27 @@
+{
+  "ReadingStates": [
+    {
+      "CurrentBookmark": {
+        "ContentSourceProgressPercent": 33,
+        "LastModified": "2024-01-21T09:26:53Z",
+        "Location": {
+          "Source": "GoogleDoc/363Citationsinspirantespourpasserlaction.xhtml",
+          "Type": "KoboSpan",
+          "Value": "kobo.409.3"
+        },
+        "ProgressPercent": 34
+      },
+      "EntitlementId": "52e5beac-3705-490f-8cfc-fa37190cb92b",
+      "LastModified": "2024-01-21T09:26:53Z",
+      "Statistics": {
+        "LastModified": "2024-01-21T09:26:53Z",
+        "RemainingTimeMinutes": 31,
+        "SpentReadingMinutes": 71
+      },
+      "StatusInfo": {
+        "LastModified": "2024-01-21T09:26:53Z",
+        "Status": "Reading"
+      }
+    }
+  ]
+}

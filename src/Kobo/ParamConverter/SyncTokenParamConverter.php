@@ -4,28 +4,38 @@ namespace App\Kobo\ParamConverter;
 
 use App\Kobo\SyncToken;
 use App\Service\KoboSyncTokenExtractor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class SyncTokenParamConverter implements ParamConverterInterface
+#[AutoconfigureTag('controller.argument_value_resolver', ['priority' => 150])]
+class SyncTokenParamConverter implements ValueResolverInterface
 {
     public function __construct(protected KoboSyncTokenExtractor $koboSyncTokenExtractor)
     {
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ArgumentMetadata $configuration): bool
     {
-        return $configuration->getClass() === SyncToken::class;
+        return $configuration->getType() === SyncToken::class;
     }
 
-    public function apply(Request $request, ParamConverter $configuration): bool
+    public function apply(Request $request): SyncToken
     {
         // Fetch SyncToken from HTTP headers
-        $syncToken = $this->koboSyncTokenExtractor->get($request);
+        return $this->koboSyncTokenExtractor->get($request);
+    }
 
-        $request->attributes->set($configuration->getName(), $syncToken);
+    /**
+     * @return iterable<SyncToken>
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    {
+        if ($this->supports($argument) === false) {
+            return [];
+        }
 
-        return true;
+        return [$this->apply($request)];
     }
 }
