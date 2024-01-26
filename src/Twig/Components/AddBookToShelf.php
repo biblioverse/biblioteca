@@ -70,7 +70,7 @@ class AddBookToShelf extends AbstractController
         $shelf = $shelfRepository->find($shelfId);
 
         if (null === $shelf) {
-            throw new RuntimeException('Shelf not found');
+            throw new \RuntimeException('Shelf not found');
         }
 
         $this->book->removeShelf($shelf);
