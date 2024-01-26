@@ -5,9 +5,11 @@ namespace App\Tests;
 use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
 class GedmoTest extends KernelTestCase
 {
-    protected function setUp(): void{
+    protected function setUp(): void
+    {
         self::bootKernel();
 
         /** @var EntityManagerInterface $entityManager */
@@ -16,7 +18,8 @@ class GedmoTest extends KernelTestCase
         $entityManager->getConnection()->executeQuery("DELETE FROM book");
     }
 
-    public function testTimestamp(): void{
+    public function testTimestamp(): void
+    {
 
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
@@ -34,6 +37,6 @@ class GedmoTest extends KernelTestCase
         self::assertNotNull($book->getCreated(), 'The created date should be set by Doctrine Extensions');
         self::assertNotNull($book->getUpdated(), 'The updated date should be set by Doctrine Extensions');
 
-       }
+    }
 
 }

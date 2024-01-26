@@ -7,7 +7,7 @@ use Twig\TwigFunction;
 
 class UniqueIdExtension extends AbstractExtension
 {
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('unique_id', [$this, 'uniqueID']),
