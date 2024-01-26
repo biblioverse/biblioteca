@@ -53,5 +53,4 @@ jobs:
           bin/console doctrine:schema:create --env=test
           bin/console doctrine:schema:update --force --complete --env=test
           bin/console typesense:create --env=test
-          bin/console typesense:import --env=test
           composer test
