@@ -13,7 +13,9 @@
         </li>
     </ul>
     <div id="navbarSearch" class="navbar-search  collapse show d-inline w-100">
-        {{ component('Search') }}
+        <form action="{{ path('app_search') }}" method="post">
+            <input type="text" name="term" placeholder="{{ 'search'|trans }}" class="form-control w-100 rounded-0 border-0"/>
+        </form>
     </div>
 </header>
 

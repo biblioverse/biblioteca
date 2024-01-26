@@ -71,13 +71,14 @@ final class MenuBuilder
             }
         }
 
-        $menu->addChild('profile_divider', ['label' => 'profile'])->setExtra('divider', true);
-
-        $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         if ($this->security->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('admin_divider', ['label' => 'Admin'])->setExtra('divider', true);
             $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $menu->addChild('Add Books', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
         }
+
+        $menu->addChild('profile_divider', ['label' => 'profile'])->setExtra('divider', true);
+        $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         return $menu;
