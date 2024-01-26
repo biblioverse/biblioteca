@@ -44,3 +44,7 @@ acseo_typesense:
             query_by: title,serie,publisher,extension,authors,tags
             limit: 18
             num_typos: 2
+
+when@test:
+  acseo_typesense:
+    collections: ~
