@@ -55,3 +55,6 @@ yarn-error.log
 
 # Custom docker override for https://github.com/typesense/typesense/issues/1351
 typesense/*
+
+# Test database
+data/database.sqlite
