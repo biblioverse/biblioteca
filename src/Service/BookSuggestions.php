@@ -25,33 +25,42 @@ class BookSuggestions
     {
     }
 
-    /**
-     * @return array<string[]>
-     */
-    public function getCategorySuggestions(Book $book): array
+    public function getOpenlibraryQueryFromBook(Book $book, int $level = 1): array
+    {
+        $mainAuthor = current($book->getAuthors());
+
+        return match ($level) {
+            1 => ['q' => 'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields' => 'title,author_name,key,cover_i,subject'],
+            2 => ['q' => 'title:'.$book->getSerie().' '.$book->getSerieIndex().' author:'.$mainAuthor, 'fields' => 'title,author_name,key,cover_i,subject'],
+            default => throw new \RuntimeException('Invalid level')
+        };
+    }
+
+    public function getOpenLibrarySuggestions(Book $book): array
     {
         $cache = new FilesystemAdapter();
 
-        $mainAuthor = current($book->getAuthors());
+        $cacheKey = $this->slugger->slug('oopenlib-'.$book->getId());
 
-        $query = ['q' => 'title:'.$book->getTitle().' author:'.$mainAuthor, 'fields' => 'title,author_name,key,cover_i,subject'];
-
-        $cacheKey = $this->slugger->slug('openlib-'.implode('-', $query));
-
-        return $cache->get($cacheKey, function (ItemInterface $item) use ($query): array {
+        return $cache->get($cacheKey, function (ItemInterface $item) use ($book): array {
             $item->expiresAfter(3600);
 
             $client = new \GuzzleHttp\Client();
 
-            $results = $client->request('GET', 'https://openlibrary.org/search.json', ['query' => $query])->getBody()->getContents();
-
-            $results = json_decode($results, true);
-
+            $results = null;
+            for ($i = 1; $i <= 2; $i++) {
+                $query = $this->getOpenlibraryQueryFromBook($book, $i);
+                $results = $client->request('GET', 'https://openlibrary.org/search.json', ['query' => $query])->getBody()->getContents();
+                $results = json_decode($results, true);
+                if (is_array($results) && array_key_exists('docs', $results) && count($results['docs']) > 0) {
+                    break;
+                }
+            }
             $suggestions = self::EMPTY_SUGGESTIONS;
-
             if (!is_array($results) || !array_key_exists('docs', $results)) {
                 return $suggestions;
             }
+
             foreach ($results['docs'] as $result) {
                 if (array_key_exists('subject', $result) && is_array($result['subject'])) {
                     foreach ($result['subject'] as $category) {
@@ -62,6 +71,17 @@ class BookSuggestions
 
             return $suggestions;
         });
+    }
+
+    public function getGoogleQueryFromBook(Book $book, int $level = 1): string
+    {
+        return match ($level) {
+            1 => 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().' '.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors()),
+            2 => 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().'" inauthor:'.implode(' ', $book->getAuthors()),
+            3 => 'intitle:"'.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors()),
+            4 => 'intitle:"'.$book->getTitle().'"',
+            default => throw new \RuntimeException('Invalid level')
+        };
     }
 
     /**
@@ -79,11 +99,9 @@ class BookSuggestions
 
         $cache = new FilesystemAdapter();
 
-        $query = 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().' '.$book->getTitle().'" inauthor:'.implode(' ', $book->getAuthors());
+        $cacheKey = $this->slugger->slug('google-'.$book->getId());
 
-        $cacheKey = $this->slugger->slug($query);
-
-        return $cache->get($cacheKey, function (ItemInterface $item) use ($key, $book, $query, $suggestions): array {
+        return $cache->get($cacheKey, function (ItemInterface $item) use ($key, $book, $suggestions): array {
             $item->expiresAfter(3600);
 
             $client = new Client();
@@ -94,11 +112,17 @@ class BookSuggestions
             $service = new Books($client);
             $optParams = [];
 
-            $results = $service->volumes->listVolumes($query, $optParams);
+            $results = null;
+            for ($i = 1; $i <= 4; $i++) {
+                $query = $this->getGoogleQueryFromBook($book, $i);
+                $results = $service->volumes->listVolumes($query, $optParams);
+                if ($results->getTotalItems() > 0) {
+                    break;
+                }
+            }
 
             if (0 === $results->getTotalItems()) {
-                $query = 'intitle:"'.$book->getSerie().' '.$book->getSerieIndex().' '.$book->getTitle().'"';
-                $results = $service->volumes->listVolumes($query, $optParams);
+                return $suggestions;
             }
 
             foreach ($results->getItems() as $result) {
