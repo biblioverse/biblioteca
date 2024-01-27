@@ -31,3 +31,30 @@
 ## Visit the website
 
 - Go to `http://localhost:48480` or `https://biblioteca.docker.test` if you have configured the hosts file and traefik
+
+## Xdebug
+
+1. Create a `docker-compose-overrides.yml` file with the following content:
+
+```yaml
+services:
+  biblioteca:
+    build:
+      target: debug
+    environment:
+      - XDEBUG_MODE=debug
+      - PHP_IDE_CONFIG=serverName=biblioteca.docker.test
+```
+
+2. Make sure your container is up-to-date with `docker compose up -d --build --force-recreate`
+3. Create a new server in your IDE with the following settings:
+   - Host: `biblioteca.docker.test`
+   - Mapping: <your local project root dir> => `/var/www/html`
+4. Be sure that you are listening to the Xdebug port in your IDE
+5. Set a breakpoint in your code
+6. Start debugging.
+
+Note: On command line, you can debug with this: 
+```bash
+    docker-compose exec -e XDEBUG_MODE=debug -e XDEBUG_TRIGGER=1 biblioteca ./vendor/bin/phpunit
+```
