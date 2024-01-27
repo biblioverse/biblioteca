@@ -136,3 +136,12 @@
   }
 
 }
+
+.suggestion{
+  max-height: 50px;
+  overflow: hidden;
+  margin: 1px;
+  &:hover{
+    max-height: 100%;
+  }
+}

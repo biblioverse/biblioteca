@@ -29,12 +29,12 @@ class BookController extends AbstractController
         }
 
         $suggestions = BookSuggestions::EMPTY_SUGGESTIONS;
-        $google = (bool) $request->get('google', false);
-        $openLibraries = (bool) $request->get('openlib', false);
-        if (!$book->isVerified() && $google === true) {
-            $suggestions = $bookSuggestions->getGoogleSuggestions($book);
-        } elseif (!$book->isVerified() && $openLibraries === true) {
-            $suggestions = $bookSuggestions->getCategorySuggestions($book);
+
+        $getSuggestions = (bool) $request->get('suggestions', false);
+
+        if (!$book->isVerified() && $getSuggestions === true) {
+            $suggestions = $bookSuggestions->getOpenLibrarySuggestions($book);
+            $suggestions = array_merge_recursive($suggestions, $bookSuggestions->getGoogleSuggestions($book));
         }
 
         $form = $this->createFormBuilder()
@@ -72,7 +72,7 @@ class BookController extends AbstractController
         $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
 
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename();
-        $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename() !== $book->getBookPath().$book->getBookFilename();
+        $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
