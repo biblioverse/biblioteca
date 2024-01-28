@@ -124,6 +124,7 @@ class SyncResponse
                     false => SyncResponse::READING_STATUS_IN_PROGRESS,
                     null => SyncResponse::READING_STATUS_UNREAD,
                 },
+                'TimesStartedReading' => 0,
             ],
 
             // "Statistics"=> get_statistics_response(kobo_reading_state.statistics),

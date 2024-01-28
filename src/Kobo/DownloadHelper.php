@@ -33,7 +33,7 @@ class DownloadHelper
     public function getUrlForKobo(Book $book, Kobo $kobo): string
     {
         return $this->urlGenerator->generate('app_kobodownload', [
-             'id' => $book->getId(),
+             'bookId' => $book->getId(),
              'accessKey' => $kobo->getAccessKey(),
              'extension' => $book->getExtension(),
          ], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -92,7 +92,10 @@ class DownloadHelper
         $encodedFilename = rawurlencode($filename);
         $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
 
-        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Type', match (strtolower($book->getExtension())) {
+            'epub', 'epub3' => 'application/epub+zip',
+            default => 'application/octet-stream'
+        });
         $response->headers->set('Content-Disposition',
             sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
 
