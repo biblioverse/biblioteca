@@ -13,7 +13,7 @@ class MetadataResponseService
     {
     }
 
-    protected function getDownloadUrls(Book $book, Kobo $kobo, array $filters = []): array
+    protected function getDownloadUrls(Book $book, Kobo $kobo, ?array $filters = []): array
     {
         $platforms = $filters['DownloadUrlFilter'] ?? [];
         $platform = reset($platforms);
@@ -21,7 +21,7 @@ class MetadataResponseService
 
         $response = [];
 
-        foreach (['EPUB3'] as $format) { // EPUB3 vs EPUB3FL;
+        foreach (['EPUB3', 'EPUB'] as $format) { // and ... EPUB3FL ?;
             $response[] = [
                 'Format' => $format,
                 'Size' => $this->downloadHelper->getSize($book),
@@ -33,7 +33,7 @@ class MetadataResponseService
         return $response;
     }
 
-    public function fromBook(Book $book, Kobo $kobo, SyncToken $syncToken): array
+    public function fromBook(Book $book, Kobo $kobo, ?SyncToken $syncToken = null): array
     {
         $data = [
             'Categories' => ['00000000-0000-0000-0000-000000000001'],
@@ -42,7 +42,7 @@ class MetadataResponseService
             'CurrentDisplayPrice' => ['CurrencyCode' => 'USD', 'TotalAmount' => 0],
             'CurrentLoveDisplayPrice' => ['TotalAmount' => 0],
             'Description' => $book->getSummary(),
-            'DownloadUrls' => $this->getDownloadUrls($book, $kobo, $syncToken->filters),
+            'DownloadUrls' => $this->getDownloadUrls($book, $kobo, $syncToken?->filters),
             'EntitlementId' => $book->getUuid(),
             'ExternalIds' => [],
             'Genre' => '00000000-0000-0000-0000-000000000001',
@@ -59,6 +59,8 @@ class MetadataResponseService
             'RevisionId' => 0,
             'Title' => $book->getTitle(),
             'WorkId' => $book->getUuid(),
+            'ContributorRoles' => [],
+            'Contributors' => [],
         ];
 
         if ($book->getSerie() === null || $book->getSerieIndex() === null) {

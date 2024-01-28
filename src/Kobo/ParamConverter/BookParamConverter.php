@@ -16,15 +16,15 @@ class BookParamConverter implements ValueResolverInterface
     {
     }
 
-    public function supports(Request $request, ArgumentMetadata $configuration): bool
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return $configuration->getType() === Book::class
-            && $this->getUuid($request) !== null;
+        return $argument->getType() === Book::class
+            && $this->getFieldValue($request, $argument) !== null;
     }
 
-    public function apply(Request $request): ?Book
+    public function apply(Request $request, ArgumentMetadata $argument): ?Book
     {
-        return $this->bookRepository->findOneBy(['uuid' => $this->getUuid($request)]);
+        return $this->bookRepository->findOneBy([$this->getFieldName($argument) => $this->getFieldValue($request, $argument)]);
     }
 
     /**
@@ -36,14 +36,23 @@ class BookParamConverter implements ValueResolverInterface
             return [];
         }
 
-        return array_filter([$this->apply($request)]);
+        return array_filter([$this->apply($request, $argument)]);
     }
 
-    private function getUuid(Request $request): ?string
+    private function getFieldValue(Request $request, ArgumentMetadata $argument): ?string
     {
         /** @var array<string, string|int> $params */
         $params = $request->attributes->get('_route_params', []);
+        $name = $this->getFieldName($argument);
 
-        return array_key_exists('uuid', $params) ? ((string) $params['uuid']) : null;
+        return array_key_exists($name, $params) ? ((string) $params[$name]) : null;
+    }
+
+    private function getFieldName(ArgumentMetadata $argument): string
+    {
+        return match ($argument->getName()) {
+            'bookId' => 'id',
+            default => 'uuid',
+        };
     }
 }
