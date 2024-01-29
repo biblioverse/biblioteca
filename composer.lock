@@ -1461,16 +1461,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.17.3",
+            "version": "2.17.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "398ab0547aaf90bdb352b560a94c24f44ff00670"
+                "reference": "ccfc97c32f63aaa0988ac6aa42e71c5590bb794d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/398ab0547aaf90bdb352b560a94c24f44ff00670",
-                "reference": "398ab0547aaf90bdb352b560a94c24f44ff00670",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/ccfc97c32f63aaa0988ac6aa42e71c5590bb794d",
+                "reference": "ccfc97c32f63aaa0988ac6aa42e71c5590bb794d",
                 "shasum": ""
             },
             "require": {
@@ -1556,9 +1556,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.17.3"
+                "source": "https://github.com/doctrine/orm/tree/2.17.4"
             },
-            "time": "2024-01-16T21:32:04+00:00"
+            "time": "2024-01-26T19:41:16+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -4780,21 +4780,22 @@
         },
         {
             "name": "scienta/doctrine-json-functions",
-            "version": "5.3.0",
+            "version": "5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ScientaNL/DoctrineJsonFunctions.git",
-                "reference": "0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c"
+                "reference": "bf5f27ef5dea91713ca38ac9d7d2cda8686a449c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ScientaNL/DoctrineJsonFunctions/zipball/0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c",
-                "reference": "0c1aa4f8ecd96608ee5f4c9cbb33f687d15c6b8c",
+                "url": "https://api.github.com/repos/ScientaNL/DoctrineJsonFunctions/zipball/bf5f27ef5dea91713ca38ac9d7d2cda8686a449c",
+                "reference": "bf5f27ef5dea91713ca38ac9d7d2cda8686a449c",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^3.0",
-                "doctrine/orm": "^2.0",
+                "doctrine/lexer": "^2.0 || ^3.0",
+                "doctrine/orm": "^2.14",
                 "ext-pdo": "*",
                 "php": "^7.3 || ^8.0"
             },
@@ -4842,9 +4843,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ScientaNL/DoctrineJsonFunctions/issues",
-                "source": "https://github.com/ScientaNL/DoctrineJsonFunctions/tree/5.3.0"
+                "source": "https://github.com/ScientaNL/DoctrineJsonFunctions/tree/5.4.0"
             },
-            "time": "2023-03-20T12:05:26+00:00"
+            "time": "2024-01-29T15:49:04+00:00"
         },
         {
             "name": "smalot/pdfparser",
