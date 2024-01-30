@@ -21,7 +21,8 @@ class MetadataResponseService
 
         $response = [];
 
-        foreach (['EPUB3', 'EPUB'] as $format) { // and ... EPUB3FL ?;
+        $formats = $this->downloadHelper->isEpub3($book) ? ['EPUB3'] : ['EPUB'];
+        foreach ($formats as $format) { // and ... EPUB3FL ?;
             $response[] = [
                 'Format' => $format,
                 'Size' => $this->downloadHelper->getSize($book),
