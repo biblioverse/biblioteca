@@ -7,6 +7,7 @@ use App\Entity\Kobo;
 use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Service\BookFileSystemManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -16,7 +17,8 @@ class DownloadHelper
     public function __construct(
         private readonly BookFileSystemManager $fileSystemManager,
         private readonly CoverTransformer $coverTransformer,
-        protected UrlGeneratorInterface $urlGenerator)
+        protected UrlGeneratorInterface $urlGenerator,
+        protected LoggerInterface $logger)
     {
     }
 
@@ -28,6 +30,11 @@ class DownloadHelper
     public function getSize(Book $book): int
     {
         return $this->fileSystemManager->getBookSize($book) ?? 0;
+    }
+
+    public function isEpub3(Book $book): bool
+    {
+        return $book->getExtension() === 'epub3' || $this->readEpubVersionIs3($book) === true;
     }
 
     public function getUrlForKobo(Book $book, Kobo $kobo): string
@@ -100,5 +107,28 @@ class DownloadHelper
             sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
 
         return $response;
+    }
+
+    private function readEpubVersionIs3(Book $book): ?bool
+    {
+        $zip = new \ZipArchive();
+
+        if ($zip->open($this->getBookPath($book)) !== true) {
+            $this->logger->debug('Unable to open epub file to detect the format', ['book' => $book->getId()]);
+
+            return null;
+        }
+        try {
+            // Check for EPUB version
+            if ($zip->locateName('metadata.opf') !== false) {
+                return false; // v2
+            } elseif ($zip->locateName('package.opf') !== false) {
+                return true; // v3
+            }
+
+            return null;
+        } finally {
+            $zip->close();
+        }
     }
 }
