@@ -41,4 +41,25 @@ class SyncToken
 
         return $resolver;
     }
+
+    public function maxLastModified(?\DateTimeInterface $value): ?\DateTimeInterface
+    {
+        return $this->max(
+            $this->lastModified,
+            $value
+        );
+    }
+
+    public function maxLastCreated(?\DateTimeInterface $value): ?\DateTimeInterface
+    {
+        return $this->max(
+            $this->lastCreated,
+            $value
+        );
+    }
+
+    protected function max(?\DateTimeInterface $a, ?\DateTimeInterface $b): ?\DateTimeInterface
+    {
+        return $a !== null && $a > $b ? $a : $b;
+    }
 }
