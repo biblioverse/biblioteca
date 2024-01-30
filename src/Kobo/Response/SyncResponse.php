@@ -41,6 +41,7 @@ class SyncResponse
         array_push($list, ...$this->getNewEntitlement());
         array_push($list, ...$this->getChangedEntitlement());
         array_push($list, ...$this->getNewTags());
+        array_push($list, ...$this->getChangedTag());
         array_filter($list);
 
         $response = new JsonResponse();
@@ -89,14 +90,14 @@ class SyncResponse
 
         return [
             'Accessibility' => 'Full',
-            'ActivePeriod' => ['From' => $book->getCreated()],
+            'ActivePeriod' => ['From' => $this->syncToken->maxLastCreated($book->getCreated())],
             'Created' => $book->getCreated(),
             'CrossRevisionId' => $uuid,
             'Id' => $uuid,
             'IsRemoved' => $removed,
             'IsHiddenFromArchive' => false,
             'IsLocked' => false,
-            'LastModified' => $book->getUpdated(),
+            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated()),
             'OriginCategory' => 'Imported',
             'RevisionId' => $uuid,
             'Status' => 'Active',
@@ -192,12 +193,34 @@ class SyncResponse
      */
     private function getNewTags(): array
     {
+        $shelves = array_filter($this->shelves, function (Shelf $shelf) {
+            return $shelf->getCreated() >= $this->syncToken->lastCreated;
+        });
+
         return array_map(function (Shelf $shelf) {
             $response = new \stdClass();
             $response->NewTag = $this->createBookTagFromShelf($shelf);
 
             return $response;
-        }, $this->shelves);
+        }, $shelves);
+    }
+
+    /**
+     * New tags are newly created shelves
+     * @return array<int, object>
+     */
+    private function getChangedTag(): array
+    {
+        $shelves = array_filter($this->shelves, function (Shelf $shelf) {
+            return $shelf->getCreated() < $this->syncToken->lastCreated;
+        });
+
+        return array_map(function (Shelf $shelf) {
+            $response = new \stdClass();
+            $response->ChangedTag = $this->createBookTagFromShelf($shelf);
+
+            return $response;
+        }, $shelves);
     }
 
     /**
@@ -208,15 +231,15 @@ class SyncResponse
     {
         return [
             'Tag' => [
-                'Created' => $shelf->getCreated(),
+                'Created' => $this->syncToken->maxLastCreated($shelf->getCreated()),
                 'Id' => $shelf->getUuid(),
-                'Items' => [
-                    [
-                        'RevisionId' => $shelf->getUuid(),
+                'Items' => array_map(function (Book $book) {
+                    return [
+                        'RevisionId' => $book->getUuid(),
                         'Type' => 'ProductRevisionTagItem',
-                    ],
-                ],
-                'LastModified' => $shelf->getUpdated(),
+                    ];
+                }, $this->books),
+                'LastModified' => $this->syncToken->maxLastModified($shelf->getUpdated()),
                 'Name' => $shelf->getName(),
                 'Type' => 'UserTag',
             ],
