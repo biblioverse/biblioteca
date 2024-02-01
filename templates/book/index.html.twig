@@ -1,29 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} {{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
+{% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 
 {% block body %}
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs mb-2">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Details</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'download'|trans }} {{ book.extension }}</a>
+                </li>
+                <li class="nav-item d-none d-sm-block">
+                    <a class="nav-link disabled" aria-disabled="true">Read in browser</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3 col-xs-6 col-sm-6">
             {% if book.imageFilename is not null %}
-                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'picture.for'|trans }} {{ book.title }}">
+                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'picture.for'|trans }} {{ book.title }}">
             {% else %}
                 <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'no.picture.for'|trans }} {{ book.title }}">
             {% endif %}
             {{ include('book/_interaction.html.twig') }}
 
+            {% if not book.verified %}
             {{ component('UploadBookPicture',{'book':book}) }}
-
+            {% endif %}
             {{ component('AddBookToShelf',{'book':book, 'user':app.user}) }}
         </div>
         <div class="col-md-9">
-            <table class="table table-striped w-100">
-                <tr>
-                    <th style="width: 150px">{{ 'download'|trans }}</th>
-                    <td>
-                        <a target="_blank" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'download'|trans }} {{ book.extension }}</a>
-                    </td>
-                </tr>
+            <table class="table w-100  mb-5">
                 <tr>
                     <th>{{ 'title'|trans }}</th>
                     <td>
@@ -63,22 +71,45 @@
                 <tr>
                     <th>{{ 'tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', suggestions:suggestions}) }}</td>
                 </tr>
+                {% if not book.verified %}
+                    <tr>
+                        <th>Paths</th>
+                        <td>
+                            <ul class="small m-0">
+                                <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
+                                <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
+                                {% if not book.verified and needsRelocation %}
+                                    <li class="text-danger">Calculated path: <code>{{ calculatedPath }}</code>
+                                        <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Utilities</th>
+                        <td>
+                            <ul class="small m-0">
+                                <li>
+                                    <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a target="_blank" href="https://www.goodreads.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}">{{ 'search.goodreads'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'suggestions':true}) }}">{{ 'Get suggestions'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'extract.from-file'|trans }}</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <th>{{ 'verified'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', suggestions:suggestions}) }}</td>
                 </tr>
-                <tr>
-                    <td colspan="2">
-                        <ul class="small">
-                            <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
-                            <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
-                            {% if needsRelocation %}
-                                <li class="text-danger">Calculated path: <code>{{ calculatedPath }}</code>
-                                    <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </td>
-                </tr>
+
 
             </table>
 
@@ -98,12 +129,7 @@
                 {% endfor %}
                 {% endif %}
 
-                <div class="btn-group btn-group-sm my-3">
-                    <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
-                    <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.goodreads.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}">{{ 'search.goodreads'|trans }}</a>
-                    <a class="btn btn-sm btn-outline-primary" href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'suggestions':true}) }}">{{ 'Get suggestions'|trans }}</a>
-                    <a class="btn btn-sm btn-outline-primary" href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'extract.from-file'|trans }}</a>
-                </div>
+
             </div>
             {% endif %}
             {% if serie|length > 0 %}

@@ -127,7 +127,7 @@
             {% else %}
                 {{ attribute(book, "get"~field) }}
             {% endif %}
-            {% if is_granted('EDIT', book) %}
+            {% if is_granted('EDIT', book) and not book.verified  %}
                 <button
                     data-action="live#action"
                     data-action-name="activateEditing"
