@@ -120,7 +120,15 @@
             "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
         ],
         "test": [
-            "composer test-phpcs && composer test-phpunit && composer test-phpstan"
+            "@test-phpcs",
+            "@test-phpstan",
+            "mkdir -p data",
+            "rm -f data/database.sqlite",
+            "touch data/database.sqlite",
+            "@php bin/console doctrine:schema:update --complete --force --env=test -n",
+            "@php bin/console typesense:create --env=test",
+            "@php bin/console doctrine:fixtures:load --env=test --append -n",
+            "@test-phpunit"
         ]
     },
     "conflict": {
@@ -139,6 +147,7 @@
         }
     ],
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.5",
         "friendsofphp/php-cs-fixer": "^3.25",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-doctrine": "^1.3",
