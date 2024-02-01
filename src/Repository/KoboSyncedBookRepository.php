@@ -103,12 +103,12 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function deleteAllSyncedBooks(Kobo $kobo): int
+    public function deleteAllSyncedBooks(Kobo|int $koboId): int
     {
         $query = $this->createQueryBuilder('koboSyncedBook')
             ->delete()
             ->where('koboSyncedBook.kobo = :kobo')
-            ->setParameter('kobo', $kobo)
+            ->setParameter('kobo', $koboId)
             ->getQuery();
 
         /** @var int $result */

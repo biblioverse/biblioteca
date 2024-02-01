@@ -7,6 +7,9 @@ use App\Tests\Contraints\JSONContainKeys;
 class KoboInitializationControllerTest  extends AbstractKoboControllerTest
 {
 
+    /**
+     * @throws \JsonException
+     */
     public function testInitialization() : void
     {
         $client = static::getClient();
