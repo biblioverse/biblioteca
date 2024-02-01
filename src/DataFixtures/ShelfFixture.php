@@ -43,6 +43,7 @@ class ShelfFixture extends Fixture implements DependentFixtureInterface
         return [
             UserFixture::class,
             BookFixture::class,
+            KoboFixture::class,
         ];
     }
 }
