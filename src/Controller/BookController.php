@@ -156,12 +156,6 @@ class BookController extends AbstractController
 
                 $childProcess->wait();
 
-                $childProcess = new Process(['/var/www/html/bin/console', 'books:extract-cover', 'all']);
-
-                $childProcess->start();
-
-                $childProcess->wait();
-
                 $this->addFlash('success', 'Book '.$bookFile->getFilename().' consumed');
 
                 return $this->redirectToRoute('app_book_consume');
