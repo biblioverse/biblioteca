@@ -13,33 +13,27 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     protected ?string $accessKey = null;
 
+    protected function getEntityManager(): EntityManagerInterface{
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
+        return $entityManager;
+    }
 
     protected function setUp(): void
     {
         self::createClient();
 
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
-
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => 'test@example.com']);
-        if($user === null) {
-            $user = new User();
-            $user->setUsername('test@example.com');
-            $user->setPassword('test@example.com');
-            $entityManager->persist($user);
-        }
-
-        $kobo = $user->getKobos()->current();
-        if($kobo == null) {
-            $kobo = new Kobo();
-            $kobo->setUser($user);
-            $entityManager->persist($kobo);
-            $entityManager->flush();
+        $kobo = $this->getEntityManager()->getRepository(Kobo::class)->findOneBy(['id' => 1]);
+        if($kobo === null) {
+            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
         }
 
         $this->accessKey = $kobo->getAccessKey();
     }
 
+    /**
+     * @throws \JsonException
+     */
     protected static function getJsonResponse(): array
     {
         if (null === self::getClient()) {
