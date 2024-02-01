@@ -77,6 +77,7 @@ class Shelf
     public function addBook(Book $book): static
     {
         if (!$this->books->contains($book)) {
+            $book->addShelf($this);
             $this->books->add($book);
         }
 
