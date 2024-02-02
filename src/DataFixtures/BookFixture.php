@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 class BookFixture extends Fixture implements DependentFixtureInterface
 {
     public const BOOK_REFERENCE = 'book-hobbit';
+    public const ID = 1;
 
     public function load(ObjectManager $manager): void
     {
