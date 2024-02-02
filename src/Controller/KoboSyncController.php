@@ -57,6 +57,7 @@ class KoboSyncController extends AbstractController
                 $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
                 $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
                 $kobo->setForceSync(false);
+                $syncToken->currentDate = new \DateTime('now');
             }
             $this->logger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);
             $syncToken->lastCreated = null;
