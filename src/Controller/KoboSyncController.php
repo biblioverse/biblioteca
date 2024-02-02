@@ -51,10 +51,18 @@ class KoboSyncController extends AbstractController
     public function apiEndpoint(Kobo $kobo, SyncToken $syncToken, Request $request): Response
     {
         $forced = $kobo->isForceSync() || $request->query->has('force');
-        if ($forced) {
-            $this->logger->debug('Forced sync for Kobo {id}', ['id' => $kobo->getId()]);
-            $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
-            $kobo->setForceSync(false);
+        $count = $this->koboSyncedBookRepository->countByKobo($kobo);
+        if ($forced || $count === 0) {
+            if ($count > 0 || $forced) {
+                $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
+                $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
+                $kobo->setForceSync(false);
+            }
+            $this->logger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);
+            $syncToken->lastCreated = null;
+            $syncToken->lastModified = null;
+            $syncToken->tagLastModified = null;
+            $syncToken->archiveLastModified = null;
         }
 
         // We fetch a subset of book to sync, based on the SyncToken.
