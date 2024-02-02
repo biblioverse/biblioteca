@@ -1,0 +1,63 @@
+// This is from Kobo's StdOut and was corrupted, need fixing..
+{
+  "ddb50dfb-d801-4ff6-9800-b7ac2b5c8fb1": [
+    {
+      "ContributorRoles": [
+        {
+          "Name": "Victor Hugo",
+          "Role": "Author"
+        }
+      ],
+      "Contributors": "Victor Hugo",
+      "CrossRevisionId": "b804918e-c3fb-307b-9584-085ada81d2e1",
+      "Description": "<p>Quatrevingt-treize est le dernier roman de Victor Hugo. L'ouvrage connaît un succès immédiat : 8 000 exemplaires sont vendus dès les douze premiers jours. Paru en 1874, il a pour toile de fond les plus terribles années de la Révolution française : la Terreur. À l'origine, ce roman devait constituer le dernier volume d'une trilogie romanesque consacrée à la Révolution française, dont L'Homme qui rit constituerait le premier volume, mais Victor Hugo n'a pas mené ce projet jusqu'à son terme. ...",
+      "EligibleForKoboLoveDiscount": false,
+      "HasPreview": true,
+      "ISBN": "9782824710839",
+      "Id": "024bbfba-b5ed-4d67-bfcd-badc4c15e4e7",
+      "ImageId": "7afe30b9-1555-4e9f-9e7e-29b78338790c",
+      "IsContentSharingEnabled": true,
+      "IsFree": true,
+      "IsInternetArchive": false,
+      "IsPreOrder": false,
+      "Language": "fr",
+      "Price": {
+        "Currency": "CHF",
+        "Price": 0
+      },
+      "PromoCodeAllowed": false,
+      "PublicationDate": "2015-06-09T04:00:00.0000000Z",
+      "PublisherName": "Bibebook",
+      "Rating": 4.256,
+      "RedirectPreviewUrls": [
+        {
+          "DrmType": "None",
+          "Format": "EPUB_SAMPLE",
+          "Platform": "IPadV1",
+          "Size": 1207144,
+          "Url": "..."
+        },
+        {
+          "DrmType": "None",
+          "Format": "EPUB_SAMPLE",
+          "Platform": "IPhone",
+          "Size": 1207144,
+          "Url": "..."
+        },
+        {
+          "DrmType": "None",
+          "Format": "EPUB_SAMPLE",
+          "Platform": "Android",
+          "Size": 1207144,
+          "Url": "..."
+        }
+      ],
+      "RelatedGroupId": "7a725a8a-71a3-fa71-0000-000000000000",
+      "Slug": "quatrevingt-treize-7",
+      "Title": "Quatrevingt-Treize",
+      "TotalRating": 125,
+      "WorkId": "45204f77-5ad4-45db-ad53-c1ac9b6e5dff"
+    }
+    , {}
+  ]
+}
