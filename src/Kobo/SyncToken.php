@@ -16,6 +16,8 @@ class SyncToken
     public ?string $rawKoboStoreToken = null;
     public array $filters = [];
 
+    public ?\DateTimeInterface $currentDate = null;
+
     public function getFilterResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -42,24 +44,35 @@ class SyncToken
         return $resolver;
     }
 
-    public function maxLastModified(?\DateTimeInterface $value): ?\DateTimeInterface
+    public function maxLastModified(?\DateTimeInterface ...$value): ?\DateTimeInterface
     {
         return $this->max(
             $this->lastModified,
-            $value
+            ...$value
         );
     }
 
-    public function maxLastCreated(?\DateTimeInterface $value): ?\DateTimeInterface
+    public function maxLastCreated(?\DateTimeInterface ...$value): ?\DateTimeInterface
     {
         return $this->max(
             $this->lastCreated,
-            $value
+            ...$value
         );
     }
 
-    protected function max(?\DateTimeInterface $a, ?\DateTimeInterface $b): ?\DateTimeInterface
+    protected function max(?\DateTimeInterface ...$dates): ?\DateTimeInterface
     {
-        return $a !== null && $a > $b ? $a : $b;
+        $max = null;
+        foreach ($dates as $date) {
+            if ($date === null) {
+                continue;
+            }
+
+            if ($max === null || $date > $max) {
+                $max = $date;
+            }
+        }
+
+        return $max;
     }
 }
