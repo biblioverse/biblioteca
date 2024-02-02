@@ -23,9 +23,9 @@ class BookFixture extends Fixture implements DependentFixtureInterface
         $book->setPublisher('Public domain');
         $book->setExtension('epub');
         $book->setImageExtension('jpg');
-        $book->setImageFilename('TheOdysses');
+        $book->setImageFilename('TheOdysses.jpg');
         $book->setImagePath('');
-        $book->setBookFilename('TheOdysses');
+        $book->setBookFilename('TheOdysses.epub');
         $book->setChecksum(md5($book->getBookFilename()));
         $book->setBookPath('');
 
