@@ -129,7 +129,7 @@ class KoboProxyConfiguration
             'delete_tag_items' => 'https://storeapi.kobo.com/v1/library/tags/{TagId}/items/delete',
             'device_auth' => 'https://storeapi.kobo.com/v1/auth/device',
             'device_refresh' => 'https://storeapi.kobo.com/v1/auth/refresh',
-            'dictionary_host' => 'https://kbdownload1-a.akamaihd.net',
+            'dictionary_host' => 'https://ereaderfiles.kobo.com',
             'discovery_host' => 'https://discovery.kobobooks.com',
             'eula_page' => 'https://www.kobo.com/termsofuse?style=onestore',
             'exchange_auth' => 'https://storeapi.kobo.com/v1/auth/exchange',
@@ -238,7 +238,7 @@ class KoboProxyConfiguration
             'user_recommendations' => 'https://storeapi.kobo.com/v1/user/recommendations',
             'user_reviews' => 'https://storeapi.kobo.com/v1/user/reviews',
             'user_wishlist' => 'https://storeapi.kobo.com/v1/user/wishlist',
-            'userguide_host' => 'https://kbdownload1-a.akamaihd.net',
+            'userguide_host' => 'https://ereaderfiles.kobo.com',
             'wishlist_page' => 'https://store.kobobooks.com/{region}/{language}/account/wishlist',
         ];
     }
