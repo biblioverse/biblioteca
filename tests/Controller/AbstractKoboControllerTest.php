@@ -2,15 +2,23 @@
 
 namespace App\Tests\Controller;
 
+use App\DataFixtures\BookFixture;
+use App\Entity\Book;
 use App\Entity\Kobo;
 use App\Entity\User;
+use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 abstract class AbstractKoboControllerTest extends WebTestCase
 {
 
+    const DEFAULT_BOOK_FOLDER_NAMING_FORMAT = '{authorFirst}/{author}/{title}/{serie}';
     protected ?string $accessKey = null;
     protected ?Kobo $kobo = null;
 
@@ -37,6 +45,12 @@ abstract class AbstractKoboControllerTest extends WebTestCase
             throw new \RuntimeException('Kobo not initialized');
         }
         return $this->kobo;
+    }
+
+    private function getBook(): Book
+    {
+        // @phpstan-ignore-next-line
+        return $this->getEntityManager()->getRepository(Book::class)->find(BookFixture::ID);
     }
 
     /**
@@ -66,6 +80,28 @@ abstract class AbstractKoboControllerTest extends WebTestCase
             throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
         }
         return $kobo;
+    }
+
+    protected function injectFakeFileSystemManager(): void
+    {
+        $fixtureBookPath = realpath(__DIR__.'/../Resources/')."/";
+        $mockBuilder = $this->getMockBuilder(BookFileSystemManager::class);
+
+        $mock =  $mockBuilder->setConstructorArgs([
+            self::getContainer()->get(Security::class),
+            realpath(__DIR__.'/../Resources/'),
+            self::DEFAULT_BOOK_FOLDER_NAMING_FORMAT,
+            $this->createMock(SluggerInterface::class),
+            new NullLogger(),
+        ])
+            ->onlyMethods(['getBooksDirectory', 'getCoverDirectory'])
+            ->enableProxyingToOriginalMethods()
+            ->getMock();
+        $mock->expects(self::any())->method('getBooksDirectory')->willReturn($fixtureBookPath);
+        $mock->expects(self::any())->method('getCoverDirectory')->willReturn($fixtureBookPath);
+
+        self::assertSame(realpath(__DIR__.'/../Resources/').'/books/TheOdysses.epub', $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
+        self::getContainer()->set(BookFileSystemManager::class, $mock);
     }
 
 }
