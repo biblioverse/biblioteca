@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
 use App\Entity\Kobo;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
@@ -13,6 +14,7 @@ use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,6 +52,7 @@ class KoboSyncController extends AbstractController
     {
         $forced = $kobo->isForceSync() || $request->query->has('force');
         if ($forced) {
+            $this->logger->debug('Forced sync for Kobo {id}', ['id' => $kobo->getId()]);
             $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
             $kobo->setForceSync(false);
         }
@@ -57,6 +60,7 @@ class KoboSyncController extends AbstractController
         // We fetch a subset of book to sync, based on the SyncToken.
         $books = $this->bookRepository->getChangedBooks($kobo, $syncToken, 0, self::MAX_BOOKS_PER_SYNC);
         $count = $this->bookRepository->getChangedBooksCount($kobo, $syncToken);
+        $this->logger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $kobo->getId(), 'count' => $count, 'token' => $syncToken]);
 
         $response = $this->syncResponseFactory->create($syncToken, $kobo)
             ->addBooks($books)
@@ -69,9 +73,25 @@ class KoboSyncController extends AbstractController
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
         if (false === $forced) {
+            $this->logger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
+
             $this->koboSyncedBookRepository->updateSyncedBooks($kobo, $books, $syncToken);
         }
 
         return $httpResponse;
+    }
+
+    #[Route('/v1/library/{uuid}/metadata', name: 'api_endpoint_v1_library_metadata')]
+    public function metadataEndpoint(Kobo $kobo, ?Book $book, Request $request): Response
+    {
+        if ($book === null) {
+            if ($this->koboStoreProxy->isEnabled()) {
+                return $this->koboStoreProxy->proxy($request);
+            }
+
+            return new JsonResponse(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->syncResponseFactory->createMetadata($kobo, $book);
     }
 }
