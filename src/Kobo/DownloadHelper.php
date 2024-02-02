@@ -79,7 +79,10 @@ class DownloadHelper
         };
 
         if ($asAttachement) {
-            $filename = $book->getImageFilename().'.'.$book->getImageExtension();
+            $filename = $book->getImageFilename();
+            if ($filename === null) {
+                return $response;
+            }
             $encodedFilename = rawurlencode($filename);
             $simpleName = rawurlencode(sprintf('book-cover--%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
             $response->headers->set('Content-Disposition',
@@ -99,7 +102,7 @@ class DownloadHelper
             readfile($bookPath);
         }, 200);
 
-        $filename = $book->getBookFilename().'.'.$book->getExtension();
+        $filename = $book->getBookFilename();
         $encodedFilename = rawurlencode($filename);
         $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
 
