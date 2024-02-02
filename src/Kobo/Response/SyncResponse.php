@@ -90,14 +90,14 @@ class SyncResponse
 
         return [
             'Accessibility' => 'Full',
-            'ActivePeriod' => ['From' => $this->syncToken->maxLastCreated($book->getCreated())],
-            'Created' => $book->getCreated(),
+            'ActivePeriod' => ['From' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate)],
+            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
             'CrossRevisionId' => $uuid,
             'Id' => $uuid,
             'IsRemoved' => $removed,
             'IsHiddenFromArchive' => false,
             'IsLocked' => false,
-            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated()),
+            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate),
             'OriginCategory' => 'Imported',
             'RevisionId' => $uuid,
             'Status' => 'Active',
@@ -114,10 +114,12 @@ class SyncResponse
 
         return [
             'EntitlementId' => $uuid,
-            'Created' => $book->getUpdated(),
-            'LastModified' => $book->getUpdated(),
+            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
+            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate),
+
             // PriorityTimestamp is always equal to LastModified.
-            'PriorityTimestamp' => $book->getUpdated(),
+            'PriorityTimestamp' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
+
             'StatusInfo' => [
                 'LastModified' => $book->getUpdated(),
                 'Status' => match ($this->isReadingFinished($book)) {
