@@ -17,6 +17,10 @@ class KoboType extends AbstractType
         $builder
             ->add('name')
             ->add('accessKey')
+            ->add('forceSync', null, [
+                'label' => 'Force Sync',
+                'required' => false,
+            ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'username',
