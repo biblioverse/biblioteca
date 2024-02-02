@@ -25,19 +25,29 @@ class KoboInitializationController extends AbstractController
     ) {
     }
 
+    /**
+     * @throws GuzzleException
+     */
     #[Route('/v1/initialization')]
     public function initialization(Request $request, Kobo $kobo): Response
     {
         $this->logger->info('Initialization request');
 
+        // Force proxy response no matter what
+        if ($this->koboProxyConfiguration->forceProxyResponseOnInitialization()) {
+            return $this->koboStoreProxy->proxy($request);
+        }
+
+        // Load the JSON data from the store
+        // A hardcoded value is returned as fallback (see KoboProxyConfiguration::getNativeInitializationJson)
         $jsonData = $this->getJsonData($request);
 
-        // We received the JSON array
+        // Make sure the response is wrapped in a Resources key
         if (false === key_exists('Resources', $jsonData)) {
             $jsonData = ['Resources' => $jsonData];
         }
 
-        // Override the configuration with the one from this server
+        // Override the Image Endpoint with the one from this server
         $base = $this->generateUrl('koboapi_endpoint', [
             'accessKey' => $kobo->getAccessKey(),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
