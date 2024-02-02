@@ -58,11 +58,11 @@ class MetadataResponseService
             'Publisher' => [
                 'Imprint' => '',
                 'Name' => $book->getPublisher() ?? 'Unknown'],
-            'RevisionId' => 0,
+            'RevisionId' => $book->getUuid(),
             'Title' => $book->getTitle(),
             'WorkId' => $book->getUuid(),
-            'ContributorRoles' => [],
-            'Contributors' => [],
+            'ContributorRoles' => array_map(fn (string $author) => ['author' => $author], $book->getAuthors()),
+            'Contributor' => $book->getAuthors(),
         ];
 
         if ($book->getSerie() === null || $book->getSerieIndex() === null) {
