@@ -117,4 +117,17 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    public function countByKobo(Kobo $kobo): int
+    {
+        /** @var int $result */
+        $result = $this->createQueryBuilder('koboSyncedBook')
+            ->select('count(koboSyncedBook.id)')
+            ->where('koboSyncedBook.kobo = :kobo')
+            ->setParameter('kobo', $kobo)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result;
+    }
 }
