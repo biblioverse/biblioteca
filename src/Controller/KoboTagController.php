@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Kobo;
 use App\Entity\Shelf;
 use App\Kobo\Proxy\KoboStoreProxy;
+use App\Kobo\Request\TagDeleteRequest;
 use App\Repository\ShelfRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/kobo/{accessKey}', name: 'app_kobo')]
 class KoboTagController extends AbstractController
@@ -22,6 +25,7 @@ class KoboTagController extends AbstractController
     public function __construct(
         protected ShelfRepository $shelfRepository,
         protected KoboStoreProxy $koboStoreProxy,
+        protected SerializerInterface $serializer,
         protected LoggerInterface $logger)
     {
     }
@@ -31,12 +35,34 @@ class KoboTagController extends AbstractController
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
     #[Route('/v1/library/tags/{tagId}/items/delete', methods: ['POST'])]
-    public function delete(Request $request): Response
+    public function delete(Request $request, Kobo $kobo, string $tagId): Response
     {
         if ($this->koboStoreProxy->isEnabled()) {
             return $this->koboStoreProxy->proxy($request);
         }
-        throw $this->createNotFoundException('Deleting a tag item is not implemented yet');
+
+        /** @var TagDeleteRequest $deleteRequest */
+        $deleteRequest = $this->serializer->deserialize($request->getContent(false), TagDeleteRequest::class, 'json');
+        $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
+
+        try {
+            $shelf = $this->shelfRepository->findByKoboAndUUid($kobo, $tagId);
+            if (null === $shelf) {
+                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $tagId));
+            }
+        } catch (NonUniqueResultException $e) {
+            throw new BadRequestException('Invalid tag id', 0, $e);
+        }
+
+        foreach ($shelf->getBooks() as $book) {
+            if ($deleteRequest->hasItem($book)) {
+                $shelf->removeBook($book);
+            }
+        }
+        $this->shelfRepository->flush();
+
+        // TODO Find the response format for this
+        return new JsonResponse([], Response::HTTP_NOT_IMPLEMENTED);
     }
 
     #[Route('/v1/library/tags')]
