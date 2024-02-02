@@ -24,7 +24,7 @@ class KoboDownloadController extends AbstractController
     {
     }
 
-    #[Route('/v1/download/{bookId}.{extension}', name: 'download')]
+    #[Route('/v1/download/{id}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
     public function download(Kobo $kobo, Book $book): Response
     {
         $this->assertCanDownload($kobo, $book);

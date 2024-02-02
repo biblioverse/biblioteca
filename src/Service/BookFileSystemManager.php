@@ -788,4 +788,23 @@ class BookFileSystemManager
             $file->move($destination, $file->getClientOriginalName());
         }
     }
+
+    /**
+     * @param array{0: string, 1: string, 2: string, 3: string} $paths
+     * @return string
+     */
+    private function handlePath(array $paths): string
+    {
+        $base = array_shift($paths);
+        $paths = array_map(fn ($item) => ltrim($item, '/'), $paths);
+        $paths = array_map(fn ($item) => rtrim($item, '/'), $paths);
+
+        $result = sprintf('%s/%s/%s.%s', $base, ...$paths);
+
+        do {
+            $result = str_replace('//', '/', $result);
+        } while (str_contains($result, '//'));
+
+        return $result;
+    }
 }

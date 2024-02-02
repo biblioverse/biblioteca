@@ -9,23 +9,25 @@ use Doctrine\Persistence\ObjectManager;
 
 class BookFixture extends Fixture implements DependentFixtureInterface
 {
-    public const BOOK_REFERENCE = 'book-hobbit';
+    public const BOOK_REFERENCE = 'book-odyssey';
     public const ID = 1;
 
     public function load(ObjectManager $manager): void
     {
+        // https://www.gutenberg.org/ebooks/1727
         $book = new Book();
-        $book->setTitle('The Hobbit');
-        $book->setAuthors(['J.R.R. Tolkien']);
-        $book->setPublishDate(new \DateTimeImmutable('1937-09-21'));
+        $book->setTitle('The Odyssey');
+        $book->setAuthors(['Homer']);
+        $book->setPublishDate(new \DateTimeImmutable('1999-04-01'));
         $book->setLanguage('en');
-        $book->setPublisher('Allen & Unwin');
+        $book->setPublisher('Public domain');
         $book->setExtension('epub');
         $book->setImageExtension('jpg');
-        $book->setImageFilename('the-hobbit');
-        $book->setBookFilename('the-hobbit');
+        $book->setImageFilename('TheOdysses');
+        $book->setImagePath('');
+        $book->setBookFilename('TheOdysses');
         $book->setChecksum(md5($book->getBookFilename()));
-        $book->setBookPath('tests/');
+        $book->setBookPath('');
 
         $manager->persist($book);
         $manager->flush();

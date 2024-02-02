@@ -2,33 +2,34 @@
 
 namespace App\Kobo\ParamConverter;
 
-use App\Entity\Book;
-use App\Repository\BookRepository;
+use App\Entity\Kobo;
+use App\Repository\KoboRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 #[AutoconfigureTag('controller.argument_value_resolver', ['priority' => 150])]
-class BookParamConverter implements ValueResolverInterface
+class KoboParamConverter implements ValueResolverInterface
 {
-    public function __construct(protected BookRepository $bookRepository)
+    public function __construct(protected KoboRepository $bookRepository)
     {
     }
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return $argument->getType() === Book::class
-            && $this->getFieldValue($request, $argument) !== null;
+        return $argument->getType() === Kobo::class && $this->getFieldValue($request) !== null;
     }
 
-    public function apply(Request $request, ArgumentMetadata $argument): ?Book
+    public function apply(Request $request): ?Kobo
     {
-        return $this->bookRepository->findOneBy([$this->getFieldName($argument) => $this->getFieldValue($request, $argument)]);
+        $value = $this->getFieldValue($request);
+
+        return $this->bookRepository->findOneBy([$this->getFieldName() => $value]);
     }
 
     /**
-     * @return array<int, Book>
+     * @return array<int, Kobo>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
@@ -36,23 +37,20 @@ class BookParamConverter implements ValueResolverInterface
             return [];
         }
 
-        return array_filter([$this->apply($request, $argument)]);
+        return array_filter([$this->apply($request)]);
     }
 
-    private function getFieldValue(Request $request, ArgumentMetadata $argument): ?string
+    private function getFieldValue(Request $request): ?string
     {
         /** @var array<string, string|int> $params */
         $params = $request->attributes->get('_route_params', []);
-        $name = $this->getFieldName($argument);
+        $name = $this->getFieldName();
 
         return array_key_exists($name, $params) ? ((string) $params[$name]) : null;
     }
 
-    private function getFieldName(ArgumentMetadata $argument): string
+    private function getFieldName(): string
     {
-        return match ($argument->getName()) {
-            'bookId' => 'id',
-            default => 'uuid',
-        };
+        return 'accessKey';
     }
 }
