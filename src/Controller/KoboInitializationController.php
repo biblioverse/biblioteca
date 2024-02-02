@@ -32,12 +32,6 @@ class KoboInitializationController extends AbstractController
     public function initialization(Request $request, Kobo $kobo): Response
     {
         $this->logger->info('Initialization request');
-
-        // Force proxy response no matter what
-        if ($this->koboProxyConfiguration->forceProxyResponseOnInitialization()) {
-            return $this->koboStoreProxy->proxy($request);
-        }
-
         // Load the JSON data from the store
         // A hardcoded value is returned as fallback (see KoboProxyConfiguration::getNativeInitializationJson)
         $jsonData = $this->getJsonData($request);
