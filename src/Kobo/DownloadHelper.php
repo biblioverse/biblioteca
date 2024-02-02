@@ -22,14 +22,19 @@ class DownloadHelper
     {
     }
 
-    protected function getBookPath(Book $book): string
+    protected function getBookFilename(Book $book): string
     {
-        return $this->fileSystemManager->getBookPath($book);
+        return $this->fileSystemManager->getBookFilename($book);
     }
 
     public function getSize(Book $book): int
     {
         return $this->fileSystemManager->getBookSize($book) ?? 0;
+    }
+
+    public function getCoverSize(Book $book): int
+    {
+        return $this->fileSystemManager->getCoverSize($book) ?? 0;
     }
 
     public function isEpub3(Book $book): bool
@@ -40,10 +45,10 @@ class DownloadHelper
     public function getUrlForKobo(Book $book, Kobo $kobo): string
     {
         return $this->urlGenerator->generate('app_kobodownload', [
-             'bookId' => $book->getId(),
-             'accessKey' => $kobo->getAccessKey(),
-             'extension' => $book->getExtension(),
-         ], UrlGeneratorInterface::ABSOLUTE_URL);
+            'id' => $book->getId(),
+            'accessKey' => $kobo->getAccessKey(),
+            'extension' => $book->getExtension(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     public function exists(Book $book): bool
@@ -58,8 +63,8 @@ class DownloadHelper
      */
     public function getCoverResponse(Book $book, int $width, int $height, bool $grayscale = false, bool $asAttachement = true): StreamedResponse
     {
-        $coverPath = $this->fileSystemManager->getCoverPath($book);
-        if (false === $this->fileSystemManager->coverExist($book)) {
+        $coverPath = $this->fileSystemManager->getCoverFilename($book);
+        if ($coverPath === null || false === $this->fileSystemManager->coverExist($book)) {
             throw new BookFileNotFound($coverPath);
         }
         $response = new StreamedResponse(function () use ($coverPath, $width, $height, $grayscale) {
@@ -67,8 +72,7 @@ class DownloadHelper
         }, 200);
 
         match ($book->getImageExtension()) {
-            'jpg' => $response->headers->set('Content-Type', 'image/jpeg'),
-            'jpeg' => $response->headers->set('Content-Type', 'image/jpeg'),
+            'jpg', 'jpeg' => $response->headers->set('Content-Type', 'image/jpeg'),
             'png' => $response->headers->set('Content-Type', 'image/png'),
             'gif' => $response->headers->set('Content-Type', 'image/gif'),
             default => $response->headers->set('Content-Type', 'application/octet-stream'),
@@ -87,7 +91,7 @@ class DownloadHelper
 
     public function getResponse(Book $book): StreamedResponse
     {
-        $bookPath = $this->getBookPath($book);
+        $bookPath = $this->getBookFilename($book);
         if (false === $this->exists($book)) {
             throw new BookFileNotFound($bookPath);
         }
@@ -106,6 +110,8 @@ class DownloadHelper
         $response->headers->set('Content-Disposition',
             sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
 
+        $response->headers->set('Content-Length', (string) $this->getSize($book));
+
         return $response;
     }
 
@@ -113,7 +119,7 @@ class DownloadHelper
     {
         $zip = new \ZipArchive();
 
-        if ($zip->open($this->getBookPath($book)) !== true) {
+        if ($zip->open($this->getBookFilename($book)) !== true) {
             $this->logger->debug('Unable to open epub file to detect the format', ['book' => $book->getId()]);
 
             return null;
@@ -130,5 +136,10 @@ class DownloadHelper
         } finally {
             $zip->close();
         }
+    }
+
+    public function coverExist(Book $book): bool
+    {
+        return $this->fileSystemManager->coverExist($book);
     }
 }
