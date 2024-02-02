@@ -17,6 +17,15 @@ security:
           pattern: ^/media/cache/resolve
           security:
             false
+        kobo:
+          lazy: true
+          stateless: true
+          pattern: ^/kobo
+
+          access_token:
+            token_handler: App\Security\KoboTokenHandler
+            token_extractors:
+              - App\Security\KoboTokenExtractor
         main:
           lazy: true
           remember_me:
@@ -37,12 +46,14 @@ security:
           # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/logout, roles: ROLE_USER }
         - { path: ^/, roles: ROLE_USER }
+        - { path: ^/kobo, roles: PUBLIC_ACCESS }
 
 when@test:
     security:
