@@ -80,3 +80,7 @@ services:
         bind:
             '$publicDir': '%kernel.project_dir%/public'
             '$bookFolderNamingFormat': '%BOOK_FOLDER_NAMING_FORMAT%'
+
+    App\Kobo\ParamConverter\SyncTokenParamConverter:
+      tags:
+        - { name: request.param_converter, priority: 100 }
