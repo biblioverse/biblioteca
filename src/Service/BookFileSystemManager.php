@@ -214,7 +214,7 @@ class BookFileSystemManager
         return $book;
     }
 
-    public function removeEmptySubFolders(string $path = null): bool
+    public function removeEmptySubFolders(?string $path = null): bool
     {
         if (null === $path) {
             $path = $this->getBooksDirectory();
