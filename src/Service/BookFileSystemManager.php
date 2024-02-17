@@ -41,7 +41,9 @@ class BookFileSystemManager
     {
         try {
             $finder = new Finder();
-            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS);
+            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(function (\SplFileInfo $a, \SplFileInfo $b): int {
+                return strcmp($a->getRealPath(), $b->getRealPath());
+            });
             if ($onlyConsumeDirectory) {
                 $finder->in($this->getBooksDirectory().'/consume');
             } else {

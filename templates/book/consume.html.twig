@@ -23,7 +23,7 @@ Consume books
                 </tr>
                 {% for path,book in books %}
                     <tr>
-                        <td>{{ book.basename }}</td>
+                        <td>{{ book.relativePathname }}</td>
                         <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
                         <td>
                             <div class="btn-group">
