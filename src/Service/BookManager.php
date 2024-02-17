@@ -7,7 +7,7 @@ use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
-use Kiwilan\Ebook\Tools\BookAuthor;
+use Kiwilan\Ebook\Models\BookAuthor;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
@@ -134,7 +134,7 @@ class BookManager
         return $data;
     }
 
-    public function consumeBooks(array $files, InputInterface $input = null, OutputInterface $output = null): void
+    public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null): void
     {
         if ($output === null) {
             $output = new NullOutput();
