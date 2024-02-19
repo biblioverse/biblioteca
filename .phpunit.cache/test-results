@@ -1,0 +1,1 @@
+{"version":1,"defects":{"App\\Tests\\GedmoTest::testTimestamp":8,"App\\Tests\\SampleTest::testSample":8},"times":{"App\\Tests\\SampleTest::testSample":0,"App\\Tests\\GedmoTest::testTimestamp":0.133}}
