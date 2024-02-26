@@ -6,7 +6,7 @@ parameters:
         - tests/
     ignoreErrors:
         - '#(.*)no value type specified in iterable type array#'
-        - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
+  #      - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
 
 
 includes:
