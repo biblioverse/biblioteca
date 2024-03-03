@@ -18,7 +18,7 @@ use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
-#[AsLiveComponent()]
+#[AsLiveComponent(method: 'get')]
 class InlineEditInteraction extends AbstractController
 {
     use DefaultActionTrait;

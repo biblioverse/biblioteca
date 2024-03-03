@@ -12,7 +12,7 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 
-#[AsLiveComponent()]
+#[AsLiveComponent(method: 'get')]
 class InlineEditMultiple extends AbstractController
 {
     use DefaultActionTrait;

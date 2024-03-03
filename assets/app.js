@@ -10,3 +10,8 @@ import './bootstrap.js';
 import './styles/global.scss';
 
 require('bootstrap');
+
+window.addEventListener('manager:flush', () => {
+    location.reload()
+
+});

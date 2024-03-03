@@ -1,4 +1,4 @@
-<span {{ attributes.defaults(stimulus_controller('inline-edit-book')) }}>
+<span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
 {% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
             <form>
                 <div class="input-group">
@@ -140,7 +140,7 @@
             {% endif %}
 
         {% if flashMessage %}
-                <i class="bi bi-check alert-remove"></i>
+                <i class="bi bi-hourglass-split alert-remove"></i>
         {% endif %}
     {% endif %}
 
