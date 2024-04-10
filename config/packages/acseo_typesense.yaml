@@ -22,25 +22,30 @@ acseo_typesense:
           name: serie
           type: string
           optional: true
-        publisher:
-          name: publisher
-          type: string
+          facet: true
+        serieIndex:
+          name: serieIndex
+          type: float
           optional: true
         extension:
           name: extension
           type: string
+          facet: true
         authors:
           name: authors
           type: string[]
+          facet: true
         tags:
           name: tags
           type: string[]
+          facet: true
           optional: true
       default_sorting_field: sortable_id
-      symbols_to_index: ['+']
+      symbols_to_index: ['+', '#', '@', '_']
+      token_separators: [' ', '-', "'"]
       finders:
         books_autocomplete:
           finder_parameters:
-            query_by: title,serie,publisher,extension,authors,tags
-            limit: 18
+            query_by: title,serie,extension,authors,tags
+            limit: 200
             num_typos: 2

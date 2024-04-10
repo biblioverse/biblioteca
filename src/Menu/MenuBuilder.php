@@ -4,6 +4,7 @@ namespace App\Menu;
 
 use App\Entity\Shelf;
 use App\Entity\User;
+use App\Service\FilteredBookUrlGenerator;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,7 +19,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private FilteredBookUrlGenerator $filteredBookUrlGenerator)
     {
     }
 
@@ -75,7 +76,9 @@ final class MenuBuilder
             $menu->addChild('admin_divider', ['label' => 'Admin'])->setExtra('divider', true);
             $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $menu->addChild('Add Books', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
-            $menu->addChild('Commands', ['route' => 'app_run_command_manually', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+
+            $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
+            $menu->addChild('Not verified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
         }
 
         $menu->addChild('profile_divider', ['label' => 'profile'])->setExtra('divider', true);

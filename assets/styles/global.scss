@@ -56,7 +56,7 @@
   aspect-ratio: 7 / 10; /* ↔️ is double the ↕️ */
   position: relative;
   transition: .4s ease-in-out;
-  border-radius: 5px 15px 15px 5px;
+  border-radius: 5px 5px 5px 5px;
   transform-origin: left center 0px;
   display: inline-block;
   perspective: 800px;
@@ -75,8 +75,8 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    border-radius: 5px 15px 15px 5px;
-    box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.25);
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.15);
     background-size: cover;
     z-index: 10;
     transition: .5s linear;
@@ -100,12 +100,12 @@
   }
 
   &__detail {
-    background-color: rgba(51, 51, 51, 0.8);
-    height: 20%;
+    background-color: rgba(51, 51, 51, 0.6);
+    height: 15%;
     width: 100%;
     bottom:5%;
     padding: 10px;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 800;
     position: absolute;
     overflow: hidden;
@@ -130,8 +130,8 @@
     position: absolute;
     background-color: #fbfae8;
     z-index: 0;
-    box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.25);
-    border-radius: 5px 16px 16px 5px;
+    box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.15);
+    border-radius: 5px 5px 5px 5px;
     overflow: hidden;
   }
 

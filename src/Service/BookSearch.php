@@ -15,6 +15,11 @@ class BookSearch
 
     public function autocomplete(string $query): array
     {
-        return $this->autocompleteBookFinder->search($query)->getResults();
+        return $this->autocompleteBookFinder->search($query)->getRawResults();
+    }
+
+    public function facets(string $query): array
+    {
+        return $this->autocompleteBookFinder->search($query)->getFacetCounts();
     }
 }

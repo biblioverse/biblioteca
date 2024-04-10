@@ -1,6 +1,6 @@
 {# @var book App\Entity\Book #}
 {% set read = false %}
-{% for interaction in book.bookInteractions %}
+{% for interaction in book.bookInteractions|default([]) %}
     {% if interaction.user.id == app.user.id and interaction.finished %}
         {% set read = true %}
     {% endif %}
@@ -21,31 +21,19 @@
         <div class="book__cover">
             <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}"  alt="{{ book.title }}"/>
             <div class="book__detail">
-                <i class="bi {{ icon }}"></i> {{ book.title }}
+                <i class="bi {{ icon }}"></i> {{ book.title }} -
+                {% for author in book.authors %}
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                {% endfor %}
+
+                {% if book.serie %}
+                    <i class="bi bi-list-ol"></i>
+                    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
+
+                {% endif %}
             </div>
         </div>
         <div class="book__page"></div>
     </div>
     </a>
-    <div class="small text-muted">
-        {% for author in book.authors %}
-            <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
-                <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-            </a>
-        {% endfor %}
-
-        {% if book.serie %}
-            <br>
-            <i class="bi bi-list-ol"></i> <a href="{{ filter_book_url({'serie':book.serie}) }}" class="text-muted text-decoration-none">
-            {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
-        </a>
-        {% endif %}
-        {% if not book.verified %}
-            {{ component('InlineEditBook', {'book':book, 'field':'verified', suggestions:[]}) }}
-        {% endif %}
-    </div>
-    <div class="text-center">
-        {{ include('book/_interaction.html.twig') }}
-
-    </div>
 </div>

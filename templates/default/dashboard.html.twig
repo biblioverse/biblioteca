@@ -6,23 +6,7 @@
 
 {% block body %}
 
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="my-5">Types</h2>
-        </div>
-        {% for type, count in types %}
-            <div class="col-md-3">{{ type }}: <span class="badge rounded-pill text-bg-info">{{ count }}</span></div>
-        {% endfor %}
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="my-5">Extensions</h2>
-        </div>
-        {% for extension, count in extensions %}
-            <div class="col-md-3">{{ extension }}: <span class="badge rounded-pill text-bg-info">{{ count }}</span></div>
-        {% endfor %}
-    </div>
+    {{ component('Search') }}
 
 
 {% endblock %}

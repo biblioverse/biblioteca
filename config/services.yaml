@@ -54,3 +54,7 @@ services:
     App\Service\BookSearch:
        arguments:
            $autocompleteBookFinder: '@typesense.specificfinder.books.books_autocomplete'
+
+    App\Twig\Components\Search:
+        arguments:
+            $bookFinder: '@typesense.finder.books'

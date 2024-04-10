@@ -1,0 +1,55 @@
+<div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <div class="input-group">
+                <input type="text"
+                       class="form-control-lg w-100"
+                       id="search"
+                       placeholder="Search for..."
+                       data-model="query"
+                />
+            </div>
+            <style>
+                mark {
+                    font-weight: bold; margin: 0; padding: 0; background-color: yellow;
+                }
+            </style>
+
+
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-3">
+            {% for facet in computed.results.facets|default([]) %}
+                {% if facet.counts|length>0 %}
+                <h3>{{ facet.field_name }}</h3>
+                {% for count in facet.counts %}
+                    <li>
+                        <button type="button" class="btn btn-bare position-relative"
+
+                                data-action="live#action"
+                                data-action-name="addToQuery(value={{ count.value|e('html') }})"
+
+                        >
+                            {{ count.value }}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ count.count }}
+                                <span class="visually-hidden">records</span>
+                            </span>
+                        </button>
+                    </li>
+                {% endfor %}
+                {% endif %}
+            {% endfor %}
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    {% for book in computed.results.books|default([]) %}
+                        <div class="col-md-3">
+                            {% include 'book/_teaser.html.twig' with {book: book.book} %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
