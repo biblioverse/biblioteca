@@ -3,7 +3,7 @@
         <div class="btn-group mt-2">
 
             <input type="file" name="cover" class="form-control"/>
-            <button data-action="live#action" class="btn btn-sm btn-outline-dark" data-action-name="files|uploadFiles">
+            <button data-action="live#action" class="btn btn-sm btn-outline-dark" data-live-action-param="files|uploadFiles">
                 {{ 'upload'|trans }}
             </button>
         </div>
@@ -11,7 +11,7 @@
 
         <button
             data-action="live#action"
-            data-action-name="activateEditing"
+            data-live-action-param="activateEditing"
             class="btn btn-sm btn-outline-dark"
             title="Click to upload cover!"
         >

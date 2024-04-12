@@ -8,7 +8,7 @@
                                 data-action="live#action"
                                 type="checkbox"
                                 data-model="book.{{ field }}"
-                                data-action-name="prevent|save"
+                                data-live-action-param="prevent|save"
                                 class="form-check"
                                 autofocus
                                 id="book_{{ book.id }}_{{ field }}"
@@ -85,7 +85,7 @@
                     {% if field!='verified' %}
                         <button
                                 data-action="live#action"
-                                data-action-name="prevent|save"
+                                data-live-action-param="prevent|save"
                                 class="btn btn-outline-success"
                         >
                             <i class="bi bi-journal-check"></i>
@@ -130,7 +130,7 @@
             {% if is_granted('EDIT', book) and not book.verified  %}
                 <button
                     data-action="live#action"
-                    data-action-name="activateEditing"
+                    data-live-action-param="activateEditing"
                     class="btn m-0 p-0"
                     title="Click to edit!"
                     style="  -webkit-user-select: text; -moz-user-select: text;-ms-user-select: text;user-select: text;"
@@ -150,7 +150,7 @@
             <a
                 class="btn btn-outline-secondary btn-sm p-1 suggestion"
                 data-action="live#action"
-                data-action-name="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
             >{{ suggestion }}</a>
             {% endif %}
         {% endfor %}

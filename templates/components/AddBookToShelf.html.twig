@@ -6,7 +6,7 @@
                 {% if shelf in book.shelves %}
                     <button
                         data-action="live#action"
-                        data-action-name="remove(shelfId={{ shelf.id }})"
+                        data-live-action-param="remove(shelfId={{ shelf.id }})"
                         class="btn btn-success btn-sm w-100"
                         title="{{shelf.name}}"
                     >
@@ -15,7 +15,7 @@
                 {% else %}
                     <button
                             data-action="live#action"
-                            data-action-name="add(shelfId={{ shelf.id }})"
+                            data-live-action-param="add(shelfId={{ shelf.id }})"
                             class="btn btn-outline-dark btn-sm w-100"
                             title="{{shelf.name}}"
                     >

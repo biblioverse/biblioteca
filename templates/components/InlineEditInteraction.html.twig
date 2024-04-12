@@ -10,7 +10,7 @@
     {% endif %}
     <button
         data-action="live#action"
-        data-action-name="toggle"
+        data-live-action-param="toggle"
         class="btn btn-link btn-sm text-{{ finished?'success':'secondary' }} text-decoration-none"
         title="Click to toggle read status"
     >
@@ -29,7 +29,7 @@
     {% endif %}
     <button
         data-action="live#action"
-        data-action-name="toggleFavorite"
+        data-live-action-param="toggleFavorite"
         class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
         title="Click to toggle favorite"
     >
@@ -57,7 +57,7 @@
                     'novalidate': true,
                     'class': '',
                     'data-action': 'live#action',
-                    'data-action-name': 'prevent|saveInteraction',
+                    'data-live-action-param': 'prevent|saveInteraction',
                 }
             }) }}
         {% endblock %}

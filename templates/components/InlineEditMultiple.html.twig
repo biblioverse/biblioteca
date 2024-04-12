@@ -12,7 +12,7 @@
             ></select>
             <button
                 data-action="live#action"
-                data-action-name="prevent|save"
+                data-live-action-param="prevent|save"
                 class="btn btn-sm btn-outline-danger"
             >
                 <i class="bi bi-journal-check"></i> Override {{ field }} for {{ books|length }} books
@@ -22,7 +22,7 @@
 
     <button
         data-action="live#action"
-        data-action-name="activateEditing"
+        data-live-action-param="activateEditing"
         class="btn btn-sm btn-outline-dark"
         style="text-align: left"
         title="Click to edit!"
