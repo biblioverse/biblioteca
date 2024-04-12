@@ -16,8 +16,8 @@ class Search
 {
     use DefaultActionTrait;
 
-    #[LiveProp(writable: true)]
-    public ?string $query = null;
+    #[LiveProp(writable: true, url: true)]
+    public string $query = '';
     public array $books = [];
 
     public function __construct(protected CollectionFinder $bookFinder)
@@ -39,11 +39,11 @@ class Search
             return [];
         }
 
-        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags');
+        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags,summary');
 
         $complexQuery->facetBy('authors,serie,tags');
 
-        $complexQuery->perPage(200);
+        $complexQuery->perPage(50);
         $complexQuery->sortBy('serieIndex:ASC');
         $complexQuery->numTypos(2);
 

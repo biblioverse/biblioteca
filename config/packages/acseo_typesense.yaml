@@ -23,6 +23,10 @@ acseo_typesense:
           type: string
           optional: true
           facet: true
+        summary:
+          name: summary
+          type: string
+          optional: true
         serieIndex:
           name: serieIndex
           type: float
@@ -46,6 +50,6 @@ acseo_typesense:
       finders:
         books_autocomplete:
           finder_parameters:
-            query_by: title,serie,extension,authors,tags
+            query_by: title,serie,extension,authors,tags,summary
             limit: 200
             num_typos: 2
