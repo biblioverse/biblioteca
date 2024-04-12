@@ -35,7 +35,7 @@ class Search
      */
     public function getResults(): array
     {
-        if (null === $this->query || '' === $this->query) {
+        if ('' === $this->query) {
             return [];
         }
 
