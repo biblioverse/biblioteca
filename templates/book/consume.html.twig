@@ -21,7 +21,21 @@ Consume books
                         Actions
                     </th>
                 </tr>
+                {% set previousPath='' %}
                 {% for path,book in books %}
+                    {% set parts = path|split('/consume/') %}
+                    {% set folders = parts[1]|split('/') %}
+                    {% set folderPath ='' %}
+                    {% for path in folders %}
+                        {% if not loop.last %}
+                            {% set folderPath = folderPath~((not loop.first)?"-":'')~path %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if folderPath!=previousPath %}
+                    <tr>
+                        <td colspan="3" class="bg-dark text-light"><i class="bi bi-folder-fill"></i> {{ folderPath }}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td>{{ book.relativePathname }}</td>
                         <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
