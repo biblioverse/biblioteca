@@ -7,6 +7,7 @@
                     <button
                         data-action="live#action"
                         data-live-action-param="remove(shelfId={{ shelf.id }})"
+                        data-live-shelf-param="{{ shelf.id }}"
                         class="btn btn-success btn-sm w-100"
                         title="{{shelf.name}}"
                     >
@@ -16,6 +17,7 @@
                     <button
                             data-action="live#action"
                             data-live-action-param="add(shelfId={{ shelf.id }})"
+                            data-live-shelf-param="{{ shelf.id }}"
                             class="btn btn-outline-dark btn-sm w-100"
                             title="{{shelf.name}}"
                     >

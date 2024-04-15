@@ -45,11 +45,11 @@ class AddBookToShelf extends AbstractController
     }
 
     #[LiveAction]
-    public function add(EntityManagerInterface $entityManager, #[LiveArg] int $shelfId): void
+    public function add(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
     {
         $shelfRepository = $entityManager->getRepository(Shelf::class);
 
-        $shelf = $shelfRepository->find($shelfId);
+        $shelf = $shelfRepository->find($shelf);
 
         if (null === $shelf) {
             throw new \RuntimeException('Shelf not found');
@@ -63,11 +63,11 @@ class AddBookToShelf extends AbstractController
     }
 
     #[LiveAction]
-    public function remove(EntityManagerInterface $entityManager, #[LiveArg] int $shelfId): void
+    public function remove(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
     {
         $shelfRepository = $entityManager->getRepository(Shelf::class);
 
-        $shelf = $shelfRepository->find($shelfId);
+        $shelf = $shelfRepository->find($shelf);
 
         if (null === $shelf) {
             throw new \RuntimeException('Shelf not found');
