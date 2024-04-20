@@ -35,6 +35,7 @@ Consume books
                     <tr>
                         <td colspan="3" class="bg-dark text-light"><i class="bi bi-folder-fill"></i> {{ folderPath }}</td>
                     </tr>
+                        {% set previousPath = folderPath %}
                     {% endif %}
                     <tr>
                         <td>{{ book.relativePathname }}</td>

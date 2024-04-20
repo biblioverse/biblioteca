@@ -7,22 +7,23 @@
                        id="search"
                        placeholder="Search for..."
                        data-model="query"
+                       autofocus
                 />
             </div>
         </div>
         {% if computed.results.books|default([])|length >0 %}
         <div class="row mt-5">
-            <div class="col-md-9 col-xs-6">
+            <div class="col-md-9 col-12">
                 <div class="row">
                     <h5> Results</h5>
                     {% for book in computed.results.books|default([]) %}
-                        <div class="col-md-3 col-xs-12">
+                        <div class="col-md-3 col-6">
                             {% include 'book/_teaser.html.twig' with {book: book.book} %}
                         </div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-md-3 col-xs-6">
+            <div class="col-md-3 col-12">
                 {% for facet in computed.results.facets|default([]) %}
                     {% if facet.counts|length>0 %}
                         <h5 class="m-0 mb-2">{{ facet.field_name|capitalize }}</h5>
