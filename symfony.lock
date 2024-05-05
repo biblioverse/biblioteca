@@ -65,18 +65,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "google/apiclient": {
-        "version": "2.15",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "2.10",
-            "ref": "07a97ec434d43b7903c78069a04c92adb6442e52"
-        },
-        "files": [
-            "config/packages/google_apiclient.yaml"
-        ]
-    },
     "knplabs/knp-menu-bundle": {
         "version": "v3.2.0"
     },
