@@ -58,13 +58,13 @@ final class ChatGPTSuggestion
             default => throw new \InvalidArgumentException('Invalid field'),
         };
 
-        $bookString = '"'.$this->book->getTitle().'" by '.implode('and ', $this->book->getAuthors());
+        $bookString = '"'.$this->book->getTitle().'" by '.implode(' and ', $this->book->getAuthors());
 
         if ($this->book->getSerie() !== null) {
             $bookString .= ' number '.$this->book->getSerieIndex().' in the series "'.$this->book->getSerie().'"';
         }
 
-        $this->prompt = str_replace(' {book}', $bookString, $this->prompt);
+        $this->prompt = str_replace('{book}', $bookString, $this->prompt);
     }
 
     #[LiveAction]
