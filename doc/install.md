@@ -1,4 +1,6 @@
 # Installing Biblioteca for the first time
+## Pre-requisites
+Docker and docker compose installed
 
 ## Local development with DDEV
 
