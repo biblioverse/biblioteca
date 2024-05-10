@@ -4,7 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    GOOGLE_API_KEY: '%env(GOOGLE_API_KEY)%'
+    BOOK_FOLDER_NAMING_FORMAT: '%env(BOOK_FOLDER_NAMING_FORMAT)%'
+    BOOK_FILE_NAMING_FORMAT: '%env(BOOK_FILE_NAMING_FORMAT)%'
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +23,22 @@ services:
             - '../src/Kernel.php'
 
 
+    gedmo.mapping.driver.attribute:
+        class: Gedmo\Mapping\Driver\AttributeReader
+
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_listener, event: 'prePersist'}
+            - { name: doctrine.event_listener, event: 'preUpdate'}
+            - { name: doctrine.event_listener, event: 'preRemove'}
+            - { name: doctrine.event_listener, event: 'onFlush'}
+            - { name: doctrine.event_listener, event: 'loadClassMetadata'}
+            - { name: doctrine.event_listener, event: 'postPersist'}
+            - { name: doctrine.event_listener, event: 'postUpdate'}
+            - { name: doctrine.event_listener, event: 'postRemove'}
+        calls:
+            - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]
 
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
@@ -30,7 +47,7 @@ services:
             - { name: doctrine.event_listener, event: 'onFlush' }
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -39,7 +56,7 @@ services:
             - { name: doctrine.event_listener, event: 'onFlush' }
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]
 
     app.menu_builder:
         class: App\Menu\MenuBuilder

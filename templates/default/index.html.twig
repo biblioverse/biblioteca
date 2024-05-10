@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends themedTemplate('base.html.twig') %}
 
 {% block title %} {{ pagination.getTotalItemCount }} books - Page {{ page }}{% endblock %}
 {% block body %}
@@ -70,5 +70,5 @@
         {{ form_rest(form) }}
         {{ form_end(form) }}
     </details>
-    {% include 'book/_pagination.html.twig' %}
+    {% include themedTemplate('book/_pagination.html.twig') %}
 {% endblock %}

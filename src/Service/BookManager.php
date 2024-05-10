@@ -32,6 +32,9 @@ class BookManager
         $book = new Book();
 
         $extractedMetadata = $this->extractEbookMetadata($file);
+        if ('' === $extractedMetadata['title'] || '.pdf' === $extractedMetadata['title']) {
+            $extractedMetadata['title'] = $file->getBasename();
+        }
         $book->setTitle($extractedMetadata['title']);
         $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
         if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {

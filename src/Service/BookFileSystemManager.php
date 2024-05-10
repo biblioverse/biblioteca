@@ -6,6 +6,7 @@ use App\Entity\Book;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -20,7 +21,7 @@ class BookFileSystemManager
 
     public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-    public function __construct(private KernelInterface $appKernel, private SluggerInterface $slugger, private LoggerInterface $logger)
+    public function __construct(private KernelInterface $appKernel, private ContainerBagInterface $params, private SluggerInterface $slugger, private LoggerInterface $logger)
     {
     }
 
@@ -121,7 +122,7 @@ class BookFileSystemManager
         return str_replace($file->getFilename(), '', $path);
     }
 
-    private function calculateFilePath(Book $book): string
+    private function getPlaceHolders(Book $book): array
     {
         $main = current($book->getAuthors());
         if (false === $main) {
@@ -133,19 +134,29 @@ class BookFileSystemManager
         $serie = null !== $book->getSerie() ? mb_strtolower($this->slugger->slug($book->getSerie())) : null;
         $firstLetter = mb_substr($main, 0, 1);
         $letter = mb_strtolower($firstLetter);
-        $path = [$letter];
 
-        $path[] = $author;
+        return [
+            '{author}' => $author,
+            '{authorFirst}' => $letter,
+            '{title}' => $title,
+            '{serie}' => $serie,
+            '{serieIndex}' => $book->getSerieIndex(),
+            '{language}' => $book->getLanguage() ?? 'not-set',
+            '{extension}' => $book->getExtension(),
+        ];
+    }
 
-        if (null !== $serie) {
-            $path[] = $serie;
+    private function calculateFilePath(Book $book): string
+    {
+        $path = $this->params->get('BOOK_FOLDER_NAMING_FORMAT');
+        if (!is_string($path)) {
+            throw new \RuntimeException('Could not get filename format');
         }
+        $placeholders = $this->getPlaceHolders($book);
 
-        $path[] = $title;
+        $path = str_replace(array_keys($placeholders), array_values($placeholders), $path).DIRECTORY_SEPARATOR;
 
-        $expectedPath = implode(DIRECTORY_SEPARATOR, $path);
-
-        return $expectedPath.DIRECTORY_SEPARATOR;
+        return str_replace('//', '/', $path);
     }
 
     public function getCalculatedFilePath(Book $book, bool $realpath): string
@@ -164,13 +175,16 @@ class BookFileSystemManager
 
     private function calculateFileName(Book $book): string
     {
-        $expectedFilename = '';
-        if (null !== $book->getSerie()) {
-            $expectedFilename .= $book->getSerie().' '.$book->getSerieIndex().' - ';
+        $filename = $this->params->get('BOOK_FILE_NAMING_FORMAT');
+        if (!is_string($filename)) {
+            throw new \RuntimeException('Could not get filename format');
         }
-        $expectedFilename .= $this->slugger->slug($book->getTitle());
+        $placeholders = $this->getPlaceHolders($book);
 
-        return $this->slugger->slug($expectedFilename);
+        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $filename);
+        $filename = str_replace('/', '', $filename);
+
+        return $this->slugger->slug($filename);
     }
 
     public function getCalculatedFileName(Book $book): string
