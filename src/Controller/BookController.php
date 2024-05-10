@@ -61,7 +61,7 @@ class BookController extends AbstractController
 
         $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
 
-        $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename();
+        $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
         return $this->render('book/index.html.twig', [
