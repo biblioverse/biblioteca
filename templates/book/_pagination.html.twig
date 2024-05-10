@@ -23,7 +23,7 @@
 
 
 {% if displayMode.getDisplayMode =='gallery' %}
-    {% include 'book/_gallery.html.twig' %}
+    {% include themedTemplate('book/_gallery.html.twig') %}
 {% else %}
-    {% include 'book/_list.html.twig' %}
+    {% include themedTemplate('book/_list.html.twig') %}
 {% endif %}
