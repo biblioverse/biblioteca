@@ -6,35 +6,24 @@ use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use App\Service\BookManager;
-use App\Service\BookSuggestions;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/books')]
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Request $request, Book $book, string $slug, BookSuggestions $bookSuggestions, BookRepository $bookRepository, BookManager $bookManager, BookFileSystemManager $fileSystemManager): Response
+    public function index(Request $request, Book $book, string $slug, BookRepository $bookRepository, BookManager $bookManager, BookFileSystemManager $fileSystemManager): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
                 'book' => $book->getId(),
                 'slug' => $book->getSlug(),
             ], 301);
-        }
-
-        $suggestions = BookSuggestions::EMPTY_SUGGESTIONS;
-
-        $getSuggestions = (bool) $request->get('suggestions', false);
-
-        if (!$book->isVerified() && $getSuggestions === true) {
-            $suggestions = $bookSuggestions->getOpenLibrarySuggestions($book);
-            $suggestions = array_merge_recursive($suggestions, $bookSuggestions->getGoogleSuggestions($book));
         }
 
         $form = $this->createFormBuilder()
@@ -71,7 +60,7 @@ class BookController extends AbstractController
 
         $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
 
-        $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$book->getBookFilename();
+        $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
         return $this->render('book/index.html.twig', [
@@ -79,36 +68,14 @@ class BookController extends AbstractController
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,
-            'suggestions' => $suggestions,
             'form' => $form->createView(),
             'calculatedPath' => $calculatedPath,
             'needsRelocation' => $needsRelocation,
         ]);
     }
 
-    #[Route('/download-image/{id}/{image}', name: 'app_book_downloadImage')]
-    public function downloadImage(Book $book, string $image, BookSuggestions $bookSuggestions, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
-    {
-        $suggestions = $bookSuggestions->getGoogleSuggestions($book);
-
-        $url = $suggestions['image'][$image] ?? null;
-
-        if ($url === null) {
-            throw $this->createNotFoundException('Image not found');
-        }
-
-        $book = $fileSystemManager->downloadBookCover($book, $url);
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_book', [
-            'book' => $book->getId(),
-            'slug' => $book->getSlug(),
-        ], 301);
-    }
-
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
-    public function extractCover(Book $book, BookSuggestions $bookSuggestions, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
+    public function extractCover(Book $book, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {
         $book = $fileSystemManager->extractCover($book);
 

@@ -1,5 +1,5 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
-{% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
+        {% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
             <form>
                 <div class="input-group">
 
@@ -93,7 +93,7 @@
                     {% endif %}
                 </div>
             </form>
-        {% else %}
+        {% elseif displayOriginal %}
 
 
             {% if field=='serieIndex' %}
@@ -146,13 +146,25 @@
 
     {% if not book.verified and suggestions[field] is defined and is_granted('EDIT', book) %}
         {% for key,suggestion in  suggestions[field] %}
-            {% if suggestion != attribute(book, "get"~field) and suggestion not in attribute(book, "get"~field) %}
+            {% if suggestion != attribute(book, "get"~field) %}
             <a
                 class="btn btn-outline-secondary btn-sm p-1 suggestion"
                 data-action="live#action"
                 data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                data-live-field-param="{{ field }}"
+                data-live-suggestion-param="{{ key }}"
+
             >{{ suggestion }}</a>
             {% endif %}
         {% endfor %}
+        {% if field=='tags' and suggestions[field]|length>0 %}
+            <a
+            class="btn btn-primary btn-sm p-1 suggestion"
+            data-action="live#action"
+            data-live-action-param="usesuggestion(field={{ field }}, suggestion=all)"
+            data-live-field-param="{{ field }}"
+            data-live-suggestion-param="all"
+            >Accept all</a>
+            {% endif %}
     {% endif %}
 </span>

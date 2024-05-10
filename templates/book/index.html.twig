@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends themedTemplate('base.html.twig') %}
 
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 
@@ -35,33 +35,33 @@
                 <tr>
                     <th style="width:15%;">{{ 'title'|trans }}</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title', suggestions:suggestions}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
                     </td>
                 </tr>
                 <tr>
                     <th>{{ 'authors'|trans }}</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors',  suggestions:suggestions}) }}</td>
+                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}</td>
                 </tr>
                 <tr>
                     <th>{{ 'summary'|trans }}</th><td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'summary', suggestions:suggestions}) }}
+                        {{ component('InlineEditBook', {'book':book, 'field':'summary'}) }}
                     </td>
                 </tr>
                 <tr>
                     <th>{{ 'serie'|trans }}</th><td>
                         <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie', suggestions:suggestions}) }}
+                            {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
                         </div>
                         {% if book.serie is not null %}
                             <div class="w-25 d-inline-block">
-                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex', suggestions:suggestions}) }}
+                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
                             </div>
                         {% endif %}
 
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher', suggestions:suggestions}) }}</td>
+                    <th>{{ 'publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher'}) }}</td>
                 </tr>
 
                 <tr>
@@ -69,23 +69,10 @@
                 </tr>
 
                 <tr>
-                    <th>{{ 'tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags', suggestions:suggestions}) }}</td>
+                    <th>{{ 'tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
                 </tr>
                 {% if not book.verified %}
-                    <tr>
-                        <th>Paths</th>
-                        <td>
-                            <ul class="small m-0">
-                                <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
-                                <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
-                                {% if not book.verified and needsRelocation %}
-                                    <li class="text-danger">Calculated path: <code>{{ calculatedPath }}</code>
-                                        <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </td>
-                    </tr>
+
                     <tr>
                         <th>Utilities</th>
                         <td>
@@ -93,45 +80,43 @@
                                 <li>
                                     <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
                                 </li>
+                                {% if app.user.openAIKey is not null%}
                                 <li>
-                                    <a target="_blank" href="https://www.goodreads.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}">{{ 'search.goodreads'|trans }}</a>
+                                    {{ component('ChatGPTSuggestion', {book: book, field:'tags'}) }}
                                 </li>
+
                                 <li>
-                                    <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug, 'suggestions':true}) }}">{{ 'Get suggestions'|trans }}</a>
+                                    {{ component('ChatGPTSuggestion', {book: book, field:'summary'}) }}
                                 </li>
+                                {% endif %}
                                 <li>
                                     <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'extract.from-file'|trans }}</a>
                                 </li>
                             </ul>
                         </td>
                     </tr>
+                    <tr>
+                        <th>Paths</th>
+                        <td>
+                            <ul class="small m-0">
+                                <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
+                                <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
+                                {% if not book.verified and needsRelocation %}
+                                    <li class="text-danger">Calculated path: <br><code>{{ calculatedPath }}</code>
+                                        <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </td>
+                    </tr>
                 {% endif %}
                 <tr>
-                    <th>{{ 'verified'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified', suggestions:suggestions}) }}</td>
+                    <th>{{ 'verified'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'verified'}) }}</td>
                 </tr>
 
 
             </table>
 
-            {% if not book.verified and is_granted('EDIT', book) %}
-            <div class="row">
-
-                {% if suggestions.image|length >0 %}
-                <div class="col-md-12">
-                    <h5>{{ 'suggested.images'|trans }}</h5>
-                </div>
-                {% for key, image in suggestions.image %}
-                    <div class="col-md-2">
-                        <a href="{{ path('app_book_downloadImage', {'id':book.id, 'image':key }) }}">
-                            <img src="{{ image }}" class="w-100">
-                        </a>
-                    </div>
-                {% endfor %}
-                {% endif %}
-
-
-            </div>
-            {% endif %}
             {% if serie|length > 0 %}
                 {% if serieMax>=1 %}
                     <h5>{{ 'books.in.serie'|trans }}</h5>
@@ -146,10 +131,10 @@
                                 {% endif %}
                                 {% if serie[index] is defined %}
                                     {% for indexBook in serie[index] %}
-                                            {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                                     {% endfor %}
                                 {% else %}
-                                        {% include 'book/_empty.html.twig' with {serie:book.serie, index:index} %}
+                                        {% include themedTemplate('book/_empty.html.twig') with {serie:book.serie, index:index} %}
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -160,7 +145,7 @@
                     <div class="row">
                         {% for indexBook in serie['?'] %}
                             <div class="col-4 col-md-2">
-                                {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                                {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                             </div>
                         {% endfor %}
                     </div>
@@ -171,7 +156,7 @@
                 <div class="row">
                     {% for indexBook in sameAuthor %}
                         <div class="col-4 col-md-2">
-                            {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}
                 </div>
