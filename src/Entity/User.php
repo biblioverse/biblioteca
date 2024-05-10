@@ -86,6 +86,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bookKeywordPrompt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $theme = null;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -350,6 +353,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBookKeywordPrompt(?string $bookKeywordPrompt): static
     {
         $this->bookKeywordPrompt = $bookKeywordPrompt;
+
+        return $this;
+    }
+
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(?string $theme): static
+    {
+        $this->theme = $theme;
 
         return $this;
     }

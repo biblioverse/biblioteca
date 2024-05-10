@@ -1,8 +1,8 @@
-{% extends 'base.html.twig' %}
+{% extends themedTemplate('base.html.twig') %}
 
 {% block title %}{{ shelf.name }}{% endblock %}
 
 {% block body %}
 
-    {% include 'book/_pagination.html.twig' %}
+    {% include themedTemplate('book/_pagination.html.twig') %}
 {% endblock %}
