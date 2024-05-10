@@ -30,5 +30,5 @@ You can create multiple users and restrict them to age categories, or just let t
 ### Themes
 Light and dark themes are available, and you can easily create new themes.
 
-## Sync with Kobo
+### Sync with Kobo
 Sync your library with your Kobo reader (Work in progress, will be available soon)
