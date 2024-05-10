@@ -18,7 +18,7 @@
                     <h5> Results</h5>
                     {% for book in computed.results.books|default([]) %}
                         <div class="col-md-3 col-6">
-                            {% include 'book/_teaser.html.twig' with {book: book.book} %}
+                            {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
                         </div>
                     {% endfor %}
                 </div>
