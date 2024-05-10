@@ -1,0 +1,32 @@
+<div{{ attributes }}>
+
+    <button class="btn btn-link btn-sm text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#{{ field }}" type="button"
+            data-toggle="tooltip" data-placement="bottom" >
+        Generate {{ field }}
+    </button>
+
+    {% component BootstrapModal with {id: field} %}
+        {% block modal_header %}
+            <h5>{{ book.title }} - {{ field }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% endblock %}
+        {% block modal_body %}
+
+            <textarea class="form-control"  data-model="prompt" data-action="live#action"
+                rows="5"
+            >{{ prompt }}</textarea>
+            <button type="button" class="btn btn-primary"data-action="live#action"
+                    data-live-action-param="prevent|generate"
+            >Generate</button>
+
+
+            {% if result %}
+                <div>
+                    {{ component('InlineEditBook', {'book':book, 'field':field, suggestions:suggestions, displayOriginal: false} ) }}
+                </div>
+            {% endif %}
+
+        {% endblock %}
+
+    {% endcomponent %}
+</div>

@@ -62,7 +62,7 @@ class FilteredBookUrlGenerator
         foreach (self::FIELDS_DEFAULT_VALUE as $key => $value) {
             if (array_key_exists($key, $queryParams)) {
                 $value = $queryParams[$key];
-                if (($key === 'authors' || $key === 'authorsNot' || $key === 'tags') && is_string($value)) {
+                if (($key === 'authors' || $key === 'authorsNot' || $key === 'tags' || $key === 'age') && is_string($value)) {
                     $value = array_filter(explode(BookFilterType::AUTOCOMPLETE_DELIMITER, $value));
                 }
             }

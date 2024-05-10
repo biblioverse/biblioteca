@@ -27,6 +27,8 @@ class InlineEditBook extends AbstractController
     #[LiveProp()]
     public bool $isEditing = false;
 
+    public bool $displayOriginal = true;
+
     /**
      * @var array<string, array<string, string>>
      */
@@ -49,12 +51,28 @@ class InlineEditBook extends AbstractController
     {
         $this->isEditing = true;
         $to_call = 'set'.ucfirst($field);
-        $value = $this->suggestions[$field][$suggestion];
+        if ($suggestion === 'all') {
+            $value = $this->suggestions[$field];
+        } else {
+            $value = $this->suggestions[$field][$suggestion];
+        }
         if (is_callable([$this->book, $to_call])) {
             if ('tags' === $field) {
-                $this->book->addTag($value);
+                if (is_array($value)) {
+                    foreach ($value as $tag) {
+                        $this->book->addTag($tag);
+                    }
+                } else {
+                    $this->book->addTag($value);
+                }
             } elseif ('authors' === $field) {
-                $this->book->addAuthor($value);
+                if (is_array($value)) {
+                    foreach ($value as $tag) {
+                        $this->book->addAuthor($tag);
+                    }
+                } else {
+                    $this->book->addAuthor($value);
+                }
             } else {
                 /* @phpstan-ignore-next-line */
                 $this->book->$to_call($value);
