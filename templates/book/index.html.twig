@@ -102,7 +102,7 @@
                                 <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
                                 <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
                                 {% if not book.verified and needsRelocation %}
-                                    <li class="text-danger">Calculated path: <code>{{ calculatedPath }}</code>
+                                    <li class="text-danger">Calculated path: <br><code>{{ calculatedPath }}</code>
                                         <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
                                     </li>
                                 {% endif %}
