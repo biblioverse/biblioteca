@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,6 +37,13 @@ class ProfileType extends AbstractType
                 'help_html' => true,
                 'help' => 'This is the prompt that will be used to generate a summary for books. It should be a short sentence or phrase. Here is a good starting example: <br>
 <code>Can you make a factual summary of the book {book} in around 150 words in french</code>',
+            ])
+            ->add('theme', ChoiceType::class, [
+                'label' => 'Theme',
+                'choices' => [
+                    'Default' => 'default',
+                    'Dark' => 'dark',
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Save',

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends themedTemplate('base.html.twig') %}
 
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 
@@ -131,10 +131,10 @@
                                 {% endif %}
                                 {% if serie[index] is defined %}
                                     {% for indexBook in serie[index] %}
-                                            {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                                     {% endfor %}
                                 {% else %}
-                                        {% include 'book/_empty.html.twig' with {serie:book.serie, index:index} %}
+                                        {% include themedTemplate('book/_empty.html.twig') with {serie:book.serie, index:index} %}
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -145,7 +145,7 @@
                     <div class="row">
                         {% for indexBook in serie['?'] %}
                             <div class="col-4 col-md-2">
-                                {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                                {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                             </div>
                         {% endfor %}
                     </div>
@@ -156,7 +156,7 @@
                 <div class="row">
                     {% for indexBook in sameAuthor %}
                         <div class="col-4 col-md-2">
-                            {% include 'book/_teaser.html.twig' with {book:indexBook} %}
+                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}
                 </div>
