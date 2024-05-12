@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Entity\BookInteraction;
+use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
-use App\Service\BookManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Request $request, Book $book, string $slug, BookRepository $bookRepository, BookManager $bookManager, BookFileSystemManager $fileSystemManager): Response
+    public function index(Request $request, Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManager $fileSystemManager): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -63,14 +65,106 @@ class BookController extends AbstractController
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
+        $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
+            'book' => $book,
+            'user' => $this->getUser(),
+        ]);
+
         return $this->render('book/index.html.twig', [
             'book' => $book,
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,
+            'interaction' => $interaction,
             'form' => $form->createView(),
             'calculatedPath' => $calculatedPath,
             'needsRelocation' => $needsRelocation,
+        ]);
+    }
+
+    #[Route('/{book}/{slug}/read', name: 'app_book_read')]
+    public function read(Request $request, Book $book, string $slug, BookFileSystemManager $fileSystemManager, PaginatorInterface $paginator, EntityManagerInterface $manager): Response
+    {
+        if ($slug !== $book->getSlug()) {
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            $this->addFlash('danger', 'You need to be logged in to read books');
+            throw $this->createAccessDeniedException();
+        }
+
+        switch ($book->getExtension()) {
+            // case 'epub':
+            //    break;
+            case 'pdf':
+            case 'cbr':
+            case 'cbz':
+                $files = $fileSystemManager->extractFilesToRead($book);
+                break;
+            default:
+                $this->addFlash('danger', 'Unsupported book format');
+
+                return $this->redirectToRoute('app_book', [
+                    'book' => $book->getId(),
+                    'slug' => $book->getSlug(),
+                ]);
+        }
+
+        if ($book->getPageNumber() !== count($files)) {
+            $book->setPageNumber(count($files));
+            $manager->flush();
+        }
+        $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
+            'book' => $book,
+            'user' => $this->getUser(),
+        ]);
+        if ($interaction === null) {
+            $interaction = new BookInteraction();
+            $interaction->setBook($book);
+            $interaction->setUser($user);
+        }
+
+        $page = $request->get('page', $interaction->getReadPages() ?? 1);
+        if (!is_int($page) || $page < 1) {
+            $page = 1;
+        }
+
+        if (!$interaction->isFinished() && $interaction->getReadPages() < $page) {
+            $interaction->setReadPages($page);
+        }
+        $manager->persist($interaction);
+        $manager->flush();
+
+        if (!$interaction->isFinished() && $page === $book->getPageNumber()) {
+            $interaction->setFinished(true);
+            $interaction->setFinishedDate(new \DateTime());
+            $this->addFlash('success', 'Book finished! Congratulations!');
+            $manager->flush();
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ]);
+        }
+
+        $pagination = $paginator->paginate(
+            $files,
+            $page,
+            1
+        );
+
+        // @phpstan-ignore-next-line
+        $pagination->setTemplate('book/_knp_minimal_pagination.html.twig');
+
+        return $this->render('book/reader-files.html.twig', [
+            'book' => $book,
+            'page' => $page,
+            'pagination' => $pagination,
         ]);
     }
 

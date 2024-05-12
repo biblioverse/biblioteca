@@ -13,7 +13,9 @@
                     <a class="nav-link" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'download'|trans }} {{ book.extension }}</a>
                 </li>
                 <li class="nav-item d-none d-sm-block">
-                    <a class="nav-link disabled" aria-disabled="true">Read in browser</a>
+                    <a class="nav-link" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}"><i class="bi bi-file-earmark-arrow-up"></i>
+                        Read in browser
+                    </a>
                 </li>
             </ul>
         </div>
@@ -36,6 +38,22 @@
                     <th style="width:15%;">{{ 'title'|trans }}</th>
                     <td>
                         {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ 'Read state'|trans }}</th>
+                    <td>
+                        {% if interaction is not null and interaction.finished %}
+                            Finished
+                        {% elseif interaction is null or interaction.readPages is null or interaction.readPages==1 %}
+                        Not started
+                        {% else %}
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {{ (interaction.readPages/book.pageNumber) *100 }}%">
+                                    {{ interaction.readPages }}/{{ book.pageNumber }}
+                                </div>
+                            </div>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>

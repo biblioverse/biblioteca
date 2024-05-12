@@ -26,6 +26,9 @@ class BookInteraction
     #[ORM\Column]
     private bool $finished = false;
 
+    #[ORM\Column]
+    private ?int $readPages = null;
+
     #[ORM\Column(nullable: false)]
     private bool $favorite = false;
 
@@ -113,5 +116,15 @@ class BookInteraction
     public function getUpdated(): ?\DateTimeInterface
     {
         return $this->updated;
+    }
+
+    public function getReadPages(): ?int
+    {
+        return $this->readPages;
+    }
+
+    public function setReadPages(?int $readPages): void
+    {
+        $this->readPages = $readPages;
     }
 }
