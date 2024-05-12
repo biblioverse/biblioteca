@@ -577,7 +577,6 @@ class BookFileSystemManager
 
         sort($return);
 
-
         return $return;
     }
 
