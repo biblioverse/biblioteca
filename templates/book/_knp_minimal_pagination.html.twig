@@ -1,7 +1,7 @@
 {% if pageCount > 1 %}
     <nav>
         {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-content-center' : (align=='right' ? ' justify-content-end' : '') %}
-        {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
+        {% set classSize =' pagination-sm' %}
         <ul class="pagination{{ classAlign }}{{ classSize }}">
 
             {% if previous is defined %}

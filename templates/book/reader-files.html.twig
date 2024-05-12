@@ -3,22 +3,22 @@
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row mt-2">
-            <div class="col-md-6">
-                <a class="btn btn-outline-primary" aria-current="page" href="{{ path('app_book',{'book':book.id,'slug':book.slug}) }}">
+            <div class="col-12 col-sm-6">
+                <a class="btn btn-sm btn-outline-primary" aria-current="page" href="{{ path('app_book',{'book':book.id,'slug':book.slug}) }}">
                     Back to {{ book.title }}
                 </a>
             </div>
-            <div class="col-md-6 align-content-end text-end text-end">
+            <div class="col-12 col-sm-6 align-content-end text-end text-end">
                 {{ knp_pagination_render(pagination) }}
             </div>
-            <div class="col-md-12">
+            <div class="col-12">
 
             {% for file in pagination %}
                 <div class="text-center w-100">
                     <a href="{{ path('app_book_read',{'book':book.id,'slug':book.slug, page:page+1}) }}">
-                        <img src="{{ asset(file) }}?book={{ book.id }}" style="height: 90vh" class="w-auto">
+                        <img src="{{ asset(file) }}?book={{ book.id }}" style="height: 88vh;max-width:100vw" class="w-auto">
                     </a>
                 </div>
             {% endfor %}

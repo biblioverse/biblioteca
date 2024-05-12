@@ -86,6 +86,7 @@ class BookController extends AbstractController
     #[Route('/{book}/{slug}/read', name: 'app_book_read')]
     public function read(Request $request, Book $book, string $slug, BookFileSystemManager $fileSystemManager, PaginatorInterface $paginator, EntityManagerInterface $manager): Response
     {
+        set_time_limit(120);
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
                 'book' => $book->getId(),
