@@ -45,7 +45,7 @@
                     <td>
                         {% if interaction is not null and interaction.finished %}
                             Finished
-                        {% elseif interaction is null or interaction.readPages is null or interaction.readPages==1 %}
+                        {% elseif interaction is null or interaction.readPages is null or interaction.readPages==1 or book.pageNumber==0 or book.pageNumber is null %}
                         Not started
                         {% else %}
                             <div class="progress">
