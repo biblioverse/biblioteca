@@ -62,6 +62,9 @@ class Book
     #[ORM\Column(length: 2, nullable: true)]
     private ?string $language = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $pageNumber = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $publisher = null;
 
@@ -500,5 +503,15 @@ class Book
         }
 
         return $this->uuid;
+    }
+
+    public function getPageNumber(): ?int
+    {
+        return $this->pageNumber;
+    }
+
+    public function setPageNumber(?int $pageNumber): void
+    {
+        $this->pageNumber = $pageNumber;
     }
 }

@@ -284,51 +284,6 @@ class BookFileSystemManager
         return $book;
     }
 
-    public function downloadBookCover(Book $book, string $url): Book
-    {
-        $filesystem = new Filesystem();
-
-        $fileContents = file_get_contents($url);
-
-        if (false === $fileContents) {
-            throw new \RuntimeException('Could not download file');
-        }
-        $checksum = md5($fileContents);
-
-        $ext = $this->getImageExtension($url);
-        if (null === $ext) {
-            throw new \RuntimeException('Could not get image extension');
-        }
-        $book->setImageExtension($ext);
-
-        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-
-        $filesystem->dumpFile($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum), $fileContents);
-
-        $book->setImagePath($this->getCalculatedImagePath($book, false));
-        $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
-
-        return $book;
-    }
-
-    private function getImageExtension(string $url): ?string
-    {
-        $mimes = [
-            IMAGETYPE_GIF => 'gif',
-            IMAGETYPE_JPEG => 'jpg',
-            IMAGETYPE_PNG => 'png',
-            IMAGETYPE_BMP => 'bmp',
-            IMAGETYPE_WEBP => 'webp',
-        ];
-        $image_type = exif_imagetype($url);
-
-        if (false !== $image_type && array_key_exists($image_type, $mimes)) {
-            return $mimes[$image_type];
-        }
-
-        return null;
-    }
-
     public function deleteBookFiles(Book $book): void
     {
         $filesystem = new Filesystem();
@@ -381,10 +336,10 @@ class BookFileSystemManager
                 $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
 
                 if (!is_string($return)) {
-                    $book = $this->extractFromGeneralArchive($bookFile, $book);
+                    $book = $this->extractCoverFromGeneralArchive($bookFile, $book);
                     break;
                 }
-                $book = $this->extractFromRarArchive($bookFile, $book);
+                $book = $this->extractCoverFromRarArchive($bookFile, $book);
 
                 break;
             case 'pdf':
@@ -416,7 +371,33 @@ class BookFileSystemManager
         return $book;
     }
 
-    private function extractFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
+    public function extractFilesToRead(Book $book): array
+    {
+        $bookFile = $this->getBookFile($book);
+        $files = [];
+        switch ($book->getExtension()) {
+            case 'cbr':
+            case 'cbz':
+                $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+
+                if (!is_string($return)) {
+                    $files = $this->extractFilesFromGeneralArchive($bookFile, $book);
+                    break;
+                }
+                $files = $this->extractFilesFromRarArchive($bookFile, $book);
+
+                break;
+            case 'pdf':
+                $files = $this->extractFilesFromPdf($bookFile, $book);
+                break;
+            default:
+                throw new \RuntimeException('Extension not implemented');
+        }
+
+        return $files;
+    }
+
+    private function extractCoverFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
     {
         $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
 
@@ -494,7 +475,7 @@ class BookFileSystemManager
         return $book;
     }
 
-    private function extractFromGeneralArchive(\SplFileInfo $bookFile, Book $book): Book
+    private function extractCoverFromGeneralArchive(\SplFileInfo $bookFile, Book $book): Book
     {
         $archive = new Archive7z($bookFile->getRealPath());
 
@@ -548,5 +529,194 @@ class BookFileSystemManager
         $book->setImageExtension('jpg');
 
         return $book;
+    }
+
+    private function getReaderFolder(): string
+    {
+        return $this->appKernel->getProjectDir().'/public/tmp/reader';
+    }
+
+    private function isCurrentBookInReaderFolder(\SplFileInfo $bookFile): bool
+    {
+        $filesystem = new Filesystem();
+        if (!$filesystem->exists($this->getReaderFolder())) {
+            $filesystem->mkdir($this->getReaderFolder());
+
+            return false;
+        }
+
+        $finder = new Finder();
+        $iterator = $finder->in($this->getReaderFolder())->name('book.txt')->files();
+        foreach ($iterator->getIterator() as $item) {
+            $content = file_get_contents($item->getRealPath());
+            if ($bookFile->getRealPath() === $content) {
+                return true;
+            }
+        }
+
+        $filesystem->remove($this->getReaderFolder());
+        $filesystem->mkdir($this->getReaderFolder());
+        $filesystem->touch($this->getReaderFolder().'/book.txt');
+        file_put_contents($this->getReaderFolder().'/book.txt', $bookFile->getRealPath());
+
+        return false;
+    }
+
+    private function listReaderFiles(): array
+    {
+        $finder = new Finder();
+        $fileIterator = $finder->in($this->getReaderFolder())->name('*')->files()->getIterator();
+        $files = iterator_to_array($fileIterator);
+        $return = [];
+        foreach ($files as $file) {
+            if (!in_array($file->getExtension(), self::VALID_COVER_EXTENSIONS, true)) {
+                continue;
+            }
+            $return[] = str_replace($this->appKernel->getProjectDir().'/public/', '', $file->getRealPath());
+        }
+
+        return $return;
+    }
+
+    private function extractFilesFromRarArchive(\SplFileInfo $bookFile, Book $book): array
+    {
+        if ($this->isCurrentBookInReaderFolder($bookFile)) {
+            return $this->listReaderFiles();
+        }
+        $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+
+        if (!is_string($return)) {
+            $this->logger->error('not a string', ['book' => $bookFile->getRealPath(), 'return' => $return]);
+
+            return [];
+        }
+        $entries = explode(PHP_EOL, $return);
+
+        sort($entries);
+
+        $entries = array_values(array_filter($entries, static function ($entry) {
+            foreach (self::VALID_COVER_EXTENSIONS as $extension) {
+                if (str_ends_with(strtolower($entry), '.'.$extension)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }));
+        if (count($entries) === 0) {
+            $this->logger->error('no errors');
+
+            return [];
+        }
+
+        $filesystem = new Filesystem();
+        $finder = new Finder();
+
+        foreach ($entries as $key => $entry) {
+            shell_exec('unrar e -ep '.escapeshellarg($bookFile->getRealPath()).' '.escapeshellarg($entry).' -op"'.$this->getReaderFolder().'" -y');
+            $entryFolder = '';
+            $entryFileName = $entry;
+            if (str_contains($entry, '/')) {
+                $entry = explode('/', $entry);
+                $entryFolder = '/'.$entry[0];
+                $entryFileName = $entry[1];
+            }
+            foreach ($finder->in($this->getReaderFolder().$entryFolder)->name($entryFileName)->files()->getIterator() as $entryFile) {
+                $filesystem->rename(
+                    $entryFile->getRealPath(),
+                    $this->getReaderFolder().'/'.$this->getFileExtractedName($book, $key, $entryFile),
+                    true
+                );
+            }
+        }
+
+        return $this->listReaderFiles();
+    }
+
+    public function getFileExtractedName(Book $book, int $key, \SplFileInfo|string $file): string
+    {
+        $ext = strtolower(is_string($file) ? $file : $file->getExtension());
+
+        return $book->getSlug().'-'.$book->getId().'-'.str_pad(''.$key, 3, '0', STR_PAD_LEFT).'.'.$ext;
+    }
+
+    private function extractFilesFromGeneralArchive(\SplFileInfo $bookFile, Book $book): array
+    {
+        if ($this->isCurrentBookInReaderFolder($bookFile)) {
+            return $this->listReaderFiles();
+        }
+        $archive = new Archive7z($bookFile->getRealPath());
+
+        if (!$archive->isValid()) {
+            return [];
+        }
+
+        $entries = [];
+        foreach ($archive->getEntries() as $entry) {
+            foreach (self::VALID_COVER_EXTENSIONS as $extension) {
+                if (str_ends_with(strtolower($entry->getPath()), '.'.$extension)) {
+                    $entries[] = $entry->getPath();
+                }
+            }
+        }
+        sort($entries);
+
+        if (count($entries) === 0) {
+            return [];
+        }
+
+        $filesystem = new Filesystem();
+        $finder = new Finder();
+
+        foreach ($entries as $key => $entry) {
+            $archive->setOutputDirectory($this->getReaderFolder())->extractEntry($entry); // extract the archive
+            $entryFolder = '';
+            $entryFileName = $entry;
+            if (str_contains($entry, '/')) {
+                $entry = explode('/', $entry);
+                $entryFolder = '/'.$entry[0];
+                $entryFileName = $entry[1];
+            }
+            foreach ($finder->in($this->getReaderFolder().$entryFolder)->name($entryFileName)->files()->getIterator() as $entryFile) {
+                $filesystem->rename(
+                    $entryFile->getRealPath(),
+                    $this->getReaderFolder().'/'.$this->getFileExtractedName($book, $key, $entryFile),
+                    true
+                );
+            }
+        }
+
+        return $this->listReaderFiles();
+    }
+
+    private function extractFilesFromPdf(\SplFileInfo $bookFile, Book $book): array
+    {
+        if ($this->isCurrentBookInReaderFolder($bookFile)) {
+            return $this->listReaderFiles();
+        }
+
+        // try {
+        $im = new \Imagick($bookFile->getRealPath()); // 0-first page, 1-second page
+        $num_page = $im->getNumberImages();
+        $im->clear();
+        $im->destroy();
+        for ($i = 0; $i < $num_page; $i++) {
+            $im = new \Imagick($bookFile->getRealPath().'['.$i.']'); // 0-first page, 1-second page
+
+            $im->setImageColorspace(255); // prevent image colors from inverting
+            $im->setImageFormat('jpeg');
+            $im->thumbnailImage(1000, 1000, true);
+
+            $im->writeImage($this->getReaderFolder().'/'.$this->getFileExtractedName($book, $i, 'jpg'));
+            $im->clear();
+            $im->destroy();
+        }
+
+        /*} catch (\Exception $e) {
+            $this->logger->error('Could not extract pdf', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
+            return [];
+        }*/
+
+        return $this->listReaderFiles();
     }
 }
