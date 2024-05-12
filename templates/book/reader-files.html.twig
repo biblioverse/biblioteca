@@ -17,7 +17,7 @@
 
             {% for file in pagination %}
                 <div class="text-center w-100">
-                    <a href="{{ path('app_book_read',{'book':book.id,'slug':book.slug,'file':file, page:page+1}) }}">
+                    <a href="{{ path('app_book_read',{'book':book.id,'slug':book.slug, page:page+1}) }}">
                         <img src="{{ asset(file) }}?book={{ book.id }}" style="height: 90vh" class="w-auto">
                     </a>
                 </div>

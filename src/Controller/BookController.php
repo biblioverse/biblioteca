@@ -129,10 +129,10 @@ class BookController extends AbstractController
             $interaction->setUser($user);
         }
 
-        $page = $request->get('page', $interaction->getReadPages() ?? 1);
-        if (!is_int($page) || $page < 1) {
-            $page = 1;
-        }
+
+        // @phpstan-ignore-next-line
+        $page = (int) $request->get('page', $interaction->getReadPages() ?? 1);
+
 
         if (!$interaction->isFinished() && $interaction->getReadPages() < $page) {
             $interaction->setReadPages($page);
