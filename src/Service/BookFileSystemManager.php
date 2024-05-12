@@ -575,6 +575,9 @@ class BookFileSystemManager
             $return[] = str_replace($this->appKernel->getProjectDir().'/public/', '', $file->getRealPath());
         }
 
+        sort($return);
+
+
         return $return;
     }
 
