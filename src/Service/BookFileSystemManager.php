@@ -6,6 +6,7 @@ use App\Entity\Book;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -21,7 +22,7 @@ class BookFileSystemManager
 
     public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-    public function __construct(private KernelInterface $appKernel, private ContainerBagInterface $params, private SluggerInterface $slugger, private LoggerInterface $logger)
+    public function __construct(private Security $security, private KernelInterface $appKernel, private ContainerBagInterface $params, private SluggerInterface $slugger, private LoggerInterface $logger)
     {
     }
 
@@ -533,7 +534,9 @@ class BookFileSystemManager
 
     private function getReaderFolder(): string
     {
-        return $this->appKernel->getProjectDir().'/public/tmp/reader';
+        $user = $this->security->getUser();
+
+        return $this->appKernel->getProjectDir().'/public/tmp/reader/'.$user?->getUserIdentifier();
     }
 
     private function isCurrentBookInReaderFolder(\SplFileInfo $bookFile): bool

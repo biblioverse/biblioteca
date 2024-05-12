@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\BookInteraction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @extends ServiceEntityRepository<BookInteraction>
@@ -16,25 +17,29 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookInteractionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private Security $security)
     {
         parent::__construct($registry, BookInteraction::class);
     }
 
-    //    /**
-    //     * @return BookInteraction[] Returns an array of BookInteraction objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getStartedBooks(): array
+    {
+        $results = $this->createQueryBuilder('b')
+            ->andWhere('b.readPages >0')
+            ->andWhere('b.finished = false')
+            ->andWhere('b.user = :val')
+            ->setParameter('val', $this->security->getUser())
+            ->orderBy('b.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+        if (!is_array($results)) {
+            return [];
+        }
+
+        return $results;
+    }
 
     //    public function findOneBySomeField($value): ?BookInteraction
     //    {

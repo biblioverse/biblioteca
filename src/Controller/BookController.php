@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
+use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -177,6 +178,16 @@ class BookController extends AbstractController
             'book' => $book->getId(),
             'slug' => $book->getSlug(),
         ], 301);
+    }
+
+    #[Route('/started', name: 'app_started')]
+    public function started(BookInteractionRepository $repository): Response
+    {
+        $books = $repository->getStartedBooks();
+
+        return $this->render('book/started.html.twig', [
+            'books' => $books,
+        ]);
     }
 
     #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]

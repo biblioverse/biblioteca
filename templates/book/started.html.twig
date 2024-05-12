@@ -1,0 +1,24 @@
+{% extends themedTemplate('base.html.twig') %}
+
+{% block title %}Started Books{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+{% for bookInteraction in books %}
+    <div class="col-4 col-md-2">
+        {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+
+    </div>
+    <div class="col-8 col-md-10">
+        <h3>{{ bookInteraction.book.title }}</h3>
+        <div class="progress">
+            <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
+                {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
+            </div>
+        </div>
+        <a href="{{ path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages}) }}" class="mt-2 btn btn-primary">Continue reading</a>
+    </div>
+{% endfor %}
+    </div>
+{% endblock %}

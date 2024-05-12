@@ -58,6 +58,8 @@ final class MenuBuilder
             $menu->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
 
+        $menu->addChild('Books to be finished', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
+
         if ($user->getShelves()->count() > 0) {
             $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
             foreach ($user->getShelves() as $shelf) {
