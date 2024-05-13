@@ -26,7 +26,7 @@ class BookInteraction
     #[ORM\Column]
     private bool $finished = false;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $readPages = null;
 
     #[ORM\Column(nullable: false)]

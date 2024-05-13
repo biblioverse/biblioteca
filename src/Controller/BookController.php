@@ -120,6 +120,7 @@ class BookController extends AbstractController
         if ($book->getPageNumber() !== count($files)) {
             $book->setPageNumber(count($files));
             $manager->flush();
+
         }
         $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
             'book' => $book,
