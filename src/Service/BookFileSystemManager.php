@@ -518,9 +518,9 @@ class BookFileSystemManager
         }
 
         $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-        $checksum = $this->getFileChecksum($item);
+        $checksum = $this->getFileChecksum($file);
         $filesystem->rename(
-            $item->getRealPath(),
+            $file->getRealPath(),
             $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
             true
         );
