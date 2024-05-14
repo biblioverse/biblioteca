@@ -35,13 +35,12 @@ class BooksScanCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->writeln('Scanning books directory');
-
         if ($input->getOption('book-path') !== null) {
             $path = $input->getOption('book-path');
             if (!is_string($path)) {
                 throw new \Exception('Invalid path');
             }
+            $io->writeln('Consuming '.$path);
             $info = new \SplFileInfo($path);
             $book = $this->bookManager->consumeBook($info);
             $this->entityManager->persist($book);
@@ -49,6 +48,7 @@ class BooksScanCommand extends Command
             $this->fileSystemManager->renameFiles($book);
             $this->entityManager->flush();
         } else {
+            $io->writeln('Scanning books directory');
             $consume = $input->getOption('consume');
             if (!is_bool($consume)) {
                 $consume = false;

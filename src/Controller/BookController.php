@@ -219,6 +219,7 @@ class BookController extends AbstractController
 
         $consume = $request->get('consume');
         if ($consume !== null) {
+            set_time_limit(240);
             foreach ($bookFiles as $bookFile) {
                 if ($bookFile->getRealPath() !== $consume) {
                     continue;
