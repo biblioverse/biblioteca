@@ -7,11 +7,9 @@ use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class BookFileSystemManager
@@ -22,18 +20,26 @@ class BookFileSystemManager
 
     public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-    public function __construct(private Security $security, private KernelInterface $appKernel, private ContainerBagInterface $params, private SluggerInterface $slugger, private LoggerInterface $logger)
+    public function __construct(
+        private Security $security,
+        private string $publicDir,
+        private string $bookFolderNamingFormat,
+        private SluggerInterface $slugger,
+        private LoggerInterface $logger)
     {
+        if ($this->bookFolderNamingFormat == '') {
+            throw new \RuntimeException('Could not get filename format');
+        }
     }
 
     public function getBooksDirectory(): string
     {
-        return $this->appKernel->getProjectDir().'/public/books/';
+        return $this->publicDir.'/books/';
     }
 
     public function getCoverDirectory(): string
     {
-        return $this->appKernel->getProjectDir().'/public/covers/';
+        return $this->publicDir.'/covers/';
     }
 
     /**
@@ -149,13 +155,9 @@ class BookFileSystemManager
 
     private function calculateFilePath(Book $book): string
     {
-        $path = $this->params->get('BOOK_FOLDER_NAMING_FORMAT');
-        if (!is_string($path)) {
-            throw new \RuntimeException('Could not get filename format');
-        }
         $placeholders = $this->getPlaceHolders($book);
 
-        $path = str_replace(array_keys($placeholders), array_values($placeholders), $path).DIRECTORY_SEPARATOR;
+        $path = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFolderNamingFormat).DIRECTORY_SEPARATOR;
 
         return str_replace('//', '/', $path);
     }
@@ -176,13 +178,9 @@ class BookFileSystemManager
 
     private function calculateFileName(Book $book): string
     {
-        $filename = $this->params->get('BOOK_FILE_NAMING_FORMAT');
-        if (!is_string($filename)) {
-            throw new \RuntimeException('Could not get filename format');
-        }
         $placeholders = $this->getPlaceHolders($book);
 
-        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $filename);
+        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFolderNamingFormat);
         $filename = str_replace('/', '', $filename);
 
         return $this->slugger->slug($filename);
@@ -535,8 +533,7 @@ class BookFileSystemManager
     private function getReaderFolder(): string
     {
         $user = $this->security->getUser();
-
-        return $this->appKernel->getProjectDir().'/public/tmp/reader/'.$user?->getUserIdentifier();
+        return $this->publicDir.'/tmp/reader/'.$user?->getUserIdentifier();
     }
 
     private function isCurrentBookInReaderFolder(\SplFileInfo $bookFile): bool
@@ -575,7 +572,7 @@ class BookFileSystemManager
             if (!in_array($file->getExtension(), self::VALID_COVER_EXTENSIONS, true)) {
                 continue;
             }
-            $return[] = str_replace($this->appKernel->getProjectDir().'/public/', '', $file->getRealPath());
+            $return[] = str_replace($this->publicDir, '', $file->getRealPath());
         }
 
         sort($return);
