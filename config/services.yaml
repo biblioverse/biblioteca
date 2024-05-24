@@ -6,7 +6,12 @@
 parameters:
     BOOK_FOLDER_NAMING_FORMAT: '%env(BOOK_FOLDER_NAMING_FORMAT)%'
     BOOK_FILE_NAMING_FORMAT: '%env(BOOK_FILE_NAMING_FORMAT)%'
-
+    KOBO_PROXY_ENABLED: '%env(bool:KOBO_PROXY_ENABLED)%'
+    env(KOBO_PROXY_ENABLED): true
+    KOBO_PROXY_USE_DEV: '%env(bool:KOBO_PROXY_USE_DEV)%'
+    env(KOBO_PROXY_USE_DEV): false
+    KOBO_PROXY_USE_EVERYWHERE: '%env(bool:KOBO_PROXY_USE_EVERYWHERE)%'
+    env(KOBO_PROXY_USE_EVERYWHERE): false
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -84,3 +89,14 @@ services:
     App\Kobo\ParamConverter\SyncTokenParamConverter:
       tags:
         - { name: request.param_converter, priority: 100 }
+
+    App\Kobo\Proxy\KoboProxyConfiguration:
+      calls:
+        - [ setUseDevProxy, ['%KOBO_PROXY_USE_DEV%'] ]
+        - [ setEnabled, ['%KOBO_PROXY_ENABLED%'] ]
+        - [ setUseProxyEverywhere, ['%KOBO_PROXY_USE_EVERYWHERE%'] ]
+
+    App\Kobo\Proxy\KoboProxyListener:
+      tags:
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 130 }
+

@@ -32,7 +32,7 @@ class SyncTokenParser
         return $token;
     }
 
-    private static function timeStampStringToDate(string|null $timeStamp): ?\DateTimeInterface
+    private static function timeStampStringToDate(?string $timeStamp): ?\DateTimeInterface
     {
         if ($timeStamp === null || trim($timeStamp) === '') {
             return null;
