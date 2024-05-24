@@ -3,8 +3,6 @@
 {% block title %}Kobo index{% endblock %}
 
 {% block body %}
-    <h1>Kobo index</h1>
-
     <table class="table">
         <thead>
             <tr>
@@ -34,4 +32,7 @@
     </table>
 
     <a href="{{ path('app_kobo_admin_new') }}">Create new</a>
+
+
+    {{ include('kobo_admin/instructions.html.twig') }}
 {% endblock %}
