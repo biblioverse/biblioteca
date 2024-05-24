@@ -7,15 +7,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class KoboProxyConfiguration
 {
-    public const KOBO_STOREAPI_URL_PROD = 'https://storeapi.kobo.com';
-    public const KOBO_IMAGEHOST_URL_PROD = 'https://cdn.kobo.com/book-images';
-    public const KOBO_STOREAPI_URL_SAFE = 'https://books-proxy.example.com';
-    public const KOBO_IMAGEHOST_URL_SAFE = 'https://books-proxy.example.com';
-    private bool $useDevProxy = true;
     private bool $useProxy = true;
-    private bool $useProxyEverywhere = true;
+    private bool $useProxyEverywhere = false;
 
-    private bool $useRedirect = false;
+    private string $imageApiUrl = '';
+    private string $storeApiUrl = '';
 
     public function useProxy(): bool
     {
@@ -27,19 +23,29 @@ class KoboProxyConfiguration
         return $this->useProxyEverywhere;
     }
 
-    protected function useDevProxy(): bool
-    {
-        return $this->useDevProxy;
-    }
-
     public function getStoreApiUrl(): string
     {
-        return $this->useDevProxy() ? self::KOBO_STOREAPI_URL_SAFE : self::KOBO_STOREAPI_URL_PROD;
+        if ($this->storeApiUrl === '') {
+            throw new \InvalidArgumentException('Store API URL is not set');
+        }
+
+        return $this->storeApiUrl;
+    }
+
+    public function setStoreApiUrl(string $storeApiUrl): self
+    {
+        $this->storeApiUrl = $storeApiUrl;
+
+        return $this;
     }
 
     public function getImageApiUrl(): string
     {
-        return $this->useDevProxy() ? self::KOBO_IMAGEHOST_URL_SAFE : self::KOBO_IMAGEHOST_URL_PROD;
+        if ($this->storeApiUrl === '') {
+            throw new \InvalidArgumentException('Image API URL is not set');
+        }
+
+        return $this->imageApiUrl;
     }
 
     public function isImageHostUrl(Request|RequestInterface $request): bool
@@ -51,9 +57,9 @@ class KoboProxyConfiguration
             || str_ends_with($uri, '.jpeg');
     }
 
-    public function setUseDevProxy(bool $useDevProxy): KoboProxyConfiguration
+    public function setImageApiUrl(string $imageApiUrl): KoboProxyConfiguration
     {
-        $this->useDevProxy = $useDevProxy;
+        $this->imageApiUrl = $imageApiUrl;
 
         return $this;
     }
@@ -63,30 +69,6 @@ class KoboProxyConfiguration
         $this->useProxy = $useProxy;
 
         return $this;
-    }
-
-    public function setUseProxyEverywhere(bool $useProxyEverywhere): KoboProxyConfiguration
-    {
-        $this->useProxyEverywhere = $useProxyEverywhere;
-
-        return $this;
-    }
-
-    public function isBlacklistedForEveryWhere(Request $request): bool
-    {
-        return false;
-    }
-
-    public function setUseRedirect(bool $useRedirect): KoboProxyConfiguration
-    {
-        $this->useRedirect = $useRedirect;
-
-        return $this;
-    }
-
-    public function isUseRedirect(): bool
-    {
-        return $this->useRedirect;
     }
 
     public function getNativeInitializationJson(): array
@@ -241,5 +223,12 @@ class KoboProxyConfiguration
             'userguide_host' => 'https://ereaderfiles.kobo.com',
             'wishlist_page' => 'https://store.kobobooks.com/{region}/{language}/account/wishlist',
         ];
+    }
+
+    public function setUseProxyEverywhere(bool $useProxyEverywhere): self
+    {
+        $this->useProxyEverywhere = $useProxyEverywhere;
+
+        return $this;
     }
 }

@@ -8,10 +8,12 @@ parameters:
     BOOK_FILE_NAMING_FORMAT: '%env(BOOK_FILE_NAMING_FORMAT)%'
     KOBO_PROXY_ENABLED: '%env(bool:KOBO_PROXY_ENABLED)%'
     env(KOBO_PROXY_ENABLED): true
-    KOBO_PROXY_USE_DEV: '%env(bool:KOBO_PROXY_USE_DEV)%'
-    env(KOBO_PROXY_USE_DEV): false
     KOBO_PROXY_USE_EVERYWHERE: '%env(bool:KOBO_PROXY_USE_EVERYWHERE)%'
     env(KOBO_PROXY_USE_EVERYWHERE): false
+    env(KOBO_API_URL): "https://storeapi.kobo.com"
+    KOBO_API_URL:  '%env(KOBO_API_URL)%'
+    env(KOBO_IMAGE_API_URL): "https://cdn.kobo.com/book-images"
+    KOBO_IMAGE_API_URL:  '%env(KOBO_IMAGE_API_URL)%'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -92,7 +94,8 @@ services:
 
     App\Kobo\Proxy\KoboProxyConfiguration:
       calls:
-        - [ setUseDevProxy, ['%KOBO_PROXY_USE_DEV%'] ]
+        - [ setStoreApiUrl, ['%KOBO_API_URL%'] ]
+        - [ setImageApiUrl, ['%KOBO_IMAGE_API_URL%'] ]
         - [ setEnabled, ['%KOBO_PROXY_ENABLED%'] ]
         - [ setUseProxyEverywhere, ['%KOBO_PROXY_USE_EVERYWHERE%'] ]
 
