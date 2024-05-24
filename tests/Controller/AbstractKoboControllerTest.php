@@ -12,6 +12,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 {
 
     protected ?string $accessKey = null;
+    protected ?Kobo $kobo = null;
 
     protected function getEntityManager(): EntityManagerInterface{
         /** @var EntityManagerInterface $entityManager */
@@ -23,12 +24,19 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     {
         self::createClient();
 
-        $kobo = $this->getEntityManager()->getRepository(Kobo::class)->findOneBy(['id' => 1]);
-        if($kobo === null) {
-            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
-        }
+        $this->kobo = $this->loadKobo();
+        $this->accessKey = $this->kobo->getAccessKey();
+    }
 
-        $this->accessKey = $kobo->getAccessKey();
+    public function getKobo(bool $refresh = false): Kobo
+    {
+        if($refresh && $this->kobo !== null){
+            $this->getEntityManager()->refresh($this->kobo);
+        }
+        if($this->kobo === null) {
+            throw new \RuntimeException('Kobo not initialized');
+        }
+        return $this->kobo;
     }
 
     /**
@@ -49,6 +57,15 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         }
 
         return (array)json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    private function loadKobo(): Kobo
+    {
+        $kobo = $this->getEntityManager()->getRepository(Kobo::class)->findOneBy(['id' => 1]);
+        if($kobo === null) {
+            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
+        }
+        return $kobo;
     }
 
 }
