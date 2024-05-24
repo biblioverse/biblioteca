@@ -3,7 +3,6 @@
 {% block title %}Kobo{% endblock %}
 
 {% block body %}
-    <h1>Kobo</h1>
 
     <table class="table">
         <tbody>
@@ -27,4 +26,7 @@
     <a href="{{ path('app_kobo_admin_edit', {'id': kobo.id}) }}">edit</a>
 
     {{ include('kobo_admin/_delete_form.html.twig') }}
+
+    {% include('kobo_admin/instructions.html.twig') with {'token': kobo.accessKey} only %}
+
 {% endblock %}
