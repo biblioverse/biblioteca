@@ -20,7 +20,7 @@
         "doctrine/orm": "^2.14",
         "gedmo/doctrine-extensions": "^3.11",
         "gemorroj/archive7z": "^5.6",
-        "guzzle/guzzle": "^3.8",
+        "guzzlehttp/guzzle": "^7.8",
         "jms/serializer": "^3.30",
         "kiwilan/php-ebook": "^2.0",
         "knplabs/knp-menu-bundle": "^3.2",
