@@ -94,6 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Kobo::class, orphanRemoval: true)]
     private Collection $kobos;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
