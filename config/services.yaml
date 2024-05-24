@@ -75,3 +75,8 @@ services:
     App\Twig\Components\Search:
         arguments:
             $bookFinder: '@typesense.finder.books'
+
+    App\Service\BookFileSystemManager:
+        bind:
+            '$publicDir': '%kernel.project_dir%/public'
+            '$bookFolderNamingFormat': '%BOOK_FOLDER_NAMING_FORMAT%'
