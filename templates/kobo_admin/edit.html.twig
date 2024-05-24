@@ -3,11 +3,14 @@
 {% block title %}Edit Kobo{% endblock %}
 
 {% block body %}
-    <h1>Edit Kobo</h1>
-
     {{ include('kobo_admin/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_kobo_admin_index') }}">back to list</a>
 
-    {{ include('kobo_admin/_delete_form.html.twig') }}
+    <div class="mt-3">
+        {{ include('kobo_admin/_delete_form.html.twig') }}
+    </div>
+
+    {{ include('kobo_admin/instructions.html.twig') }}
+
 {% endblock %}

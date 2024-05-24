@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-12 mt-5">
+    <h3>Instructions</h3>
+        <p>To use a <a href="https://en.wikipedia.org/wiki/Kobo_eReader">Kobo</a> with this application, you will need to manually edit a configuration file on your Kobo.</p>
+        <ul>
+            <li>Plug your Kobo to your computer and browse the files on it.</li>
+            <li>Find a hidden file located at <code>.kobo/Kobo/Kobo eReader.conf</code>.</li>
+            <li>Edit the file with a text editor (vs-code, vim, etc).</li>
+            <li>
+                Alter the line <code>api_endpoint</code> under the section <code>[OneStoreServices]</code> (or create it if it doesn't exist).
+                <pre>
+                    {% apply spaceless -%}
+                    <code>
+                        {{- "\n" }}[OneStoreServices]
+                        {{- "\n" }}...{{ "" -}}
+                    {%  if token is not defined %}
+                        {{- "\n" }}api_endpoint={{ app.request.getUriForPath("/kobo/" ~ (token|default("<token>"))~ "/") -}}
+                    {% else  %}
+                        {{- "\n" }}api_endpoint={{ url('koboapi_endpoint', {'accessKey': token}) -}}
+                    {% endif %}
+                        {{- "\n"}}...
+                    </code>
+                    {%- endapply %}
+                </pre>
+            </li>
+            {%  if token is not defined %}
+            <li>
+                The <code>{{ "<token>"|escape }}</code> placeholder must be replaced with your access key.
+            </li>
+            {% endif %}
+            <li>When the configuration is over, save the file, eject your kobo and click on the sync button !</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Known limitations</h3>
+        <ul>
+            <li>This is an experimental feature, only basic book syncing is currently supported.</li>
+            <li>
+                The domain name <code>{{ app.request.getUriForPath("/") }}</code> must be protected with a valid HTTPS certificate and accessible from the internet.
+            </li>
+            <li>So far, you will not be able to access the books you bought via the Official store (Except if you revert the configuration on your Kobo).</li>
+            <li>Some features are known to be not working, or haven't been tested at all. Example: Bookmarks, Syncing Read progression, Syncing big collections, etc.</li>
+            <li>You need to explicitly "add a book in a specific shelf", and configure the shelf to be synced with your Kobo under <strong>Sync with Shelves</strong> from this admin panel. </li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Sources</h3>
+        <ul>
+            <li>Kobo sync implementation is inspired by <a href="https://github.com/janeczku/calibre-web">Calibre Web</a>. Thanks for the hard work on it. You can read the <a href="https://github.com/janeczku/calibre-web/wiki/Kobo-Integration">doc</a> they have.</li>
+        </ul>
+    </div>
+</div>
