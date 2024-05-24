@@ -158,6 +158,7 @@ class Shelf
     {
         if (!$this->kobos->contains($kobo)) {
             $this->kobos->add($kobo);
+            $kobo->addShelf($this);
         }
 
         return $this;
@@ -165,8 +166,9 @@ class Shelf
 
     public function removeKobo(Kobo $kobo): self
     {
-        if (!$this->kobos->contains($kobo)) {
-            $this->kobos->add($kobo);
+        if ($this->kobos->contains($kobo)) {
+            $this->kobos->removeElement($kobo);
+            $kobo->removeShelf($this);
         }
 
         return $this;

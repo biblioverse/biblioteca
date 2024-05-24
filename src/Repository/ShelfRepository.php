@@ -51,7 +51,7 @@ class ShelfRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
-            ->join('shelf.kobo', 'kobo')
+            ->join('shelf.kobos', 'kobo')
             ->where('kobo.id = :koboId')
             ->setParameter('koboId', $kobo->getId())
             ->andWhere('shelf.id = :shelfId')
@@ -111,7 +111,7 @@ class ShelfRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findByKoboAndUUid(Kobo $kobo, string $uuid): ?Shelf
+    public function findByKoboAndUuid(Kobo $kobo, string $uuid): ?Shelf
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')

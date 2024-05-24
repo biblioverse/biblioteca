@@ -46,7 +46,7 @@ class KoboTagController extends AbstractController
         $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
 
         try {
-            $shelf = $this->shelfRepository->findByKoboAndUUid($kobo, $tagId);
+            $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
             if (null === $shelf) {
                 throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $tagId));
             }
@@ -70,25 +70,38 @@ class KoboTagController extends AbstractController
     public function tags(Request $request, Kobo $kobo, ?string $tagId = null): Response
     {
         try {
-            /** @var array<string,string|null> $data */
-            $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $content = $request->getContent();
+            /** @var array<string,string|null>|null $data */
+            $data = trim($content) === '' ? null : json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new BadRequestException('Invalid JSON', $e->getCode(), $e);
         }
         $name = (string) ($data['Name'] ?? null);
+        $name = trim($name) === '' ? null : $name;
         $shelf = $this->findShelfByNameOrTagId($kobo, $name, $tagId);
 
         if ($request->isMethod('DELETE')) {
             if ($shelf !== null) {
-                // TODO Delete shelf if it's not null
-            }
+                $this->logger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
+                $shelf->removeKobo($kobo);
+                $this->shelfRepository->flush();
 
-            return new JsonResponse([], 405);
+                return new JsonResponse(['deleted'], 200);
+            }
+            if ($this->koboStoreProxy->isEnabled()) {
+                $this->logger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
+
+                $proxyResponse = $this->koboStoreProxy->proxy($request);
+                if ($proxyResponse->getStatusCode() === 404) {
+                    return new JsonResponse(['unable to delete tag, skipped.'], 200);
+                }
+
+                return $proxyResponse;
+            }
         }
 
         if (null === $shelf) {
-            // TODO Create shelf with this name assigned to this kobo/user
-            throw new NotFoundHttpException(sprintf('Shelf with name %s not found', $name));
+            throw new NotFoundHttpException(sprintf('Shelf %s not found', $name ?? $tagId));
         }
 
         // TODO Add items to shelf
@@ -100,7 +113,7 @@ class KoboTagController extends AbstractController
     private function findShelfByNameOrTagId(Kobo $kobo, ?string $name, ?string $tagId): ?Shelf
     {
         if ($tagId !== null) {
-            return $this->shelfRepository->findByKoboAndId($kobo, $tagId);
+            return $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
         }
 
         if ($name === null || trim($name) === '') {

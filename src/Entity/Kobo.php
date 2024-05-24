@@ -163,4 +163,9 @@ class Kobo
 
         return $this;
     }
+
+    public function removeShelf(Shelf $shelf): void
+    {
+        $this->shelves->removeElement($shelf);
+    }
 }

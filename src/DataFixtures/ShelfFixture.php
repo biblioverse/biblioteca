@@ -12,11 +12,12 @@ use Doctrine\Persistence\ObjectManager;
 class ShelfFixture extends Fixture implements DependentFixtureInterface
 {
     public const SHELF_REFERENCE = 'shelf';
+    public const SHELF_NAME = 'test shelf';
 
     public function load(ObjectManager $manager): void
     {
         $shelf = new Shelf();
-        $shelf->setName('test shelf');
+        $shelf->setName(self::SHELF_NAME);
         $shelf->setUser($this->getUser());
         $this->getBook()->addShelf($shelf);
 
