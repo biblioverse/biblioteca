@@ -35,7 +35,7 @@ class KoboRepository extends ServiceEntityRepository
      * @param UserInterface|null $user
      * @return array<int,Kobo>
      */
-    public function findAllByUser(UserInterface $user = null): array
+    public function findAllByUser(?UserInterface $user = null): array
     {
         if ($user === null) {
             return [];

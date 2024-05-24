@@ -523,7 +523,6 @@ class Book
         $this->pageNumber = $pageNumber;
     }
 
-
     /**
      * @return Collection<int, KoboSyncedBook>
      */
