@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  biblioteca:
+    build:
+      context: .
+      target: base
+    command: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
+    ports:
+      - "48480:8080"
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/html
+      - .composer:/home/.composer:cached
+    stdin_open: true
+    tty: true
+    networks:
+      - default
+      - pontsun
+
+    labels:
+      - 'traefik.port=8080'
+      - 'traefik.frontend.rule=Host:biblioteca.docker.test'
+      # Traefik v2
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=pontsun'
+      - 'traefik.http.routers.biblioteca.service=biblioteca'
+      - 'traefik.http.routers.biblioteca.entrypoints=https,http'
+      - 'traefik.http.routers.biblioteca.rule=Host(`biblioteca.docker.test`)'
+      - 'traefik.http.services.biblioteca.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.biblioteca.middlewares=https_redirect'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
+
+  db:
+    image: mariadb:10.10
+    environment:
+      - MYSQL_ROOT_PASSWORD=biblioteca
+      - MYSQL_DATABASE=biblioteca
+      - MYSQL_USER=biblioteca
+      - MYSQL_PASSWORD=biblioteca
+    ports:
+      - "49405:3306"
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - default
+
+  typesense:
+      image: typesense/typesense:0.26.0.rc46
+      restart: on-failure
+      ports:
+        - 8983
+        - "8108:8108"
+      volumes:
+        - searchdata:/data
+      command: '--data-dir /data --api-key=xyz --enable-cors'
+
+volumes:
+  mariadb:
+  searchdata:
+
+networks:
+  pontsun:
+    external: true
+
+
+
