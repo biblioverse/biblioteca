@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;

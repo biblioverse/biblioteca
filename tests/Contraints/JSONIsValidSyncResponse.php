@@ -2,7 +2,6 @@
 
 namespace App\Tests\Contraints;
 
-use PHPUnit\Framework\Constraint\ArrayHasKey;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsIdentical;
 
