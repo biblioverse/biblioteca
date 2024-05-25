@@ -501,9 +501,6 @@ class Book
         return $this;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function getUuid(): string
     {
         if ($this->uuid === null) {
@@ -549,6 +546,13 @@ class Book
                 $koboSyncedBook->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function setUuid(?string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
