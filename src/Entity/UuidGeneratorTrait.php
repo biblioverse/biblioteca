@@ -4,12 +4,13 @@ namespace App\Entity;
 
 trait UuidGeneratorTrait
 {
-    /**
-     * @throws \Exception
-     */
     protected function generateUuid(): string
     {
-        $data = random_bytes(16);
+        try {
+            $data = random_bytes(16);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Unable to generate a random UUID', 0, $e);
+        }
 
         // Set the version (4 for randomly generated UUID)
         $data[6] = chr(ord($data[6]) & 0x0F | 0x40);
