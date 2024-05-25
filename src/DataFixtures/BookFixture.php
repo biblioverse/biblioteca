@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 class BookFixture extends Fixture implements DependentFixtureInterface
 {
     public const BOOK_REFERENCE = 'book-odyssey';
+    public const BOOK_PAGE_REFERENCE = '7557680347007504212_1727-h-21.htm.xhtml';
     public const ID = 1;
     public const UUID = '54c8fb05-cf05-4cb6-9482-bc25fa49fa80';
 

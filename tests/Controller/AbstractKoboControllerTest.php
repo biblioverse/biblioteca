@@ -30,6 +30,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         self::createClient();
 
         $this->kobo = $this->loadKobo();

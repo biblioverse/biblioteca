@@ -7,6 +7,6 @@ class ReadingState
     public ?Bookmark $currentBookmark = null;
     public ?string $entitlementId = null;
     public ?\DateTimeImmutable $lastModified = null;
-    public mixed $statistics = null;
+    public ?ReadingStateStatistics $statistics = null;
     public ?ReadingStateStatusInfo $statusInfo = null;
 }
