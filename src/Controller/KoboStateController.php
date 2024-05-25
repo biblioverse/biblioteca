@@ -60,13 +60,29 @@ class KoboStateController extends AbstractController
         if ($interaction === false) {
             $interaction = new BookInteraction();
             $interaction->setBook($book);
+            $interaction->setReadPages(0); // On a new interaction, we assume the user has read 0 pages
+            $interaction->setUser($kobo->getUser());
             $interactions->add($interaction);
             $this->em->persist($interaction);
         }
 
         $interaction->setUpdated($state->lastModified);
         $interaction->setFinished($state->statusInfo?->status === ReadingStateStatusInfo::STATUS_FINISHED);
+        switch ($state->statusInfo?->status) {
+            case ReadingStateStatusInfo::STATUS_FINISHED:
+                $interaction->setReadPages($book->getPageNumber());
 
+                break;
+            case ReadingStateStatusInfo::STATUS_READING:
+                $percent = $state->currentBookmark?->progressPercent;
+                $numPages = $percent !== null && $book->getPageNumber() !== null ? $book->getPageNumber() * $percent / 100 : null;
+                if ($numPages !== null) {
+                    $interaction->setReadPages((int) $numPages);
+                }
+                break;
+            case null:
+                break;
+        }
         $this->em->flush();
 
         return new StateResponse($book);

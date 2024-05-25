@@ -7,7 +7,7 @@ class ReadingStateStatusInfo
     public const STATUS_READING = 'Reading';
     public const STATUS_FINISHED = 'Finished';
 
-    public ?\DateTime $lastModified = null;
+    public ?\DateTimeImmutable $lastModified = null;
 
     public ?string $status = null;
 }
