@@ -119,6 +119,14 @@
             "Composer\\Config::disableProcessTimeout",
             "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src -vv --verbose  --config=.php-cs-fixer.dist.php"
         ],
+        "test-rector": [
+            "Composer\\Config::disableProcessTimeout",
+            "env XDEBUG_MODE=off ./vendor/bin/rector --dry-run"
+        ],
+        "rector": [
+            "Composer\\Config::disableProcessTimeout",
+            "env XDEBUG_MODE=off ./vendor/bin/rector"
+        ],
         "test-phpunit": [
             "Composer\\Config::disableProcessTimeout",
             "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
@@ -126,6 +134,7 @@
         "test": [
             "@test-phpcs",
             "@test-phpstan",
+            "@test-rector",
             "mkdir -p data",
             "rm -f data/database.sqlite",
             "touch data/database.sqlite",
@@ -158,6 +167,7 @@
         "phpstan/phpstan-strict-rules": "^1.0",
         "phpstan/phpstan-symfony": "^1.2",
         "phpunit/phpunit": "^9.5",
+        "rector/rector": "^1.1",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "^6.2",
         "symfony/css-selector": "^6.2",
