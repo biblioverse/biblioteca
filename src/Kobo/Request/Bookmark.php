@@ -6,7 +6,7 @@ class Bookmark
 {
     public ?int $contentSourceProgressPercent = null;
     public ?\DateTime $lastModified = null;
-    public mixed $location;
+    public ?ReadingStateLocation $location = null;
 
     public ?int $progressPercent = null;
 }
