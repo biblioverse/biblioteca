@@ -4,7 +4,6 @@ namespace App\Tests\Controller;
 
 use App\DataFixtures\ShelfFixture;
 use App\Entity\Shelf;
-use Doctrine\ORM\EntityManager;
 
 class KoboTagControllerTest  extends AbstractKoboControllerTest
 {

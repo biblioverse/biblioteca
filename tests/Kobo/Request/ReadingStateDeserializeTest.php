@@ -3,7 +3,6 @@
 namespace App\Tests\Kobo\Request;
 
 use App\Kobo\Request\Bookmark;
-use App\Kobo\Request\ReadingState;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use JMS\Serializer\SerializerInterface;

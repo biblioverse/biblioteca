@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Kobo;
 use App\Entity\Shelf;
+use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -83,10 +84,10 @@ class ShelfRepository extends ServiceEntityRepository
 
     /**
      * @param Kobo $kobo
-     * @param \App\Kobo\SyncToken $syncToken
+     * @param SyncToken $syncToken
      * @return array<Shelf>
      */
-    public function getShelvesToSync(Kobo $kobo, \App\Kobo\SyncToken $syncToken): array
+    public function getShelvesToSync(Kobo $kobo, SyncToken $syncToken): array
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
