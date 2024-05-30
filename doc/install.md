@@ -8,7 +8,7 @@ Docker and docker compose installed
 2. `cd` to your local directory where you cloned the repository
 3. Run `ddev start`
 4. Run `ddev composer install`
-5. Run `ddev exec bin/console doctrine:shema:create`
+5. Run `ddev exec bin/console doctrine:schema:create`
 6. Run `ddev exec bin/console typesense:create`
 7. Run `ddev exec bin/console app:create-admin-user <username> <password>`
 8. Run `ddev exec npm i`
@@ -25,7 +25,7 @@ Run `ddev xdebug`
 2. Copy the [Dockerfile](Dockerfile)
 3. run `docker-compose up -d`
 4. run `docker-compose exec php composer install`
-5. run `docker-compose exec php bin/console doctrine:shema:create`
+5. run `docker-compose exec php bin/console doctrine:schema:create`
 6. run `docker-compose exec php bin/console typesense:create`
 7. run `docker-compose exec php bin/console app:create-admin-user <username> <password>`
 8. run `docker-compose exec npm i`
@@ -65,5 +65,5 @@ Note: On command line, you can debug with this:
 3. open your browser on `http://biblioteca.docker.test`
 
 
-## In your Unrar setup
+## In your Unraid setup
 You can use [dockge](https://github.com/louislam/dockge) and setup a stack. Use the same docker-compose procedure as before.
