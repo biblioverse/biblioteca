@@ -2105,16 +2105,16 @@
         },
         {
             "name": "kiwilan/php-ebook",
-            "version": "2.3.8",
+            "version": "2.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-ebook.git",
-                "reference": "946f7508b039ba6923d082637659bfde86c5e91d"
+                "reference": "904529e5159cb9d2a012bb9f49694c8db3f7c8b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/946f7508b039ba6923d082637659bfde86c5e91d",
-                "reference": "946f7508b039ba6923d082637659bfde86c5e91d",
+                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/904529e5159cb9d2a012bb9f49694c8db3f7c8b1",
+                "reference": "904529e5159cb9d2a012bb9f49694c8db3f7c8b1",
                 "shasum": ""
             },
             "require": {
@@ -2177,7 +2177,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-ebook/issues",
-                "source": "https://github.com/kiwilan/php-ebook/tree/v2.3.8"
+                "source": "https://github.com/kiwilan/php-ebook/tree/v2.5.11"
             },
             "funding": [
                 {
@@ -2185,7 +2185,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-06T09:20:15+00:00"
+            "time": "2024-05-26T19:36:53+00:00"
         },
         {
             "name": "kiwilan/php-xml-reader",
