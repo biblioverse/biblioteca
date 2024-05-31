@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
 
 class KoboAnalyticsControllerTest extends AbstractKoboControllerTest

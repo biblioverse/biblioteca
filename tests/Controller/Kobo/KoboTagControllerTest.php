@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\ShelfFixture;
 use App\Entity\Shelf;

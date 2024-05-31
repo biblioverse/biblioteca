@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
-use App\Entity\KoboDevice;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
+use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 
-class KoboDownloadControllerTest extends AbstractKoboControllerTest
+class KoboImageControllerTest extends AbstractKoboControllerTest
 {
     public function testDownload(): void
     {
@@ -21,17 +21,12 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         /** @var DownloadHelper $downloadHelper */
         $downloadHelper = self::getContainer()->get(DownloadHelper::class);
 
-        self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
+        self::assertTrue($downloadHelper->coverExist($book), 'The book cover does not exist');
 
-        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.epub', $this->accessKey, BookFixture::ID));
+        $client?->request('GET', sprintf('/kobo/%s/%s/300/200/80/isGreyscale/image.jpg', $this->accessKey, $book->getUuid()));
 
         self::assertResponseIsSuccessful();
-        self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
-        self::assertResponseHasHeader('Content-Length');
-
-        $expectedDisposition = "attachment; filename=\"book-1-TheOdysses.epub\"; filename*=UTF-8''TheOdysses.epub";
-        self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
-
+        self::assertResponseHeaderSame('Content-Type', 'image/jpeg');
     }
 
     private function findByIdAndKobo(int $bookId, KoboDevice $kobo): ?Book
