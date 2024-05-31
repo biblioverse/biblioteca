@@ -37,11 +37,6 @@ class DownloadHelper
         return $this->fileSystemManager->getCoverSize($book) ?? 0;
     }
 
-    public function isEpub3(Book $book): bool
-    {
-        return $book->getExtension() === 'epub3' || $this->readEpubVersionIs3($book) === true;
-    }
-
     public function getUrlForKoboDevice(Book $book, KoboDevice $kobo): string
     {
         return $this->urlGenerator->generate('app_kobodownload', [
@@ -116,29 +111,6 @@ class DownloadHelper
         $response->headers->set('Content-Length', (string) $this->getSize($book));
 
         return $response;
-    }
-
-    private function readEpubVersionIs3(Book $book): ?bool
-    {
-        $zip = new \ZipArchive();
-
-        if ($zip->open($this->getBookFilename($book)) !== true) {
-            $this->logger->debug('Unable to open epub file to detect the format', ['book' => $book->getId()]);
-
-            return null;
-        }
-        try {
-            // Check for EPUB version
-            if ($zip->locateName('metadata.opf') !== false) {
-                return false; // v2
-            } elseif ($zip->locateName('package.opf') !== false) {
-                return true; // v3
-            }
-
-            return null;
-        } finally {
-            $zip->close();
-        }
     }
 
     public function coverExist(Book $book): bool

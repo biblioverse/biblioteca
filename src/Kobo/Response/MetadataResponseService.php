@@ -21,8 +21,7 @@ class MetadataResponseService
 
         $response = [];
 
-        // $formats = $this->downloadHelper->isEpub3($book) ? ['EPUB3'] : ['EPUB'];
-        $formats = ['EPUB3', 'EPUB']; // EPUB3 is required for Kobo
+        $formats = ['EPUB3']; // EPUB3 is required for Kobo
         foreach ($formats as $format) { // and ... EPUB3FL ?;
             $response[] = [
                 'Format' => $format,
