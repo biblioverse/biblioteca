@@ -53,7 +53,7 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/logout, roles: ROLE_USER }
         - { path: ^/, roles: ROLE_USER }
-        - { path: ^/kobo, roles: PUBLIC_ACCESS }
+        - { path: ^/kobo, roles: ROLE_USER }
 
 when@test:
     security:
