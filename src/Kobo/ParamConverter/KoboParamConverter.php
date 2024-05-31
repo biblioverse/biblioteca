@@ -2,8 +2,8 @@
 
 namespace App\Kobo\ParamConverter;
 
-use App\Entity\Kobo;
-use App\Repository\KoboRepository;
+use App\Entity\KoboDevice;
+use App\Repository\KoboDeviceRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
@@ -12,16 +12,16 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 #[AutoconfigureTag('controller.argument_value_resolver', ['priority' => 150])]
 class KoboParamConverter implements ValueResolverInterface
 {
-    public function __construct(protected KoboRepository $bookRepository)
+    public function __construct(protected KoboDeviceRepository $bookRepository)
     {
     }
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return $argument->getType() === Kobo::class && $this->getFieldValue($request) !== null;
+        return $argument->getType() === KoboDevice::class && $this->getFieldValue($request) !== null;
     }
 
-    public function apply(Request $request): ?Kobo
+    public function apply(Request $request): ?KoboDevice
     {
         $value = $this->getFieldValue($request);
 
@@ -29,7 +29,7 @@ class KoboParamConverter implements ValueResolverInterface
     }
 
     /**
-     * @return array<int, Kobo>
+     * @return array<int, KoboDevice>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {

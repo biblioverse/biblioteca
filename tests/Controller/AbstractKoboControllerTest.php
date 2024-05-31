@@ -2,9 +2,9 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\KoboDevice;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
-use App\Entity\Kobo;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
@@ -18,7 +18,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     const DEFAULT_BOOK_FOLDER_NAMING_FORMAT = '{authorFirst}/{author}/{title}/{serie}';
     protected ?string $accessKey = null;
-    protected ?Kobo $kobo = null;
+    protected ?KoboDevice $koboDevice = null;
 
     protected function getEntityManager(): EntityManagerInterface{
         /** @var EntityManagerInterface $entityManager */
@@ -31,19 +31,19 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         parent::setUp();
         self::createClient();
 
-        $this->kobo = $this->loadKobo();
-        $this->accessKey = $this->kobo->getAccessKey();
+        $this->koboDevice = $this->loadKoboDevice();
+        $this->accessKey = $this->koboDevice->getAccessKey();
     }
 
-    public function getKobo(bool $refresh = false): Kobo
+    public function getKoboDevice(bool $refresh = false): KoboDevice
     {
-        if($refresh && $this->kobo !== null){
-            $this->getEntityManager()->refresh($this->kobo);
+        if($refresh && $this->koboDevice !== null){
+            $this->getEntityManager()->refresh($this->koboDevice);
         }
-        if($this->kobo === null) {
+        if($this->koboDevice === null) {
             throw new \RuntimeException('Kobo not initialized');
         }
-        return $this->kobo;
+        return $this->koboDevice;
     }
 
     private function getBook(): Book
@@ -63,6 +63,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
         /** @var Response $response */
         $response = self::getClient()->getResponse();
+        self::assertResponseIsSuccessful();
         $content = $response->getContent();
 
         if($content === false) {
@@ -72,12 +73,14 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return (array)json_decode($content, true, 512, JSON_THROW_ON_ERROR);
     }
 
-    private function loadKobo(): Kobo
+    private function loadKoboDevice(): KoboDevice
     {
-        $kobo = $this->getEntityManager()->getRepository(Kobo::class)->findOneBy(['id' => 1]);
+        $repository = $this->getEntityManager()->getRepository(KoboDevice::class);
+        $kobo = $repository->findOneBy(['id' => 1]);
         if($kobo === null) {
             throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
         }
+
         return $kobo;
     }
 

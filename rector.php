@@ -15,6 +15,9 @@ return RectorConfig::configure()
     ->withRules([
         AddVoidReturnTypeWhereNoReturnRector::class,
     ])
+    ->withConfiguredRule(\Rector\Renaming\Rector\Name\RenameClassRector::class, [
+        \App\Entity\Kobo::class => str_replace("Kobo", "KoboDevice", \App\Entity\Kobo::class),
+    ])
     ->withImportNames(true, true, false, true)
     ->withSkip([
         '**/config/bundles.php',

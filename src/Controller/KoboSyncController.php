@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Book;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponseFactory;
@@ -43,15 +43,15 @@ class KoboSyncController extends AbstractController
      * See KoboSyncTokenExtractor and Kobo
      * Both
      * Kobo will call this url multiple times if there are more book to sync (x-kobo-sync: continue)
-     * @param Kobo $kobo The kobo entity is retrieved via the accessKey in the url
+     * @param KoboDevice $kobo The kobo entity is retrieved via the accessKey in the url
      * @param SyncToken $syncToken It's provided from HTTP Headers + Get parameters, see SyncTokenParamConverter and    KoboSyncTokenExtractor
      * @return Response
      **/
     #[Route('/v1/library/sync', name: 'api_endpoint_v1_library_sync')]
-    public function apiEndpoint(Kobo $kobo, SyncToken $syncToken, Request $request): Response
+    public function apiEndpoint(KoboDevice $kobo, SyncToken $syncToken, Request $request): Response
     {
         $forced = $kobo->isForceSync() || $request->query->has('force');
-        $count = $this->koboSyncedBookRepository->countByKobo($kobo);
+        $count = $this->koboSyncedBookRepository->countByKoboDevice($kobo);
         if ($forced || $count === 0) {
             if ($count > 0 || $forced) {
                 $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
@@ -91,7 +91,7 @@ class KoboSyncController extends AbstractController
     }
 
     #[Route('/v1/library/{uuid}/metadata', name: 'api_endpoint_v1_library_metadata')]
-    public function metadataEndpoint(Kobo $kobo, ?Book $book, Request $request): Response
+    public function metadataEndpoint(KoboDevice $kobo, ?Book $book, Request $request): Response
     {
         if ($book === null) {
             if ($this->koboStoreProxy->isEnabled()) {

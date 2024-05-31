@@ -3,7 +3,7 @@
 namespace App\Kobo\Response;
 
 use App\Entity\Book;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\SyncToken;
 
@@ -13,7 +13,7 @@ class MetadataResponseService
     {
     }
 
-    protected function getDownloadUrls(Book $book, Kobo $kobo, ?array $filters = []): array
+    protected function getDownloadUrls(Book $book, KoboDevice $kobo, ?array $filters = []): array
     {
         $platforms = $filters['DownloadUrlFilter'] ?? [];
         $platform = reset($platforms);
@@ -27,7 +27,7 @@ class MetadataResponseService
             $response[] = [
                 'Format' => $format,
                 'Size' => $this->downloadHelper->getSize($book),
-                'Url' => $this->downloadHelper->getUrlForKobo($book, $kobo),
+                'Url' => $this->downloadHelper->getUrlForKoboDevice($book, $kobo),
                 'Platform' => $platform,
             ];
         }
@@ -35,7 +35,7 @@ class MetadataResponseService
         return $response;
     }
 
-    public function fromBook(Book $book, Kobo $kobo, ?SyncToken $syncToken = null): array
+    public function fromBook(Book $book, KoboDevice $kobo, ?SyncToken $syncToken = null): array
     {
         $data = [
             'Categories' => ['00000000-0000-0000-0000-000000000001'],

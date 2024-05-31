@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -14,7 +14,7 @@ class KoboFixture extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $kobo = new Kobo();
+        $kobo = new KoboDevice();
         $kobo->setAccessKey('0000-0000-0000-0000');
         $kobo->setName('test kobo');
         $kobo->setUser($this->getUser());

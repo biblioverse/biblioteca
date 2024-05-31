@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -48,13 +48,13 @@ class ShelfRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function findByKoboAndId(Kobo $kobo, string $shelfId): ?Shelf
+    public function findByKoboAndId(KoboDevice $koboDevice, string $shelfId): ?Shelf
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
-            ->join('shelf.kobos', 'kobo')
-            ->where('kobo.id = :koboId')
-            ->setParameter('koboId', $kobo->getId())
+            ->join('shelf.kobosDevices', 'kobosDevice')
+            ->where('kobosDevice.id = :koboDeviceId')
+            ->setParameter('koboDeviceId', $koboDevice->getId())
             ->andWhere('shelf.id = :shelfId')
             ->setParameter('shelfId', $shelfId)
             ->setMaxResults(1);
@@ -65,13 +65,13 @@ class ShelfRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function findByKoboAndName(Kobo $kobo, mixed $name): ?Shelf
+    public function findByKoboAndName(KoboDevice $koboDevice, string $name): ?Shelf
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
-            ->join('shelf.kobo', 'kobo')
-            ->where('kobo.id = :id')
-            ->setParameter('id', $kobo->getId())
+            ->join('shelf.koboDevices', 'koboDevice')
+            ->where('koboDevice.id = :id')
+            ->setParameter('id', $koboDevice->getId())
             ->andWhere('shelf.name = :name')
             ->setParameter('name', $name)
             ->setMaxResults(1);
@@ -83,17 +83,17 @@ class ShelfRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Kobo $kobo
+     * @param KoboDevice $koboDevice
      * @param SyncToken $syncToken
      * @return array<Shelf>
      */
-    public function getShelvesToSync(Kobo $kobo, SyncToken $syncToken): array
+    public function getShelvesToSync(KoboDevice $koboDevice, SyncToken $syncToken): array
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
-            ->join('shelf.kobos', 'kobo')
-            ->where('kobo.id = :id')
-            ->setParameter('id', $kobo->getId());
+            ->join('shelf.koboDevices', 'koboDevice')
+            ->where('koboDevice.id = :id')
+            ->setParameter('id', $koboDevice->getId());
 
         if ($syncToken->tagLastModified !== null) {
             $qb->andWhere($qb->expr()->orX(
@@ -112,14 +112,14 @@ class ShelfRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findByKoboAndUuid(Kobo $kobo, string $uuid): ?Shelf
+    public function findByKoboAndUuid(KoboDevice $koboDevice, string $uuid): ?Shelf
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
-            ->join('shelf.kobos', 'kobo')
-            ->where('kobo.id = :id')
+            ->join('shelf.koboDevices', 'koboDevice')
+            ->where('koboDevice.id = :id')
             ->andWhere('shelf.uuid = :uuid')
-            ->setParameter('id', $kobo->getId())
+            ->setParameter('id', $koboDevice->getId())
             ->setMaxResults(1)
             ->setParameter('uuid', $uuid);
 
