@@ -19,8 +19,12 @@
                 <td>{{ kobo.name }}</td>
                 <td>{{ kobo.accessKey }}</td>
                 <td>
-                    <a href="{{ path('app_kobo_admin_show', {'id': kobo.id}) }}">show</a>
-                    <a href="{{ path('app_kobo_admin_edit', {'id': kobo.id}) }}">edit</a>
+                    {% if is_granted('VIEW', kobo) %}
+                        <a href="{{ path('app_kobodevice_user_show', {'id': kobo.id}) }}">show</a>
+                    {% endif %}
+                    {% if is_granted('EDIT', kobo) %}
+                        <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -31,8 +35,8 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_kobo_admin_new') }}">Create new</a>
+    <a href="{{ path('app_kobodevice_user_new') }}">Create new</a>
 
 
-    {{ include('kobo_admin/instructions.html.twig') }}
+    {{ include('kobodevice_user/instructions.html.twig') }}
 {% endblock %}

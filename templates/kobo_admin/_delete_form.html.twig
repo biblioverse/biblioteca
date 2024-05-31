@@ -1,4 +1,0 @@
-<form method="post" action="{{ path('app_kobo_admin_delete', {'id': kobo.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ kobo.id) }}">
-    <button class="btn btn-danger">Delete</button>
-</form>
