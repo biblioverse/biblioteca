@@ -20,6 +20,11 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    serializer:
+        enabled: true
+        # Enable Doctrine Annotations mapping
+        enable_annotations: true
+        name_converter: 'App\Kobo\Serializer\KoboNameConverter'
 
 when@test:
     framework:

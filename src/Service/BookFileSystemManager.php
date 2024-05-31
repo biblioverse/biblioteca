@@ -7,11 +7,9 @@ use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class BookFileSystemManager
@@ -22,18 +20,26 @@ class BookFileSystemManager
 
     public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-    public function __construct(private Security $security, private KernelInterface $appKernel, private ContainerBagInterface $params, private SluggerInterface $slugger, private LoggerInterface $logger)
+    public function __construct(
+        private Security $security,
+        private string $publicDir,
+        private string $bookFolderNamingFormat,
+        private SluggerInterface $slugger,
+        private LoggerInterface $logger)
     {
+        if ($this->bookFolderNamingFormat == '') {
+            throw new \RuntimeException('Could not get filename format');
+        }
     }
 
     public function getBooksDirectory(): string
     {
-        return $this->appKernel->getProjectDir().'/public/books/';
+        return $this->publicDir.'/books/';
     }
 
     public function getCoverDirectory(): string
     {
-        return $this->appKernel->getProjectDir().'/public/covers/';
+        return $this->publicDir.'/covers/';
     }
 
     /**
@@ -57,6 +63,60 @@ class BookFileSystemManager
         }
 
         return $iterator;
+    }
+
+    public function getBookFilename(Book $book): string
+    {
+        $paths = [$this->getBooksDirectory(), $book->getBookPath(), $book->getBookFilename()];
+
+        return $this->handlePath($paths);
+    }
+
+    public function getCoverFilename(Book $book): ?string
+    {
+        $paths = [$this->getCoverDirectory(), $book->getImagePath(), $book->getImageFilename()];
+        if (in_array(null, $paths, true)) {
+            return null;
+        }
+
+        return $this->handlePath($paths);
+    }
+
+    public function getBookSize(Book $book): ?int
+    {
+        if (!$this->fileExist($book)) {
+            return null;
+        }
+
+        $size = filesize($this->getBookFilename($book));
+
+        return $size === false ? null : $size;
+    }
+
+    public function getCoverSize(Book $book): ?int
+    {
+        if (!$this->coverExist($book)) {
+            return null;
+        }
+
+        $filename = $this->getCoverFilename($book);
+        $size = $filename === null ? false : filesize($filename);
+
+        return $size === false ? null : $size;
+    }
+
+    public function fileExist(Book $book): bool
+    {
+        $path = $this->getBookFilename($book);
+
+        return file_exists($path);
+    }
+
+    public function coverExist(Book $book): bool
+    {
+        $cover = $this->getCoverFilename($book);
+
+        return !($cover === null) && file_exists($cover);
     }
 
     /**
@@ -149,13 +209,9 @@ class BookFileSystemManager
 
     private function calculateFilePath(Book $book): string
     {
-        $path = $this->params->get('BOOK_FOLDER_NAMING_FORMAT');
-        if (!is_string($path)) {
-            throw new \RuntimeException('Could not get filename format');
-        }
         $placeholders = $this->getPlaceHolders($book);
 
-        $path = str_replace(array_keys($placeholders), array_values($placeholders), $path).DIRECTORY_SEPARATOR;
+        $path = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFolderNamingFormat).DIRECTORY_SEPARATOR;
 
         return str_replace('//', '/', $path);
     }
@@ -176,13 +232,9 @@ class BookFileSystemManager
 
     private function calculateFileName(Book $book): string
     {
-        $filename = $this->params->get('BOOK_FILE_NAMING_FORMAT');
-        if (!is_string($filename)) {
-            throw new \RuntimeException('Could not get filename format');
-        }
         $placeholders = $this->getPlaceHolders($book);
 
-        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $filename);
+        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFolderNamingFormat);
         $filename = str_replace('/', '', $filename);
 
         return $this->slugger->slug($filename);
@@ -536,7 +588,7 @@ class BookFileSystemManager
     {
         $user = $this->security->getUser();
 
-        return $this->appKernel->getProjectDir().'/public/tmp/reader/'.$user?->getUserIdentifier();
+        return $this->publicDir.'/tmp/reader/'.$user?->getUserIdentifier();
     }
 
     private function isCurrentBookInReaderFolder(\SplFileInfo $bookFile): bool
@@ -575,7 +627,7 @@ class BookFileSystemManager
             if (!in_array($file->getExtension(), self::VALID_COVER_EXTENSIONS, true)) {
                 continue;
             }
-            $return[] = str_replace($this->appKernel->getProjectDir().'/public/', '', $file->getRealPath());
+            $return[] = str_replace($this->publicDir, '', $file->getRealPath());
         }
 
         sort($return);
@@ -723,5 +775,36 @@ class BookFileSystemManager
         }*/
 
         return $this->listReaderFiles();
+    }
+
+    /**
+     * @param array<int, UploadedFile> $files
+     * @return void
+     */
+    public function uploadFilesToConsumeDirectory(array $files): void
+    {
+        $destination = $this->getBooksDirectory().'/consume';
+        foreach ($files as $file) {
+            $file->move($destination, $file->getClientOriginalName());
+        }
+    }
+
+    /**
+     * @param array{0: string, 1: string, 2: string} $paths
+     * @return string
+     */
+    private function handlePath(array $paths): string
+    {
+        $base = array_shift($paths);
+        $paths = array_map(fn ($item) => ltrim($item, '/'), $paths);
+        $paths = array_map(fn ($item) => rtrim($item, '/'), $paths);
+
+        $result = sprintf('%s/%s/%s', $base, ...$paths);
+
+        do {
+            $result = str_replace('//', '/', $result);
+        } while (str_contains($result, '//'));
+
+        return $result;
     }
 }

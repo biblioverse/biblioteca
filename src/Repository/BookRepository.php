@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\KoboDevice;
+use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -305,5 +307,106 @@ class BookRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->_em->flush();
+    }
+
+    /**
+     * @param KoboDevice $kobo
+     * @param SyncToken $syncToken
+     * @return array<int, Book>
+     */
+    public function getChangedBooks(KoboDevice $kobo, SyncToken $syncToken, int $firstResult, int $maxResults): array
+    {
+        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+        $qb->orderBy('book.updated', 'ASC');
+        /** @var Book[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    public function getChangedBooksCount(KoboDevice $kobo, SyncToken $syncToken): int
+    {
+        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb->select('count(book.id) as nb');
+
+        return (int) $qb->getQuery()->getSingleColumnResult();
+    }
+
+    private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('book', 'koboSyncedBooks', 'bookInteractions')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.koboDevices', 'koboDevice')
+            ->leftJoin('book.bookInteractions', 'bookInteractions')
+            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.koboDevice = :koboDevice')
+            ->where('koboDevice.id = :id')
+            ->andWhere('book.extension = :extension')
+            ->setParameter('id', $koboDevice->getId())
+            ->setParameter('koboDevice', $koboDevice)
+            ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
+
+        if ($syncToken->lastCreated !== null) {
+            $qb->andWhere('book.created > :lastCreated');
+            $qb->orWhere($qb->expr()->orX(
+                $qb->expr()->isNull('koboSyncedBooks.created is null'),
+                $qb->expr()->isNull('koboSyncedBooks.created > :lastCreated'),
+            ))
+            ->setParameter('lastCreated', $syncToken->lastCreated);
+        }
+
+        if ($syncToken->lastModified !== null) {
+            $qb->andWhere($qb->expr()->orX(
+                'book.updated > :lastModified',
+                'book.created  > :lastModified',
+                'koboSyncedBooks.updated > :lastModified',
+                $qb->expr()->isNull('koboSyncedBooks.updated'),
+            ));
+            $qb->setParameter('lastModified', $syncToken->lastModified);
+        }
+
+        $qb->orderBy('book.updated');
+        if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
+            $qb->orderBy('bookInteractions.updated', 'ASC');
+            $qb->addOrderBy('bookInteractions.finished', 'ASC');
+        }
+
+        return $qb;
+    }
+
+    public function findByIdAndKoboDevice(int $bookId, KoboDevice $kobo): ?Book
+    {
+        /** @var Book|null $result */
+        $result = $this->createQueryBuilder('book')
+            ->select('book')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.koboDevices', 'koboDevice')
+            ->where('koboDevice.id = :koboId')
+            ->andWhere('book.id = :bookId')
+            ->setParameter('koboId', $kobo->getId())
+            ->setParameter('bookId', $bookId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $result;
+    }
+
+    public function findByUuidAndKoboDevice(string $bookUuid, KoboDevice $koboDevice): ?Book
+    {
+        /** @var Book|null $result */
+        $result = $this->createQueryBuilder('book')
+            ->select('book')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.koboDevices', 'koboDevice')
+            ->where('koboDevice.id = :koboDeviceId')
+            ->andWhere('book.uuid = :bookUuid')
+            ->setParameter('koboDeviceId', $koboDevice->getId())
+            ->setParameter('bookUuid', $bookUuid)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $result;
     }
 }

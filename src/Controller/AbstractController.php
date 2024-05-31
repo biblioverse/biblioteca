@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 abstract class AbstractController extends BaseAbstractController
 {
@@ -19,7 +20,7 @@ abstract class AbstractController extends BaseAbstractController
                 return $view;
             }
             $twig = $this->container->get('twig');
-            if (!$twig instanceof \Twig\Environment) {
+            if (!$twig instanceof Environment) {
                 return $view;
             }
             if ($twig->getLoader()->exists($theme.'/'.$view)) {
@@ -44,7 +45,7 @@ abstract class AbstractController extends BaseAbstractController
         }
 
         $twig = $this->container->get('twig');
-        if (!$twig instanceof \Twig\Environment) {
+        if (!$twig instanceof Environment) {
             return $view;
         }
 

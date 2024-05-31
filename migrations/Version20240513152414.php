@@ -14,7 +14,7 @@ final class Version20240513152414 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Interaction.ReadPage is nullable';
     }
 
     public function up(Schema $schema): void

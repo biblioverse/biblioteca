@@ -10,7 +10,9 @@ use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
@@ -208,6 +210,40 @@ class BookController extends AbstractController
         $this->addFlash('success', 'Book deleted');
 
         return $this->redirectToRoute('app_allbooks');
+    }
+
+    #[Route('/new/consume/upload', name: 'app_book_upload_consume')]
+    public function upload(Request $request, BookFileSystemManager $fileSystemManager): Response
+    {
+        $form = $this->createFormBuilder()
+            ->setMethod('POST')
+            ->add('file', FileType::class, [
+                'label' => 'Book',
+                'required' => false,
+                'multiple' => true,
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Upload',
+                'attr' => [
+                    'class' => 'btn btn-success',
+                ],
+            ])
+            ->getForm()
+        ;
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var array<int, UploadedFile> $files */
+            $files = (array) $form->get('file')->getData();
+            if (count($files) > 0) {
+                $fileSystemManager->uploadFilesToConsumeDirectory($files);
+
+                return $this->redirectToRoute('app_book_consume');
+            }
+        }
+
+        return $this->render('book/upload.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/new/consume/files', name: 'app_book_consume')]

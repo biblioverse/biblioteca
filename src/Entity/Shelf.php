@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Entity(repositoryClass: ShelfRepository::class)]
 class Shelf
 {
+    use UuidGeneratorTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -34,12 +35,30 @@ class Shelf
     #[Gedmo\Slug(fields: ['name', 'id'], style: 'lower')]
     private string $slug;
 
+    /**
+     * @var Collection<int, KoboDevice>
+     */
+    #[ORM\ManyToMany(targetEntity: KoboDevice::class, mappedBy: 'shelves')]
+    private Collection $koboDevices;
+
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $queryString = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: 'create')]
+    private ?\DateTimeInterface $created = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
+    private ?\DateTimeInterface $updated = null;
+
+    #[ORM\Column(type: Types::STRING, length: 36, unique: true, nullable: true)]
+    private ?string $uuid = null;
 
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->uuid = $this->generateUuid();
     }
 
     public function getId(): int
@@ -123,5 +142,77 @@ class Shelf
         $this->queryString = $queryString;
 
         return $this;
+    }
+
+    /**
+     * @param Collection<int, KoboDevice> $collection
+     */
+    public function setKoboDevices(Collection $collection): self
+    {
+        $this->koboDevices = $collection;
+
+        return $this;
+    }
+
+    public function addKoboDevice(KoboDevice $kobo): self
+    {
+        if (!$this->koboDevices->contains($kobo)) {
+            $this->koboDevices->add($kobo);
+            $kobo->addShelf($this);
+        }
+
+        return $this;
+    }
+
+    public function removeKoboDevice(KoboDevice $kobo): self
+    {
+        if ($this->koboDevices->contains($kobo)) {
+            $this->koboDevices->removeElement($kobo);
+            $kobo->removeShelf($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, KoboDevice>
+     */
+    public function getKoboDevices(): Collection
+    {
+        return $this->koboDevices;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): void
+    {
+        $this->updated = $updated;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(?\DateTimeInterface $created): void
+    {
+        $this->created = $created;
+    }
+
+    public function getUuid(): ?string
+    {
+        if ($this->uuid === null) {
+            $this->uuid = $this->generateUuid();
+        }
+
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): void
+    {
+        $this->uuid = $uuid;
     }
 }

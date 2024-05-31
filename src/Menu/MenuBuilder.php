@@ -84,6 +84,7 @@ final class MenuBuilder
         }
 
         $menu->addChild('profile_divider', ['label' => 'profile'])->setExtra('divider', true);
+        $menu->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
         $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 

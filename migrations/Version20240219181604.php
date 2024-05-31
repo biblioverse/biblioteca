@@ -14,7 +14,7 @@ final class Version20240219181604 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add book.uuid + interaction.created+updated at';
     }
 
     public function up(Schema $schema): void

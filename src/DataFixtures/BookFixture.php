@@ -9,22 +9,29 @@ use Doctrine\Persistence\ObjectManager;
 
 class BookFixture extends Fixture implements DependentFixtureInterface
 {
-    public const BOOK_REFERENCE = 'book-hobbit';
+    public const BOOK_REFERENCE = 'book-odyssey';
+    public const BOOK_PAGE_REFERENCE = '7557680347007504212_1727-h-21.htm.xhtml';
+    public const ID = 1;
+    public const UUID = '54c8fb05-cf05-4cb6-9482-bc25fa49fa80';
 
     public function load(ObjectManager $manager): void
     {
+        // https://www.gutenberg.org/ebooks/1727
         $book = new Book();
-        $book->setTitle('The Hobbit');
-        $book->setAuthors(['J.R.R. Tolkien']);
-        $book->setPublishDate(new \DateTimeImmutable('1937-09-21'));
+        $book->setUuid(self::UUID);
+        $book->setTitle('The Odyssey');
+        $book->setAuthors(['Homer']);
+        $book->setPublishDate(new \DateTimeImmutable('1999-04-01'));
         $book->setLanguage('en');
-        $book->setPublisher('Allen & Unwin');
+        $book->setPublisher('Public domain');
         $book->setExtension('epub');
         $book->setImageExtension('jpg');
-        $book->setImageFilename('the-hobbit');
-        $book->setBookFilename('the-hobbit');
+        $book->setImageFilename('TheOdysses.jpg');
+        $book->setImagePath('');
+        $book->setBookFilename('TheOdysses.epub');
         $book->setChecksum(md5($book->getBookFilename()));
-        $book->setBookPath('tests/');
+        $book->setBookPath('');
+        $book->setPageNumber(30);
 
         $manager->persist($book);
         $manager->flush();

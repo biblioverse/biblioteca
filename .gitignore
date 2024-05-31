@@ -60,3 +60,4 @@ typesense/*
 
 # Test database
 data/database.sqlite
+*.pcap

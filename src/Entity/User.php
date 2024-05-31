@@ -89,10 +89,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $theme = null;
 
+    /**
+     * @var Collection<int, KoboDevice>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: KoboDevice::class, orphanRemoval: true)]
+    private Collection $kobos;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
         $this->shelves = new ArrayCollection();
+        $this->kobos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,6 +139,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    public function addRole(string $role): self
+    {
+        $this->roles[] = $role;
+        $this->roles = array_unique($this->roles);
+
+        return $this;
     }
 
     /**
@@ -367,5 +382,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->theme = $theme;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, KoboDevice>
+     */
+    public function getKobos(): Collection
+    {
+        return $this->kobos;
     }
 }

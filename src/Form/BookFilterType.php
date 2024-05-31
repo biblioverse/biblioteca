@@ -6,7 +6,11 @@ use App\Entity\Book;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
@@ -23,7 +27,7 @@ class BookFilterType extends AbstractType
     {
         $builder->setMethod('GET');
 
-        $builder->add('title', Type\SearchType::class, [
+        $builder->add('title', SearchType::class, [
             'required' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
@@ -33,7 +37,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('serieIndexGTE', Type\SearchType::class, [
+        $builder->add('serieIndexGTE', SearchType::class, [
             'required' => false,
             'mapped' => false,
             'label' => 'Index >=',
@@ -45,7 +49,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('serieIndexLTE', Type\SearchType::class, [
+        $builder->add('serieIndexLTE', SearchType::class, [
             'required' => false,
             'mapped' => false,
             'label' => 'Index <=',
@@ -57,7 +61,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('authors', Type\TextType::class, [
+        $builder->add('authors', TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
@@ -82,7 +86,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('authorsNot', Type\TextType::class, [
+        $builder->add('authorsNot', TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
@@ -108,7 +112,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('tags', Type\TextType::class, [
+        $builder->add('tags', TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
@@ -137,7 +141,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('serie', Type\TextType::class, [
+        $builder->add('serie', TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
@@ -166,7 +170,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('publisher', Type\TextType::class, [
+        $builder->add('publisher', TextType::class, [
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => false,
@@ -195,7 +199,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('read', Type\ChoiceType::class, [
+        $builder->add('read', ChoiceType::class, [
             'choices' => [
                 'Any' => '',
                 'Read' => 'read',
@@ -215,7 +219,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('extension', Type\ChoiceType::class, [
+        $builder->add('extension', ChoiceType::class, [
             'choices' => [
                 'Any' => '',
                 'epub' => 'epub',
@@ -233,7 +237,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('age', Type\ChoiceType::class, [
+        $builder->add('age', ChoiceType::class, [
             'choices' => User::AGE_CATEGORIES + ['Not set' => 'null'],
             'required' => false,
             'mapped' => false,
@@ -249,7 +253,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('favorite', Type\ChoiceType::class, [
+        $builder->add('favorite', ChoiceType::class, [
             'choices' => [
                 'Any' => '',
                 'Favorite' => 'favorite',
@@ -269,7 +273,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('verified', Type\ChoiceType::class, [
+        $builder->add('verified', ChoiceType::class, [
             'choices' => [
                 'Any' => '',
                 'Verified' => 'verified',
@@ -289,7 +293,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('picture', Type\ChoiceType::class, [
+        $builder->add('picture', ChoiceType::class, [
             'choices' => [
                 'Any' => '',
                 'Has picture' => 'with',
@@ -309,7 +313,7 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('orderBy', Type\ChoiceType::class, [
+        $builder->add('orderBy', ChoiceType::class, [
             'choices' => [
                 'created (ASC)' => 'created-asc',
                 'created (DESC)' => 'created-desc',
@@ -346,14 +350,14 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('displayMode', Type\HiddenType::class, [
+        $builder->add('displayMode', HiddenType::class, [
             'data' => 'list',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
             },
         ]);
 
-        $builder->add('submit', Type\SubmitType::class, [
+        $builder->add('submit', SubmitType::class, [
             'label' => 'Filter',
             'attr' => [
                 'class' => 'btn btn-primary',

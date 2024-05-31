@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -14,7 +13,7 @@ final class Version20240112163633 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Alter book.updated interaction.finished_date shelf.query_string end messenger';
     }
 
     public function up(Schema $schema): void

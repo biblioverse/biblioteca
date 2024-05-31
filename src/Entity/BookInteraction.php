@@ -37,11 +37,11 @@ class BookInteraction
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => '2024-01-12 00:00:00'])]
     #[Gedmo\Timestampable(on: 'create', )]
-    private \DateTimeInterface $created;
+    private \DateTimeImmutable $created;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['default' => '2024-01-12 00:00:00'])]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated;
+    private ?\DateTimeImmutable $updated;
 
     public function getId(): ?int
     {
@@ -108,12 +108,12 @@ class BookInteraction
         return $this;
     }
 
-    public function getCreated(): \DateTimeInterface
+    public function getCreated(): \DateTimeImmutable
     {
         return $this->created;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdated(): ?\DateTimeImmutable
     {
         return $this->updated;
     }
@@ -126,5 +126,10 @@ class BookInteraction
     public function setReadPages(?int $readPages): void
     {
         $this->readPages = $readPages;
+    }
+
+    public function setUpdated(?\DateTimeImmutable $updated): void
+    {
+        $this->updated = $updated;
     }
 }

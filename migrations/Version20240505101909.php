@@ -14,7 +14,7 @@ final class Version20240505101909 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add openAI key';
     }
 
     public function up(Schema $schema): void
