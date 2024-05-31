@@ -1,6 +1,8 @@
 # Installing Biblioteca for the first time
 ## Pre-requisites
-Docker and docker compose installed
+
+* Docker and docker compose installed
+* Ddev <https://ddev.com/>
 
 ## Local development with DDEV
 
@@ -8,12 +10,14 @@ Docker and docker compose installed
 2. `cd` to your local directory where you cloned the repository
 3. Run `ddev start`
 4. Run `ddev composer install`
-5. Run `ddev exec bin/console doctrine:schema:create`
-6. Run `ddev exec bin/console typesense:create`
-7. Run `ddev exec bin/console app:create-admin-user <username> <password>`
-8. Run `ddev exec npm i`
-9. Run `ddev exec npm run build`
-10. Run `ddev launch`
+5. Run `ddev exec bin/console doctrine:database:create`
+6. Run `ddev exec bin/console doctrine:migration:sync-metadata-storage`
+7. Run `ddev exec bin/console doctrine:migration:migrate`
+8. Run `ddev exec bin/console typesense:create`
+9. Run `ddev exec bin/console app:create-admin-user <username> <password>`
+10. Run `ddev exec npm i`
+11. Run `ddev exec npm run build`
+12. Run `ddev launch`
 
 ### Enable Xdebug
 Run `ddev xdebug` 

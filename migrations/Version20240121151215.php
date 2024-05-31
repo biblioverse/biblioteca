@@ -14,7 +14,7 @@ final class Version20240121151215 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add book.author shelf.query_string and user.display_series';
     }
 
     public function up(Schema $schema): void
