@@ -4,6 +4,12 @@ namespace App\Kobo\ImageProcessor;
 
 class CoverTransformer
 {
+    public const JPG = '.jpg';
+    public const PNG = '.png';
+    public const GIF = '.gif';
+    public const JPEG = '.jpeg';
+    public const WEBP = '.wepb';
+
     public function __construct()
     {
     }
@@ -22,11 +28,12 @@ class CoverTransformer
             return;
         }
 
-        // We only support jpeg & png & gif
-        if (false === str_ends_with($coverPath, '.jpg')
-            && false === str_ends_with($coverPath, '.png')
-            && false === str_ends_with($coverPath, '.gif')
-            && false === str_ends_with($coverPath, '.jpeg')
+        // We only support jpeg & png & gif & webp
+        if (false === str_ends_with($coverPath, self::JPG)
+            && false === str_ends_with($coverPath, self::PNG)
+            && false === str_ends_with($coverPath, self::GIF)
+            && false === str_ends_with($coverPath, self::JPEG)
+            && false === str_ends_with($coverPath, self::WEBP)
         ) {
             $this->fallback($coverPath);
 
@@ -75,8 +82,9 @@ class CoverTransformer
         // Load the original image based on the extension
         $extension = pathinfo($coverPath, PATHINFO_EXTENSION);
         $originalImage = match ($extension) {
-            'png' => imagecreatefrompng($coverPath),
-            'gif' => imagecreatefromgif($coverPath),
+            self::PNG => imagecreatefrompng($coverPath),
+            self::GIF => imagecreatefromgif($coverPath),
+            self::WEBP => imagecreatefromwebp($coverPath),
             default => imagecreatefromjpeg($coverPath),
         };
         if (false === $originalImage) {
@@ -98,8 +106,9 @@ class CoverTransformer
 
         // Output the image based on the extension
         match ($extension) {
-            'png' => imagepng($image, null, 9),
-            'gif' => imagegif($image),
+            self::PNG => imagepng($image, null, 9),
+            self::GIF => imagegif($image),
+            self::WEBP => imagewebp($image),
             default => imagejpeg($image, null, 100),
         };
 
