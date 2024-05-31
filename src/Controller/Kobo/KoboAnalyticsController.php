@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Kobo;
 
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;

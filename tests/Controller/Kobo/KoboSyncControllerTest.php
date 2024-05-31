@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
 use App\Entity\KoboSyncedBook;
 use App\Tests\Contraints\JSONIsValidSyncResponse;

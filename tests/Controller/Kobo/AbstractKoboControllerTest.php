@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
-use App\Entity\KoboDevice;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
+use App\Entity\KoboDevice;
 use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
@@ -86,12 +86,13 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     protected function injectFakeFileSystemManager(): void
     {
-        $fixtureBookPath = realpath(__DIR__.'/../Resources/')."/";
+        $resources = __DIR__.'/../../Resources';
+        $fixtureBookPath = realpath($resources)."/";
         $mockBuilder = $this->getMockBuilder(BookFileSystemManager::class);
 
         $mock =  $mockBuilder->setConstructorArgs([
             self::getContainer()->get(Security::class),
-            realpath(__DIR__.'/../Resources/'),
+            realpath($resources),
             self::DEFAULT_BOOK_FOLDER_NAMING_FORMAT,
             $this->createMock(SluggerInterface::class),
             new NullLogger(),
@@ -102,7 +103,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         $mock->expects(self::any())->method('getBooksDirectory')->willReturn($fixtureBookPath);
         $mock->expects(self::any())->method('getCoverDirectory')->willReturn($fixtureBookPath);
 
-        self::assertSame(realpath(__DIR__.'/../Resources/').'/books/TheOdysses.epub', $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
+        self::assertSame(realpath($resources).'/books/TheOdysses.epub', $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
         self::getContainer()->set(BookFileSystemManager::class, $mock);
     }
 

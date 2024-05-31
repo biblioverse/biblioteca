@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Kobo;
 
 use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
 use App\Tests\Contraints\JSONContainKeys;
 use Symfony\Component\BrowserKit\Response;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Kobo;
 
 use App\Kobo\Proxy\KoboStoreProxy;
 use GuzzleHttp\Exception\GuzzleException;

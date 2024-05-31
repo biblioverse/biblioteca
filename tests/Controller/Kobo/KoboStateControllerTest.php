@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
