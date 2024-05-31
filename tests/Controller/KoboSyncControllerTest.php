@@ -10,7 +10,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
     public function assertPreConditions(): void
     {
-        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['kobo' => 1]);
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(0, $count, 'There should be no synced books');
     }
 
@@ -33,7 +33,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
             'NewTag' => 1
         ]), 'Response is not a valid sync response');
 
-        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['kobo' => 1]);
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(0, $count, 'There should be no synced books');
     }
 
@@ -50,7 +50,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
             'NewTag' => 1
         ]), 'Response is not a valid sync response');
 
-        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['kobo' => 1]);
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(1, $count, 'There should be 1 synced books');
 
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);

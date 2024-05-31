@@ -3,7 +3,7 @@
 namespace App\Kobo;
 
 use App\Entity\Book;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Service\BookFileSystemManager;
@@ -42,7 +42,7 @@ class DownloadHelper
         return $book->getExtension() === 'epub3' || $this->readEpubVersionIs3($book) === true;
     }
 
-    public function getUrlForKobo(Book $book, Kobo $kobo): string
+    public function getUrlForKoboDevice(Book $book, KoboDevice $kobo): string
     {
         return $this->urlGenerator->generate('app_kobodownload', [
             'id' => $book->getId(),

@@ -2,17 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\KoboRepository;
+use App\Repository\KoboDeviceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: KoboRepository::class)]
+#[ORM\Entity(repositoryClass: KoboDeviceRepository::class)]
 #[ORM\UniqueConstraint(name: 'kobo_access_key', columns: ['access_key'])]
 #[UniqueEntity(fields: ['accessKey'])]
-class Kobo
+class KoboDevice
 {
     use RandomGeneratorTrait;
     #[ORM\Id]
@@ -37,14 +37,14 @@ class Kobo
     /**
      * @var Collection<int, Shelf>
      */
-    #[ORM\ManyToMany(targetEntity: Shelf::class, inversedBy: 'kobos', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Shelf::class, inversedBy: 'koboDevices', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'shelf_kobo')]
     private Collection $shelves;
 
     /**
      * @var Collection<int, KoboSyncedBook>
      */
-    #[ORM\OneToMany(mappedBy: 'kobo', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'koboDevice', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
     /**
@@ -78,7 +78,7 @@ class Kobo
         return $this->shelves;
     }
 
-    public function setName(?string $name): Kobo
+    public function setName(?string $name): KoboDevice
     {
         $this->name = $name;
 
@@ -134,7 +134,7 @@ class Kobo
     {
         if (!$this->koboSyncedBooks->contains($koboSyncedBook)) {
             $this->koboSyncedBooks->add($koboSyncedBook);
-            $koboSyncedBook->setKobo($this);
+            $koboSyncedBook->setKoboDevice($this);
         }
 
         return $this;
@@ -144,8 +144,8 @@ class Kobo
     {
         if ($this->koboSyncedBooks->removeElement($koboSyncedBook)) {
             // set the owning side to null (unless already changed)
-            if ($koboSyncedBook->getKobo() === $this) {
-                $koboSyncedBook->setKobo(null);
+            if ($koboSyncedBook->getKoboDevice() === $this) {
+                $koboSyncedBook->setKoboDevice(null);
             }
         }
 
