@@ -21,7 +21,7 @@ class KoboSyncedBook
 
     #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Kobo $kobo = null;
+    private ?KoboDevice $koboDevice = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -48,14 +48,14 @@ class KoboSyncedBook
         return $this;
     }
 
-    public function getKobo(): ?Kobo
+    public function getKoboDevice(): ?KoboDevice
     {
-        return $this->kobo;
+        return $this->koboDevice;
     }
 
-    public function setKobo(?Kobo $kobo): static
+    public function setKoboDevice(?KoboDevice $koboDevice): static
     {
-        $this->kobo = $kobo;
+        $this->koboDevice = $koboDevice;
 
         return $this;
     }

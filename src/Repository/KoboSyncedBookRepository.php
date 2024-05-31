@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Book;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -49,16 +49,16 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function updateSyncedBooks(Kobo $kobo, array $books, SyncToken $syncToken): void
+    public function updateSyncedBooks(KoboDevice $koboDevice, array $books, SyncToken $syncToken): void
     {
         $updatedAt = $syncToken->lastModified ?? new \DateTime();
 
         $qb = $this->createQueryBuilder('koboSyncedBook')
              ->select('book.id')
              ->join('koboSyncedBook.book', 'book')
-             ->where('koboSyncedBook.kobo = :kobo')
+             ->where('koboSyncedBook.koboDevice = :koboDevice')
              ->andWhere('koboSyncedBook.book IN (:books)')
-             ->setParameter('kobo', $kobo)
+             ->setParameter('koboDevice', $koboDevice)
              ->setParameter('books', $books)
         ;
         $updatedBooks = (array) $qb
@@ -93,22 +93,22 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         foreach ($books as $book) {
             $object = new KoboSyncedBook();
             $object->setBook($book);
-            $object->setKobo($kobo);
+            $object->setKoboDevice($koboDevice);
             $object->setUpdated($updatedAt);
             $object->setCreated($updatedAt);
             $book->addKoboSyncedBook($object);
-            $kobo->addKoboSyncedBook($object);
+            $koboDevice->addKoboSyncedBook($object);
             $this->_em->persist($object);
         }
         $this->_em->flush();
     }
 
-    public function deleteAllSyncedBooks(Kobo|int $koboId): int
+    public function deleteAllSyncedBooks(KoboDevice|int $koboDeviceId): int
     {
         $query = $this->createQueryBuilder('koboSyncedBook')
             ->delete()
-            ->where('koboSyncedBook.kobo = :kobo')
-            ->setParameter('kobo', $koboId)
+            ->where('koboSyncedBook.koboDevice = :koboDevice')
+            ->setParameter('koboDevice', $koboDeviceId)
             ->getQuery();
 
         /** @var int $result */
@@ -118,13 +118,13 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function countByKobo(Kobo $kobo): int
+    public function countByKoboDevice(KoboDevice $koboDevice): int
     {
         /** @var int $result */
         $result = $this->createQueryBuilder('koboSyncedBook')
             ->select('count(koboSyncedBook.id)')
-            ->where('koboSyncedBook.kobo = :kobo')
-            ->setParameter('kobo', $kobo)
+            ->where('koboSyncedBook.koboDevice = :koboDevice')
+            ->setParameter('koboDevice', $koboDevice)
             ->getQuery()
             ->getSingleScalarResult();
 

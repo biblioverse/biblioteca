@@ -2,9 +2,9 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\KoboDevice;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
-use App\Entity\Kobo;
 use App\Kobo\DownloadHelper;
 
 class KoboDownloadControllerTest extends AbstractKoboControllerTest
@@ -15,7 +15,7 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         $this->injectFakeFileSystemManager();
 
 
-        $book = $this->findByIdAndKobo(BookFixture::ID, $this->getKobo());
+        $book = $this->findByIdAndKobo(BookFixture::ID, $this->getKoboDevice());
         self::assertNotNull($book, 'The book is not linked to the Kobo');
 
         /** @var DownloadHelper $downloadHelper */
@@ -34,8 +34,8 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
 
     }
 
-    private function findByIdAndKobo(int $bookId, Kobo $kobo): ?Book
+    private function findByIdAndKobo(int $bookId, KoboDevice $kobo): ?Book
     {
-        return $this->getEntityManager()->getRepository(Book::class)->findByIdAndKobo($bookId, $kobo);
+        return $this->getEntityManager()->getRepository(Book::class)->findByIdAndKoboDevice($bookId, $kobo);
     }
 }

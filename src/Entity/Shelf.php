@@ -36,10 +36,10 @@ class Shelf
     private string $slug;
 
     /**
-     * @var Collection<int, Kobo>
+     * @var Collection<int, KoboDevice>
      */
-    #[ORM\ManyToMany(targetEntity: Kobo::class, mappedBy: 'shelves')]
-    private Collection $kobos;
+    #[ORM\ManyToMany(targetEntity: KoboDevice::class, mappedBy: 'shelves')]
+    private Collection $koboDevices;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $queryString = null;
@@ -145,29 +145,29 @@ class Shelf
     }
 
     /**
-     * @param Collection<int, Kobo> $collection
+     * @param Collection<int, KoboDevice> $collection
      */
-    public function setKobos(Collection $collection): self
+    public function setKoboDevices(Collection $collection): self
     {
-        $this->kobos = $collection;
+        $this->koboDevices = $collection;
 
         return $this;
     }
 
-    public function addKobo(Kobo $kobo): self
+    public function addKoboDevice(KoboDevice $kobo): self
     {
-        if (!$this->kobos->contains($kobo)) {
-            $this->kobos->add($kobo);
+        if (!$this->koboDevices->contains($kobo)) {
+            $this->koboDevices->add($kobo);
             $kobo->addShelf($this);
         }
 
         return $this;
     }
 
-    public function removeKobo(Kobo $kobo): self
+    public function removeKoboDevice(KoboDevice $kobo): self
     {
-        if ($this->kobos->contains($kobo)) {
-            $this->kobos->removeElement($kobo);
+        if ($this->koboDevices->contains($kobo)) {
+            $this->koboDevices->removeElement($kobo);
             $kobo->removeShelf($this);
         }
 
@@ -175,11 +175,11 @@ class Shelf
     }
 
     /**
-     * @return Collection<int, Kobo>
+     * @return Collection<int, KoboDevice>
      */
-    public function getKobos(): Collection
+    public function getKoboDevices(): Collection
     {
-        return $this->kobos;
+        return $this->koboDevices;
     }
 
     public function getUpdated(): ?\DateTimeInterface

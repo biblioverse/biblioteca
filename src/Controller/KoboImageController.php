@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponseFactory;
 use App\Repository\BookRepository;
-use App\Repository\KoboRepository;
+use App\Repository\KoboDeviceRepository;
 use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
 use GuzzleHttp\Exception\GuzzleException;
@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class KoboImageController extends AbstractController
 {
     public function __construct(
-        protected KoboRepository $koboRepository,
+        protected KoboDeviceRepository $koboRepository,
         protected KoboStoreProxy $koboStoreProxy,
         protected BookRepository $bookRepository,
         protected KoboProxyConfiguration $koboProxyConfiguration,
@@ -42,10 +42,10 @@ class KoboImageController extends AbstractController
     #[Route('//{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality_bad', defaults: ['isGreyscale' => false])]
     #[Route('/{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image')]
     #[Route('//{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image_bad')]
-    public function imageQuality(Request $request, Kobo $kobo, string $uuid, int $width, int $height, string $isGreyscale): Response
+    public function imageQuality(Request $request, KoboDevice $kobo, string $uuid, int $width, int $height, string $isGreyscale): Response
     {
         $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);
-        $book = $this->bookRepository->findByUuidAndKobo($uuid, $kobo);
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
         if ($book === null) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);

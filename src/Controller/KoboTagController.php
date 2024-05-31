@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Request\TagDeleteRequest;
@@ -35,7 +35,7 @@ class KoboTagController extends AbstractController
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
     #[Route('/v1/library/tags/{tagId}/items/delete', methods: ['POST'])]
-    public function delete(Request $request, Kobo $kobo, string $tagId): Response
+    public function delete(Request $request, KoboDevice $kobo, string $tagId): Response
     {
         if ($this->koboStoreProxy->isEnabled()) {
             return $this->koboStoreProxy->proxy($request);
@@ -67,7 +67,7 @@ class KoboTagController extends AbstractController
 
     #[Route('/v1/library/tags')]
     #[Route('/v1/library/tags/{tagId}')]
-    public function tags(Request $request, Kobo $kobo, ?string $tagId = null): Response
+    public function tags(Request $request, KoboDevice $kobo, ?string $tagId = null): Response
     {
         try {
             $content = $request->getContent();
@@ -83,7 +83,7 @@ class KoboTagController extends AbstractController
         if ($request->isMethod('DELETE')) {
             if ($shelf !== null) {
                 $this->logger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
-                $shelf->removeKobo($kobo);
+                $shelf->removeKoboDevice($kobo);
                 $this->shelfRepository->flush();
 
                 return new JsonResponse(['deleted'], 200);
@@ -110,7 +110,7 @@ class KoboTagController extends AbstractController
         return new JsonResponse($shelf->getId(), 201);
     }
 
-    private function findShelfByNameOrTagId(Kobo $kobo, ?string $name, ?string $tagId): ?Shelf
+    private function findShelfByNameOrTagId(KoboDevice $kobo, ?string $name, ?string $tagId): ?Shelf
     {
         if ($tagId !== null) {
             return $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);

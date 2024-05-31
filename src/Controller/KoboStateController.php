@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\BookInteraction;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
@@ -34,9 +34,9 @@ class KoboStateController extends AbstractController
      * Update reading state.
      **/
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
-    public function state(Kobo $kobo, string $uuid, Request $request): Response|JsonResponse
+    public function state(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
     {
-        $book = $this->bookRepository->findByUuidAndKobo($uuid, $kobo);
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
 
         // Handle book not found
         if ($book === null) {
@@ -92,7 +92,7 @@ class KoboStateController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(Kobo $kobo, string $uuid, Request $request): Response|JsonResponse
+    public function getState(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
     {
         if ($this->koboStoreProxy->isEnabled()) {
             return $this->koboStoreProxy->proxyOrRedirect($request);

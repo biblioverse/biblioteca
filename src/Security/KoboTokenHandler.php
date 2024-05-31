@@ -2,7 +2,7 @@
 
 namespace App\Security;
 
-use App\Repository\KoboRepository;
+use App\Repository\KoboDeviceRepository;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 class KoboTokenHandler implements AccessTokenHandlerInterface
 {
     public function __construct(
-        private KoboRepository $repository
+        private KoboDeviceRepository $repository
     ) {
     }
 
@@ -20,19 +20,19 @@ class KoboTokenHandler implements AccessTokenHandlerInterface
             throw new BadCredentialsException('Invalid credentials.');
         }
 
-        $kobo = $this->repository->byAccessKey($token);
-        if (null === $kobo) {
+        $koboDevice = $this->repository->byAccessKey($token);
+        if (null === $koboDevice) {
             throw new BadCredentialsException('Invalid credentials.');
         }
 
         // and return a UserBadge object containing the user identifier from the found token
-        $badgeIdentifier = sprintf('kobo-%s:%s', $kobo->getId(), $kobo->getUser()->getUserIdentifier());
+        $badgeIdentifier = sprintf('kobo-%s:%s', $koboDevice->getId(), $koboDevice->getUser()->getUserIdentifier());
 
-        return new UserBadge($badgeIdentifier, function () use ($kobo) {
-            $user = $kobo->getUser();
+        return new UserBadge($badgeIdentifier, function () use ($koboDevice) {
+            $user = $koboDevice->getUser();
             $user->addRole('ROLE_KOBO');
 
             return $user;
-        }, ['kobo' => [$kobo->getId()]]);
+        }, ['kobo' => [$koboDevice->getId()]]);
     }
 }

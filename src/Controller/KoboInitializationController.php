@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
 use GuzzleHttp\Exception\GuzzleException;
@@ -29,7 +29,7 @@ class KoboInitializationController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/v1/initialization')]
-    public function initialization(Request $request, Kobo $kobo): Response
+    public function initialization(Request $request, KoboDevice $kobo): Response
     {
         $this->logger->info('Initialization request');
         // Load the JSON data from the store

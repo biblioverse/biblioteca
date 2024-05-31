@@ -90,9 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $theme = null;
 
     /**
-     * @var Collection<int, Kobo>
+     * @var Collection<int, KoboDevice>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Kobo::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: KoboDevice::class, orphanRemoval: true)]
     private Collection $kobos;
 
     public function __construct()
@@ -385,7 +385,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int,Kobo>
+     * @return Collection<int, KoboDevice>
      */
     public function getKobos(): Collection
     {

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -38,7 +38,7 @@ class KoboType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Kobo::class,
+            'data_class' => KoboDevice::class,
         ]);
     }
 }

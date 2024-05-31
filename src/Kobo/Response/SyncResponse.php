@@ -3,7 +3,7 @@
 namespace App\Kobo\Response;
 
 use App\Entity\Book;
-use App\Entity\Kobo;
+use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,7 @@ class SyncResponse
     public const READING_STATUS_FINISHED = 'Finished';
     public const READING_STATUS_IN_PROGRESS = 'Reading';
 
-    public function __construct(protected MetadataResponseService $metadataResponse, protected SyncToken $syncToken, protected Kobo $kobo, protected SerializerInterface $serializer)
+    public function __construct(protected MetadataResponseService $metadataResponse, protected SyncToken $syncToken, protected KoboDevice $kobo, protected SerializerInterface $serializer)
     {
     }
 
