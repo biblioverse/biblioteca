@@ -14,7 +14,7 @@ final class Version20240512162606 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add book pagenumber and interactions.read_pages';
     }
 
     public function up(Schema $schema): void

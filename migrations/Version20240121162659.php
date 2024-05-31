@@ -14,7 +14,7 @@ final class Version20240121162659 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add age_category and birthday';
     }
 
     public function up(Schema $schema): void

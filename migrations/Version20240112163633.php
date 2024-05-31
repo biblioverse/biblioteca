@@ -14,7 +14,7 @@ final class Version20240112163633 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Alter book.updated interaction.finished_date shelf.query_string end messenger';
     }
 
     public function up(Schema $schema): void
