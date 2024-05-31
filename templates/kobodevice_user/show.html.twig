@@ -21,12 +21,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_kobo_admin_index') }}">back to list</a>
+    <a href="{{ path('app_kobodevice_user_index') }}">back to list</a>
 
-    <a href="{{ path('app_kobo_admin_edit', {'id': kobo.id}) }}">edit</a>
+    <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}">edit</a>
 
-    {{ include('kobo_admin/_delete_form.html.twig') }}
+    {{ include('kobodevice_user/_delete_form.html.twig') }}
 
-    {% include('kobo_admin/instructions.html.twig') with {'token': kobo.accessKey} only %}
+    {% include('kobodevice_user/instructions.html.twig') with {'token': kobo.accessKey} only %}
 
 {% endblock %}

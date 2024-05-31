@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create new Kobo{% endblock %}
+
+{% block body %}
+
+    {{ include('kobodevice_user/_form.html.twig') }}
+
+    <div>
+        <a href="{{ path('app_kobodevice_user_index') }}">back to list</a>
+    </div>
+
+    {{ include('kobodevice_user/instructions.html.twig') }}
+{% endblock %}

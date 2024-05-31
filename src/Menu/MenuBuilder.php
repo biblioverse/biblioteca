@@ -79,6 +79,7 @@ final class MenuBuilder
         }
 
         $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
+        $menu->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
         $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $menu->addChild('My shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'bookshelf');
         if ($user->isDisplayTimeline()) {
