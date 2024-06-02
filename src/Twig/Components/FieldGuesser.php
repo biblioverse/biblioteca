@@ -66,10 +66,10 @@ class FieldGuesser extends AbstractController
         }
 
         $matches = [];
-        preg_match('/(T|Volume |Vol. |Tome )([0-9]{1,3})/',$this->book->getTitle(), $matches);
+        preg_match('/(T|Volume |Vol. |Tome )([0-9]{1,3})/', $this->book->getTitle(), $matches);
 
-        if(count($matches) > 0) {
-            return (int)    $matches[2];
+        if (count($matches) > 0) {
+            return $matches[2];
         }
 
         return '';

@@ -86,8 +86,6 @@ final class MenuBuilder
         $menu->addChild('My shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'bookshelf');
         $menu->addChild('Books to be finished', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
 
-
-
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         return $menu;

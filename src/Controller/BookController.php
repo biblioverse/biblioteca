@@ -171,7 +171,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
-    public function extractCover(Request$request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
+    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {
         $book = $fileSystemManager->extractCover($book);
 
@@ -179,7 +179,7 @@ class BookController extends AbstractController
 
         $referer = $request->headers->get('referer');
 
-        if($referer !== null) {
+        if ($referer !== null) {
             return $this->redirect($referer);
         }
 

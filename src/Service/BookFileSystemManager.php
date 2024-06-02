@@ -109,7 +109,6 @@ class BookFileSystemManager
     {
         $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
         if (!is_string($checkSum)) {
-            dd($file);
             throw new \RuntimeException('Could not calculate file Checksum:'.$file->getRealPath());
         }
         $checkSum = explode(' ', $checkSum);

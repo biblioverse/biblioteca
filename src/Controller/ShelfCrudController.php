@@ -25,7 +25,6 @@ class ShelfCrudController extends AbstractController
     #[Route('/{id}/edit', name: 'app_shelf_crud_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Shelf $shelf, EntityManagerInterface $entityManager): Response
     {
-
         $form = $this->createForm(ShelfType::class, $shelf);
         $form->handleRequest($request);
 
@@ -44,7 +43,7 @@ class ShelfCrudController extends AbstractController
     #[Route('/{id}', name: 'app_shelf_crud_delete', methods: ['POST'])]
     public function delete(Request $request, Shelf $shelf, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$shelf->getId(), $request->getPayload()->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$shelf->getId(), ''.$request->getPayload()->get('_token'))) {
             $entityManager->remove($shelf);
             $entityManager->flush();
         }
