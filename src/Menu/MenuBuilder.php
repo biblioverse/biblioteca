@@ -42,9 +42,6 @@ final class MenuBuilder
         if ($user->isDisplayAllBooks()) {
             $menu->addChild('All Books', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
         }
-        if ($user->isDisplayTimeline()) {
-            $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
-        }
         if ($user->isDisplaySeries()) {
             $menu->addChild('Series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
         }
@@ -84,7 +81,10 @@ final class MenuBuilder
         $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
         $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $menu->addChild('My shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'bookshelf');
-        $menu->addChild('Books to be finished', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
+        if ($user->isDisplayTimeline()) {
+            $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
+        }
+        $menu->addChild('In progress', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
 
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 

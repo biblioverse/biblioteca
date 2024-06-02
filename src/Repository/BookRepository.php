@@ -222,6 +222,21 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function getStartedSeries(): Query
+    {
+        return $this->createQueryBuilder('serie')
+            ->select('serie.serie as item')
+            ->addSelect('COUNT(serie.id) as bookCount')
+            ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
+            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.finished = true and bookInteraction.user= :user')
+            ->where('serie.serie IS NOT NULL')
+            ->setParameter('user', $this->security->getUser())
+            ->addGroupBy('serie.serie')
+            ->having('COUNT(bookInteraction.finished)>0 AND COUNT(bookInteraction.finished)<MAX(serie.serieIndex)')
+            ->getQuery();
+    }
+
     public function getAllPublishers(): Query
     {
         return $this->createQueryBuilder('publisher')

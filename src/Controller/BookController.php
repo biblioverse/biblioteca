@@ -190,12 +190,14 @@ class BookController extends AbstractController
     }
 
     #[Route('/started', name: 'app_started')]
-    public function started(BookInteractionRepository $repository): Response
+    public function started(BookInteractionRepository $repository, BookRepository $bookRepository): Response
     {
         $books = $repository->getStartedBooks();
+        $series = $bookRepository->getStartedSeries()->getResult();
 
         return $this->render('book/started.html.twig', [
             'books' => $books,
+            'series' => $series,
         ]);
     }
 

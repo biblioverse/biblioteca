@@ -1,24 +1,42 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %}Started Books{% endblock %}
+{% block title %}In progress{% endblock %}
 
 {% block body %}
+    <div class="row">
+        {% for bookInteraction in books %}
+            <div class="col-2">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+            </div>
+            <div class="col-4">
+                <h3>{{ bookInteraction.book.title }}</h3>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
+                        {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
+                    </div>
+                </div>
+                <a href="{{ path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages}) }}" class="mt-2 btn btn-primary">Continue reading</a>
+            </div>
+        {% endfor %}
+    </div>
 
     <div class="row">
-{% for bookInteraction in books %}
-    <div class="col-4 col-md-2">
-        {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
-
-    </div>
-    <div class="col-8 col-md-10">
-        <h3>{{ bookInteraction.book.title }}</h3>
-        <div class="progress">
-            <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
-                {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
-            </div>
-        </div>
-        <a href="{{ path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages}) }}" class="mt-2 btn btn-primary">Continue reading</a>
-    </div>
-{% endfor %}
+        <ul>
+        {% for item in series %}
+            {% if item.booksFinished<item.bookCount %}
+            <li class="col-4">
+                {% set params = { serie: item.item } %}
+                <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
+                    {{ item.item }}
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ (item.booksFinished/item.bookCount) *100 }}%">
+                            {{ item.booksFinished }}/{{ item.bookCount }}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
     </div>
 {% endblock %}
