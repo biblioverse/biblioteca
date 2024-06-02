@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shelf index{% endblock %}
+
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for shelf in shelves %}
+            <tr>
+                <td>{{ shelf.name }}</td>
+                <td>
+                    {% if not shelf.queryString %}
+                        <a href="{{ path('app_shelf_crud_edit', {'id': shelf.id}) }}" class="btn btn-primary">edit</a>
+                    {% endif %}
+                    {{ include('shelf_crud/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no shelves found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

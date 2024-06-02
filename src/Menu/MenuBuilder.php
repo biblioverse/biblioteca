@@ -58,8 +58,6 @@ final class MenuBuilder
             $menu->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
 
-        $menu->addChild('Books to be finished', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
-
         if ($user->getShelves()->count() > 0) {
             $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
             foreach ($user->getShelves() as $shelf) {
@@ -83,8 +81,13 @@ final class MenuBuilder
             $menu->addChild('Not verified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
         }
 
-        $menu->addChild('profile_divider', ['label' => 'profile'])->setExtra('divider', true);
+        $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
         $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
+        $menu->addChild('My shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'bookshelf');
+        $menu->addChild('Books to be finished', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
+
+
+
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         return $menu;
