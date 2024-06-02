@@ -109,7 +109,8 @@ class BookFileSystemManager
     {
         $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
         if (!is_string($checkSum)) {
-            throw new \RuntimeException('Could not calculate file Checksum');
+            dd($file);
+            throw new \RuntimeException('Could not calculate file Checksum:'.$file->getRealPath());
         }
         $checkSum = explode(' ', $checkSum);
 
@@ -334,7 +335,7 @@ class BookFileSystemManager
                 break;
             case 'cbr':
             case 'cbz':
-                $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+                $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
                 if (!is_string($return)) {
                     $book = $this->extractCoverFromGeneralArchive($bookFile, $book);
@@ -379,7 +380,7 @@ class BookFileSystemManager
         switch ($book->getExtension()) {
             case 'cbr':
             case 'cbz':
-                $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+                $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
                 if (!is_string($return)) {
                     $files = $this->extractFilesFromGeneralArchive($bookFile, $book);
@@ -400,7 +401,7 @@ class BookFileSystemManager
 
     private function extractCoverFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
     {
-        $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+        $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
         if (!is_string($return)) {
             $this->logger->error('not a string', ['book' => $bookFile->getRealPath(), 'return' => $return]);
@@ -500,6 +501,7 @@ class BookFileSystemManager
 
         $filesystem = new Filesystem();
 
+        $filesystem->remove('/tmp/cover');
         $filesystem->mkdir('/tmp/cover');
 
         $archive->setOutputDirectory('/tmp/cover')->extractEntry($entries[0]); // extract the archive
@@ -516,6 +518,11 @@ class BookFileSystemManager
         if ($file === null) {
             return $book;
         }
+        $filesystem->rename($file->getRealPath(), '/tmp/cover/cover.jpg', true);
+
+        $finder->in('/tmp/cover')->name('cover.jpg')->files();
+
+        $file = $finder->getIterator()->current();
 
         $filesystem->mkdir($this->getCalculatedImagePath($book, true));
         $checksum = $this->getFileChecksum($file);
@@ -588,7 +595,7 @@ class BookFileSystemManager
         if ($this->isCurrentBookInReaderFolder($bookFile)) {
             return $this->listReaderFiles();
         }
-        $return = shell_exec('unrar lb "'.$bookFile->getRealPath().'"');
+        $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
         if (!is_string($return)) {
             $this->logger->error('not a string', ['book' => $bookFile->getRealPath(), 'return' => $return]);

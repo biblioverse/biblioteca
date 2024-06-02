@@ -15,4 +15,16 @@
         </button>
     </form>
     {% endif %}
+    {% if this.guessIndex!='' and this.guessIndex!= book.serieIndex %}
+    <form>
+        <button
+            data-action="live#action"
+            data-live-action-param="prevent|acceptIndex"
+            class="btn btn-sm btn-outline-success"
+        >
+            {{ 'index'|trans }}: {{ this.guessIndex }}
+            <i class="bi bi-check"></i>
+        </button>
+    </form>
+    {% endif %}
 </span>

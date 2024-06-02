@@ -35,6 +35,10 @@
                     <img class="w-100" src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
                 {% endif %}
                 </a>
+
+                {% if book.imageFilename is null %}
+                    <a href="{{ path('app_extractCover', { 'id':book.id }) }}" >Get Cover</a>
+                {% endif %}
             </td>
             <td colspan="4">
                 <div>
