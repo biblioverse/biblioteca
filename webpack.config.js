@@ -21,6 +21,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('read-ebook', './assets/read-ebook.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
    //.enableStimulusBridge('./assets/controllers.json')
@@ -61,6 +62,8 @@ Encore
 
     // enables Sass/SCSS support
     .enableSassLoader()
+    // Enable vue.js
+    .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

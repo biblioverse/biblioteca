@@ -102,15 +102,19 @@ class BookController extends AbstractController
         }
 
         switch ($book->getExtension()) {
-            // case 'epub':
-            //    break;
+            case 'epub':
+            case 'mobi':
+                return $this->render('book/reader-files-epub.html.twig', [
+                    'book' => $book,
+                    'file' => $fileSystemManager->getBookPublicPath($book),
+                ]);
             case 'pdf':
             case 'cbr':
             case 'cbz':
                 $files = $fileSystemManager->extractFilesToRead($book);
                 break;
             default:
-                $this->addFlash('danger', 'Unsupported book format');
+                $this->addFlash('danger', 'Unsupported book format: '.$book->getExtension());
 
                 return $this->redirectToRoute('app_book', [
                     'book' => $book->getId(),

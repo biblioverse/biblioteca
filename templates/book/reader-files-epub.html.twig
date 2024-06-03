@@ -1,0 +1,24 @@
+{% extends themedTemplate('bare.html.twig') %}
+
+{% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('read-ebook') }}
+    {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('read-ebook') }}
+    <style>
+        body
+        {
+            background-color: #000;
+            color: #fff;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="mount" data-file="{{ file }}" style="width: 100%">
+        <a href="{{ file }}">Loading book</a>
+    </div>
+{% endblock %}
