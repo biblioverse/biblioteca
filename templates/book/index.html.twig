@@ -132,7 +132,9 @@
                 {% if app.debug %}
                 <tr>
                     <th>{{ 'Number of pages'|trans }}</th>
-                    <td>{{ book.pageNumber|default("-") }}</td>
+                    <td>
+                        {{ component('InlineEditBook', {'book':book, 'field':'pageNumber'}) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>{{ 'UUID'|trans }}</th>
