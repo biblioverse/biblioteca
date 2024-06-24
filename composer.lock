@@ -2105,16 +2105,16 @@
         },
         {
             "name": "kiwilan/php-ebook",
-            "version": "2.3.8",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-ebook.git",
-                "reference": "946f7508b039ba6923d082637659bfde86c5e91d"
+                "reference": "f065de63f1c0f3b3dda080783f0699420e5a129c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/946f7508b039ba6923d082637659bfde86c5e91d",
-                "reference": "946f7508b039ba6923d082637659bfde86c5e91d",
+                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/f065de63f1c0f3b3dda080783f0699420e5a129c",
+                "reference": "f065de63f1c0f3b3dda080783f0699420e5a129c",
                 "shasum": ""
             },
             "require": {
@@ -2177,7 +2177,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-ebook/issues",
-                "source": "https://github.com/kiwilan/php-ebook/tree/v2.3.8"
+                "source": "https://github.com/kiwilan/php-ebook/tree/v2.6.0"
             },
             "funding": [
                 {
@@ -2185,7 +2185,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-06T09:20:15+00:00"
+            "time": "2024-06-23T09:56:05+00:00"
         },
         {
             "name": "kiwilan/php-xml-reader",
@@ -7320,16 +7320,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.29.0",
+            "version": "v1.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec"
+                "reference": "fd22ab50000ef01661e2a31d850ebaa297f8e03c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
-                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fd22ab50000ef01661e2a31d850ebaa297f8e03c",
+                "reference": "fd22ab50000ef01661e2a31d850ebaa297f8e03c",
                 "shasum": ""
             },
             "require": {
@@ -7380,7 +7380,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.29.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.30.0"
             },
             "funding": [
                 {
@@ -7396,7 +7396,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-29T20:11:03+00:00"
+            "time": "2024-06-19T12:30:46+00:00"
         },
         {
             "name": "symfony/polyfill-php83",
