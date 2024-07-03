@@ -43,7 +43,7 @@ class Search
 
         $complexQuery->facetBy('authors,serie,tags');
 
-        $complexQuery->perPage(50);
+        $complexQuery->perPage(16);
         $complexQuery->sortBy('serieIndex:ASC');
         $complexQuery->numTypos(2);
 
