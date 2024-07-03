@@ -16,7 +16,7 @@
     {% set icon='bi-file-binary-fill' %}
 {% endif %}
 <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class="text-decoration-none h5">
-    <i class="bi {{ icon }}"></i> {{ book.title }} -
+    <i class="bi {{ icon }}"></i> {{ book.title }}
 </a><br>
 <span class="small">
 {% for author in book.authors %}

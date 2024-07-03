@@ -39,12 +39,11 @@ class Search
             return [];
         }
 
-        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags,summary');
+        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags,summary,serieIndex');
 
         $complexQuery->facetBy('authors,serie,tags');
 
         $complexQuery->perPage(16);
-        $complexQuery->sortBy('serieIndex:ASC');
         $complexQuery->numTypos(2);
 
         $rawResults = $this->bookFinder->rawQuery($complexQuery)->getRawResults();

@@ -29,7 +29,7 @@ acseo_typesense:
           optional: true
         serieIndex:
           name: serieIndex
-          type: float
+          type: string
           optional: true
         extension:
           name: extension
