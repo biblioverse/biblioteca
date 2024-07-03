@@ -51,5 +51,5 @@ acseo_typesense:
         books_autocomplete:
           finder_parameters:
             query_by: title,serie,extension,authors,tags,summary
-            limit: 200
+            limit: 16
             num_typos: 2
