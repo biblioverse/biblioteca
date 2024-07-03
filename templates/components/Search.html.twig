@@ -16,11 +16,15 @@
             <div class="col-md-9 col-12">
                 <div class="row">
                     <h5> Results</h5>
+                    <ul class="list-group">
+
+
                     {% for book in computed.results.books|default([]) %}
-                        <div class="col-md-3 col-6">
-                            {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
-                        </div>
+                        <li class="list-group-item">
+                            {% include themedTemplate('book/_result.html.twig') with {book: book.book} %}
+                        </li>
                     {% endfor %}
+                    </ul>
                 </div>
             </div>
             <div class="col-md-3 col-12">

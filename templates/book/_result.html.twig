@@ -1,0 +1,32 @@
+{# @var book App\Entity\Book #}
+{% set read = false %}
+{% for interaction in book.bookInteractions|default([]) %}
+    {% if interaction.user.id == app.user.id and interaction.finished %}
+        {% set read = true %}
+    {% endif %}
+{% endfor %}
+
+{% if book.extension in ['epub','mobi'] %}
+    {% set icon='bi-file-text-fill' %}
+{% elseif book.extension=='pdf' %}
+    {% set icon='bi-file-pdf-fill' %}
+{% elseif book.extension in ['cbr','cbz'] %}
+    {% set icon='bi-file-image-fill' %}
+{% else %}
+    {% set icon='bi-file-binary-fill' %}
+{% endif %}
+<a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class="text-decoration-none h5">
+    <i class="bi {{ icon }}"></i> {{ book.title }} -
+</a><br>
+<span class="small">
+{% for author in book.authors %}
+    <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-muted text-decoration-none p-1">
+        <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+    </a>
+{% endfor %}
+
+{% if book.serie %}
+    <i class="bi bi-list-ol"></i> <a href="{{ filter_book_url({'serie':book.serie}) }}" class="text-muted text-decoration-none">
+    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
+</a>
+{% endif %}</span>
