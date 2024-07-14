@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class SyncResponse
 {
-    public const DATE_FORMAT = \DateTimeInterface::RFC3339; // "Y-m-d\TH:i:s\Z";
+    public const DATE_FORMAT = "Y-m-d\TH:i:s\Z";
 
     /** @var array<int, Book> */
     private array $books = [];
@@ -37,20 +37,14 @@ class SyncResponse
 
     public function toJsonResponse(): JsonResponse
     {
-        $data = [
-            'BookEntitlement' => $this->getEntitlements(),
-            'BookMetadata' => $this->getMetaData(),
-            'ReadingState' => $this->getReadingStates(),
-            'NewEntitlement' => $this->getNewEntitlement(),
-            'ChangedEntitlement' => $this->getChangedEntitlement(),
-            'ChangedReadingState' => [
-                'ReadingState' => $this->getChangedReadingState(),
-            ],
-            'NewTags' => $this->getNewTags(),
-        ];
+        $list = [];
+        array_push($list, ...$this->getNewEntitlement());
+        array_push($list, ...$this->getChangedEntitlement());
+        array_push($list, ...$this->getNewTags());
+        array_filter($list);
 
         $response = new JsonResponse();
-        $response->setContent($this->serializer->serialize($data, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
+        $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
 
         return $response;
     }
@@ -152,7 +146,7 @@ class SyncResponse
     }
 
     /**
-     * @return array<int, BookEntitlement>
+     * @return array<int, object>
      */
     private function getChangedEntitlement(): array
     {
@@ -165,33 +159,16 @@ class SyncResponse
             return $book->getUpdated() >= $this->syncToken->lastModified || $book->getUpdated() === null || $book->getCreated() >= $this->syncToken->lastCreated;
         });
 
-        return array_map(fn (Book $book) => $this->createEntitlement($book), $books);
+        return array_map(function (Book $book) {
+            $response = new \stdClass();
+            $response->ChangedEntitlement = $this->createBookEntitlement($book);
+
+            return $response;
+        }, $books);
     }
 
     /**
-     * @return array<int, BookReadingState>
-     */
-    private function getChangedReadingState(): array
-    {
-        if ($this->syncToken->readingStateLastModified === null) {
-            return [];
-        }
-
-        $response = [];
-        foreach ($this->books as $book) {
-            foreach ($book->getBookInteractions() as $interaction) {
-                if ($interaction->getUpdated() !== null && $interaction->getUpdated() <= $this->syncToken->readingStateLastModified) {
-                    continue;
-                }
-                $response[] = $this->createReadingState($book);
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * @return array<int, BookEntitlement>
+     * @return array<int, object>
      */
     private function getNewEntitlement(): array
     {
@@ -200,52 +177,33 @@ class SyncResponse
             return $book->getKoboSyncedBook()->isEmpty();
         });
 
-        return array_map(fn (Book $book) => $this->createEntitlement($book), $books);
-    }
+        return array_map(function (Book $book) {
+            $response = new \stdClass();
+            $response->NewEntitlement = $this->createBookEntitlement($book);
 
-    /**
-     * @return array<int, BookEntitlement>
-     */
-    private function getEntitlements(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<int, BookMetadata>
-     */
-    private function getMetaData(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<int, BookReadingState>
-     */
-    private function getReadingStates(): array
-    {
-        return [];
+            return $response;
+        }, $books);
     }
 
     /**
      * New tags are newly created shelves
-     * @return BookTag[]
+     * @return array<int, object>
      */
     private function getNewTags(): array
     {
-        $response = [];
-        foreach ($this->shelves as $shelf) {
-            $response[] = $this->createBookTagFromShelf($shelf);
-        }
+        return array_map(function (Shelf $shelf) {
+            $response = new \stdClass();
+            $response->NewTag = $this->createBookTagFromShelf($shelf);
 
-        return $response;
+            return $response;
+        }, $this->shelves);
     }
 
     /**
      * @param Shelf $shelf
      * @return BookTag
      */
-    public function createBookTagFromShelf(Shelf $shelf): array
+    private function createBookTagFromShelf(Shelf $shelf): array
     {
         return [
             'Tag' => [
@@ -261,6 +219,15 @@ class SyncResponse
                 'Name' => $shelf->getName(),
                 'Type' => 'UserTag',
             ],
+        ];
+    }
+
+    private function createBookEntitlement(Book $book): array
+    {
+        return [
+            'BookEntitlement' => $this->createEntitlement($book),
+            'BookMetadata' => $this->metadataResponse->fromBook($book, $this->kobo, $this->syncToken),
+            'ReadingState' => $this->createReadingState($book),
         ];
     }
 }

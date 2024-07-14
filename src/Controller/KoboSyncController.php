@@ -48,7 +48,8 @@ class KoboSyncController extends AbstractController
     #[Route('/v1/library/sync', name: 'api_endpoint_v1_library_sync')]
     public function apiEndpoint(Kobo $kobo, SyncToken $syncToken, Request $request): Response
     {
-        if ($kobo->isForceSync() || $request->query->has('force')) {
+        $forced = $kobo->isForceSync() || $request->query->has('force');
+        if ($forced) {
             $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
             $kobo->setForceSync(false);
         }
@@ -67,7 +68,9 @@ class KoboSyncController extends AbstractController
 
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
-        $this->koboSyncedBookRepository->updateSyncedBooks($kobo, $books, $syncToken);
+        if (false === $forced) {
+            $this->koboSyncedBookRepository->updateSyncedBooks($kobo, $books, $syncToken);
+        }
 
         return $httpResponse;
     }
