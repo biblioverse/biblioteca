@@ -7,7 +7,8 @@
             <li>Find a hidden file located at <code>.kobo/Kobo/Kobo eReader.conf</code>.</li>
             <li>Edit the file with a text editor (vs-code, vim, etc).</li>
             <li>
-                Alter the line <code>api_endpoint</code> under the section <code>[OneStoreServices]</code> (or create it if it doesn't exist).
+                Alter the line <code>api_endpoint</code> under the section <code>[OneStoreServices]</code> (or create it if it doesn't exist). <br>
+                You can also edit the <code>image_host</code> and <code>image_url_quality_template</code> entries.
                 <pre>
                     {% apply spaceless -%}
                     <code>
@@ -15,8 +16,12 @@
                         {{- "\n" }}...{{ "" -}}
                     {%  if token is not defined %}
                         {{- "\n" }}api_endpoint={{ app.request.getUriForPath("/kobo/" ~ (token|default("<token>"))~ "/") -}}
+                        {{- "\n" }}image_host={{ app.request.getUriForPath("") -}}
+                        {{- "\n" }}image_url_quality_template={{ app.request.getUriForPath("/kobo/" ~ (token|default("<token>"))~ "/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg") -}}
                     {% else  %}
-                        {{- "\n" }}api_endpoint={{ url('koboapi_endpoint', {'accessKey': token}) -}}
+                        {{- "\n" }}api_endpoint={{ url('koboapi_endpoint', {'accessKey': token})  -}}
+                        {{- "\n" }}image_host={{ app.request.getUriForPath("") -}}
+                        {{- "\n" }}image_url_quality_template={{ url('koboapi_endpoint', {'accessKey': token}) ~ '/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg' -}}
                     {% endif %}
                         {{- "\n"}}...
                     </code>
