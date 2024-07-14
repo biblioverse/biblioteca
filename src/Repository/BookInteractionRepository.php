@@ -27,6 +27,27 @@ class BookInteractionRepository extends ServiceEntityRepository
         $results = $this->createQueryBuilder('b')
             ->andWhere('b.readPages >0')
             ->andWhere('b.finished = false')
+            ->andWhere('b.hidden = false')
+            ->andWhere('b.user = :val')
+            ->setParameter('val', $this->security->getUser())
+            ->orderBy('b.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+        if (!is_array($results)) {
+            return [];
+        }
+
+        return $results;
+    }
+
+    public function getFavourite(): array
+    {
+        $results = $this->createQueryBuilder('b')
+            ->andWhere('b.favorite = true')
+            ->andWhere('b.hidden = false')
+            ->andWhere('b.finished = false')
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
             ->orderBy('b.id', 'ASC')

@@ -84,7 +84,6 @@ final class MenuBuilder
         if ($user->isDisplayTimeline()) {
             $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
         }
-        $menu->addChild('In progress', ['route' => 'app_started', ...$this->defaultAttr])->setExtra('icon', 'battery-half');
 
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 

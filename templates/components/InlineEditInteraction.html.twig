@@ -8,6 +8,14 @@
             {% set finished=true %}
         {% endif %}
     {% endif %}
+
+    {% set hidden=false %}
+    {% if interaction is not null %}
+        {% if interaction.hidden %}
+            {% set hidden=true %}
+        {% endif %}
+    {% endif %}
+
     <button
         data-action="live#action"
         data-live-action-param="toggle"
@@ -33,7 +41,20 @@
         class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
         title="Click to toggle favorite"
     >
-        <i class="bi bi-heart-fill"></i>
+        <i class="bi bi-bookmark-heart"></i>
+        {% if flashMessageFav %}
+            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
+        {% endif %}
+
+    </button>
+
+    <button
+        data-action="live#action"
+        data-live-action-param="toggleHidden"
+        class="btn btn-link btn-sm text-{{ hidden?'success':'secondary' }} text-decoration-none"
+        title="Click to toggle hidden status"
+    >
+        <i class="bi bi-trash-fill"></i>
         {% if flashMessageFav %}
             <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
         {% endif %}

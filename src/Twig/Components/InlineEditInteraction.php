@@ -75,7 +75,7 @@ class InlineEditInteraction extends AbstractController
         $this->entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessage = 'Saved';
+        $this->flashMessage = 'Good Job!';
     }
 
     #[LiveAction]
@@ -106,6 +106,20 @@ class InlineEditInteraction extends AbstractController
         $entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessageFav = 'Saved';
+        $this->flashMessageFav = 'Add to readlist';
+    }
+
+    #[LiveAction]
+    public function toggleHidden(EntityManagerInterface $entityManager): void
+    {
+        $interaction = $this->getInteraction();
+
+        $interaction->setHidden(!$interaction->isHidden());
+
+        $entityManager->persist($interaction);
+        $entityManager->flush();
+        $this->interaction = $interaction;
+
+        $this->flashMessageFav = 'Hidden';
     }
 }

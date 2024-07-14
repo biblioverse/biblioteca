@@ -1,13 +1,105 @@
 {% extends themedTemplate('base.html.twig') %}
 
 {% block title %}
-    Dashboard
+    Hello {{ app.user.username }}!
 {% endblock %}
 
 {% block body %}
+<div class="row ">
+    <div class="col-md-12">
+        {{ component('Search') }}
+    </div>
+</div>
 
-    {{ component('Search') }}
+{% if books|length>0 %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Continue reading</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+        {% for bookInteraction in books %}
+            <div class="col-1">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+            </div>
+            <div class="col-3">
+                <h5>{{ bookInteraction.book.serie }} {{ bookInteraction.book.serieIndex }} {{ bookInteraction.book.title }}</h5>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
+                        {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
+                    </div>
+                </div>
+                <a href="{{ path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages}) }}" class="mt-2 btn btn-sm btn-primary">Continue reading</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Reading list</h3>
+    </div>
+</div>
+<div class="row mb-4">
+    {% if readlist|length>0 %}
+    {% for bookInteraction in readlist %}
+        <div class="col-2">
+            {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+        </div>
+    {% endfor %}
+    {% else %}
+        <div class="col-12 text-muted">
+            Add books to your reading list by clicking the bookmark icon on the book page.
+        </div>
+    {% endif %}
+</div>
+
+{% if series|length >0 %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Series in progress</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+        {% for item in series %}
+            {% if item.booksFinished<item.bookCount %}
+                <div class="col-3 p-2">
+                    {% set params = { serie: item.item } %}
+                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
+                        {{ item.item }}
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{ (item.booksFinished/item.bookCount) *100 }}%">
+                                {{ item.booksFinished }}/{{ item.bookCount }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Need some inspiration?</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+
+    {% for tag in inspiration %}
+        <div class="col-md-6">
+            <h6>{{ tag.item }}</h6>
+            <div class="row">
+                {% for book in tag.books %}
+                    <div class="col-2">
+                        {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 
 {% endblock %}
 

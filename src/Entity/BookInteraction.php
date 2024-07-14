@@ -43,6 +43,9 @@ class BookInteraction
     #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeInterface $updated;
 
+    #[ORM\Column]
+    private bool $hidden = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,5 +129,17 @@ class BookInteraction
     public function setReadPages(?int $readPages): void
     {
         $this->readPages = $readPages;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(bool $hidden): static
+    {
+        $this->hidden = $hidden;
+
+        return $this;
     }
 }

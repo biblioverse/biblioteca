@@ -6,6 +6,13 @@
     {% endif %}
 {% endfor %}
 
+{% set hidden = false %}
+{% for interaction in book.bookInteractions|default([]) %}
+    {% if interaction.user.id == app.user.id and interaction.hidden %}
+        {% set hidden = true %}
+    {% endif %}
+{% endfor %}
+
 {% if book.extension in ['epub','mobi'] %}
     {% set icon='bi-file-text-fill' %}
 {% elseif book.extension=='pdf' %}
@@ -17,7 +24,7 @@
 {% endif %}
 <div class=" m-1 mb-4">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
-    <div class="book"  style="{{ read?'opacity:0.4;' }}">
+    <div class="book"  style="{{ read?'box-shadow:0 0 20px 1px rgba(255,255,255,0.4),0 0 50px 2px rgba(0,255,0,0.4),0 0 100px 3px rgba(0,255,255,0.4);' }}{{ hidden?'opacity:0.3;' }}">
         <div class="book__cover">
             {% if book.imageFilename is not null %}
                 <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}"  alt="{{ book.title }}"/>

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
 use App\Form\BookFilterType;
+use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\FilteredBookUrlGenerator;
 use Knp\Component\Pager\PaginatorInterface;
@@ -16,14 +17,36 @@ class DefaultController extends AbstractController
     use PageFilterFormTrait;
 
     #[Route('/', name: 'app_dashboard')]
-    public function index(BookRepository $bookRepository): Response
+    public function index(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository): Response
     {
         $exts = $bookRepository->countBooks(false);
         $types = $bookRepository->countBooks(true);
 
+        $books = $bookInteractionRepository->getStartedBooks();
+        $readList = $bookInteractionRepository->getFavourite();
+
+        $series = $bookRepository->getStartedSeries()->getResult();
+
+        $tags = $bookRepository->getAllTags();
+
+        $keys = array_rand($tags, 4);
+
+        $inspiration = [];
+        foreach ($keys as $key) {
+            $randomBooks = $bookRepository->findByTag($tags[$key]['item'], 6);
+            $inspiration[] = [
+                ...$tags[$key],
+                'books' => $randomBooks,
+            ];
+        }
+
         return $this->render('default/dashboard.html.twig', [
             'extensions' => $exts,
             'types' => $types,
+            'books' => $books,
+            'readlist' => $readList,
+            'series' => $series,
+            'inspiration' => $inspiration,
         ]);
     }
 
