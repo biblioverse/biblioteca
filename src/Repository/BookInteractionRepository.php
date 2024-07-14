@@ -50,8 +50,7 @@ class BookInteractionRepository extends ServiceEntityRepository
             ->andWhere('b.finished = false')
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('b.created', 'ASC')
             ->getQuery()
             ->getResult()
         ;
