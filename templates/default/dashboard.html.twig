@@ -44,7 +44,7 @@
 <div class="row mb-4">
     {% if readlist|length>0 %}
     {% for bookInteraction in readlist %}
-        <div class="col-2">
+        <div class="col-{{ readlist|length>6?'1':'2' }}">
             {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
         </div>
     {% endfor %}
