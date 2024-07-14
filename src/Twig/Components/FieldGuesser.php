@@ -46,6 +46,18 @@ class FieldGuesser extends AbstractController
         $this->flashMessage = 'Saved';
     }
 
+    #[LiveAction]
+    public function acceptIndexAndRename(EntityManagerInterface $entityManager): void
+    {
+        $this->book->setSerieIndex((float) $this->guessIndex());
+        $title = sprintf('T%02d', $this->guessIndex());
+        $this->book->setTitle($title);
+        $entityManager->flush();
+        $this->dispatchBrowserEvent('manager:flush');
+
+        $this->flashMessage = 'Saved';
+    }
+
     public function guessSerie(): string
     {
         $author = implode($this->book->getAuthors());
@@ -66,7 +78,7 @@ class FieldGuesser extends AbstractController
         }
 
         $matches = [];
-        preg_match('/(T|Volume |Vol. |Tome )([0-9]{1,3})/', $this->book->getTitle(), $matches);
+        preg_match('/(T|Volume |Vol. |Tome | v)([0-9]{1,3})/', $this->book->getTitle(), $matches);
 
         if (count($matches) > 0) {
             return $matches[2];

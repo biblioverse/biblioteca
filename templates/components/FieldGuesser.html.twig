@@ -25,6 +25,14 @@
             {{ 'index'|trans }}: {{ this.guessIndex }}
             <i class="bi bi-check"></i>
         </button>
+        <button
+            data-action="live#action"
+            data-live-action-param="prevent|acceptIndexAndRename"
+            class="btn btn-sm btn-outline-success"
+        >
+            {{ 'index'|trans }}: {{ this.guessIndex }} and rename
+            <i class="bi bi-check"></i>
+        </button>
     </form>
     {% endif %}
 </span>
