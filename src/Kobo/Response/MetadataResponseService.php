@@ -19,12 +19,18 @@ class MetadataResponseService
         $platform = reset($platforms);
         $platform = $platform === false ? 'Generic' : $platform;
 
-        return [
-            'Format' => 'EPUB3FL',
-            'Size' => $this->downloadHelper->getSize($book),
-            'Url' => $this->downloadHelper->getUrlForKobo($book, $kobo),
-            'Platform' => $platform,
-        ];
+        $response = [];
+
+        foreach (['EPUB3'] as $format) { // EPUB3 vs EPUB3FL;
+            $response[] = [
+                'Format' => $format,
+                'Size' => $this->downloadHelper->getSize($book),
+                'Url' => $this->downloadHelper->getUrlForKobo($book, $kobo),
+                'Platform' => $platform,
+            ];
+        }
+
+        return $response;
     }
 
     public function fromBook(Book $book, Kobo $kobo, SyncToken $syncToken): array
