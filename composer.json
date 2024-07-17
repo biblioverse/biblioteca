@@ -48,7 +48,7 @@
         "symfony/mailer": "^6.2",
         "symfony/mime": "^6.2",
         "symfony/monolog-bundle": "^3.0",
-        "symfony/notifier": "^6.2",
+        "symfony/notifier": "^7.1",
         "symfony/process": "^6.2",
         "symfony/property-access": "^6.2",
         "symfony/property-info": "^6.2",
