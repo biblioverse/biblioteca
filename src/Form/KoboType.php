@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
-use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

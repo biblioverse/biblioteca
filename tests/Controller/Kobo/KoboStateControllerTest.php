@@ -86,7 +86,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $state->statusInfo->status = $percent === 100 ? ReadingStateStatusInfo::STATUS_FINISHED : ReadingStateStatusInfo::STATUS_READING;
         $state->statusInfo->lastModified = $state->lastModified;
         $state->statistics = new ReadingStateStatistics();
-        $state->statistics->remainingTimeMinutes = 100 * ($percent/100);
+        $state->statistics->remainingTimeMinutes = (int) (100 * ($percent/100));
         $state->statistics->spentReadingMinutes = 100 - $state->statistics->remainingTimeMinutes;
         $state->statistics->lastModified = $state->lastModified;
 
