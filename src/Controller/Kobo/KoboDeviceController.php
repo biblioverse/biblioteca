@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/user/kobo')]
 class KoboDeviceController extends AbstractController
@@ -54,18 +54,6 @@ class KoboDeviceController extends AbstractController
         return $this->render('kobodevice_user/new.html.twig', [
             'kobo' => $koboDevice,
             'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_kobodevice_user_show', methods: ['GET'])]
-    public function show(KoboDevice $koboDevice): Response
-    {
-        if (!$this->isGranted('VIEW', $koboDevice)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        return $this->render('kobodevice_user/show.html.twig', [
-            'kobo' => $koboDevice,
         ]);
     }
 

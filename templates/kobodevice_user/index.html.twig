@@ -3,10 +3,9 @@
 {% block title %}Kobo index{% endblock %}
 
 {% block body %}
-    <table class="table">
+    <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Name</th>
                 <th>AccessKey</th>
                 <th>actions</th>
@@ -15,15 +14,11 @@
         <tbody>
         {% for kobo in kobos %}
             <tr>
-                <td>{{ kobo.id }}</td>
                 <td>{{ kobo.name }}</td>
                 <td>{{ kobo.accessKey }}</td>
                 <td>
-                    {% if is_granted('VIEW', kobo) %}
-                        <a href="{{ path('app_kobodevice_user_show', {'id': kobo.id}) }}">show</a>
-                    {% endif %}
                     {% if is_granted('EDIT', kobo) %}
-                        <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}">edit</a>
+                        <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}" class="btn btn-primary btn-sm">Edit</a>
                     {% endif %}
                 </td>
             </tr>
@@ -35,7 +30,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_kobodevice_user_new') }}">Create new</a>
+    <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new</a>
 
 
     {{ include('kobodevice_user/instructions.html.twig') }}

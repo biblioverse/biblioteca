@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Entity\User;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -26,15 +28,14 @@ class KoboType extends AbstractType
                 'label' => 'Force Sync',
                 'required' => false,
             ]);
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $builder->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'username',
-            ]);
-        }
         $builder->add('shelves', EntityType::class, [
             'label' => 'Sync with Shelves',
             'class' => Shelf::class,
+            'query_builder' => function (EntityRepository $er): QueryBuilder {
+                return $er->createQueryBuilder('u')
+                    ->setParameter('user', $this->security->getUser())
+                    ->andWhere('u.user = :user');
+            },
             'choice_label' => 'name',
             'multiple' => true,
             'expanded' => true,

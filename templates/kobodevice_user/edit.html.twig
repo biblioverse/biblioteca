@@ -5,8 +5,6 @@
 {% block body %}
     {{ include('kobodevice_user/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_kobodevice_user_index') }}">back to list</a>
-
     <div class="mt-3">
         {{ include('kobodevice_user/_delete_form.html.twig') }}
     </div>
