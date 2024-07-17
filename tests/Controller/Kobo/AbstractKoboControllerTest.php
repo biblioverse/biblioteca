@@ -17,6 +17,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 {
 
     const DEFAULT_BOOK_FOLDER_NAMING_FORMAT = '{authorFirst}/{author}/{title}/{serie}';
+    const DEFAULT_BOOK_FILE_NAMING_FORMAT = '{serie}-{title}';
     protected ?string $accessKey = null;
     protected ?KoboDevice $koboDevice = null;
 
@@ -94,6 +95,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
             self::getContainer()->get(Security::class),
             realpath($resources),
             self::DEFAULT_BOOK_FOLDER_NAMING_FORMAT,
+            self::DEFAULT_BOOK_FILE_NAMING_FORMAT,
             $this->createMock(SluggerInterface::class),
             new NullLogger(),
         ])
