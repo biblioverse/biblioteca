@@ -20,6 +20,6 @@ monolog:
             channels: ["proxy"]
 
         deprecation:
-            type: stream
+            type: rotating_file
             channels: [deprecation]
             path: "%kernel.logs_dir%/deprecation.%kernel.environment%.log"
