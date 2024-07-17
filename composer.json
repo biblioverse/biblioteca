@@ -170,7 +170,7 @@
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^1.1",
         "roave/security-advisories": "dev-latest",
-        "symfony/browser-kit": "^6.2",
+        "symfony/browser-kit": "^7.1",
         "symfony/css-selector": "^7.1",
         "symfony/debug-bundle": "^6.2",
         "symfony/maker-bundle": "^1.0",
