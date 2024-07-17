@@ -24,6 +24,7 @@ class BookFileSystemManager
         private Security $security,
         private string $publicDir,
         private string $bookFolderNamingFormat,
+        private string $bookFileNamingFormat,
         private SluggerInterface $slugger,
         private LoggerInterface $logger)
     {
@@ -234,7 +235,7 @@ class BookFileSystemManager
     {
         $placeholders = $this->getPlaceHolders($book);
 
-        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFolderNamingFormat);
+        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFileNamingFormat);
         $filename = str_replace('/', '', $filename);
 
         return $this->slugger->slug($filename);
