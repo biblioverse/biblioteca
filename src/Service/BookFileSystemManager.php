@@ -2,10 +2,10 @@
 
 namespace App\Service;
 
-use Kiwilan\Ebook\EbookCover;
 use App\Entity\Book;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
+use Kiwilan\Ebook\EbookCover;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Filesystem\Filesystem;

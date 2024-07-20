@@ -35,6 +35,7 @@ class KoboDeviceVoter extends Voter
         if ($subject->getUser() === $user) {
             return true;
         }
+
         return in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 }

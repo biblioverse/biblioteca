@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpFoundation\Request;
 use App\Form\BookFilterType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class FilteredBookUrlGenerator

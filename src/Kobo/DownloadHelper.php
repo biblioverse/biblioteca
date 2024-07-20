@@ -2,13 +2,13 @@
 
 namespace App\Kobo;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Service\BookFileSystemManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
