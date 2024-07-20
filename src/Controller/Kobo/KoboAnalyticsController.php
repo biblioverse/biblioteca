@@ -49,7 +49,7 @@ class KoboAnalyticsController extends AbstractController
     {
         if ($this->koboStoreProxy->isEnabled()) {
             $proxyResponse = $this->koboStoreProxy->proxyOrRedirect($request);
-            if ($proxyResponse->getStatusCode() === 200) {
+            if ($proxyResponse->getStatusCode() === Response::HTTP_OK) {
                 return $proxyResponse;
             }
             $this->logger->debug('Analytics event received with bad status {code}, not proxying it', ['code' => $proxyResponse->getStatusCode()]);

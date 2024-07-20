@@ -2,6 +2,7 @@
 
 namespace App\Kobo;
 
+use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Exception\BookFileNotFound;
@@ -52,8 +53,6 @@ class DownloadHelper
     }
 
     /**
-     * @param Book $book
-     * @return StreamedResponse
      * @throws NotFoundHttpException
      */
     public function getCoverResponse(Book $book, int $width, int $height, bool $grayscale = false, bool $asAttachement = true): StreamedResponse
@@ -64,7 +63,7 @@ class DownloadHelper
         }
         $response = new StreamedResponse(function () use ($coverPath, $width, $height, $grayscale) {
             $this->coverTransformer->streamFile($coverPath, $width, $height, $grayscale);
-        }, 200);
+        }, Response::HTTP_OK);
 
         match ($book->getImageExtension()) {
             'jpg', 'jpeg' => $response->headers->set('Content-Type', 'image/jpeg'),
@@ -95,7 +94,7 @@ class DownloadHelper
         }
         $response = new StreamedResponse(function () use ($bookPath) {
             readfile($bookPath);
-        }, 200);
+        }, Response::HTTP_OK);
 
         $filename = $book->getBookFilename();
         $encodedFilename = rawurlencode($filename);

@@ -415,11 +415,9 @@ class Book
 
     public function removeBookInteraction(BookInteraction $bookInteraction): static
     {
-        if ($this->bookInteractions->removeElement($bookInteraction)) {
-            // set the owning side to null (unless already changed)
-            if ($bookInteraction->getBook() === $this) {
-                $bookInteraction->setBook(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->bookInteractions->removeElement($bookInteraction) && $bookInteraction->getBook() === $this) {
+            $bookInteraction->setBook(null);
         }
 
         return $this;
@@ -540,11 +538,9 @@ class Book
 
     public function removeKoboSyncedBook(KoboSyncedBook $koboSyncedBook): static
     {
-        if ($this->koboSyncedBooks->removeElement($koboSyncedBook)) {
-            // set the owning side to null (unless already changed)
-            if ($koboSyncedBook->getBook() === $this) {
-                $koboSyncedBook->setBook(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->koboSyncedBooks->removeElement($koboSyncedBook) && $koboSyncedBook->getBook() === $this) {
+            $koboSyncedBook->setBook(null);
         }
 
         return $this;

@@ -51,11 +51,7 @@ class InlineEditBook extends AbstractController
     {
         $this->isEditing = true;
         $to_call = 'set'.ucfirst($field);
-        if ($suggestion === 'all') {
-            $value = $this->suggestions[$field];
-        } else {
-            $value = $this->suggestions[$field][$suggestion];
-        }
+        $value = $suggestion === 'all' ? $this->suggestions[$field] : $this->suggestions[$field][$suggestion];
         if (is_callable([$this->book, $to_call])) {
             if ('tags' === $field) {
                 if (is_array($value)) {

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Symfony\Set\SymfonySetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 
 return RectorConfig::configure()
@@ -15,8 +16,14 @@ return RectorConfig::configure()
     ->withRules([
         AddVoidReturnTypeWhereNoReturnRector::class,
     ])
-    ->withConfiguredRule(\Rector\Renaming\Rector\Name\RenameClassRector::class, [
-        \App\Entity\Kobo::class => str_replace("Kobo", "KoboDevice", \App\Entity\Kobo::class),
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true
+    )
+    ->withSets([
+        SymfonySetList::SYMFONY_64,
+        SymfonySetList::SYMFONY_CODE_QUALITY,
+        SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
     ])
     ->withImportNames(true, true, false, true)
     ->withSkip([

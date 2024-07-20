@@ -38,11 +38,7 @@ class BooksExtractCoverCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $bookId = $input->getArgument('book-id');
         $force = $input->getOption('force');
-        if ($bookId === 'all') {
-            $books = $this->bookRepository->findAll();
-        } else {
-            $books = $this->bookRepository->findBy(['id' => $bookId]);
-        }
+        $books = $bookId === 'all' ? $this->bookRepository->findAll() : $this->bookRepository->findBy(['id' => $bookId]);
 
         if (count($books) === 0) {
             $io->error('No books found');

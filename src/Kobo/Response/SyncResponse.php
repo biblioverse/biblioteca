@@ -80,7 +80,6 @@ class SyncResponse
     }
 
     /**
-     * @param Book $book
      * @param bool $removed If the book was removed from the library ?
      * @return BookEntitlement
      */
@@ -105,7 +104,6 @@ class SyncResponse
     }
 
     /**
-     * @param Book $book
      * @return BookReadingState
      */
     private function createReadingState(Book $book): array
@@ -139,11 +137,7 @@ class SyncResponse
     {
         // TODO Rad book interaction to know it.
         foreach ($book->getBookInteractions() as $interaction) {
-            if ($interaction->isFinished()) {
-                return true;
-            }
-
-            return false;
+            return $interaction->isFinished();
         }
 
         return null;
@@ -160,7 +154,7 @@ class SyncResponse
                 return false;
             }
 
-            return $book->getUpdated() >= $this->syncToken->lastModified || $book->getUpdated() === null || $book->getCreated() >= $this->syncToken->lastCreated;
+            return $book->getUpdated() >= $this->syncToken->lastModified || !$book->getUpdated() instanceof \DateTimeInterface || $book->getCreated() >= $this->syncToken->lastCreated;
         });
 
         return array_map(function (Book $book) {
@@ -226,7 +220,6 @@ class SyncResponse
     }
 
     /**
-     * @param Shelf $shelf
      * @return BookTag
      */
     private function createBookTagFromShelf(Shelf $shelf): array

@@ -205,11 +205,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeBookInteraction(BookInteraction $bookInteraction): static
     {
-        if ($this->bookInteractions->removeElement($bookInteraction)) {
-            // set the owning side to null (unless already changed)
-            if ($bookInteraction->getUser() === $this) {
-                $bookInteraction->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->bookInteractions->removeElement($bookInteraction) && $bookInteraction->getUser() === $this) {
+            $bookInteraction->setUser(null);
         }
 
         return $this;

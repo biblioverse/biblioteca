@@ -49,7 +49,7 @@ class InlineEditInteraction extends AbstractController
     private function getInteraction(): BookInteraction
     {
         $interaction = $this->interaction;
-        if (null === $interaction) {
+        if (!$interaction instanceof BookInteraction) {
             $bookInteractionRepo = $this->entityManager->getRepository(BookInteraction::class);
             $interaction = $bookInteractionRepo->findOneBy(['user' => $this->user, 'book' => $this->book]);
             if (null === $interaction) {

@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\KoboDevice;
 use App\Repository\KoboDeviceRepository;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
@@ -21,7 +22,7 @@ class KoboTokenHandler implements AccessTokenHandlerInterface
         }
 
         $koboDevice = $this->repository->byAccessKey($token);
-        if (null === $koboDevice) {
+        if (!$koboDevice instanceof KoboDevice) {
             throw new BadCredentialsException('Invalid credentials.');
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Kobo;
 
+use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
@@ -39,7 +40,7 @@ class KoboStateController extends AbstractController
         $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
 
         // Handle book not found
-        if ($book === null) {
+        if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);
             }

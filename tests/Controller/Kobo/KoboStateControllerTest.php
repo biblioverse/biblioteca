@@ -56,10 +56,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
 
     protected function getBookById(int $id): ?Book
     {
-        $book = $this->getEntityManager()->getRepository(Book::class)->findOneBy(['id' => $id]);
-
-        /** @var Book|null */
-        return $book;
+        return $this->getEntityManager()->getRepository(Book::class)->findOneBy(['id' => $id]);
     }
 
     private function getSerializer(): SerializerInterface

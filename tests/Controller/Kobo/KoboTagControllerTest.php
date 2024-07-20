@@ -30,10 +30,7 @@ class KoboTagControllerTest extends AbstractKoboControllerTest
 
     protected function getShelfByName(string $name): ?Shelf
     {
-        $shelf = $this->getEntityManager()->getRepository(Shelf::class)->findOneBy(['name' => $name]);
-
-        /** @var Shelf|null */
-        return $shelf;
+        return $this->getEntityManager()->getRepository(Shelf::class)->findOneBy(['name' => $name]);
     }
 
 

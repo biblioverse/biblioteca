@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Book;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
@@ -25,7 +26,7 @@ class BookFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->setMethod('GET');
+        $builder->setMethod(Request::METHOD_GET);
 
         $builder->add('title', SearchType::class, [
             'required' => false,
@@ -246,7 +247,7 @@ class BookFilterType extends AbstractType
             'target_callback' => function (QueryBuilder $qb, array $readValue): void {
                 if (in_array('null', $readValue, true)) {
                     $qb->andWhere('book.ageCategory is null');
-                } elseif (count($readValue) > 0) {
+                } elseif ($readValue !== []) {
                     $qb->andWhere($qb->expr()->in('book.ageCategory', ':ageCategory'));
                     $qb->setParameter('ageCategory', $readValue);
                 }
@@ -334,7 +335,7 @@ class BookFilterType extends AbstractType
                     $params = array_filter($params, static function ($param) {
                         return $param->getName() === 'serie0';
                     });
-                    if (count($params) > 0) {
+                    if ($params !== []) {
                         $orderByValue = 'serieIndex';
                     } else {
                         $orderByValue = 'created';

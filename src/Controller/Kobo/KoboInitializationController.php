@@ -37,7 +37,7 @@ class KoboInitializationController extends AbstractController
         $jsonData = $this->getJsonData($request);
 
         // Make sure the response is wrapped in a Resources key
-        if (false === key_exists('Resources', $jsonData)) {
+        if (false === array_key_exists('Resources', $jsonData)) {
             $jsonData = ['Resources' => $jsonData];
         }
 
@@ -63,8 +63,6 @@ class KoboInitializationController extends AbstractController
 
     /**
      * Fetch initial data from Kobo's API, fallback to local configuration if it fails
-     * @param Request $request
-     * @return array
      */
     private function getJsonData(Request $request): array
     {
@@ -80,10 +78,10 @@ class KoboInitializationController extends AbstractController
         try {
             // Load configuration from Kobo
             $jsonResponse = $this->koboStoreProxy->proxyAndFollowRedirects($request, ['stream' => false]);
-            if ($jsonResponse->getStatusCode() === 401) {
+            if ($jsonResponse->getStatusCode() === Response::HTTP_UNAUTHORIZED) {
                 throw new \RuntimeException('Unauthorized request while contacting Kobo API');
             }
-            if ($jsonResponse->getStatusCode() !== 200) {
+            if ($jsonResponse->getStatusCode() !== Response::HTTP_OK) {
                 throw new \RuntimeException('Bad status code');
             }
 

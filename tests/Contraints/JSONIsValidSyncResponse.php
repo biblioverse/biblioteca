@@ -47,9 +47,9 @@ class JSONIsValidSyncResponse extends Constraint
             $type = $this->getType(array_keys($item));
             match($type){
                 "NewEntitlement" => $this->assertNewEntitlement($item['NewEntitlement']),
-                "ChangedTag" => $this->assertChangedTag($item),
-                "NewTag" => $this->assertNewTag($item),
-                "RemovedPublication" => $this->assertRemovedPublication($item),
+                "ChangedTag" => $this->assertChangedTag(),
+                "NewTag" => $this->assertNewTag(),
+                "RemovedPublication" => $this->assertRemovedPublication(),
                 "ChangedEntitlement" => $this->assertChangedEntitlement($item['ChangedEntitlement']),
                 default => throw new \InvalidArgumentException('Unknown type')
             };
@@ -64,19 +64,16 @@ class JSONIsValidSyncResponse extends Constraint
     }
 
 
-    private function assertChangedTag(mixed $item): void
+    private function assertChangedTag(): void
     {
-        
     }
 
-    private function assertNewTag(mixed $item): void
+    private function assertNewTag(): void
     {
-        
     }
 
-    private function assertRemovedPublication(mixed $item): void
+    private function assertRemovedPublication(): void
     {
-        
     }
 
     private function getType(array $keys): string
