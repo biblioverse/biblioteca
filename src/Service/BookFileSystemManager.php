@@ -484,7 +484,6 @@ class BookFileSystemManager
         $ext = end($expl);
 
         $expl = explode('.', $cover);
-        $coverFile = explode('/', $cover);
         $ext = end($expl);
         $book->setImageExtension($ext);
 
