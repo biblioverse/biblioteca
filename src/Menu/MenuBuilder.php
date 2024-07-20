@@ -8,6 +8,7 @@ use App\Service\FilteredBookUrlGenerator;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class MenuBuilder
 {
@@ -19,8 +20,30 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private FilteredBookUrlGenerator $filteredBookUrlGenerator)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private FilteredBookUrlGenerator $filteredBookUrlGenerator, private RequestStack $requestStack)
     {
+    }
+
+    public function isBookRoute(): bool
+    {
+        // Get the current request
+        $currentRequest = $this->requestStack->getCurrentRequest();
+
+        return $currentRequest?->attributes->get('_route') === 'app_book';
+
+        // Continue with the process to extract the route name
+    }
+
+    public function getBookRouteParams(): array
+    {
+        // Get the current request
+        $currentRequest = $this->requestStack->getCurrentRequest();
+
+        return [
+            'slug' => $currentRequest?->attributes->get('slug'),
+            'book' => $currentRequest?->attributes->get('book'),
+        ];
+        // Continue with the process to extract the route name
     }
 
     public function createMainMenu(): ItemInterface
@@ -31,51 +54,61 @@ final class MenuBuilder
             return $menu;
         }
         $menu->setChildrenAttribute('class', 'nav flex-column');
-        $menu->addChild('Home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
+        $books = $menu->addChild('books_divider', ['label' => 'Books'])->setExtra('divider', true);
+
+        $books->addChild('Home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
         if ($user->isDisplayAllBooks()) {
-            $menu->addChild('All Books', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
+            $allBooks = $books->addChild('All Books', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
+
+            if ($this->isBookRoute()) {
+                $params = $this->getBookRouteParams();
+                $allBooks->addChild('book', ['route' => 'app_book', ...$this->defaultAttr, 'routeParameters' => $params])->setDisplay(false);
+            }
         }
         if ($user->isDisplaySeries()) {
-            $menu->addChild('Series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
+            $books->addChild('Series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
         }
         if ($user->isDisplayAuthors()) {
-            $menu->addChild('Authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'people-fill');
+            $books->addChild('Authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'people-fill');
         }
         if ($user->isDisplayTags()) {
-            $menu->addChild('Tags', ['route' => 'app_groups', 'routeParameters' => ['type' => 'tags'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
+            $books->addChild('Tags', ['route' => 'app_groups', 'routeParameters' => ['type' => 'tags'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
         if ($user->isDisplayPublishers()) {
-            $menu->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
+            $books->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
+        $shelves = $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
         if ($user->getShelves()->count() > 0) {
-            $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
                 if ($shelf->getQueryString() !== null) {
-                    $menu->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => $shelf->getQueryString(), ...$this->defaultAttr])
+                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => $shelf->getQueryString(), ...$this->defaultAttr])
                         ->setExtra('icon', 'bookmark-fill');
                 } else {
-                    $menu->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
+                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
                         ->setExtra('icon', 'bookshelf');
                 }
             }
         }
+        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
+        $profile->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+        $profile->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
+        $shelves->addChild('Manage shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'building-fill-gear');
+        if ($user->isDisplayTimeline()) {
+            $profile->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
+        }
+        $profile->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
+
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('admin_divider', ['label' => 'Admin'])->setExtra('divider', true);
-            $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            $menu->addChild('Add Books', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
+            $admin = $menu->addChild('admin_divider', ['label' => 'admin'])->setExtra('divider', true);
+
+            $admin->addChild('User Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+            $admin->addChild('Add Books', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
+            $admin->addChild('Upload', ['route' => 'app_book_upload_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
 
             $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
-            $menu->addChild('Not verified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
+            $admin->addChild('Not verified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
         }
-        $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
-        $menu->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-        $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
-        $menu->addChild('My shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'bookshelf');
-        if ($user->isDisplayTimeline()) {
-            $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
-        }
-        $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         return $menu;
     }

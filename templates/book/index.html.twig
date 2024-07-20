@@ -1,6 +1,6 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
+{% block title %}{{ book.authors|first }} {% if book.serie is not null %} <i class="bi bi-chevron-right mx-2"></i> {{ book.serie }} #{{ book.serieIndex }} {% endif %} <i class="bi bi-chevron-right mx-2"></i> {{ book.title }}{% endblock %}
 
 {% block body %}
     <div class="row">

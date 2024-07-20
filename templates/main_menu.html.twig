@@ -17,10 +17,48 @@
 {% endblock %}
 {% block spanElement %}
     {% import _self as knp_menu %}
+{% endblock %}
 
-    {% if item.extra('divider') %}
-        <h6 class="nav-link mt-2 mb-0 disabled text-uppercase small">
-            <strong class="title">{{ block('label') }}</strong>
-        </h6>
+{% block list %}
+    {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
+        {% import _self as knp_menu %}
+        <ul class="list-unstyled">
+            {{ block('children') }}
+        </ul>
     {% endif %}
+{% endblock %}
+
+{% block children %}
+    {# save current variables #}
+    {% set currentOptions = options %}
+    {% set currentItem = item %}
+    {# update the depth for children #}
+    {% if options.depth is not none %}
+        {% set options = options|merge({'depth': currentOptions.depth - 1}) %}
+    {% endif %}
+    {# update the matchingDepth for children #}
+    {% if options.matchingDepth is not none and options.matchingDepth > 0 %}
+        {% set options = options|merge({'matchingDepth': currentOptions.matchingDepth - 1}) %}
+    {% endif %}
+
+    {% if currentItem.parent is not null %}
+        <div class="p-2 w-100">
+            <div class="card">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#{{ currentItem.name }}">
+                    {{ block('label') }}
+                </div>
+                <div class="card-body collapse {%- if matcher.isAncestor(item) %}show{% endif %}" id="{{ currentItem.name }}">
+    {% endif %}
+            {% for item in currentItem.children %}
+                {{ block('item') }}
+            {% endfor %}
+    {% if currentItem.parent is not null %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# restore current variables #}
+    {% set item = currentItem %}
+    {% set options = currentOptions %}
 {% endblock %}

@@ -1,7 +1,10 @@
 {% extends themedTemplate('bare.html.twig') %}
 {% block content %}
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="{{ path('app_dashboard') }}">Biblioteca</a>
+    <div class="navbar-brand col-12 me-0 px-3 fs-6 text-white">
+        <i class="bi bi-house-fill"></i> <a class="text-white d-inline-block mx-2" href="{{ path('app_dashboard') }}">Biblioteca</a>
+        <i class="bi bi-chevron-right"></i><h1 class="h6 m-2 d-inline-block">{% block title %}{{ 'page'|trans }}{% endblock %}</h1>
+    </div>
 
     <ul class="navbar-nav flex-row d-md-none">
         <li class="nav-item text-nowrap">
@@ -12,22 +15,17 @@
             </button>
         </li>
     </ul>
-    <div id="navbarSearch" class="navbar-search  collapse show d-inline w-100">
-        <a href="{{ path('app_dashboard') }}" class="btn btn-bare text-muted my-2">Search...</a>
-    </div>
 </header>
 
 <nav class="container-fluid">
     <div class="row">
-        <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
-            <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu"
+        <div class="sidebar col-md-3 col-lg-2 p-0">
+            <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu"
                  aria-labelledby="sidebarMenuLabel">
                 <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
 
-                    {{ knp_menu_render('main',{'currentClass':'active'}) }}
-                    <div class="p-2 text-center text-muted w-100">
-                        {{ component('AddNewShelf',{'user':app.user,'shelf':null}) }}
-                    </div>
+                    {{ knp_menu_render('main',{'currentClass':'active','ancestorClass':'active'}) }}
+
                 </div>
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="sidebarMenuLabel">Biblioteca</h5>
@@ -37,10 +35,8 @@
             </div>
         </div>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">{% block title %}{{ 'page'|trans }}{% endblock %}</h1>
-            </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-md-4">
+
             {% for type, messages in app.flashes %}
                 {% for message in messages %}
                     <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">

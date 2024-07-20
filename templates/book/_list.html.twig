@@ -5,23 +5,12 @@
 <table class="table-striped table table-bordered table-hover">
     <tr>
         {# sorting of properties based on query components #}
-        <th style="width:70px">
+        <th style="width:90px">
         </th>
         <th>
             {{ 'title'|trans }}
         </th>
-        <th style="width: 15%">
-            {{ 'author'|trans }}
-        </th>
-        <th style="width: 15%">
-            {{ 'serie'|trans }}
-        </th>
-        <th style="width: 15%">
-            {{ 'index'|trans }}
-        </th>
         <th style="width:90px"></th>
-        <th style="width:35px"></th>
-        <th style="width:35px"></th>
     </tr>
 
     {% for book in pagination %}
@@ -40,7 +29,7 @@
                     <a href="{{ path('app_extractCover', { 'id':book.id }) }}" >Get Cover</a>
                 {% endif %}
             </td>
-            <td colspan="4">
+            <td>
                 <div>
                 {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
                 </div>
@@ -55,24 +44,15 @@
                     {% endif %}
                     {{ component('FieldGuesser',{'book':book}) }}
                 </div>
-                <div>
-                    {{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}
-                </div>
+
             </td>
             <td>
                 {% include themedTemplate('book/_interaction.html.twig') %}
-            </td>
-            <td>
+
                 {% if not book.verified %}
                     {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
                 {% endif %}
             </td>
-            <td>
-                <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
-                    <i class="bi bi-book"></i>
-                </a>
-            </td>
-
         </tr>
     {% endfor %}
 </table>
