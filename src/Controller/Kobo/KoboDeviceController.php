@@ -2,7 +2,6 @@
 
 namespace App\Controller\Kobo;
 
-use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\KoboDevice;
 use App\Entity\User;
 use App\Form\KoboType;
@@ -12,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/user/kobo')]
 class KoboDeviceController extends AbstractController

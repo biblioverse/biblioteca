@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Routing\Attribute\Route;
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
 use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
@@ -11,6 +10,7 @@ use App\Service\FilteredBookUrlGenerator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
