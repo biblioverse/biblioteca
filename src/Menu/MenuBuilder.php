@@ -23,22 +23,15 @@ final class MenuBuilder
     {
     }
 
-    /**
-     * @param array<mixed> $options
-     * @return ItemInterface
-     */
-    public function createMainMenu(array $options): ItemInterface
+    public function createMainMenu(): ItemInterface
     {
         $menu = $this->factory->createItem('root');
         $user = $this->security->getUser();
-
         if (!$user instanceof User) {
             return $menu;
         }
-
         $menu->setChildrenAttribute('class', 'nav flex-column');
         $menu->addChild('Home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
-
         if ($user->isDisplayAllBooks()) {
             $menu->addChild('All Books', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
         }
@@ -54,7 +47,6 @@ final class MenuBuilder
         if ($user->isDisplayPublishers()) {
             $menu->addChild('Publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-
         if ($user->getShelves()->count() > 0) {
             $menu->addChild('shelves_divider', ['label' => 'Shelves'])->setExtra('divider', true);
             foreach ($user->getShelves() as $shelf) {
@@ -68,7 +60,6 @@ final class MenuBuilder
                 }
             }
         }
-
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $menu->addChild('admin_divider', ['label' => 'Admin'])->setExtra('divider', true);
             $menu->addChild('Admin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
@@ -77,7 +68,6 @@ final class MenuBuilder
             $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
             $menu->addChild('Not verified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
         }
-
         $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
         $menu->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
         $menu->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
@@ -85,9 +75,7 @@ final class MenuBuilder
         if ($user->isDisplayTimeline()) {
             $menu->addChild('Timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
         }
-
         $menu->addChild('Logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
-
         return $menu;
     }
 }

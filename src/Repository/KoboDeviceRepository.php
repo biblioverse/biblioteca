@@ -32,12 +32,11 @@ class KoboDeviceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param UserInterface|null $user
      * @return array<int, KoboDevice>
      */
     public function findAllByUser(?UserInterface $user = null): array
     {
-        if ($user === null) {
+        if (!$user instanceof UserInterface) {
             return [];
         }
 

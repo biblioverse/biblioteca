@@ -89,7 +89,7 @@ class BooksTagCommand extends Command
             $result = $d->choices[0]->message->content;
 
             $result = explode("\n", $result);
-            foreach ($result as $key => $value) {
+            foreach ($result as $value) {
                 $tag = trim($value, " \n\r\t\v\0-");
                 $book->addTag($tag);
             }

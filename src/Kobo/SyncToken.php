@@ -64,11 +64,11 @@ class SyncToken
     {
         $max = null;
         foreach ($dates as $date) {
-            if ($date === null) {
+            if (!$date instanceof \DateTimeInterface) {
                 continue;
             }
 
-            if ($max === null || $date > $max) {
+            if (!$max instanceof \DateTimeInterface || $date > $max) {
                 $max = $date;
             }
         }

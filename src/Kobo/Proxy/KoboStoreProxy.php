@@ -63,9 +63,6 @@ class KoboStoreProxy
     }
 
     /**
-     * @param Request $request
-     * @param array $options
-     * @return Response
      * @throws GuzzleException
      */
     public function proxyOrRedirect(Request $request, array $options = []): Response
@@ -73,7 +70,7 @@ class KoboStoreProxy
         $this->assertEnabled();
 
         if ($request->isMethod('GET')) {
-            return new RedirectResponse((string) $this->getTransformedUrl($request), 307);
+            return new RedirectResponse((string) $this->getTransformedUrl($request), Response::HTTP_TEMPORARY_REDIRECT);
         }
 
         return $this->proxy($request, $options);

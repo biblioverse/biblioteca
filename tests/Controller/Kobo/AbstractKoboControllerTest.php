@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Kobo;
 
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
@@ -38,10 +39,10 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     public function getKoboDevice(bool $refresh = false): KoboDevice
     {
-        if($refresh && $this->koboDevice !== null){
+        if($refresh && $this->koboDevice instanceof KoboDevice){
             $this->getEntityManager()->refresh($this->koboDevice);
         }
-        if($this->koboDevice === null) {
+        if(!$this->koboDevice instanceof KoboDevice) {
             throw new \RuntimeException('Kobo not initialized');
         }
         return $this->koboDevice;
@@ -58,7 +59,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
      */
     protected static function getJsonResponse(): array
     {
-        if (null === self::getClient()) {
+        if (!self::getClient() instanceof AbstractBrowser) {
             static::fail('A client must be initialized to make assertions');
         }
 

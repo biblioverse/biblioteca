@@ -17,8 +17,6 @@ class KoboProxyLogger
 
     /**
      * Called when the middleware is handled by the client.
-     *
-     * @param callable $handler
      */
     public function __invoke(callable $handler): \Closure
     {
@@ -32,8 +30,6 @@ class KoboProxyLogger
 
     /**
      * Returns a function which is handled when a request was successful.
-     *
-     * @param RequestInterface $request
      */
     protected function onSuccess(RequestInterface $request): \Closure
     {
@@ -46,8 +42,6 @@ class KoboProxyLogger
 
     /**
      * Returns a function which is handled when a request was rejected.
-     *
-     * @param RequestInterface $request
      */
     protected function onFailure(RequestInterface $request): \Closure
     {
@@ -66,7 +60,7 @@ class KoboProxyLogger
             'token_hash' => md5($this->accessToken),
         ]);
 
-        if ($error !== null) {
+        if ($error instanceof \Throwable) {
             $this->logger->error('Proxy error: '.$error->getMessage(), [
                 'exception' => $error,
                 'token_hash' => md5($this->accessToken),

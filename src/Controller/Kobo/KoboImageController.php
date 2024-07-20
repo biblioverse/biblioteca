@@ -2,6 +2,7 @@
 
 namespace App\Controller\Kobo;
 
+use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Proxy\KoboProxyConfiguration;
@@ -46,12 +47,12 @@ class KoboImageController extends AbstractController
     {
         $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);
         $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
-        if ($book === null) {
+        if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);
             }
 
-            return new JsonResponse(['error' => 'not found'], 404);
+            return new JsonResponse(['error' => 'not found'], Response::HTTP_NOT_FOUND);
         }
 
         $asAttachment = str_contains((string) $request->headers->get('User-Agent'), 'Kobo');

@@ -23,7 +23,6 @@ class JSONContainKeys extends Constraint
      * Validate the constraint and throw an exception for the first invalid value encountered.
      * The exception message complete "failing asserting that...".
      * @param array|mixed $other
-     * @return void
      */
     public function test($other): void
     {

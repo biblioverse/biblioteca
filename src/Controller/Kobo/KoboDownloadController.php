@@ -35,7 +35,7 @@ class KoboDownloadController extends AbstractController
     private function assertCanDownload(KoboDevice $kobo, Book $book): void
     {
         // TODO Check permissions with is_granted and a dedicated voter ?
-        if (null === $this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $kobo)) {
+        if (!$this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $kobo) instanceof Book) {
             throw new AccessDeniedException('You are not allowed to download this book');
         }
     }

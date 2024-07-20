@@ -38,7 +38,7 @@ class AddNewShelf extends AbstractController
     #[LiveAction]
     public function activateEditing(): void
     {
-        if (null === $this->shelf) {
+        if (!$this->shelf instanceof Shelf) {
             $this->shelf = new Shelf();
         }
         $this->isEditing = true;
@@ -47,7 +47,7 @@ class AddNewShelf extends AbstractController
     #[LiveAction]
     public function save(EntityManagerInterface $entityManager): void
     {
-        if (null === $this->shelf) {
+        if (!$this->shelf instanceof Shelf) {
             $this->shelf = new Shelf();
         }
 
@@ -69,7 +69,7 @@ class AddNewShelf extends AbstractController
     #[LiveAction]
     public function saveFilters(EntityManagerInterface $entityManager): void
     {
-        if (null === $this->shelf) {
+        if (!$this->shelf instanceof Shelf) {
             $this->shelf = new Shelf();
         }
 

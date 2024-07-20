@@ -47,9 +47,6 @@ class KoboDevice
     #[ORM\OneToMany(mappedBy: 'koboDevice', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
-    /**
-     * @var bool
-     */
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $forceSync = false;
 
@@ -107,7 +104,6 @@ class KoboDevice
 
     /**
      * @param Collection<int, Shelf> $collection
-     * @return void
      */
     public function setShelves(Collection $collection): void
     {
@@ -142,11 +138,9 @@ class KoboDevice
 
     public function removeKoboSyncedBook(KoboSyncedBook $koboSyncedBook): static
     {
-        if ($this->koboSyncedBooks->removeElement($koboSyncedBook)) {
-            // set the owning side to null (unless already changed)
-            if ($koboSyncedBook->getKoboDevice() === $this) {
-                $koboSyncedBook->setKoboDevice(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->koboSyncedBooks->removeElement($koboSyncedBook) && $koboSyncedBook->getKoboDevice() === $this) {
+            $koboSyncedBook->setKoboDevice(null);
         }
 
         return $this;

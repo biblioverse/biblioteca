@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\Routing\Attribute\Route;
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
 use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
@@ -10,7 +11,6 @@ use App\Service\FilteredBookUrlGenerator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
@@ -81,18 +81,10 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]
-    public function timeline(?string $type, ?string $year, Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
+    public function timeline(?string $type, ?string $year, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
     {
-        if ($type === null) {
-            $redirectType = 'all';
-        } else {
-            $redirectType = $type;
-        }
-        if ($year === null) {
-            $redirectYear = date('Y');
-        } else {
-            $redirectYear = $year;
-        }
+        $redirectType = $type === null ? 'all' : $type;
+        $redirectYear = $year === null ? date('Y') : $year;
         if ($redirectYear !== $year || $redirectType !== $type) {
             return $this->redirectToRoute('app_timeline', ['type' => $redirectType, 'year' => $redirectYear]);
         }

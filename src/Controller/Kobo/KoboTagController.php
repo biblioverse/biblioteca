@@ -47,7 +47,7 @@ class KoboTagController extends AbstractController
 
         try {
             $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
-            if (null === $shelf) {
+            if (!$shelf instanceof Shelf) {
                 throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $tagId));
             }
         } catch (NonUniqueResultException $e) {
@@ -81,33 +81,33 @@ class KoboTagController extends AbstractController
         $shelf = $this->findShelfByNameOrTagId($kobo, $name, $tagId);
 
         if ($request->isMethod('DELETE')) {
-            if ($shelf !== null) {
+            if ($shelf instanceof Shelf) {
                 $this->logger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
                 $shelf->removeKoboDevice($kobo);
                 $this->shelfRepository->flush();
 
-                return new JsonResponse(['deleted'], 200);
+                return new JsonResponse(['deleted'], Response::HTTP_OK);
             }
             if ($this->koboStoreProxy->isEnabled()) {
                 $this->logger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
 
                 $proxyResponse = $this->koboStoreProxy->proxy($request);
-                if ($proxyResponse->getStatusCode() === 404) {
-                    return new JsonResponse(['unable to delete tag, skipped.'], 200);
+                if ($proxyResponse->getStatusCode() === Response::HTTP_NOT_FOUND) {
+                    return new JsonResponse(['unable to delete tag, skipped.'], Response::HTTP_OK);
                 }
 
                 return $proxyResponse;
             }
         }
 
-        if (null === $shelf) {
+        if (!$shelf instanceof Shelf) {
             throw new NotFoundHttpException(sprintf('Shelf %s not found', $name ?? $tagId));
         }
 
         // TODO Add items to shelf
         // $data["Items"];
 
-        return new JsonResponse($shelf->getId(), 201);
+        return new JsonResponse($shelf->getId(), Response::HTTP_CREATED);
     }
 
     private function findShelfByNameOrTagId(KoboDevice $kobo, ?string $name, ?string $tagId): ?Shelf

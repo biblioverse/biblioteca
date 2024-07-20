@@ -47,7 +47,7 @@ class BookManager
             }
         }
 
-        if (0 === count($book->getAuthors())) {
+        if ([] === $book->getAuthors()) {
             $book->addAuthor('unknown');
         }
 
@@ -66,8 +66,6 @@ class BookManager
 
         $book->setBookPath('');
         $book->setBookFilename('');
-
-        $extractedMetadata = null;
 
         return $this->updateBookLocation($book, $file);
     }
@@ -98,7 +96,7 @@ class BookManager
             }
 
             $ebook = Ebook::read($file->getRealPath());
-            if (null === $ebook) {
+            if (!$ebook instanceof Ebook) {
                 throw new \RuntimeException('Could not read ebook');
             }
         } catch (\Exception $e) {
@@ -119,7 +117,7 @@ class BookManager
             ];
         }
 
-        $data = [
+        return [
             'title' => $ebook->getTitle() ?? $file->getBasename('.'.$file->getExtension()), // string
             'authors' => $ebook->getAuthors(), // BookAuthor[] (`name`: string, `role`: string)
             'main_author' => $ebook->getAuthorMain(), // ?BookAuthor => First BookAuthor (`name`: string, `role`: string)
@@ -132,17 +130,14 @@ class BookManager
             'serie_index' => $ebook->getVolume(), // ?int => `calibre:series_index` in EPUB, `number` in CBA
             'cover' => $ebook->getCover(), //  ?EbookCover => cover of book
         ];
-        $ebook = null;
-
-        return $data;
     }
 
     public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null): void
     {
-        if ($output === null) {
+        if (!$output instanceof OutputInterface) {
             $output = new NullOutput();
         }
-        if ($input === null) {
+        if (!$input instanceof InputInterface) {
             $input = new StringInput('');
         }
         $io = new SymfonyStyle($input, $output);
@@ -186,12 +181,6 @@ class BookManager
         $checksum = $this->fileSystemManager->getFileChecksum($file);
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
-        if (null === $book) {
-            $book = $this->createBook($file);
-        } else {
-            $book = $this->updateBookLocation($book, $file);
-        }
-
-        return $book;
+        return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
     }
 }

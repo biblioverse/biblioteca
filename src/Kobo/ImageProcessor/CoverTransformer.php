@@ -10,10 +10,6 @@ class CoverTransformer
     public const JPEG = '.jpeg';
     public const WEBP = '.wepb';
 
-    public function __construct()
-    {
-    }
-
     private function fallback(string $coverPath): void
     {
         readfile($coverPath);

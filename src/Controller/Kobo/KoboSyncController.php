@@ -45,7 +45,6 @@ class KoboSyncController extends AbstractController
      * Kobo will call this url multiple times if there are more book to sync (x-kobo-sync: continue)
      * @param KoboDevice $kobo The kobo entity is retrieved via the accessKey in the url
      * @param SyncToken $syncToken It's provided from HTTP Headers + Get parameters, see SyncTokenParamConverter and    KoboSyncTokenExtractor
-     * @return Response
      **/
     #[Route('/v1/library/sync', name: 'api_endpoint_v1_library_sync')]
     public function apiEndpoint(KoboDevice $kobo, SyncToken $syncToken, Request $request): Response
@@ -93,7 +92,7 @@ class KoboSyncController extends AbstractController
     #[Route('/v1/library/{uuid}/metadata', name: 'api_endpoint_v1_library_metadata')]
     public function metadataEndpoint(KoboDevice $kobo, ?Book $book, Request $request): Response
     {
-        if ($book === null) {
+        if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);
             }

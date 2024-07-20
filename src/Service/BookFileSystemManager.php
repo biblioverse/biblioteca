@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Kiwilan\Ebook\EbookCover;
 use App\Entity\Book;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
@@ -28,7 +29,7 @@ class BookFileSystemManager
         private SluggerInterface $slugger,
         private LoggerInterface $logger)
     {
-        if ($this->bookFolderNamingFormat == '') {
+        if ($this->bookFolderNamingFormat === '') {
             throw new \RuntimeException('Could not get filename format');
         }
     }
@@ -117,7 +118,7 @@ class BookFileSystemManager
     {
         $cover = $this->getCoverFilename($book);
 
-        return !($cover === null) && file_exists($cover);
+        return $cover !== null && file_exists($cover);
     }
 
     /**
@@ -131,7 +132,7 @@ class BookFileSystemManager
         $finder->files()->name($filename)->in($this->getBooksDirectory().$book->getBookPath());
         $return = iterator_to_array($finder->getIterator());
 
-        if (0 === count($return)) {
+        if ([] === $return) {
             throw new \RuntimeException('Book file not found '.$book->getBookPath().$book->getBookFilename());
         }
 
@@ -150,7 +151,7 @@ class BookFileSystemManager
         $finder = new Finder();
         $finder->files()->name($book->getImageFilename())->in($this->getCoverDirectory().$book->getImagePath());
         $return = iterator_to_array($finder->getIterator());
-        if (0 === count($return)) {
+        if ([] === $return) {
             throw new \RuntimeException('Cover file not found:'.$this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename());
         }
 
@@ -290,7 +291,7 @@ class BookFileSystemManager
         $empty = true;
 
         $files = glob($path.DIRECTORY_SEPARATOR.'{,.}[!.,!..]*', GLOB_MARK | GLOB_BRACE);
-        if (false !== $files && count($files) > 0) {
+        if (false !== $files && $files !== []) {
             foreach ($files as $file) {
                 if (is_dir($file)) {
                     if (!$this->removeEmptySubFolders($file)) {
@@ -357,12 +358,12 @@ class BookFileSystemManager
         switch ($book->getExtension()) {
             case 'epub':
                 $ebook = Ebook::read($bookFile->getRealPath());
-                if ($ebook === null) {
+                if (!$ebook instanceof Ebook) {
                     break;
                 }
                 $cover = $ebook->getCover();
 
-                if ($cover === null || $cover->getPath() === null) {
+                if (!$cover instanceof EbookCover || $cover->getPath() === null) {
                     break;
                 }
                 $coverContent = $cover->getContent();
@@ -473,7 +474,7 @@ class BookFileSystemManager
 
             return false;
         }));
-        if (count($entries) === 0) {
+        if ($entries === []) {
             $this->logger->error('no errors');
 
             return $book;
@@ -484,7 +485,6 @@ class BookFileSystemManager
 
         $expl = explode('.', $cover);
         $coverFile = explode('/', $cover);
-        $coverFile = end($coverFile);
         $ext = end($expl);
         $book->setImageExtension($ext);
 
@@ -506,7 +506,7 @@ class BookFileSystemManager
             $file = new \SplFileInfo('/tmp/cover/cover.'.$ext);
         }
 
-        if ($file === null) {
+        if (!$file instanceof \SplFileInfo) {
             return $book;
         }
 
@@ -547,7 +547,7 @@ class BookFileSystemManager
         }
         sort($entries);
 
-        if (count($entries) === 0) {
+        if ($entries === []) {
             return $book;
         }
 
@@ -667,7 +667,7 @@ class BookFileSystemManager
 
             return false;
         }));
-        if (count($entries) === 0) {
+        if ($entries === []) {
             $this->logger->error('no errors');
 
             return [];
@@ -725,7 +725,7 @@ class BookFileSystemManager
         }
         sort($entries);
 
-        if (count($entries) === 0) {
+        if ($entries === []) {
             return [];
         }
 
@@ -786,7 +786,6 @@ class BookFileSystemManager
 
     /**
      * @param array<int, UploadedFile> $files
-     * @return void
      */
     public function uploadFilesToConsumeDirectory(array $files): void
     {
@@ -798,7 +797,6 @@ class BookFileSystemManager
 
     /**
      * @param array{0: string, 1: string, 2: string} $paths
-     * @return string
      */
     private function handlePath(array $paths): string
     {

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Kobo;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\KoboDevice;
 use App\Entity\User;
 use App\Form\KoboType;
@@ -18,7 +19,7 @@ class KoboDeviceController extends AbstractController
     #[Route('/', name: 'app_kobodevice_user_index', methods: ['GET'])]
     public function index(KoboDeviceRepository $koboDeviceRepository): Response
     {
-        if ($this->getUser() === null) {
+        if (!$this->getUser() instanceof UserInterface) {
             throw $this->createAccessDeniedException();
         }
 

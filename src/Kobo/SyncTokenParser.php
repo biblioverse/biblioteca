@@ -21,18 +21,18 @@ class SyncTokenParser
         $token = new SyncToken();
         $token->version = $infos['version'] ?? $token->version;
 
-        $token->lastModified = self::timeStampStringToDate($data['books_last_modified'] ?? null);
-        $token->lastCreated = self::timeStampStringToDate($data['books_last_created'] ?? null);
-        $token->archiveLastModified = self::timeStampStringToDate($data['archive_last_modified'] ?? null);
-        $token->readingStateLastModified = self::timeStampStringToDate($data['reading_state_last_modified'] ?? null);
-        $token->tagLastModified = self::timeStampStringToDate($data['tags_last_modified'] ?? null);
+        $token->lastModified = $this->timeStampStringToDate($data['books_last_modified'] ?? null);
+        $token->lastCreated = $this->timeStampStringToDate($data['books_last_created'] ?? null);
+        $token->archiveLastModified = $this->timeStampStringToDate($data['archive_last_modified'] ?? null);
+        $token->readingStateLastModified = $this->timeStampStringToDate($data['reading_state_last_modified'] ?? null);
+        $token->tagLastModified = $this->timeStampStringToDate($data['tags_last_modified'] ?? null);
         $token->rawKoboStoreToken = (string) ($data['raw_kobo_store_token'] ?? null);
         $token->rawKoboStoreToken = trim($token->rawKoboStoreToken) === '' ? null : $token->rawKoboStoreToken;
 
         return $token;
     }
 
-    private static function timeStampStringToDate(?string $timeStamp): ?\DateTimeInterface
+    private function timeStampStringToDate(?string $timeStamp): ?\DateTimeInterface
     {
         if ($timeStamp === null || trim($timeStamp) === '') {
             return null;
@@ -46,7 +46,7 @@ class SyncTokenParser
 
     public function encode(SyncToken $token): string
     {
-        $data = base64_encode(json_encode(['data' => [
+        return base64_encode(json_encode(['data' => [
             'books_last_modified' => $token->lastModified?->getTimestamp(),
             'books_last_created' => $token->lastCreated?->getTimestamp(),
             'archive_last_modified' => $token->archiveLastModified?->getTimestamp(),
@@ -54,8 +54,6 @@ class SyncTokenParser
             'tags_last_modified' => $token->tagLastModified?->getTimestamp(),
             'raw_kobo_store_token' => $token->rawKoboStoreToken,
         ], 'version' => $token->version], JSON_THROW_ON_ERROR));
-
-        return $data;
     }
 
     public function decodeFiltersFromGetParameters(Request $request, SyncToken $syncToken): void

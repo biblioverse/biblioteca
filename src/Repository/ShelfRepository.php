@@ -83,8 +83,6 @@ class ShelfRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param KoboDevice $koboDevice
-     * @param SyncToken $syncToken
      * @return array<Shelf>
      */
     public function getShelvesToSync(KoboDevice $koboDevice, SyncToken $syncToken): array
@@ -95,7 +93,7 @@ class ShelfRepository extends ServiceEntityRepository
             ->where('koboDevice.id = :id')
             ->setParameter('id', $koboDevice->getId());
 
-        if ($syncToken->tagLastModified !== null) {
+        if ($syncToken->tagLastModified instanceof \DateTimeInterface) {
             $qb->andWhere($qb->expr()->orX(
                 'shelf.updated > :tagLastModified',
                 'shelf.created > :tagLastModified'

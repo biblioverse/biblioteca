@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class BookController extends AbstractController
 {
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Request $request, Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManager $fileSystemManager): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManager $fileSystemManager): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -34,7 +34,7 @@ class BookController extends AbstractController
             ->setAction($this->generateUrl('app_book_delete', [
                 'id' => $book->getId(),
             ]))
-            ->setMethod('POST')
+            ->setMethod(Request::METHOD_POST)
             ->add('delete', SubmitType::class, [
                 'label' => 'Delete',
                 'attr' => [
@@ -57,7 +57,7 @@ class BookController extends AbstractController
             }
             $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));
 
-            if (count($keys) > 0) {
+            if ($keys !== []) {
                 $serieMax = max($keys);
             }
         }
@@ -211,7 +211,7 @@ class BookController extends AbstractController
     public function upload(Request $request, BookFileSystemManager $fileSystemManager): Response
     {
         $form = $this->createFormBuilder()
-            ->setMethod('POST')
+            ->setMethod(Request::METHOD_POST)
             ->add('file', FileType::class, [
                 'label' => 'Book',
                 'required' => false,

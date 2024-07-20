@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Form\BookFilterType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -52,7 +53,7 @@ class FilteredBookUrlGenerator
     public function getParametersArrayForCurrent(bool $onlyModified = false): array
     {
         $request = $this->request->getMainRequest();
-        if ($request === null) {
+        if (!$request instanceof Request) {
             return self::FIELDS_DEFAULT_VALUE;
         }
         $params = [];
@@ -67,7 +68,7 @@ class FilteredBookUrlGenerator
                 }
             }
 
-            if ($onlyModified === true && $value === self::FIELDS_DEFAULT_VALUE[$key]) {
+            if ($onlyModified && $value === self::FIELDS_DEFAULT_VALUE[$key]) {
                 continue;
             }
             $params[$key] = $value;

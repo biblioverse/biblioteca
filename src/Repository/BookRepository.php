@@ -170,7 +170,7 @@ class BookRepository extends ServiceEntityRepository
 
         $items = array_filter($results, static fn ($result) => $result->getId() !== $book->getId() && ($result->getSerie() === null || $book->getSerie() !== $result->getSerie()));
 
-        if (count($items) === 0) {
+        if ($items === []) {
             return [];
         }
 
@@ -274,8 +274,6 @@ class BookRepository extends ServiceEntityRepository
      */
     public function getAllAuthors(): array
     {
-        /** @var GroupType[] $results */
-        $results = [];
         $qb = $this->createQueryBuilder('author')
             ->select('author.authors as item')
             ->addSelect('COUNT(author.id) as bookCount')
@@ -343,8 +341,6 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param KoboDevice $kobo
-     * @param SyncToken $syncToken
      * @return array<int, Book>
      */
     public function getChangedBooks(KoboDevice $kobo, SyncToken $syncToken, int $firstResult, int $maxResults): array
@@ -381,7 +377,7 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('koboDevice', $koboDevice)
             ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
 
-        if ($syncToken->lastCreated !== null) {
+        if ($syncToken->lastCreated instanceof \DateTimeInterface) {
             $qb->andWhere('book.created > :lastCreated');
             $qb->orWhere($qb->expr()->orX(
                 $qb->expr()->isNull('koboSyncedBooks.created is null'),
@@ -390,7 +386,7 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('lastCreated', $syncToken->lastCreated);
         }
 
-        if ($syncToken->lastModified !== null) {
+        if ($syncToken->lastModified instanceof \DateTimeInterface) {
             $qb->andWhere($qb->expr()->orX(
                 'book.updated > :lastModified',
                 'book.created  > :lastModified',
