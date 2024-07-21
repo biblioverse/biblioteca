@@ -26,6 +26,12 @@ class UserType extends AbstractType
             ])
             ->add('birthday', BirthdayType::class, ['widget' => 'single_text'])
             ->add('maxAgeCategory', ChoiceType::class, ['choices' => User::AGE_CATEGORIES])
+            ->add('language', ChoiceType::class, [
+                'choices' => [
+                    'English' => 'en',
+                    'French' => 'fr',
+                ],
+            ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'required' => false,

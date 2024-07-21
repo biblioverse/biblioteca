@@ -104,3 +104,6 @@ services:
       tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 130 }
 
+    App\EventListener\LanguageListener:
+        tags:
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 101 }

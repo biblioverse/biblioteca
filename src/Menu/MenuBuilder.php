@@ -91,7 +91,11 @@ final class MenuBuilder
             }
         }
         $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
-        $profile->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+
+        if ($user->isUseKoboDevices()) {
+            $profile->addChild('Kobo Devices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+        }
+
         $profile->addChild('My profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $shelves->addChild('Manage shelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'building-fill-gear');
         if ($user->isDisplayTimeline()) {

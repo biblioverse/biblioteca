@@ -8,6 +8,7 @@
             <tr>
                 <th>Username</th>
                 <th>Roles</th>
+                <th>Last Login</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,11 @@
                 </td>
                 <td>
                     <small>{{ user.roles|join(', ') }}</small>
+                </td>
+                <td>
+                    {% if user.lastLogin is not null %}
+                    {{ user.lastLogin|date('Y-m-d H:i') }}
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

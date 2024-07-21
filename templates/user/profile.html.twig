@@ -1,7 +1,53 @@
 {% extends themedTemplate('base.html.twig') %}
 
 {% block body %}
-    {{ form(form) }}
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            {{ form_start(form) }}
+
+            <div class="card m-2">
+                <div class="card-header">
+                    User information
+                </div>
+                <div class="card-body">
+                    {{ form_row(form.plainPassword) }}
+                    {{ form_row(form.language) }}
+                </div>
+            </div>
+            <div class="card m-2">
+                <div class="card-header">
+                    Customize
+                </div>
+                <div class="card-body">
+                    {{ form_row(form.displaySeries) }}
+                    {{ form_row(form.displayAuthors) }}
+                    {{ form_row(form.displayTags) }}
+                    {{ form_row(form.displayPublishers) }}
+                    {{ form_row(form.displayTimeline) }}
+                    {{ form_row(form.displayAllBooks) }}
+                    {{ form_row(form.useKoboDevices) }}
+                    {{ form_row(form.theme) }}
+                </div>
+            </div>
+            <div class="card m-2">
+                <div class="card-header">
+                    ChatGPT Features
+                </div>
+                <div class="card-body">
+                    {{ form_row(form.openAIKey) }}
+                    {{ form_row(form.bookKeywordPrompt) }}
+                    {{ form_row(form.bookSummaryPrompt) }}
+                </div>
+            </div>
+        </div>
+        {{ form_rest(form) }}
+        {{ form_end(form) }}
+
+    </div>
+
+
+
 {% endblock %}
 
 {% block title %}
