@@ -45,20 +45,18 @@ class ProfileType extends AbstractType
             ])
             ->add('openAIKey', null, [
                 'label' => 'OpenAI Key',
-                'help' => 'This is the key that will be used to connect to the OpenAI API. You can get one by signing up at <a href="https://platform.openai.com/signup" target="_blank">OpenAI</a>',
+                'help' => 'openai.help',
                 'help_html' => true,
             ])
             ->add('bookKeywordPrompt', null, [
                 'label' => 'Book Keyword Prompt',
                 'help_html' => true,
-                'help' => 'This is the prompt that will be used to generate keywords for books. It should be a short sentence or phrase. Here is a good starting example: <br>
-<code>Can you give 5 classifying keywords about the book {book} in a list without explanation in french</code>',
+                'help' => 'openai.bookprompt.help',
             ])
             ->add('bookSummaryPrompt', null, [
                 'label' => 'Book Summary Prompt',
                 'help_html' => true,
-                'help' => 'This is the prompt that will be used to generate a summary for books. It should be a short sentence or phrase. Here is a good starting example: <br>
-<code>Can you make a factual summary of the book {book} in around 150 words in french</code>',
+                'help' => 'openai.summaryprompt.help',
             ])
             ->add('theme', ChoiceType::class, [
                 'label' => 'Theme',

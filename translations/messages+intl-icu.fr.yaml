@@ -1,4 +1,4 @@
-missing.book: Livre manquant
+missing.book: 'Livre manquant'
 title: Titre
 author: Auteur
 serie: Serie
@@ -6,7 +6,7 @@ index: Index
 books: Livres
 download: Télécharger
 picture.for: 'Image de '
-no.picture.for: 'Pas d''image pour '
+no.picture.for: "Pas d'image pour "
 authors: Auteurs
 summary: Descriptions
 publisher: Edition
@@ -27,7 +27,124 @@ rename: Renommer
 upload: Téléverser
 page: Page
 search: Recherche
-upload.cover: Téléverser la couverture
-books.in.serie: Livres dans la série
-books.same.index: Livres avec le même numéro
-books.same.author: Livres du même auteur
+upload.cover: 'Téléverser la couverture'
+books.in.serie: 'Livres dans la série'
+books.same.index: 'Livres avec le même numéro'
+books.same.author: 'Livres du même auteur'
+'Read state': 'Etat de lecture'
+Age: Âge
+reading.list: 'Liste de lecture'
+add_to_favorites: 'Ajoutez des livres à votre liste de lecture en utilisant le bouton signet sur la page du livre.'
+series_in_progress: 'Séries en cours'
+need_inspiration: 'Besoin d''inspiration?'
+continue.reading: 'Continuer à lire'
+hello: Salut
+menu.home: 'Accueil'
+menu.books: 'Livres'
+menu.authors: 'Auteurs'
+menu.series: 'Séries'
+menu.tags: 'Etiquettes'
+menu.shelves: 'Etagères'
+menu.allbooks: 'Tous les livres'
+menu.admin: 'Administration'
+menu.addbooks: 'Ajouter des livres'
+menu.useradmin: 'Gérer les utilisateurs'
+menu.upload: 'Téléverser'
+menu.notverified: 'Livres à vérifier'
+menu.profile: 'Mon profil'
+menu.logout: 'Déconnexion'
+menu.timeline: 'Mon historique des lectures'
+menu.kobodevices: 'Appareils Kobo'
+menu.editshelves: 'Gérer étagères'
+
+"filter.title": "Par titre"
+"filter.serie": "Par série"
+"filter.authors": "Par auteurs"
+"filter.authornot": "Exclure les auteurs"
+"filter.tags": "Par tags"
+"filter.picture": "Couverture"
+"filter.picture.any": "Tousany"
+"filter.picture.yes": "Avec"
+"filter.picture.no": "Sans"
+"filter.favorite": "Liste de lecture"
+"filter.favorite.any": "Tous"
+"filter.favorite.yes": "Oui"
+"filter.favorite.no": "Non"
+"filter.verified": "Vérifié"
+"filter.verified.any": "Tous"
+"filter.verified.yes": "Oui"
+"filter.verified.no": "Non"
+"filter.read": "Lecture"
+"filter.read.any": "Tous"
+"filter.read.yes": "Lus"
+"filter.read.no": "Non lus"
+"filter.indexgte": "Index >="
+"filter.indexlte": "Index <="
+"filter.extension": "Extension"
+"Any": "Toutes"
+"filter.publisher": "Editeur"
+"filter.orderby": "Ordonner par"
+"created (ASC)": "Création (ASC)"
+"created (DESC)": "Création (DESC)"
+"title (ASC)": "Titre (ASC)"
+"title (DESC)": "Titre (DESC)"
+"updated (ASC)": "Modification (ASC)"
+"updated (DESC)": "Modification (DESC)"
+"id (ASC)": "Id (ASC)"
+"id (DESC)": "Id (DESC)"
+"serieIndex (ASC)": "Index (ASC)"
+"Finished": "Ststut de lecture"
+"Favorite": "Liste de lecture"
+"Finished date": "Date de lecture"
+"Submit": "Envoyer"
+"Delete": "Supprimer"
+"serieIndex (DESC)": "Index de série (DESC)"
+"filter.age": "Âge"
+"E (Everyone)": "E (Tout le monde)"
+"E10+ (10 and more)": "E10+ (10 et plus)"
+"T (13 and more)": "T (13 et plus)"
+"M (17 and more)": "M (17 et plus)"
+"A (Adults only)": "A (Adultes uniquement)"
+"filter.age.notset": "Non défini"
+"filter.submit": "Filtrer"
+"Has picture": "A une image"
+"No picture": "N'a pas d'image"
+"Not favorite": "Pas dans la liste de lecture"
+"Verified": "Vérifié"
+"Not Verified": "Non vérifié"
+"Read": "Lu"
+"Unread": "Non lu"
+"Not set": "Non défini"
+"cbz": "cbz"
+"Password": "Mot de passe"
+"Repeat Password": "répéter le mot de passe"
+"Language": "Langue"
+"English": "Anglais"
+"French": "Français"
+"Display series": "Afficher les séries"
+"Display authors": "Afficher les auteurs"
+"Display tags": "Afficher les étiquettes"
+"Display publishers": "Afficher les éditeurs"
+"Display timeline": "Afficher la chronologie"
+"Display all books": "Afficher le lien 'tous les livres'"
+"Use kobo devices": "Utiliser les fonctionnalités Kobo"
+"Theme": "Thpme"
+"Default": "Par défaut"
+"Dark": "Sombre"
+"OpenAI Key": "Clé OpenAI"
+"openai.help": 'This is the key that will be used to connect to the OpenAI API. You can get one by signing up at <a href="https://platform.openai.com/signup" target="_blank">OpenAI</a>'
+"Book Keyword Prompt": "Book Keyword Prompt"
+"openai.bookprompt.help": "This is the prompt that will be used to generate keywords for books. It should be a short sentence or phrase. Here is a good starting example: <br>
+<code>Can you give 5 classifying keywords about the book {book} in a list without explanation in french</code>"
+"Book Summary Prompt": "Book Summary Prompt"
+"openai.summaryprompt.help": "This is the prompt that will be used to generate a summary for books. It should be a short sentence or phrase. Here is a good starting example: <br>
+<code>Can you make a factual summary of the book {book} in around 150 words in french</code>"
+"Save": "Enregistrer"
+"Username": "Nom d'utilisatrice(-eur)"
+"Roles": "Rôles"
+"User": "Utilisateur"
+"Admin": "Administrateur"
+"Birthday": "Anniversaire"
+"Max age category": "Catégorie d'âge maximale"
+"Plain password": "Mot de passe"
+"Leave blank to keep the current password": "Laissez vide pour ne pas changer le mot de passe existant"

@@ -30,6 +30,7 @@ class BookFilterType extends AbstractType
 
         $builder->add('title', SearchType::class, [
             'required' => false,
+            'label' => 'filter.title',
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
                     $qb->andWhere($qb->expr()->like('book.title', ':title'));
@@ -41,7 +42,7 @@ class BookFilterType extends AbstractType
         $builder->add('serieIndexGTE', SearchType::class, [
             'required' => false,
             'mapped' => false,
-            'label' => 'Index >=',
+            'label' => 'filter.indexgte',
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
                     $qb->andWhere('book.serieIndex >= :indexGTE');
@@ -53,7 +54,7 @@ class BookFilterType extends AbstractType
         $builder->add('serieIndexLTE', SearchType::class, [
             'required' => false,
             'mapped' => false,
-            'label' => 'Index <=',
+            'label' => 'filter.indexlte',
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue !== null) {
                     $qb->andWhere('book.serieIndex <= :indexLTE or book.serieIndex is null');
@@ -70,6 +71,7 @@ class BookFilterType extends AbstractType
             ],
             'mapped' => false,
             'required' => false,
+            'label' => 'filter.authors',
             'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'authors', 'create' => false]),
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue === null || $searchValue === '') {
@@ -94,7 +96,7 @@ class BookFilterType extends AbstractType
                 'delimiter' => self::AUTOCOMPLETE_DELIMITER,
             ],
             'mapped' => false,
-            'label' => 'Author not in',
+            'label' => 'filter.authornot',
             'required' => false,
             'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'authors', 'create' => false]),
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
@@ -121,6 +123,7 @@ class BookFilterType extends AbstractType
             ],
             'mapped' => false,
             'required' => false,
+            'label' => 'filter.tags',
             'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'tags', 'create' => false]),
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue === null || $searchValue === '') {
@@ -150,6 +153,7 @@ class BookFilterType extends AbstractType
             ],
             'mapped' => false,
             'required' => false,
+            'label' => 'filter.serie',
             'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'serie', 'create' => false]),
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue === null || $searchValue === '') {
@@ -179,6 +183,7 @@ class BookFilterType extends AbstractType
             ],
             'mapped' => false,
             'required' => false,
+            'label' => 'filter.publisher',
             'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'publisher', 'create' => false]),
             'target_callback' => function (QueryBuilder $qb, ?string $searchValue): void {
                 if ($searchValue === null || $searchValue === '') {
@@ -202,11 +207,12 @@ class BookFilterType extends AbstractType
 
         $builder->add('read', ChoiceType::class, [
             'choices' => [
-                'Any' => '',
-                'Read' => 'read',
-                'Unread' => 'unread',
+                'filter.read.any' => '',
+                'filter.read.yes' => 'read',
+                'filter.read.no' => 'unread',
             ],
             'required' => false,
+            'label' => 'filter.read',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
                 switch ($readValue) {
@@ -228,6 +234,7 @@ class BookFilterType extends AbstractType
                 'cbz' => 'cbz',
                 'pdf' => 'pdf',
             ],
+            'label' => 'filter.extension',
             'required' => false,
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
@@ -239,10 +246,11 @@ class BookFilterType extends AbstractType
         ]);
 
         $builder->add('age', ChoiceType::class, [
-            'choices' => User::AGE_CATEGORIES + ['Not set' => 'null'],
+            'choices' => User::AGE_CATEGORIES + ['filter.age.notset' => 'null'],
             'required' => false,
             'mapped' => false,
             'expanded' => true,
+            'label' => 'filter.age',
             'multiple' => true,
             'target_callback' => function (QueryBuilder $qb, array $readValue): void {
                 if (in_array('null', $readValue, true)) {
@@ -256,11 +264,12 @@ class BookFilterType extends AbstractType
 
         $builder->add('favorite', ChoiceType::class, [
             'choices' => [
-                'Any' => '',
-                'Favorite' => 'favorite',
-                'Not favorite' => 'notfavorite',
+                'filter.favorite.any' => '',
+                'filter.favorite.yes' => 'favorite',
+                'filter.favorite.no' => 'notfavorite',
             ],
             'required' => false,
+            'label' => 'filter.favorite',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
                 switch ($readValue) {
@@ -276,11 +285,12 @@ class BookFilterType extends AbstractType
 
         $builder->add('verified', ChoiceType::class, [
             'choices' => [
-                'Any' => '',
-                'Verified' => 'verified',
-                'Not Verified' => 'unverified',
+                'filter.verified.any' => '',
+                'filter.verified.yes' => 'verified',
+                'filter.verified.no' => 'unverified',
             ],
             'required' => false,
+            'label' => 'filter.verified',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
                 switch ($readValue) {
@@ -296,11 +306,12 @@ class BookFilterType extends AbstractType
 
         $builder->add('picture', ChoiceType::class, [
             'choices' => [
-                'Any' => '',
-                'Has picture' => 'with',
-                'No picture' => 'without',
+                'filter.picture.any' => '',
+                'filter.picture.yes' => 'with',
+                'filter.picture.no' => 'without',
             ],
             'required' => false,
+            'label' => 'filter.picture',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
                 switch ($readValue) {
@@ -327,6 +338,7 @@ class BookFilterType extends AbstractType
                 'serieIndex (ASC)' => 'serieIndex-asc',
                 'serieIndex (DESC)' => 'serieIndex-desc',
             ],
+            'label' => 'filter.orderby',
             'mapped' => false,
             'target_callback' => function (QueryBuilder $qb, ?string $orderByValue): void {
                 $direction = 'ASC';
@@ -359,7 +371,7 @@ class BookFilterType extends AbstractType
         ]);
 
         $builder->add('submit', SubmitType::class, [
-            'label' => 'Filter',
+            'label' => 'filter.submit',
             'attr' => [
                 'class' => 'btn btn-primary',
             ],

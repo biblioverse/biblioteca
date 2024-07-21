@@ -107,3 +107,5 @@ services:
     App\EventListener\LanguageListener:
         tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 101 }
+
+    Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'

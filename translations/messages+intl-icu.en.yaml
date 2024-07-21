@@ -1,14 +1,14 @@
 page: Page
 search: Search
-save.current.filtering: Save current filtering
-new.shelf: New Shelf
+save.current.filtering: 'Save current filtering'
+new.shelf: 'New Shelf'
 author: Author
 serie: Serie
 index: Index
 rename: Rename
 upload: Upload
-upload.cover: Upload cover
-picture.for: Picture for
+upload.cover: 'Upload cover'
+picture.for: 'Picture for'
 no.picture.for: __no.picture.for
 download: Download
 title: Title
@@ -19,15 +19,39 @@ tags: Tags
 verified: Verified
 book: Book
 image: Image
-suggested.images: Suggested images
-search.google.images: Search on Google Images
+suggested.images: 'Suggested images'
+search.google.images: 'Search on Google Images'
 search.goodreads: 'Search on Goodreads'
-google.books.api: Suggestions from Google Books
-openlibrary.api: Suggestions from OpenLibrary
-extract.from-file: Extract cover from file
-books.in.serie: Books in serie
-books.same.index: Books with same index
-other.books: Other books
-books.same.author: Book with same author
-missing.book: Missing Book
+google.books.api: 'Suggestions from Google Books'
+openlibrary.api: 'Suggestions from OpenLibrary'
+extract.from-file: 'Extract cover from file'
+books.in.serie: 'Books in serie'
+books.same.index: 'Books with same index'
+other.books: 'Other books'
+books.same.author: 'Book with same author'
+missing.book: 'Missing Book'
 books: Books
+reading.list: 'Reading list'
+add_to_favorites: 'Add books to your reading list by clicking the bookmark icon on the book page.'
+series_in_progress: 'Series in progress'
+need_inspiration: 'Need some inspiration?'
+continue.reading: 'Continue reading'
+hello: Hello
+menu.home: 'Home'
+menu.books: 'Books'
+menu.authors: 'Authors'
+menu.series: 'Series'
+menu.tags: 'Tags'
+menu.shelves: 'Shelves'
+menu.allbooks: 'All books'
+menu.admin: 'Admin panel'
+menu.addbooks: 'Add books'
+menu.useradmin: 'Manage users'
+menu.upload: 'Upload'
+menu.notverified: 'Not verified'
+menu.profile: 'My Profile'
+menu.logout: 'Logout'
+menu.timeline: 'My Timeline'
+menu.kobodevices: 'Kobo devices'
+menu.editshelves: 'Edit shelves'
+filter.serie: 'Filter by serie'

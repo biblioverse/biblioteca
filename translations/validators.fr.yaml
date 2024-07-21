@@ -104,6 +104,10 @@ Error: Erreur
 'Using invisible characters is not allowed.': "Utiliser des caractères invisibles n'est pas autorisé."
 'Mixing numbers from different scripts is not allowed.': "Mélanger des chiffres provenant de différents scripts n'est pas autorisé."
 'Using hidden overlay characters is not allowed.': "Utiliser des caractères de superposition cachés n'est pas autorisé."
+'The extension of the file is invalid ({{ extension }}). Allowed extensions are {{ extensions }}.': "L'extension du fichier est invalide ({{ extension }}). Les extensions autorisées sont {{ extensions }}."
+'The detected character encoding is invalid ({{ detected }}). Allowed encodings are {{ encodings }}.': "L'encodage de caractères détecté est invalide ({{ detected }}). Les encodages autorisés sont {{ encodings }}."
+'This value is not a valid MAC address.': "Cette valeur n'est pas une adresse MAC valide."
+'This URL is missing a top-level domain.': 'Cette URL doit contenir un domaine de premier niveau.'
 'This form should not contain extra fields.': 'Ce formulaire ne doit pas contenir de champs supplémentaires.'
 'The uploaded file was too large. Please try to upload a smaller file.': "Le fichier téléchargé est trop volumineux. Merci d'essayer d'envoyer un fichier plus petit."
 'The CSRF token is invalid. Please try to resubmit the form.': 'Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.'
@@ -137,3 +141,4 @@ Error: Erreur
 'Please select a valid option.': 'Veuillez sélectionner une option valide.'
 'Please select a valid range.': 'Veuillez sélectionner une plage valide.'
 'Please enter a valid week.': 'Veuillez entrer une semaine valide.'
+'Need to be Hexadecimal': '__Need to be Hexadecimal'
