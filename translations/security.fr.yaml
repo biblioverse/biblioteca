@@ -17,10 +17,10 @@
 'Invalid or expired login link.': 'Lien de connexion invalide ou expiré.'
 'Too many failed login attempts, please try again in %minutes% minute.': 'Plusieurs tentatives de connexion ont échoué, veuillez réessayer dans %minutes% minute.'
 'Too many failed login attempts, please try again in %minutes% minutes.': 'Plusieurs tentatives de connexion ont échoué, veuillez réessayer dans %minutes% minutes.'
-password: Mot de passe
+password: 'Mot de passe'
 email: Email
 please.sign.in: 'Merci de vous connecter'
 logged.in.as: 'Vous êtes connectés en tant que '
-logout: 'Déconnexion'
+logout: Déconnexion
 remember.me: 'Se rappeler de moi'
-sign.in: 'Connexion'
+sign.in: Connexion
