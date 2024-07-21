@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,7 +27,27 @@ class ProfileType extends AbstractType
             ->add('displayPublishers')
             ->add('displayTimeline')
             ->add('displayAllBooks')
-            ->add('openAIKey')
+            ->add('useKoboDevices')
+            ->add('language', ChoiceType::class, [
+                'choices' => [
+                    'English' => 'en',
+                    'French' => 'fr',
+                ],
+            ])
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'mapped' => false,
+                'invalid_message' => 'The password fields must match.',
+                'options' => ['attr' => ['class' => 'password-field']],
+                'required' => false,
+                'first_options' => ['label' => 'Password'],
+                'second_options' => ['label' => 'Repeat Password'],
+            ])
+            ->add('openAIKey', null, [
+                'label' => 'OpenAI Key',
+                'help' => 'This is the key that will be used to connect to the OpenAI API. You can get one by signing up at <a href="https://platform.openai.com/signup" target="_blank">OpenAI</a>',
+                'help_html' => true,
+            ])
             ->add('bookKeywordPrompt', null, [
                 'label' => 'Book Keyword Prompt',
                 'help_html' => true,

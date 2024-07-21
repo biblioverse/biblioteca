@@ -95,6 +95,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: KoboDevice::class, orphanRemoval: true)]
     private Collection $kobos;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $lastLogin = null;
+
+    #[ORM\Column(length: 2)]
+    private ?string $language = null;
+
+    #[ORM\Column]
+    private bool $useKoboDevices = true;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -388,5 +397,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getKobos(): Collection
     {
         return $this->kobos;
+    }
+
+    public function getLastLogin(): ?\DateTimeInterface
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(?\DateTimeInterface $lastLogin): static
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): static
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function isUseKoboDevices(): bool
+    {
+        return $this->useKoboDevices;
+    }
+
+    public function setUseKoboDevices(bool $useKoboDevices): static
+    {
+        $this->useKoboDevices = $useKoboDevices;
+
+        return $this;
     }
 }

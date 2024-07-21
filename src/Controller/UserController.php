@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,7 +31,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profile', name: 'app_user_profile')]
-    public function profile(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, Security $security): Response
+    public function profile(Request $request, EntityManagerInterface $entityManager, Security $security, RequestStack $requestStack): Response
     {
         $user = $security->getUser();
         if (!$user instanceof User) {
@@ -41,8 +42,23 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword !== null && trim($plainPassword.'') !== '') {
+                if (!is_string($plainPassword)) {
+                    throw new \RuntimeException('Password must be a string');
+                }
+                $user->setPassword($this->passwordHasher->hashPassword(
+                    $user,
+                    $plainPassword
+                ));
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
+
+            $requestStack->getSession()->set('_locale', $user->getLanguage());
+
+            $this->addFlash('success', 'Profile updated successfully');
 
             return $this->redirectToRoute('app_user_profile', [], Response::HTTP_SEE_OTHER);
         }
