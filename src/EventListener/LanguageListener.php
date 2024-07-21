@@ -2,15 +2,16 @@
 
 namespace App\EventListener;
 
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bundle\SecurityBundle\Security\FirewallConfig;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class LanguageListener
 {
-    public function __construct(private RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack, private Security $security)
     {
     }
 
@@ -19,7 +20,11 @@ final class LanguageListener
     {
         $request = $event->getRequest();
 
-        if (!$this->requestStack->getCurrentRequest() instanceof Request || !$this->requestStack->getCurrentRequest()->hasSession()) {
+        if (!$request->hasSession()) {
+            return;
+        }
+        $config = $this->security->getFirewallConfig($request);
+        if ($config instanceof FirewallConfig && $config->isStateless()) {
             return;
         }
 

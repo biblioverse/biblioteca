@@ -23,7 +23,7 @@ framework:
     serializer:
         enabled: true
         # Enable Doctrine Annotations mapping
-        enable_annotations: true
+        enable_attributes: true
         name_converter: 'App\Kobo\Serializer\KoboNameConverter'
 
 when@test:
