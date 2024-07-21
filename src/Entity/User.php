@@ -99,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $lastLogin = null;
 
     #[ORM\Column(length: 2)]
-    private ?string $language = null;
+    private ?string $language = 'en';
 
     #[ORM\Column]
     private bool $useKoboDevices = true;

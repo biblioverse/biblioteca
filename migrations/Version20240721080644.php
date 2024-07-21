@@ -20,7 +20,7 @@ final class Version20240721080644 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD last_login DATETIME DEFAULT NULL, ADD language VARCHAR(2) NOT NULL DEFAULT \'en\', ADD use_kobo_devices TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE user ADD last_login DATETIME DEFAULT NULL, ADD language VARCHAR(2) NULL DEFAULT \'en\', ADD use_kobo_devices TINYINT(1) NULL DEFAULT 1');
     }
 
     public function down(Schema $schema): void
