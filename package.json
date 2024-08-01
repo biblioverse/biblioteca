@@ -22,6 +22,7 @@
   "private": true,
   "scripts": {
     "dev-server": "encore dev-server",
+    "dev-server-traefik": "encore dev-server --public https://biblioteca-npm.docker.test  --allowed-hosts biblioteca-npm.docker.test  --allowed-hosts biblioteca.docker.test --host 0.0.0.0 --port=8181 --client-web-socket-url=wss://biblioteca-npm.docker.test/ws",
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "NODE_ENV=production encore production --progress"
