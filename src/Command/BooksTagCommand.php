@@ -19,6 +19,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksTagCommand extends Command
 {
+    public const DEFAULT_KEYWORD_PROMPT = 'Imagine you want to tag a book. Can you cite the most probable categories for the following book: {book}? Display only the results, separating each term with a newline, and return an empty string if you don\'t know. This way, your answer can be parsed.';
+
     public function __construct(private EntityManagerInterface $em)
     {
         parent::__construct();
@@ -91,7 +93,9 @@ class BooksTagCommand extends Command
             $result = explode("\n", $result);
             foreach ($result as $value) {
                 $tag = trim($value, " \n\r\t\v\0-");
-                $book->addTag($tag);
+                if ($tag !== '') {
+                    $book->addTag($tag);
+                }
             }
 
             $this->em->flush();
@@ -106,7 +110,7 @@ class BooksTagCommand extends Command
 
     private function getPrompt(Book $book, User $user): string
     {
-        $prompt = (string) $user->getBookKeywordPrompt();
+        $prompt = $user->getBookKeywordPrompt() ?? self::DEFAULT_KEYWORD_PROMPT;
 
         $bookString = '"'.$book->getTitle().'" by '.implode(' and ', $book->getAuthors());
 
