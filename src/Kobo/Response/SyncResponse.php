@@ -3,6 +3,7 @@
 namespace App\Kobo\Response;
 
 use App\Entity\Book;
+use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
@@ -133,14 +134,22 @@ class SyncResponse
         ];
     }
 
+    /**
+     * @return bool|null Null if we do not now the reading state
+     */
     private function isReadingFinished(Book $book): ?bool
     {
-        // TODO Rad book interaction to know it.
-        foreach ($book->getBookInteractions() as $interaction) {
-            return $interaction->isFinished();
+        // Read the latest interaction to know it.
+        $interaction = $book->getLastInteraction($this->kobo->getUser());
+        if (!$interaction instanceof BookInteraction) {
+            return null;
         }
 
-        return null;
+        if ($interaction->getReadPages() === null) {
+            return null;
+        }
+
+        return $interaction->isFinished();
     }
 
     /**
@@ -154,7 +163,12 @@ class SyncResponse
                 return false;
             }
 
-            return $book->getUpdated() >= $this->syncToken->lastModified || !$book->getUpdated() instanceof \DateTimeInterface || $book->getCreated() >= $this->syncToken->lastCreated;
+            $lastInteraction = $book->getLastInteraction($this->kobo->getUser());
+
+            return $book->getUpdated() >= $this->syncToken->lastModified
+                || !$book->getUpdated() instanceof \DateTimeInterface
+                || $book->getCreated() >= $this->syncToken->lastCreated
+                || ($lastInteraction instanceof BookInteraction && $lastInteraction->getUpdated() >= $this->syncToken->lastModified);
         });
 
         return array_map(function (Book $book) {
