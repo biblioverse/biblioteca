@@ -25,7 +25,7 @@ class BookProgressionService
     {
         // Read from book entity (null > 0 is falsy)
         $readPages = $book->getLastInteraction($user)?->getReadPages();
-        $nbPages = $this->getPageNumber($book);
+        $nbPages = $this->processPageNumber($book);
         if ($nbPages === null || $nbPages === 0 || $readPages === null) {
             return null;
         }
@@ -46,7 +46,7 @@ class BookProgressionService
         if ($progress < 0 || $progress > 1) {
             throw new \InvalidArgumentException('Progress must be between 0 and 1');
         }
-        $nbPages = $this->getPageNumber($book);
+        $nbPages = $this->processPageNumber($book);
         if ($nbPages === null) {
             return $this;
         }
@@ -66,7 +66,7 @@ class BookProgressionService
         return $this;
     }
 
-    public function getPageNumber(Book $book, bool $force = false): ?int
+    public function processPageNumber(Book $book, bool $force = false): ?int
     {
         // Read from book entity (null > 0 is falsy)
         if ($book->getPageNumber() > 0 && $force === false) {

@@ -32,11 +32,11 @@ class BookProgressionServiceTest extends KernelTestCase
         $book->setPageNumber($fakePageNumber);
 
         // Read from existing entity
-        self::assertSame($fakePageNumber, $bookProgression->getPageNumber($book),  'Book number should be read from entity');
+        self::assertSame($fakePageNumber, $bookProgression->processPageNumber($book),  'Book number should be read from entity');
 
         // Read from file if forced
         $expectedPageNumber = 503;
-        self::assertSame($bookProgression->getPageNumber($book, true), $expectedPageNumber, 'Book number should not be 30');
+        self::assertSame($bookProgression->processPageNumber($book, true), $expectedPageNumber, 'Book number should not be 30');
         // Read from file must update the entity
         self::assertSame($book->getPageNumber(), $expectedPageNumber, 'Book number should be 30');
     }
