@@ -3,13 +3,13 @@
 namespace App\Controller\Kobo;
 
 use App\Entity\Book;
-use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
 use App\Repository\BookRepository;
+use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +28,7 @@ class KoboStateController extends AbstractController
         protected KoboStoreProxy $koboStoreProxy,
         protected SerializerInterface $serializer,
         protected EntityManagerInterface $em,
+        protected BookProgressionService $bookProgressionService
     ) {
     }
 
@@ -56,30 +57,14 @@ class KoboStateController extends AbstractController
             return new JsonResponse(['error' => 'No reading state provided'], Response::HTTP_BAD_REQUEST);
         }
         $state = $entity->readingStates[0];
-        $interactions = $book->getBookInteractions();
-        $interaction = $interactions->current();
-        if ($interaction === false) {
-            $interaction = new BookInteraction();
-            $interaction->setBook($book);
-            $interaction->setReadPages(0); // On a new interaction, we assume the user has read 0 pages
-            $interaction->setUser($kobo->getUser());
-            $interactions->add($interaction);
-            $this->em->persist($interaction);
-        }
-
-        $interaction->setUpdated($state->lastModified);
-        $interaction->setFinished($state->statusInfo?->status === ReadingStateStatusInfo::STATUS_FINISHED);
         switch ($state->statusInfo?->status) {
             case ReadingStateStatusInfo::STATUS_FINISHED:
-                $interaction->setReadPages($book->getPageNumber());
-
+                $this->bookProgressionService->setProgression($book, $kobo->getUser(), 1.0);
                 break;
             case ReadingStateStatusInfo::STATUS_READING:
-                $percent = $state->currentBookmark?->progressPercent;
-                $numPages = $percent !== null && $book->getPageNumber() !== null ? $book->getPageNumber() * $percent / 100 : null;
-                if ($numPages !== null) {
-                    $interaction->setReadPages((int) $numPages);
-                }
+                $progress = $state->currentBookmark?->progressPercent;
+                $progress = $progress !== null ? $progress / 100 : null;
+                $this->bookProgressionService->setProgression($book, $kobo->getUser(), $progress);
                 break;
             case null:
                 break;
