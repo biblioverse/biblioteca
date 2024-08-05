@@ -1,8 +1,6 @@
 services:
   biblioteca:
-    build:
-      context: .
-      target: base
+    image: ghcr.io/biblioverse/biblioteca-docker:latest
     command: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
     ports:
       - "48480:8080"
