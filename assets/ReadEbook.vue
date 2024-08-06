@@ -4,7 +4,7 @@
         :url="props.file"
         :showToc="true"
         :getRendition="getRendition"
-        backgroundColor="#000"
+        :backgroundColor="props.bgColor"
         @update:location="locationChange"
         :location="getInitialLocation()"
     />
@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-const props = defineProps({'file': String})
+const props = defineProps({'file': String, 'css': String, 'bgColor': String})
 import { VueReader } from 'vue-book-reader'
 const initialCfi = new URLSearchParams(window.location.search).get('cfi');
 
@@ -25,14 +25,9 @@ const locationChange = (detail) => {
 const getInitialLocation = () => {
     return initialCfi ?? null
 }
+
 const getRendition = async (rendition) => {
-  rendition.renderer.setStyles([
-    `
-    html {
-      background: #000;
-      color: #fff;
-    }`,
-  ])
+  rendition.renderer.setStyles([props.css])
 }
 
 </script>

@@ -2,23 +2,21 @@
 
 namespace App\Twig\Runtime;
 
-use App\Entity\User;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\ThemeSelector;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ThemeExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private Security $security)
+    public function __construct(private ThemeSelector $themeSelector)
     {
-        // Inject dependencies if needed
     }
 
     public function themedTemplate(string $value): string|array
     {
-        $user = $this->security->getUser();
+        $theme = $this->themeSelector->getTheme();
 
-        if ($user instanceof User) {
-            return ['themes/'.$user->getTheme().'/'.$value, $value];
+        if ($theme !== null) {
+            return ['themes/'.$theme.'/'.$value, $value];
         }
 
         return $value;

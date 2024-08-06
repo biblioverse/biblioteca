@@ -7,6 +7,7 @@ use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
+use App\Service\ThemeSelector;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -85,8 +86,15 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}/read', name: 'app_book_read')]
-    public function read(Request $request, Book $book, string $slug, BookFileSystemManager $fileSystemManager, PaginatorInterface $paginator, EntityManagerInterface $manager): Response
-    {
+    public function read(
+        Request $request,
+        Book $book,
+        string $slug,
+        BookFileSystemManager $fileSystemManager,
+        PaginatorInterface $paginator,
+        ThemeSelector $themeSelector,
+        EntityManagerInterface $manager
+    ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -107,6 +115,8 @@ class BookController extends AbstractController
                 return $this->render('book/reader-files-epub.html.twig', [
                     'book' => $book,
                     'file' => $fileSystemManager->getBookPublicPath($book),
+                    'body_class' => $themeSelector->isDark() ? 'bg-darker' : '',
+                    'isDark' => $themeSelector->isDark(),
                 ]);
             case 'pdf':
             case 'cbr':
