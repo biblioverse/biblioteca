@@ -4,6 +4,8 @@ namespace App\Twig\Components;
 
 use App\Entity\Book;
 use App\Entity\User;
+use App\Suggestion\SummaryPrompt;
+use App\Suggestion\TagPrompt;
 use Orhanerday\OpenAi\OpenAi;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -28,7 +30,8 @@ final class ChatGPTSuggestion
     #[LiveProp(writable: true)]
     public string $prompt = '';
 
-    public array|string $result = '';
+    /** @var array<string> */
+    public array $result = [];
     public array $suggestions = [];
 
     public const EMPTY_SUGGESTIONS = [
@@ -40,8 +43,11 @@ final class ChatGPTSuggestion
         'summary' => [],
     ];
 
-    public function __construct(private Security $security)
-    {
+    public function __construct(
+        private Security $security,
+        private TagPrompt $tagPrompt,
+        private SummaryPrompt $summaryPrompt
+    ) {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
             throw new \LogicException('User must be logged in');
@@ -52,24 +58,22 @@ final class ChatGPTSuggestion
     #[PostMount]
     public function postMount(): void
     {
-        $this->prompt = (string) match ($this->field.'') {
-            'summary' => $this->user->getBookSummaryPrompt(),
-            'tags' => $this->user->getBookKeywordPrompt(),
+        $this->prompt = match ($this->field) {
+            'summary' => $this->summaryPrompt->getPrompt($this->book, $this->user),
+            'tags' => $this->tagPrompt->getPrompt($this->book, $this->user),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
-
-        $bookString = '"'.$this->book->getTitle().'" by '.implode(' and ', $this->book->getAuthors());
-
-        if ($this->book->getSerie() !== null) {
-            $bookString .= ' number '.$this->book->getSerieIndex().' in the series "'.$this->book->getSerie().'"';
-        }
-
-        $this->prompt = str_replace('{book}', $bookString, $this->prompt);
     }
 
     #[LiveAction]
     public function generate(): void
     {
+        $this->suggestions = self::EMPTY_SUGGESTIONS;
+
+        if ($this->user->getOpenAIKey() === null) {
+            return;
+        }
+
         $open_ai = new OpenAi($this->user->getOpenAIKey());
 
         $chat = $open_ai->chat([
@@ -93,22 +97,15 @@ final class ChatGPTSuggestion
         if (!is_string($chat)) {
             throw new \RuntimeException('Failed to decode OpenAI response');
         }
-        $d = json_decode($chat);
+        $jsonResult = json_decode($chat);
         // @phpstan-ignore-next-line
-        $this->result = $d->choices[0]->message->content;
+        $apiResult = $jsonResult->choices[0]->message->content;
 
-        if ($this->field === 'tags') {
-            $this->result = explode("\n", $this->result);
-            foreach ($this->result as $key => $value) {
-                if (str_starts_with($value, '- ')) {
-                    $this->result[$key] = trim($value, " \n\r\t\v\0-");
-                }
-            }
-        } else {
-            $this->result = trim($this->result);
-        }
+        $this->result = match ($this->field) {
+            'tags' => $this->tagPrompt->promptResultToTags($apiResult),
+            default => [trim($apiResult)],
+        };
 
-        $this->suggestions = self::EMPTY_SUGGESTIONS;
-        $this->suggestions[$this->field] = is_array($this->result) ? $this->result : [$this->result];
+        $this->suggestions[$this->field] = $this->result;
     }
 }
