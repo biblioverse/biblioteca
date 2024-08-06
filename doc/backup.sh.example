@@ -1,0 +1,58 @@
+#!/bin/bash
+set -e
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+BUCKET=${BUCKET:-biblioteca-backup}
+REMOTE=${REMOTE:-biblioteca-backup}
+
+if [ "$(command -v gzip)" = "" ]; then
+  echo "gzip is required to run this script"
+  exit 1
+fi
+
+if [ "$(command -v rclone)" = "" ]; then
+  echo "rclone is required to run this script"
+  exit 1
+fi
+
+BOOKS_DIR=$SCRIPT_DIR/../public/books
+COVER_DIR=$SCRIPT_DIR/../public/covers
+mkdir -p $BOOKS_DIR
+mkdir -p $COVER_DIR
+
+filename=$(date +"dump-%Y%m%d-%H%M%S.sql.gz")
+DUMP_LOCAL=$(realpath $SCRIPT_DIR/..)/$filename
+
+
+# Generate the dump
+if [ ! -f $DUMP_LOCAL ]; then
+  # Start the SQL Server
+  docker compose up -d --remove-orphans
+  # Create the dump
+  docker compose exec db bash -c 'mysqldump -h localhost -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" "${MYSQL_DATABASE}"' | gzip > $DUMP_LOCAL
+fi
+
+# Sync files
+rclone sync -P $BOOKS_DIR $REMOTE:$BUCKET/biblioteca/books
+rclone sync -P $COVER_DIR $REMOTE:$BUCKET/biblioteca/covers
+
+# Backup the dump
+rclone copyto $DUMP_LOCAL $REMOTE:$BUCKET/biblioteca/data/$filename
+rm -f $DUMP_LOCAL
+
+# Backup the script
+rclone copyto $0 $REMOTE:$BUCKET/biblioteca/$(basename $0)
+
+# Remove old dumps
+FILES=$(rclone lsf --format pt --absolute --files-only --max-depth 1 "${REMOTE}:${BUCKET}/biblioteca/data/" |  awk 'BEGIN {OFS=","} {print $1,$2}' | sort -t ',' -k 2 -r)
+mapfile -t FILE_ARRAY <<<"$FILES"
+FILE_COUNT=${#FILE_ARRAY[@]}
+KEEP=30
+DELETE_COUNT=$(( FILE_COUNT - KEEP ))
+if [ "$DELETE_COUNT" -gt 0 ]; then
+  echo "Deleting $DELETE_COUNT old files..."
+  for (( i = KEEP; i < FILE_COUNT; i++ )); do
+    FILE_TO_DELETE=${REMOTE}:${BUCKET}/biblioteca/data$(echo ${FILE_ARRAY[$i]} | cut -d ';' -f 1)
+    rclone delete "$FILE_TO_DELETE"
+  done
+fi

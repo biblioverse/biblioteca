@@ -11,7 +11,8 @@
 docker-compose.override.yml
 docker-compose.yml
 Dockerfile
-/backups/*.sql
+/backups/
+!/backups/.gitkeep
 /public/media/cache/*
 !/public/images/.gitkeep
 !/public/images/librairies
