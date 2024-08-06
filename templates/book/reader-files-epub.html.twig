@@ -1,4 +1,5 @@
 {% extends themedTemplate('bare.html.twig') %}
+{% set isDark = isDark|default(false) %}
 
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 {% block javascripts %}
@@ -7,18 +8,23 @@
 {% endblock %}
 
 {% block stylesheets %}
+    {{ parent() }}
     {{ encore_entry_link_tags('read-ebook') }}
-    <style>
-        body
-        {
-            background-color: #000;
-            color: #fff;
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
-    <div id="mount" data-file="{{ file }}" style="width: 100%">
+    <div id="vue-book-reader" data-file="{{ file }}" data-css="{{ block('readercss')|e('html_attr') }}" data-background-color="{{ isDark ? '#000' : '#fff' }}">
         <a href="{{ file }}">Loading book</a>
     </div>
+{% endblock %}
+
+{% block readercss %}
+    {# This css is injected to the vue-book-reader component, in a shadow root, so it's not possible to use --vars. #}
+    html {
+        background: {{ isDark ? '#000' : '#fff' }};
+        color: {{ isDark ? '#fff' : '#000' }};
+    }
+    a {
+        color: #24599d;
+    }
 {% endblock %}

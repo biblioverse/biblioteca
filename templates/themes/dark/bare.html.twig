@@ -12,7 +12,7 @@
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    <body {{ (body_class is defined and body_class ? 'class="' ~ (body_class|e('html_attr'))~'"' : '')|raw }}>
     {% block content %}{% endblock %}
 
     {% block javascripts %}
