@@ -4,12 +4,13 @@ namespace App\Command;
 
 use App\Entity\Book;
 use App\Entity\User;
+use App\Suggestion\TagPrompt;
 use Doctrine\ORM\EntityManagerInterface;
-use Orhanerday\OpenAi\OpenAi;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -19,8 +20,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksTagCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly TagPrompt $tagPrompt
+    ) {
         parent::__construct();
     }
 
@@ -48,8 +51,6 @@ class BooksTagCommand extends Command
             return Command::FAILURE;
         }
 
-        $open_ai = new OpenAi($user->getOpenAIKey());
-
         $qb = $this->em->getRepository(Book::class)->createQueryBuilder('book');
         $qb->andWhere('book.tags = \'[]\'');
         $books = $qb->getQuery()->getResult();
@@ -61,59 +62,16 @@ class BooksTagCommand extends Command
         }
 
         $progress = $io->createProgressBar(count($books));
+        $this->tagPrompt->setLogger(new ConsoleLogger($output));
         foreach ($books as $book) {
-            $chat = $open_ai->chat([
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => 'You are a helpful factual librarian that only refers to verifiable content to provide real answers about existing books.',
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $this->getPrompt($book, $user),
-                    ],
-                ],
-                'temperature' => 0,
-                'max_tokens' => 4000,
-                'frequency_penalty' => 0,
-                'presence_penalty' => 0,
-            ]);
-
-            if (!is_string($chat)) {
-                $io->error('Failed to decode OpenAI response');
-                continue;
-            }
-            $d = json_decode($chat);
-            // @phpstan-ignore-next-line
-            $result = $d->choices[0]->message->content;
-
-            $result = explode("\n", $result);
-            foreach ($result as $value) {
-                $tag = trim($value, " \n\r\t\v\0-");
-                $book->addTag($tag);
-            }
+            $this->tagPrompt->generateTags($book, $user);
 
             $this->em->flush();
-
             $progress->advance();
         }
 
         $progress->finish();
 
         return Command::SUCCESS;
-    }
-
-    private function getPrompt(Book $book, User $user): string
-    {
-        $prompt = (string) $user->getBookKeywordPrompt();
-
-        $bookString = '"'.$book->getTitle().'" by '.implode(' and ', $book->getAuthors());
-
-        if ($book->getSerie() !== null) {
-            $bookString .= ' number '.$book->getSerieIndex().' in the series "'.$book->getSerie().'"';
-        }
-
-        return str_replace('{book}', $bookString, $prompt);
     }
 }
