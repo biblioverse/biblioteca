@@ -87,6 +87,7 @@ class Book
      * @var Collection<int, BookInteraction>
      */
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookInteraction::class, cascade: ['remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['updated' => 'ASC'])]
     private Collection $bookInteractions;
 
     /**
@@ -155,6 +156,19 @@ class Book
     public function getCreated(): \DateTimeInterface
     {
         return $this->created;
+    }
+
+    public function getLastInteraction(User $user): ?BookInteraction
+    {
+        foreach ($this->bookInteractions as $interaction) {
+            if ($interaction->getUser() !== $user) {
+                continue;
+            }
+
+            return $interaction;
+        }
+
+        return null;
     }
 
     public function setCreated(\DateTimeInterface $created): void
