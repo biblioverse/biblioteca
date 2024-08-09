@@ -74,6 +74,13 @@ class BookFileSystemManager
         return $this->handlePath($paths);
     }
 
+    public function getBookPublicPath(Book $book): string
+    {
+        $path = $this->getBookFilename($book);
+
+        return str_replace($this->publicDir, '', $path);
+    }
+
     public function getCoverFilename(Book $book): ?string
     {
         $paths = [$this->getCoverDirectory(), $book->getImagePath(), $book->getImageFilename()];
