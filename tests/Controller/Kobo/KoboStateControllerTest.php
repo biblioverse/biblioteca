@@ -80,7 +80,11 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $state->currentBookmark->lastModified = new \DateTime();
         $state->entitlementId = $bookUuid;
         $state->statusInfo = new ReadingStateStatusInfo();
-        $state->statusInfo->status = $percent === 100 ? ReadingStateStatusInfo::STATUS_FINISHED : ReadingStateStatusInfo::STATUS_READING;
+        $state->statusInfo->status = match($percent) {
+            0 => ReadingStateStatusInfo::STATUS_READY_TO_READ,
+            100 => ReadingStateStatusInfo::STATUS_FINISHED,
+            default => ReadingStateStatusInfo::STATUS_READING,
+        };
         $state->statusInfo->lastModified = $state->lastModified;
         $state->statistics = new ReadingStateStatistics();
         $state->statistics->remainingTimeMinutes = (int) (100 * ($percent/100));
