@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
@@ -47,25 +48,30 @@ class KoboAnalyticsController extends AbstractController
     #[Route('/v1/analytics/event', methods: ['POST'])]
     public function analyticsEvent(Request $request): Response
     {
-        if ($this->koboStoreProxy->isEnabled()) {
-            $proxyResponse = $this->koboStoreProxy->proxyOrRedirect($request);
-            if ($proxyResponse->getStatusCode() === Response::HTTP_OK) {
-                return $proxyResponse;
-            }
-            $this->logger->debug('Analytics event received with bad status {code}, not proxying it', ['code' => $proxyResponse->getStatusCode()]);
-        }
-
         $content = $request->getContent();
         $json = trim($content) === '' ? [] : (array) json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->logger->debug('Analytics event received', ['body' => $json]);
 
-        return new JsonResponse([
-            'Result' => 'Success',
-            'AcceptedEvents' => [
-                '1eba5308-878a-4997-a7c4-80644a79f6da',
-                '75a68185-ac29-4255-b7e2-c9be02cf85f5',
-            ],
-            'RejectedEvents' => new \stdClass(),
-        ]);
+        $response = new StreamedResponse(function () use ($request) {
+            echo json_encode([
+                'Result' => 'Success',
+                'AcceptedEvents' => [
+                    '1eba5308-878a-4997-a7c4-80644a79f6da',
+                    '75a68185-ac29-4255-b7e2-c9be02cf85f5',
+                ],
+                'RejectedEvents' => new \stdClass(),
+            ]);
+
+            if ($this->koboStoreProxy->isEnabled()) {
+                $proxyResponse = $this->koboStoreProxy->proxyOrRedirect($request);
+                if ($proxyResponse->getStatusCode() === Response::HTTP_OK) {
+                    $this->logger->debug('Analytics event received with bad status {code}', ['code' => $proxyResponse->getStatusCode()]);
+                }
+            }
+        });
+
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }
