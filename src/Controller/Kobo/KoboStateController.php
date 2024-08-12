@@ -3,8 +3,10 @@
 namespace App\Controller\Kobo;
 
 use App\Entity\Book;
+use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
+use App\Kobo\Request\Bookmark;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
@@ -72,6 +74,9 @@ class KoboStateController extends AbstractController
             case null:
                 break;
         }
+
+        $this->handleBookmark($kobo, $book, $state->currentBookmark);
+
         $this->em->flush();
 
         return new StateResponse($book);
@@ -87,5 +92,23 @@ class KoboStateController extends AbstractController
             return $this->koboStoreProxy->proxyOrRedirect($request);
         }
         throw new HttpException(200, 'Not implemented');
+    }
+
+    private function handleBookmark(KoboDevice $kobo, Book $book, ?Bookmark $currentBookmark): void
+    {
+        if (!$currentBookmark instanceof Bookmark) {
+            $kobo->getUser()->removeBookmarkForBook($book);
+
+            return;
+        }
+
+        $bookmark = $kobo->getUser()->getBookmarkForBook($book) ?? new BookmarkUser($book, $kobo->getUser());
+        $this->em->persist($bookmark);
+
+        $bookmark->setPercent($currentBookmark->progressPercent === null ? null : $currentBookmark->progressPercent / 100);
+        $bookmark->setLocationType($currentBookmark->location?->type);
+        $bookmark->setLocationSource($currentBookmark->location?->source);
+        $bookmark->setLocationValue($currentBookmark->location?->value);
+        $bookmark->setSourcePercent($currentBookmark->contentSourceProgressPercent === null ? null : $currentBookmark->contentSourceProgressPercent / 100);
     }
 }
