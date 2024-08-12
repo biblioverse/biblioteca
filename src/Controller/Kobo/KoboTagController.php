@@ -41,7 +41,16 @@ class KoboTagController extends AbstractController
 
         // Proxy query if we do not know the shelf
         if ($this->koboStoreProxy->isEnabled() && !$shelf instanceof Shelf) {
-            return $this->koboStoreProxy->proxy($request);
+            $response = $this->koboStoreProxy->proxy($request);
+
+            // Avoid the Kobo to send the request over and over again by marking it successful
+            if ($response->getStatusCode() === Response::HTTP_NOT_FOUND) {
+                $this->logger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
+
+                return new JsonResponse($shelfId, Response::HTTP_CREATED);
+            }
+
+            return $response;
         }
 
         /** @var TagDeleteRequest $deleteRequest */
