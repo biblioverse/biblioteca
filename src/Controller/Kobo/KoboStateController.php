@@ -64,7 +64,7 @@ class KoboStateController extends AbstractController
                 $this->bookProgressionService->setProgression($book, $kobo->getUser(), 1.0);
                 break;
             case ReadingStateStatusInfo::STATUS_READY_TO_READ:
-                $this->bookProgressionService->setProgression($book, $kobo->getUser(), 0.0);
+                $this->bookProgressionService->setProgression($book, $kobo->getUser(), null);
                 break;
             case ReadingStateStatusInfo::STATUS_READING:
                 $progress = $state->currentBookmark?->progressPercent;
