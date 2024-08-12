@@ -52,7 +52,7 @@ class KoboSyncController extends AbstractController
         $forced = $kobo->isForceSync() || $request->query->has('force');
         $count = $this->koboSyncedBookRepository->countByKoboDevice($kobo);
         if ($forced || $count === 0) {
-            if ($count > 0 || $forced) {
+            if ($forced) {
                 $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
                 $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
                 $kobo->setForceSync(false);
