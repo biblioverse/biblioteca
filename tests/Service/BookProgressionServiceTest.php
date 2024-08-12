@@ -5,6 +5,7 @@ namespace App\Tests\Service;
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\UserFixture;
 use App\Entity\Book;
+use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
@@ -78,6 +79,24 @@ class BookProgressionServiceTest extends KernelTestCase
 
         self::assertFalse($lastInteraction->isFinished(), 'Book should not be finished');
         self::assertSame(15, $lastInteraction->getReadPages(), 'Book should have half page read');
+    }
+
+    public function testMarkAsUnread(): void{
+        $service = $this->getProgressionService();
+        $book = $this->getBook();
+        // Make sure we have 0 interactions
+        $interaction = new BookInteraction();
+        $interaction->setBook($book);
+        $interaction->setUser($this->getUser());
+        $interaction->setReadPages(12);
+
+        $book->getBookInteractions()->add($interaction);
+        $service->setProgression($book, $this->getUser(), null);
+        $lastInteraction = $book->getLastInteraction($this->getUser());
+        self::assertNotNull($lastInteraction, 'Interaction should be created');
+
+        self::assertFalse($lastInteraction->isFinished(), 'Book should not be finished');
+        self::assertNull($lastInteraction->getReadPages(), 'Book should have null page read');
     }
 
 

@@ -40,6 +40,12 @@ class BookProgressionService
     public function setProgression(Book $book, User $user, ?float $progress): self
     {
         if ($progress === null) {
+            $interaction = $book->getLastInteraction($user);
+            if ($interaction instanceof BookInteraction) {
+                $interaction->setReadPages(null);
+                $interaction->setFinished(false);
+            }
+
             return $this;
         }
 
