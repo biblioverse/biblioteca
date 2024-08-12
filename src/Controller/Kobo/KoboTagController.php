@@ -34,10 +34,13 @@ class KoboTagController extends AbstractController
      * @throws GuzzleException
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
-    #[Route('/v1/library/tags/{tagId}/items/delete', methods: ['POST'])]
-    public function delete(Request $request, KoboDevice $kobo, string $tagId): Response
+    #[Route('/v1/library/tags/{shelfId}/items/delete', methods: ['POST'])]
+    public function delete(Request $request, KoboDevice $kobo, string $shelfId): Response
     {
-        if ($this->koboStoreProxy->isEnabled()) {
+        $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $shelfId);
+
+        // Proxy query if we do not know the shelf
+        if ($this->koboStoreProxy->isEnabled() && !$shelf instanceof Shelf) {
             return $this->koboStoreProxy->proxy($request);
         }
 
@@ -46,12 +49,11 @@ class KoboTagController extends AbstractController
         $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
 
         try {
-            $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
             if (!$shelf instanceof Shelf) {
-                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $tagId));
+                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $shelfId));
             }
         } catch (NonUniqueResultException $e) {
-            throw new BadRequestException('Invalid tag id', 0, $e);
+            throw new BadRequestException('Invalid shelf id', 0, $e);
         }
 
         foreach ($shelf->getBooks() as $book) {
