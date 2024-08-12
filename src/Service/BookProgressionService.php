@@ -66,6 +66,13 @@ class BookProgressionService
         return $this;
     }
 
+    public function flush(): self
+    {
+        $this->em->flush();
+
+        return $this;
+    }
+
     public function processPageNumber(Book $book, bool $force = false): ?int
     {
         // Read from book entity (null > 0 is falsy)
