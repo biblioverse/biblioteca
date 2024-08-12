@@ -63,8 +63,7 @@ class KoboTagController extends AbstractController
         }
         $this->shelfRepository->flush();
 
-        // TODO Find the response format for this
-        return new JsonResponse([], Response::HTTP_NOT_IMPLEMENTED);
+        return new JsonResponse($shelfId, Response::HTTP_CREATED);
     }
 
     #[Route('/v1/library/tags')]
