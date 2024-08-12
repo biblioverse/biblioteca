@@ -4,9 +4,11 @@ namespace App\Kobo\Response;
 
 use App\Entity\Book;
 use App\Entity\BookInteraction;
+use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
+use App\Service\BookProgressionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -32,7 +34,12 @@ class SyncResponse
     public const READING_STATUS_FINISHED = 'Finished';
     public const READING_STATUS_IN_PROGRESS = 'Reading';
 
-    public function __construct(protected MetadataResponseService $metadataResponse, protected SyncToken $syncToken, protected KoboDevice $kobo, protected SerializerInterface $serializer)
+    public function __construct(
+        protected MetadataResponseService $metadataResponse,
+        protected BookProgressionService $bookProgressionService,
+        protected SyncToken $syncToken,
+        protected KoboDevice $kobo,
+        protected SerializerInterface $serializer)
     {
     }
 
@@ -120,7 +127,7 @@ class SyncResponse
             'PriorityTimestamp' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
 
             'StatusInfo' => [
-                'LastModified' => $book->getUpdated(),
+                'LastModified' => $book->getLastInteraction($this->kobo->getUser())?->getUpdated(),
                 'Status' => match ($this->isReadingFinished($book)) {
                     true => SyncResponse::READING_STATUS_FINISHED,
                     false => SyncResponse::READING_STATUS_IN_PROGRESS,
@@ -130,7 +137,7 @@ class SyncResponse
             ],
 
             // "Statistics"=> get_statistics_response(kobo_reading_state.statistics),
-            // "CurrentBookmark"=> get_current_bookmark_response(kobo_reading_state.current_bookmark),
+            'CurrentBookmark' => $this->createBookmark($this->kobo->getUser()->getBookmarkForBook($book)),
         ];
     }
 
@@ -139,17 +146,12 @@ class SyncResponse
      */
     private function isReadingFinished(Book $book): ?bool
     {
-        // Read the latest interaction to know it.
-        $interaction = $book->getLastInteraction($this->kobo->getUser());
-        if (!$interaction instanceof BookInteraction) {
+        $progression = $this->bookProgressionService->getProgression($book, $this->kobo->getUser());
+        if ($progression === null) {
             return null;
         }
 
-        if ($interaction->getReadPages() === null) {
-            return null;
-        }
-
-        return $interaction->isFinished();
+        return $progression >= 1.0;
     }
 
     /**
@@ -262,5 +264,28 @@ class SyncResponse
             'BookMetadata' => $this->metadataResponse->fromBook($book, $this->kobo, $this->syncToken),
             'ReadingState' => $this->createReadingState($book),
         ];
+    }
+
+    private function createBookmark(?BookmarkUser $bookMark): array
+    {
+        if (!$bookMark instanceof BookmarkUser) {
+            return [];
+        }
+
+        $values = [
+            'Location' => [
+                'Type' => $bookMark->getLocationType(),
+                'Value' => $bookMark->getLocationValue(),
+                'Source' => $bookMark->getLocationSource(),
+            ],
+            'ProgressPercent' => $bookMark->getPercentAsInt(),
+            'ContentSourceProgressPercent' => $bookMark->getSourcePercentAsInt(),
+        ];
+
+        if (false === $bookMark->hasLocation()) {
+            unset($values['Location']);
+        }
+
+        return array_filter($values); // Remove null values
     }
 }
