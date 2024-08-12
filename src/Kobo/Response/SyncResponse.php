@@ -127,7 +127,7 @@ class SyncResponse
             'PriorityTimestamp' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
 
             'StatusInfo' => [
-                'LastModified' => $book->getLastInteraction($this->kobo->getUser())?->getUpdated(),
+                'LastModified' => $this->syncToken->maxLastModified($book->getLastInteraction($this->kobo->getUser())?->getUpdated(), $this->getLastBookmarkDate($book), $this->syncToken->currentDate),
                 'Status' => match ($this->isReadingFinished($book)) {
                     true => SyncResponse::READING_STATUS_FINISHED,
                     false => SyncResponse::READING_STATUS_IN_PROGRESS,
@@ -287,5 +287,10 @@ class SyncResponse
         }
 
         return array_filter($values); // Remove null values
+    }
+
+    private function getLastBookmarkDate(Book $book): ?\DateTimeInterface
+    {
+        return $this->kobo->getUser()->getBookmarkForBook($book)?->getUpdated();
     }
 }
