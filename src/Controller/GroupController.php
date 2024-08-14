@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Repository\BookRepository;
 use http\Exception\RuntimeException;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,19 +11,19 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/groups')]
 class GroupController extends AbstractController
 {
-    public function __construct(private BookRepository $bookRepository, private PaginatorInterface $paginator)
+    public function __construct(private BookRepository $bookRepository)
     {
     }
 
-    #[Route('/{type}/{page}', name: 'app_groups', requirements: ['page' => '\d+'])]
-    public function groups(Request $request, string $type, int $page = 1): Response
+    #[Route('/{type}/{letter}', name: 'app_groups')]
+    public function groups(Request $request, string $type, string $letter = 'a'): Response
     {
         $group = [];
-        $incomplete = $request->get('incomplete', 0);
-        if (!is_numeric($incomplete)) {
-            throw new RuntimeException('Invalid incomplete type');
+        $letter = strtolower($letter);
+        if (strlen($letter) !== 1 || !ctype_alpha($letter)) {
+            return $this->redirectToRoute('app_groups', ['type' => $type, 'letter' => 'a']);
         }
-        $incomplete = (int) $incomplete;
+
         switch ($type) {
             case 'authors':
                 $group = $this->bookRepository->getAllAuthors();
@@ -36,10 +35,6 @@ class GroupController extends AbstractController
                 $group = $this->bookRepository->getAllPublishers()->getResult();
                 break;
             case 'serie':
-                if ($incomplete === 1) {
-                    $group = $this->bookRepository->getIncompleteSeries()->getResult();
-                    break;
-                }
                 $group = $this->bookRepository->getAllSeries()->getResult();
                 break;
         }
@@ -56,14 +51,16 @@ class GroupController extends AbstractController
             $group = array_filter($group, static function ($item) use ($search) {
                 return str_contains(strtolower($item['item']), strtolower($search));
             });
+        } else {
+            $group = array_filter($group, static function ($item) use ($letter) {
+                return str_starts_with(strtolower($item['item']), $letter);
+            });
         }
-        $pagination = $this->paginator->paginate($group, $page, 150);
 
         return $this->render('group/index.html.twig', [
-            'pagination' => $pagination,
-            'page' => $page,
+            'group' => $group,
+            'letter' => $letter,
             'type' => $type,
-            'incomplete' => $incomplete,
             'search' => $search,
         ]);
     }
