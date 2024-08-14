@@ -44,10 +44,10 @@
     {% if currentItem.parent is not null %}
         <div class="p-2 w-100">
             <div class="card">
-                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#{{ currentItem.name }}">
+                <div class="card-header" >
                     {{ block('label') }}
                 </div>
-                <div class="card-body collapse {%- if matcher.isAncestor(item) %}show{% endif %}" id="{{ currentItem.name }}">
+                <div class="card-body" id="{{ currentItem.name }}">
     {% endif %}
             {% for item in currentItem.children %}
                 {{ block('item') }}
