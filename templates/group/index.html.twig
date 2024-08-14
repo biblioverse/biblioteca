@@ -1,11 +1,11 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %}{{ pagination.getTotalItemCount }} {{ type }} - Page {{ page }}{% endblock %}
+{% block title %}{{ type }} - {{ letter }}{% endblock %}
 
 {% block body %}
 
     <div class="count">
-        {{ pagination.getTotalItemCount }} {{ type }}
+        {{ type }} - {{ letter|upper }}
     </div>
 
     <form method="get" class="form-inline my-2">
@@ -15,21 +15,31 @@
         </div>
     </form>
 
-    {{ knp_pagination_render(pagination) }}
-        <div class="row">
-            {% for item in pagination %}
+    <div class="btn-group btn-group-sm">
+    {% for other_letter in "a".."z" %}
+        <a href="{{ path('app_groups', {'type':type, 'letter': other_letter}) }}" class="btn {{ other_letter==letter?'btn-primary':'btn-outline-primary' }}">{{ other_letter|upper }}</a>
+    {% endfor %}
+    </div>
+        <ul class="list-unstyled my-3">
+            {% for item in group %}
                 {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
-                {% set class = status==100?'success':(status>0?'warning':'secondary') %}
-                <div class="bg-{{ class }}-subtle col-md-4 p-2 border-3 border-{{ class }}">
+                {% set class = status==100?'success':(status>0?'warning':'') %}
+                <li class="px-3">
                     {% set params = { (type): item.item } %}
                     <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
-                    {{ item.item }}
-                        <span class="badge bg-{{ class }} rounded-pill">{{ item.booksFinished }}/{{ item.bookCount }}</span>
+                        {% if type=='author' %}
+                            {% set icon='person-fill' %}
+                        {% elseif type=='serie' %}
+                            {% set icon='list-ol' %}
+                        {% else %}
+                            {% set icon='tag-fill' %}
+                        {% endif %}
+                        <i class="bi bi-{{ icon }}"></i> {{ item.item }}
+                        <span class="text-{{ class }} px-2">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
                     {{ component('InlineEditGroup', {'existingValue':item.item,'fieldValue':item.item, 'field':type}) }}
-                </div>
+                </li>
             {% endfor %}
-        </div>
-    {{ knp_pagination_render(pagination) }}
+        </ul>
 
 {% endblock %}
