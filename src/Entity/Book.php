@@ -89,7 +89,11 @@ class Book
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookInteraction::class, cascade: ['remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['updated' => 'ASC'])]
     private Collection $bookInteractions;
-
+    /**
+     * @var Collection<int, BookmarkUser>
+     */
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookmarkUser::class, orphanRemoval: true)]
+    private Collection $bookmarkUsers;
     /**
      * @var array<string>|null
      */
@@ -120,6 +124,7 @@ class Book
         $this->shelves = new ArrayCollection();
         $this->uuid = $this->generateUuid();
         $this->koboSyncedBooks = new ArrayCollection();
+        $this->bookmarkUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -563,6 +568,24 @@ class Book
     public function setUuid(?string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookmarkUser>
+     */
+    public function getBookmarkUsers(): Collection
+    {
+        return $this->bookmarkUsers;
+    }
+
+    /**
+     * @param Collection<int, BookmarkUser> $bookmarkUsers
+     */
+    public function setBookmarkUsers(Collection $bookmarkUsers): self
+    {
+        $this->bookmarkUsers = $bookmarkUsers;
 
         return $this;
     }

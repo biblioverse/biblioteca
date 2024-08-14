@@ -3,8 +3,10 @@
 namespace App\Controller\Kobo;
 
 use App\Entity\Book;
+use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
+use App\Kobo\Request\Bookmark;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
@@ -16,7 +18,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -61,6 +62,9 @@ class KoboStateController extends AbstractController
             case ReadingStateStatusInfo::STATUS_FINISHED:
                 $this->bookProgressionService->setProgression($book, $kobo->getUser(), 1.0);
                 break;
+            case ReadingStateStatusInfo::STATUS_READY_TO_READ:
+                $this->bookProgressionService->setProgression($book, $kobo->getUser(), null);
+                break;
             case ReadingStateStatusInfo::STATUS_READING:
                 $progress = $state->currentBookmark?->progressPercent;
                 $progress = $progress !== null ? $progress / 100 : null;
@@ -69,6 +73,9 @@ class KoboStateController extends AbstractController
             case null:
                 break;
         }
+
+        $this->handleBookmark($kobo, $book, $state->currentBookmark);
+
         $this->em->flush();
 
         return new StateResponse($book);
@@ -80,9 +87,40 @@ class KoboStateController extends AbstractController
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
     public function getState(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
     {
+        // Get State returns an empty response
+        $response = new JsonResponse([]);
+        $response->headers->set('x-kobo-api-token', 'e30=');
+
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
+
+        // Empty response if we know the book
+        if ($book instanceof Book) {
+            return $response;
+        }
+
+        // If we do not know the book, we forward the query to the proxy
         if ($this->koboStoreProxy->isEnabled()) {
             return $this->koboStoreProxy->proxyOrRedirect($request);
         }
-        throw new HttpException(200, 'Not implemented');
+
+        return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
+    }
+
+    private function handleBookmark(KoboDevice $kobo, Book $book, ?Bookmark $currentBookmark): void
+    {
+        if (!$currentBookmark instanceof Bookmark) {
+            $kobo->getUser()->removeBookmarkForBook($book);
+
+            return;
+        }
+
+        $bookmark = $kobo->getUser()->getBookmarkForBook($book) ?? new BookmarkUser($book, $kobo->getUser());
+        $this->em->persist($bookmark);
+
+        $bookmark->setPercent($currentBookmark->progressPercent === null ? null : $currentBookmark->progressPercent / 100);
+        $bookmark->setLocationType($currentBookmark->location?->type);
+        $bookmark->setLocationSource($currentBookmark->location?->source);
+        $bookmark->setLocationValue($currentBookmark->location?->value);
+        $bookmark->setSourcePercent($currentBookmark->contentSourceProgressPercent === null ? null : $currentBookmark->contentSourceProgressPercent / 100);
     }
 }

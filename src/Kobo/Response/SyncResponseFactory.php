@@ -5,6 +5,7 @@ namespace App\Kobo\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\SyncToken;
+use App\Service\BookProgressionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -13,13 +14,22 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class SyncResponseFactory
 {
-    public function __construct(protected MetadataResponseService $metadataResponseService, protected SerializerInterface $serializer)
+    public function __construct(
+        protected MetadataResponseService $metadataResponseService,
+        protected BookProgressionService $bookProgressionService,
+        protected SerializerInterface $serializer)
     {
     }
 
     public function create(SyncToken $syncToken, KoboDevice $kobo): SyncResponse
     {
-        return new SyncResponse($this->metadataResponseService, $syncToken, $kobo, $this->serializer);
+        return new SyncResponse(
+            $this->metadataResponseService,
+            $this->bookProgressionService,
+            $syncToken,
+            $kobo,
+            $this->serializer
+        );
     }
 
     public function createMetadata(KoboDevice $kobo, Book $book): JsonResponse
