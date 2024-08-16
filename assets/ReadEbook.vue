@@ -1,13 +1,21 @@
 <template>
-  <div id="area" style="width: 100vw; height: 100vh; min-height: 95vh;">
-    <vue-reader
-        :url="props.file"
-        :showToc="true"
-        :getRendition="getRendition"
-        :backgroundColor="props.bgColor"
-        @update:location="locationChange"
-        :location="getInitialLocation()"
-    />
+  <div class="flex">
+    <div class="area-back" v-if="canGoBack()" style="width: 10vw">
+      <button @click="goBack" class="arrow pre">
+        ‹‹
+      </button>
+    </div>
+
+    <div id="area" :style="`width: ${canGoBack() ?80 :  100}vw; height: 100vh; min-height: 95vh;`">
+      <vue-reader
+          :url="props.file"
+          :showToc="true"
+          :getRendition="getRendition"
+          :backgroundColor="props.bgColor"
+          @update:location="locationChange"
+          :location="getInitialLocation()"
+      />
+    </div>
   </div>
 </template>
 
@@ -17,11 +25,12 @@ const props = defineProps({
   'css': String,
   'bgColor': String,
   'percent': String,
-  'progressionUrl': String
+  'progressionUrl': String,
+  'backUrl': { type: String, default: ''}
 })
 import { VueReader } from 'vue-book-reader'
 const initialCfi = new URLSearchParams(window.location.search).get('cfi');
-
+const initialReferrer = document.referrer
 function debounce(func, delay) {
   let timeoutId;
   return function(...args) {
@@ -71,4 +80,12 @@ const getRendition = async (rendition) => {
   rendition.renderer.setStyles([props.css])
 }
 
+const canGoBack = () => {
+  return initialReferrer !== "" || props.backUrl !== ""
+}
+
+const goBack = (e) => {
+  e.preventDefault()
+  window.location.href = props.backUrl ?? initialReferrer;
+}
 </script>
