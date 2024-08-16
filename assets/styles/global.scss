@@ -9,6 +9,13 @@ body.bg-darker{
 
 #vue-book-reader{
   width: 100%;
+  .flex{
+    display: flex;
+    button{
+      display: block;
+    }
+  }
+
 }
 
 /*

@@ -13,7 +13,13 @@
 {% endblock %}
 
 {% block content %}
-    <div id="vue-book-reader" data-progressionUrl="{{ app.request.pathInfo }}" data-percent="{{ percent??'undefined' }}" data-file="{{ file }}" data-css="{{ block('readercss')|e('html_attr') }}" data-background-color="{{ isDark ? '#000' : '#fff' }}">
+    <div id="vue-book-reader"
+         data-progression-url="{{ app.request.pathInfo }}"
+         data-percent="{{ percent??'undefined' }}"
+         data-file="{{ file }}"
+         data-css="{{ block('readercss')|e('html_attr') }}"
+         data-background-color="{{ isDark ? '#000' : '#fff' }}"
+         data-back-url="{{ backUrl }}">
         <a href="{{ file }}">Loading book</a>
     </div>
 {% endblock %}
