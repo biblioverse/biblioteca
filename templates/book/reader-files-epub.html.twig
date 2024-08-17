@@ -19,12 +19,25 @@
 {% endblock %}
 
 {% block readercss %}
-    {# This css is injected to the vue-book-reader component, in a shadow root, so it's not possible to use --vars. #}
-    html {
-        background: {{ isDark ? '#000' : '#fff' }};
-        color: {{ isDark ? '#fff' : '#000' }};
-    }
-    a {
-        color: #24599d;
-    }
+    {% if isDark %}
+        {# This css is injected to the vue-book-reader component, in a shadow root, so it's not possible to use --vars. #}
+        html {
+            background: #000;
+            color: #fff;
+        }
+        a {
+            color: #24599d;
+        }
+
+        a:hover {
+            color: #FFFFFF;
+        }
+
+        h1,h2,h3,h4,h5,h6,h7,h8,h9,h10 {
+            color: #fff !important;
+        }
+        p, pre, blockquote, code {
+            color: #fff !important;
+        }
+    {% endif %}
 {% endblock %}
