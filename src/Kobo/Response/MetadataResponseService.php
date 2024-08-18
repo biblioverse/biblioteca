@@ -5,12 +5,22 @@ namespace App\Kobo\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
+use App\Kobo\Kepubify\KepubifyConversionFailed;
+use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Kobo\SyncToken;
+use Psr\Log\LoggerInterface;
 
 class MetadataResponseService
 {
-    public function __construct(protected DownloadHelper $downloadHelper)
-    {
+    public const KEPUB_FORMAT = 'KEPUB';
+    public const EPUB3_FORMAT = 'EPUB3';
+    public const EPUB_FORMAT = 'EPUB';
+
+    public function __construct(
+        protected DownloadHelper $downloadHelper,
+        protected KepubifyEnabler $kepubifyEnabler,
+        protected LoggerInterface $koboLogger,
+    ) {
     }
 
     protected function getDownloadUrls(Book $book, KoboDevice $kobo, ?array $filters = []): array
@@ -19,19 +29,31 @@ class MetadataResponseService
         $platform = reset($platforms);
         $platform = $platform === false ? 'Generic' : $platform;
 
-        $response = [];
+        // If format conversion is enabled, we convert the book to KEPUB and return it
+        if ($this->kepubifyEnabler->isEnabled()) {
+            try {
+                $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $kobo, self::KEPUB_FORMAT);
 
-        $formats = ['EPUB3']; // EPUB3 is required for Kobo
-        foreach ($formats as $format) { // and ... EPUB3FL ?;
-            $response[] = [
-                'Format' => $format,
-                'Size' => $this->downloadHelper->getSize($book),
-                'Url' => $this->downloadHelper->getUrlForKoboDevice($book, $kobo),
-                'Platform' => $platform,
-            ];
+                return [0 => [
+                    'Format' => self::KEPUB_FORMAT,
+                    'Size' => $downloadInfo->getSize(),
+                    'Url' => $downloadInfo->getUrl(),
+                    'Platform' => $platform,
+                ]];
+            } catch (KepubifyConversionFailed $e) {
+                $this->koboLogger->info('Conversion failed for book {book}', ['book' => $book->getUuid(), 'exception' => $e]);
+            }
         }
 
-        return $response;
+        // Otherwise, we return the original book with a EPUB3 format
+        $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $kobo, $book->getExtension());
+
+        return [0 => [
+            'Format' => self::EPUB3_FORMAT,
+            'Size' => $downloadInfo->getSize(),
+            'Url' => $downloadInfo->getUrl(),
+            'Platform' => $platform,
+        ]];
     }
 
     public function fromBook(Book $book, KoboDevice $kobo, ?SyncToken $syncToken = null): array

@@ -6,12 +6,17 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
+use App\Kobo\Kepubify\KepubifyConversionFailed;
+use App\Kobo\Kepubify\KepubifyMessage;
+use App\Kobo\Response\MetadataResponseService;
 use App\Service\BookFileSystemManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DownloadHelper
@@ -20,8 +25,9 @@ class DownloadHelper
         private readonly BookFileSystemManager $fileSystemManager,
         private readonly CoverTransformer $coverTransformer,
         protected UrlGeneratorInterface $urlGenerator,
-        protected LoggerInterface $logger)
-    {
+        protected LoggerInterface $logger,
+        protected MessageBusInterface $messageBus,
+    ) {
     }
 
     protected function getBookFilename(Book $book): string
@@ -34,17 +40,12 @@ class DownloadHelper
         return $this->fileSystemManager->getBookSize($book) ?? 0;
     }
 
-    public function getCoverSize(Book $book): int
-    {
-        return $this->fileSystemManager->getCoverSize($book) ?? 0;
-    }
-
-    public function getUrlForKoboDevice(Book $book, KoboDevice $kobo): string
+    private function getUrlForKoboDevice(Book $book, KoboDevice $kobo, string $extension): string
     {
         return $this->urlGenerator->generate('app_kobodownload', [
             'id' => $book->getId(),
             'accessKey' => $kobo->getAccessKey(),
-            'extension' => $book->getExtension(),
+            'extension' => strtolower($extension),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
@@ -86,28 +87,45 @@ class DownloadHelper
         return $response;
     }
 
-    public function getResponse(Book $book): StreamedResponse
+    /**
+     * @throws NotFoundHttpException Book conversion failed
+     */
+    public function getResponse(Book $book, string $format): Response
     {
         $bookPath = $this->getBookFilename($book);
         if (false === $this->exists($book)) {
             throw new BookFileNotFound($bookPath);
         }
-        $response = new StreamedResponse(function () use ($bookPath) {
-            readfile($bookPath);
-        }, Response::HTTP_OK);
 
-        $filename = $book->getBookFilename();
+        $message = null;
+
+        if ($format === MetadataResponseService::KEPUB_FORMAT) {
+            try {
+                $message = $this->runKepubify($bookPath);
+            } catch (KepubifyConversionFailed $e) {
+                throw new NotFoundHttpException('Book conversion failed', $e);
+            }
+        }
+
+        $fileToStream = $message?->destination ?? $bookPath;
+        $fileSize = $message?->size ?? filesize($fileToStream);
+
+        $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
+            ->deleteFileAfterSend($message?->destination !== null);
+
+        $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
         $encodedFilename = rawurlencode($filename);
         $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
 
-        $response->headers->set('Content-Type', match (strtolower($book->getExtension())) {
-            'epub', 'epub3' => 'application/epub+zip',
+        $response->headers->set('Content-Type', match (strtoupper($format)) {
+            MetadataResponseService::KEPUB_FORMAT, MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT => 'application/epub+zip',
             default => 'application/octet-stream',
         });
-        $response->headers->set('Content-Disposition',
-            sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $encodedFilename, $simpleName));
 
-        $response->headers->set('Content-Length', (string) $this->getSize($book));
+        if ($fileSize !== false) {
+            $response->headers->set('Content-Length', (string) $fileSize);
+        }
 
         return $response;
     }
@@ -115,5 +133,48 @@ class DownloadHelper
     public function coverExist(Book $book): bool
     {
         return $this->fileSystemManager->coverExist($book);
+    }
+
+    /**
+     * @throws KepubifyConversionFailed
+     */
+    private function runKepubify(string $bookPath): KepubifyMessage
+    {
+        $message = new KepubifyMessage($bookPath);
+        $this->messageBus->dispatch($message);
+
+        if ($message->destination === null || $message->size === null) {
+            throw new KepubifyConversionFailed($bookPath);
+        }
+
+        return $message;
+    }
+
+    /**
+     * @throws KepubifyConversionFailed
+     * @throws BookFileNotFound
+     */
+    public function getDownloadInfo(Book $book, KoboDevice $koboDevice, string $extension): BookDownloadInfo
+    {
+        $bookPath = $this->getBookFilename($book);
+        if (false === $this->exists($book)) {
+            throw new BookFileNotFound($bookPath);
+        }
+
+        $url = $this->getUrlForKoboDevice($book, $koboDevice, $extension);
+
+        if (strtoupper($extension) !== MetadataResponseService::KEPUB_FORMAT) {
+            return new BookDownloadInfo($this->getSize($book), $url);
+        }
+
+        // Convert the book to fetch the final size
+        $message = $this->runKepubify($bookPath);
+
+        $info = new BookDownloadInfo((int) $message->size, $url);
+        if ($message->destination !== null) {
+            unlink($message->destination);
+        }
+
+        return $info;
     }
 }
