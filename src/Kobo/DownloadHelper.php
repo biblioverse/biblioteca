@@ -8,6 +8,7 @@ use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Service\BookFileSystemManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -55,33 +56,32 @@ class DownloadHelper
     /**
      * @throws NotFoundHttpException
      */
-    public function getCoverResponse(Book $book, int $width, int $height, bool $grayscale = false, bool $asAttachement = true): StreamedResponse
+    public function getCoverResponse(Book $book, int $width, int $height, string $extensionWithDot, bool $grayscale = false, bool $asAttachement = true): StreamedResponse
     {
         $coverPath = $this->fileSystemManager->getCoverFilename($book);
         if ($coverPath === null || false === $this->fileSystemManager->coverExist($book)) {
             throw new BookFileNotFound($coverPath);
         }
-        $response = new StreamedResponse(function () use ($coverPath, $width, $height, $grayscale) {
-            $this->coverTransformer->streamFile($coverPath, $width, $height, $grayscale);
+        $responseExtensionWithDot = $this->coverTransformer->canConvertFile($coverPath) ? $extensionWithDot : '.'.pathinfo($coverPath, PATHINFO_EXTENSION);
+        $response = new StreamedResponse(function () use ($coverPath, $width, $height, $grayscale, $responseExtensionWithDot) {
+            $this->coverTransformer->streamFile($coverPath, $width, $height, $responseExtensionWithDot, $grayscale);
         }, Response::HTTP_OK);
 
-        match ($book->getImageExtension()) {
-            'jpg', 'jpeg' => $response->headers->set('Content-Type', 'image/jpeg'),
-            'png' => $response->headers->set('Content-Type', 'image/png'),
-            'gif' => $response->headers->set('Content-Type', 'image/gif'),
+        match ($responseExtensionWithDot) {
+            CoverTransformer::JPG, CoverTransformer::JPEG => $response->headers->set('Content-Type', 'image/jpeg'),
+            CoverTransformer::PNG => $response->headers->set('Content-Type', 'image/png'),
+            CoverTransformer::GIF => $response->headers->set('Content-Type', 'image/gif'),
             default => $response->headers->set('Content-Type', 'application/octet-stream'),
         };
 
-        if ($asAttachement) {
-            $filename = $book->getImageFilename();
-            if ($filename === null) {
-                return $response;
-            }
-            $encodedFilename = rawurlencode($filename);
-            $simpleName = rawurlencode(sprintf('book-cover--%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
-            $response->headers->set('Content-Disposition',
-                sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
+        $filename = $book->getImageFilename();
+        if ($filename === null) {
+            return $response;
         }
+
+        $encodedFilename = rawurlencode($filename);
+        $simpleName = rawurlencode(sprintf('book-cover--%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition($asAttachement ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE, $encodedFilename, $simpleName));
 
         return $response;
     }

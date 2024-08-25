@@ -130,6 +130,10 @@ class BookController extends AbstractController
                     'file' => $fileSystemManager->getBookPublicPath($book),
                     'body_class' => $themeSelector->isDark() ? 'bg-darker' : '',
                     'isDark' => $themeSelector->isDark(),
+                    'backUrl' => $this->generateUrl('app_book', [
+                        'book' => $book->getId(),
+                        'slug' => $book->getSlug(),
+                    ]),
                 ]);
             case 'pdf':
             case 'cbr':
