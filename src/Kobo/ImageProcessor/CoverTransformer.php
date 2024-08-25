@@ -8,29 +8,36 @@ class CoverTransformer
     public const PNG = '.png';
     public const GIF = '.gif';
     public const JPEG = '.jpeg';
-    public const WEBP = '.wepb';
+    public const WEBP = '.webp';
 
     private function fallback(string $coverPath): void
     {
         readfile($coverPath);
     }
 
-    public function streamFile(string $coverPath, int $maxWidth, int $maxHeight, bool $grayscale = false): void
+    public function canConvertFile(string $coverPath): bool
     {
-        // Check if GD extension is loaded
-        if (false === function_exists('imagecreatetruecolor')) {
-            $this->fallback($coverPath);
-
-            return;
+        if (!function_exists('imagecreatetruecolor')) {
+            return false;
         }
 
         // We only support jpeg & png & gif & webp
-        if (false === str_ends_with($coverPath, self::JPG)
+        return !(false === str_ends_with($coverPath, self::JPG)
             && false === str_ends_with($coverPath, self::PNG)
             && false === str_ends_with($coverPath, self::GIF)
             && false === str_ends_with($coverPath, self::JPEG)
-            && false === str_ends_with($coverPath, self::WEBP)
-        ) {
+            && false === str_ends_with($coverPath, self::WEBP));
+    }
+
+    public function streamFile(string $coverPath, int $maxWidth, int $maxHeight, string $extensionWithDot, bool $grayscale = false): void
+    {
+        // Make sure the extension starts with a dot
+        if (false === str_starts_with($extensionWithDot, '.')) {
+            $extensionWithDot = '.'.$extensionWithDot;
+        }
+
+        // Check if the file can be converted
+        if (false === $this->canConvertFile($coverPath)) {
             $this->fallback($coverPath);
 
             return;
@@ -76,8 +83,8 @@ class CoverTransformer
         imagefill($image, 0, 0, $blackColor);
 
         // Load the original image based on the extension
-        $extension = pathinfo($coverPath, PATHINFO_EXTENSION);
-        $originalImage = match ($extension) {
+        $originalExtensionWithDot = '.'.pathinfo($coverPath, PATHINFO_EXTENSION); // Add a dot to the extension
+        $originalImage = match ($originalExtensionWithDot) {
             self::PNG => imagecreatefrompng($coverPath),
             self::GIF => imagecreatefromgif($coverPath),
             self::WEBP => imagecreatefromwebp($coverPath),
@@ -101,7 +108,7 @@ class CoverTransformer
         }
 
         // Output the image based on the extension
-        match ($extension) {
+        match ($extensionWithDot) {
             self::PNG => imagepng($image, null, 9),
             self::GIF => imagegif($image),
             self::WEBP => imagewebp($image),
