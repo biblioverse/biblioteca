@@ -72,6 +72,17 @@
                             {% endfor %}
                             <option value="">Not set</option>
                         </select>
+                    {% elseif field=='pageNumber' %}
+                        <input
+                                data-action="live#action"
+                                type="number"
+                                step="1"
+                                data-model="book.{{ field }}"
+                                data-live-action-param="prevent|save"
+                                class="form-check"
+                                autofocus
+                                id="book_{{ book.id }}_{{ field }}"
+                        />
                     {% else %}
                         <input
                                 type="text"

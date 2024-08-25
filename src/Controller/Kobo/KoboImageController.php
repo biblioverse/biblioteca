@@ -57,6 +57,6 @@ class KoboImageController extends AbstractController
 
         $asAttachment = str_contains((string) $request->headers->get('User-Agent'), 'Kobo');
 
-        return $this->downloadHelper->getCoverResponse($book, $width, $height, $isGreyscale, $asAttachment);
+        return $this->downloadHelper->getCoverResponse($book, $width, $height, '.jpg', $isGreyscale, $asAttachment);
     }
 }

@@ -2,23 +2,19 @@
 
 namespace App\Tests\Controller\Kobo;
 
+use App\Tests\InjectFakeFileSystemTrait;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
-use App\Service\BookFileSystemManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 abstract class AbstractKoboControllerTest extends WebTestCase
 {
+    use InjectFakeFileSystemTrait;
 
-    const DEFAULT_BOOK_FOLDER_NAMING_FORMAT = '{authorFirst}/{author}/{title}/{serie}';
-    const DEFAULT_BOOK_FILE_NAMING_FORMAT = '{serie}-{title}';
     protected ?string $accessKey = null;
     protected ?KoboDevice $koboDevice = null;
 
@@ -86,28 +82,6 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $kobo;
     }
 
-    protected function injectFakeFileSystemManager(): void
-    {
-        $resources = __DIR__.'/../../Resources';
-        $fixtureBookPath = realpath($resources)."/";
-        $mockBuilder = $this->getMockBuilder(BookFileSystemManager::class);
 
-        $mock =  $mockBuilder->setConstructorArgs([
-            self::getContainer()->get(Security::class),
-            realpath($resources),
-            self::DEFAULT_BOOK_FOLDER_NAMING_FORMAT,
-            self::DEFAULT_BOOK_FILE_NAMING_FORMAT,
-            $this->createMock(SluggerInterface::class),
-            new NullLogger(),
-        ])
-            ->onlyMethods(['getBooksDirectory', 'getCoverDirectory'])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
-        $mock->expects(self::any())->method('getBooksDirectory')->willReturn($fixtureBookPath);
-        $mock->expects(self::any())->method('getCoverDirectory')->willReturn($fixtureBookPath);
-
-        self::assertSame(realpath($resources).'/books/TheOdysses.epub', $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
-        self::getContainer()->set(BookFileSystemManager::class, $mock);
-    }
 
 }

@@ -7,11 +7,15 @@ use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
+use App\Service\BookProgressionService;
+use App\Service\ThemeSelector;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
@@ -20,6 +24,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/books')]
 class BookController extends AbstractController
 {
+    public function __construct(private readonly BookProgressionService $bookProgressionService)
+    {
+    }
+
     #[Route('/{book}/{slug}', name: 'app_book')]
     public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManager $fileSystemManager): Response
     {
@@ -85,8 +93,16 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}/read', name: 'app_book_read')]
-    public function read(Request $request, Book $book, string $slug, BookFileSystemManager $fileSystemManager, PaginatorInterface $paginator, EntityManagerInterface $manager): Response
-    {
+    public function read(
+        Request $request,
+        Book $book,
+        string $slug,
+        BookFileSystemManager $fileSystemManager,
+        PaginatorInterface $paginator,
+        ThemeSelector $themeSelector,
+        EntityManagerInterface $manager,
+        BookProgressionService $bookProgressionService
+    ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -102,15 +118,30 @@ class BookController extends AbstractController
         }
 
         switch ($book->getExtension()) {
-            // case 'epub':
-            //    break;
+            case 'epub':
+            case 'mobi':
+                if ($request->isMethod('POST') && $request->headers->get('Content-Type') === 'application/json') {
+                    return $this->updateProgression($request, $book, $user);
+                }
+
+                return $this->render('book/reader-files-epub.html.twig', [
+                    'book' => $book,
+                    'percent' => $this->bookProgressionService->getProgression($book, $user),
+                    'file' => $fileSystemManager->getBookPublicPath($book),
+                    'body_class' => $themeSelector->isDark() ? 'bg-darker' : '',
+                    'isDark' => $themeSelector->isDark(),
+                    'backUrl' => $this->generateUrl('app_book', [
+                        'book' => $book->getId(),
+                        'slug' => $book->getSlug(),
+                    ]),
+                ]);
             case 'pdf':
             case 'cbr':
             case 'cbz':
                 $files = $fileSystemManager->extractFilesToRead($book);
                 break;
             default:
-                $this->addFlash('danger', 'Unsupported book format');
+                $this->addFlash('danger', 'Unsupported book format: '.$book->getExtension());
 
                 return $this->redirectToRoute('app_book', [
                     'book' => $book->getId(),
@@ -296,5 +327,27 @@ class BookController extends AbstractController
             'book' => $book->getId(),
             'slug' => $book->getSlug(),
         ]);
+    }
+
+    private function updateProgression(Request $request, Book $book, User $user): JsonResponse
+    {
+        try {
+            /** @var array{percent?:string|float, cfi?:string} $json */
+            $json = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new BadRequestException('Invalid percent in json', 0, $e);
+        }
+        $percent = $json['percent'] ?? null;
+        $percent = $percent === null ? null : floatval((string) $percent);
+
+        if ($percent !== null && $percent <= 1.0 && $percent >= 0) {
+            $this->bookProgressionService->setProgression($book, $user, $percent)
+                ->flush();
+
+            return new JsonResponse([
+                'percent' => $percent,
+            ]);
+        }
+        throw new BadRequestException('Invalid percent in json: '.json_encode($json));
     }
 }

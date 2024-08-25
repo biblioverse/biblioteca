@@ -1,0 +1,49 @@
+{% extends themedTemplate('bare.html.twig') %}
+{% set isDark = isDark|default(false) %}
+
+{% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('read-ebook') }}
+    {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('read-ebook') }}
+{% endblock %}
+
+{% block content %}
+    <div id="vue-book-reader"
+         data-progression-url="{{ app.request.pathInfo }}"
+         data-percent="{{ percent??'undefined' }}"
+         data-file="{{ file }}"
+         data-css="{{ block('readercss')|e('html_attr') }}"
+         data-background-color="{{ isDark ? '#000' : '#fff' }}"
+         data-back-url="{{ backUrl }}">
+        <a href="{{ file }}">Loading book</a>
+    </div>
+{% endblock %}
+
+{% block readercss %}
+    {% if isDark %}
+        {# This css is injected to the vue-book-reader component, in a shadow root, so it's not possible to use --vars. #}
+        html {
+            background: #000;
+            color: #fff;
+        }
+        a {
+            color: #24599d;
+        }
+
+        a:hover {
+            color: #FFFFFF;
+        }
+
+        h1,h2,h3,h4,h5,h6,h7,h8,h9,h10 {
+            color: #fff !important;
+        }
+        p, pre, blockquote, code {
+            color: #fff !important;
+        }
+    {% endif %}
+{% endblock %}

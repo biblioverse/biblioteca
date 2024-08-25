@@ -104,11 +104,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $useKoboDevices = true;
 
+    /**
+     * @var Collection<int, BookmarkUser>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookmarkUser::class, orphanRemoval: true)]
+    private Collection $bookmarkUsers;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
         $this->shelves = new ArrayCollection();
         $this->kobos = new ArrayCollection();
+        $this->bookmarkUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -431,6 +438,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUseKoboDevices(bool $useKoboDevices): static
     {
         $this->useKoboDevices = $useKoboDevices;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookmarkUser>
+     */
+    public function getBookmarkUsers(): Collection
+    {
+        return $this->bookmarkUsers;
+    }
+
+    public function addBookmarkUser(BookmarkUser $bookmarkUser): static
+    {
+        if (!$this->bookmarkUsers->contains($bookmarkUser)) {
+            $this->bookmarkUsers->add($bookmarkUser);
+            $bookmarkUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookmarkUser(BookmarkUser $bookmarkUser): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->bookmarkUsers->removeElement($bookmarkUser) && $bookmarkUser->getUser() === $this) {
+            $bookmarkUser->setUser(null);
+        }
+
+        return $this;
+    }
+
+    public function getBookmarkForBook(Book $book): ?BookmarkUser
+    {
+        foreach ($this->bookmarkUsers as $bookmarkUser) {
+            if ($bookmarkUser->getBook() === $book) {
+                return $bookmarkUser;
+            }
+        }
+
+        return null;
+    }
+
+    public function removeBookmarkForBook(Book $book): self
+    {
+        $this->getBookmarkForBook($book)?->setUser(null)->setBook(null);
 
         return $this;
     }

@@ -2,6 +2,21 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
+body.bg-darker{
+  background-color: #000;
+  color: #fff;
+}
+
+#vue-book-reader{
+  width: 100%;
+  .flex{
+    display: flex;
+    button{
+      display: block;
+    }
+  }
+
+}
 
 /*
  * Sidebar

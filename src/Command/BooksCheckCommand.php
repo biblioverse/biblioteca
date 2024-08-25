@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManager;
+use App\Service\BookProgressionService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -19,8 +20,12 @@ use Symfony\Component\Routing\RouterInterface;
 )]
 class BooksCheckCommand extends Command
 {
-    public function __construct(private BookFileSystemManager $fileSystemManager, private BookRepository $bookRepository, private RouterInterface $router)
-    {
+    public function __construct(
+        private BookFileSystemManager $fileSystemManager,
+        private BookRepository $bookRepository,
+        private RouterInterface $router,
+        private BookProgressionService $bookProgressionService,
+    ) {
         parent::__construct();
     }
 
@@ -46,6 +51,10 @@ class BooksCheckCommand extends Command
                 $this->bookRepository->flush();
             } catch (\Exception $e) {
                 $io->warning($e->getMessage());
+            }
+            // Trigger page number generation
+            if ($book->getPageNumber() === 0 || $book->getPageNumber() === null) {
+                $this->bookProgressionService->processPageNumber($book, true);
             }
 
             $progressBar->advance();

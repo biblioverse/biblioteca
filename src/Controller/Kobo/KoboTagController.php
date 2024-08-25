@@ -34,11 +34,23 @@ class KoboTagController extends AbstractController
      * @throws GuzzleException
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
-    #[Route('/v1/library/tags/{tagId}/items/delete', methods: ['POST'])]
-    public function delete(Request $request, KoboDevice $kobo, string $tagId): Response
+    #[Route('/v1/library/tags/{shelfId}/items/delete', methods: ['POST'])]
+    public function delete(Request $request, KoboDevice $kobo, string $shelfId): Response
     {
-        if ($this->koboStoreProxy->isEnabled()) {
-            return $this->koboStoreProxy->proxy($request);
+        $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $shelfId);
+
+        // Proxy query if we do not know the shelf
+        if ($this->koboStoreProxy->isEnabled() && !$shelf instanceof Shelf) {
+            $response = $this->koboStoreProxy->proxy($request);
+
+            // Avoid the Kobo to send the request over and over again by marking it successful
+            if ($response->getStatusCode() === Response::HTTP_NOT_FOUND) {
+                $this->logger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
+
+                return new JsonResponse($shelfId, Response::HTTP_CREATED);
+            }
+
+            return $response;
         }
 
         /** @var TagDeleteRequest $deleteRequest */
@@ -46,12 +58,11 @@ class KoboTagController extends AbstractController
         $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
 
         try {
-            $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
             if (!$shelf instanceof Shelf) {
-                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $tagId));
+                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $shelfId));
             }
         } catch (NonUniqueResultException $e) {
-            throw new BadRequestException('Invalid tag id', 0, $e);
+            throw new BadRequestException('Invalid shelf id', 0, $e);
         }
 
         foreach ($shelf->getBooks() as $book) {
@@ -61,8 +72,7 @@ class KoboTagController extends AbstractController
         }
         $this->shelfRepository->flush();
 
-        // TODO Find the response format for this
-        return new JsonResponse([], Response::HTTP_NOT_IMPLEMENTED);
+        return new JsonResponse($shelfId, Response::HTTP_CREATED);
     }
 
     #[Route('/v1/library/tags')]
