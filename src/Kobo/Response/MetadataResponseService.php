@@ -5,11 +5,18 @@ namespace App\Kobo\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
+use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Kobo\SyncToken;
 
 class MetadataResponseService
 {
-    public function __construct(protected DownloadHelper $downloadHelper)
+    public const KEPUB_FORMAT = 'KEPUB';
+    public const EPUB3_FORMAT = 'EPUB3';
+    public const EPUB_FORMAT = 'EPUB';
+
+    public function __construct(
+        protected DownloadHelper $downloadHelper,
+        protected KepubifyEnabler $kepubifyEnabler)
     {
     }
 
@@ -21,12 +28,17 @@ class MetadataResponseService
 
         $response = [];
 
-        $formats = ['EPUB3']; // EPUB3 is required for Kobo
+        $formats = [self::EPUB3_FORMAT]; // At least EPUB3 is required for Kobo
+        if ($this->kepubifyEnabler->isEnabled()) {
+            $formats[] = self::KEPUB_FORMAT;
+        }
+
         foreach ($formats as $format) { // and ... EPUB3FL ?;
+            $extension = $format === self::KEPUB_FORMAT ? $format : $book->getExtension();
             $response[] = [
                 'Format' => $format,
                 'Size' => $this->downloadHelper->getSize($book),
-                'Url' => $this->downloadHelper->getUrlForKoboDevice($book, $kobo),
+                'Url' => $this->downloadHelper->getUrlForKoboDevice($book, $kobo, $extension),
                 'Platform' => $platform,
             ];
         }

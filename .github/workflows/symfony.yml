@@ -31,7 +31,9 @@ jobs:
           php-version: '8.2'
       - uses: actions/checkout@v3
       - name: Copy .env.test.local
-        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+        run: |
+          php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+          echo "KEPUBIFY_BIN=/usr/local/bin/kepubify" >> .env.test.local
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3
@@ -42,6 +44,28 @@ jobs:
             ${{ runner.os }}-php-
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Cache kepubify
+        id: kepubify-cache-restore
+        uses: actions/cache@v3
+        with:
+          path: /usr/local/bin/kepubify
+          key: ${{ runner.os }}-kepubify-cache
+      - name: Install kepubify
+        if: steps.kepubify-cache-restore.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /usr/local/bin/
+          # Install kepubify (from https://github.com/linuxserver/docker-calibre-web/blob/master/Dockerfile)
+          KEPUBIFY_RELEASE=$(curl -sX GET "https://api.github.com/repos/pgaskin/kepubify/releases/latest"  | awk '/tag_name/{print $4;exit}' FS='[""]');
+          curl -o /usr/local/bin/kepubify -L https://github.com/pgaskin/kepubify/releases/download/${KEPUBIFY_RELEASE}/kepubify-linux-64bit
+          chmod +x /usr/local/bin/kepubify
+      - name: Cache kepubify
+        uses: actions/cache/save@v4
+        if: steps.kepubify-cache-restore.outputs.cache-hit != 'true'
+        id: kepubify-cache-save
+        with:
+          path: /usr/local/bin/kepubify
+          key: ${{ runner.os }}-kepubify-cache
+
       - name: Create Database
         run: |
           mkdir -p data
