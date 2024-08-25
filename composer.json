@@ -172,7 +172,7 @@
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "^7.1",
         "symfony/css-selector": "^7.1",
-        "symfony/debug-bundle": "^6.2",
+        "symfony/debug-bundle": "^7.1",
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/stopwatch": "^6.2",
