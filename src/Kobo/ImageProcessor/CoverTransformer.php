@@ -55,8 +55,8 @@ class CoverTransformer
         $aspectRatio = $originalWidth / max(1, $originalHeight);
 
         // Calculate the new dimensions while maintaining the aspect ratio and respecting maxWidth and maxHeight
-        $newWidth = min($maxWidth, $originalWidth);
-        $newHeight = min($maxHeight, $originalHeight);
+        $newWidth = $maxWidth;
+        $newHeight = $maxHeight;
 
         // New ratio
         if ($newWidth / $aspectRatio > $newHeight) {
