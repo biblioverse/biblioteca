@@ -44,7 +44,7 @@
         "symfony/form": "^7.1",
         "symfony/framework-bundle": "^6.2",
         "symfony/http-client": "^6.2",
-        "symfony/intl": "^6.2",
+        "symfony/intl": "^7.1",
         "symfony/mailer": "^6.2",
         "symfony/mime": "^7.1",
         "symfony/monolog-bundle": "^3.0",
