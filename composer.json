@@ -33,7 +33,7 @@
         "scienta/doctrine-json-functions": "^5.3",
         "symandy/database-backup-bundle": "^0.4.0",
         "symfony/apache-pack": "^1.0",
-        "symfony/asset": "^6.2",
+        "symfony/asset": "^7.1",
         "symfony/console": "^6.2",
         "symfony/doctrine-messenger": "^7.1",
         "symfony/dotenv": "^6.2",
