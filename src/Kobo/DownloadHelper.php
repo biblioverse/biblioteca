@@ -102,7 +102,7 @@ class DownloadHelper
 
         $response->headers->set('Content-Type', match (strtolower($book->getExtension())) {
             'epub', 'epub3' => 'application/epub+zip',
-            default => 'application/octet-stream'
+            default => 'application/octet-stream',
         });
         $response->headers->set('Content-Disposition',
             sprintf('attachment; filename="%s"; filename*=UTF-8\'\'%s', $simpleName, $encodedFilename));
