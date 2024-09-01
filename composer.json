@@ -1,181 +1,181 @@
 {
-    "type": "project",
-    "license": "proprietary",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
-    "require": {
-        "php": ">=8.1",
-        "ext-ctype": "*",
-        "ext-exif": "*",
-        "ext-gd": "*",
-        "ext-iconv": "*",
-        "ext-imagick": "*",
-        "ext-zip": "*",
-        "acseo/typesense-bundle": "dev-master",
-        "andanteproject/page-filter-form-bundle": "^1.0",
-        "beberlei/doctrineextensions": "^1.3",
-        "doctrine/annotations": "^2.0",
-        "doctrine/doctrine-bundle": "^2.9",
-        "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.14",
-        "gedmo/doctrine-extensions": "^3.11",
-        "gemorroj/archive7z": "^5.6",
-        "guzzlehttp/guzzle": "^7.8",
-        "jms/serializer": "^3.30",
-        "kiwilan/php-ebook": "^2.0",
-        "knplabs/knp-menu-bundle": "^3.2",
-        "knplabs/knp-paginator-bundle": "^6.2",
-        "liip/imagine-bundle": "^2.10",
-        "orhanerday/open-ai": "^5.1",
-        "phpdocumentor/reflection-docblock": "^5.3",
-        "phpstan/phpdoc-parser": "^1.18",
-        "rtheunissen/guzzle-log-middleware": "^2.0",
-        "scienta/doctrine-json-functions": "^5.3",
-        "symandy/database-backup-bundle": "^0.4.0",
-        "symfony/apache-pack": "^1.0",
-        "symfony/asset": "^6.2",
-        "symfony/console": "^6.2",
-        "symfony/doctrine-messenger": "^7.1",
-        "symfony/dotenv": "^6.2",
-        "symfony/expression-language": "^7.1",
-        "symfony/filesystem": "^7.1",
-        "symfony/finder": "^7.1",
-        "symfony/flex": "^2",
-        "symfony/form": "^7.1",
-        "symfony/framework-bundle": "^6.2",
-        "symfony/http-client": "^6.2",
-        "symfony/intl": "^7.1",
-        "symfony/mailer": "^6.2",
-        "symfony/mime": "^7.1",
-        "symfony/monolog-bundle": "^3.0",
-        "symfony/notifier": "^7.1",
-        "symfony/process": "^6.2",
-        "symfony/property-access": "^6.2",
-        "symfony/property-info": "^7.1",
-        "symfony/psr-http-message-bridge": "^7.1",
-        "symfony/runtime": "^6.2",
-        "symfony/security-bundle": "^6.2",
-        "symfony/serializer": "^6.2",
-        "symfony/stimulus-bundle": "^2.11",
-        "symfony/string": "^7.1",
-        "symfony/translation": "^7.1",
-        "symfony/twig-bundle": "^6.2",
-        "symfony/ux-autocomplete": "^2.11",
-        "symfony/ux-live-component": "^2.11",
-        "symfony/validator": "^6.2",
-        "symfony/web-link": "^6.2",
-        "symfony/webpack-encore-bundle": "^2.0",
-        "symfony/yaml": "^7.1",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+  "type": "project",
+  "license": "proprietary",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=8.1",
+    "ext-ctype": "*",
+    "ext-exif": "*",
+    "ext-gd": "*",
+    "ext-iconv": "*",
+    "ext-imagick": "*",
+    "ext-zip": "*",
+    "acseo/typesense-bundle": "dev-master",
+    "andanteproject/page-filter-form-bundle": "^1.0",
+    "beberlei/doctrineextensions": "^1.3",
+    "doctrine/annotations": "^2.0",
+    "doctrine/doctrine-bundle": "^2.9",
+    "doctrine/doctrine-migrations-bundle": "^3.2",
+    "doctrine/orm": "^2.14",
+    "gedmo/doctrine-extensions": "^3.11",
+    "gemorroj/archive7z": "^5.6",
+    "guzzlehttp/guzzle": "^7.8",
+    "jms/serializer": "^3.30",
+    "kiwilan/php-ebook": "^2.0",
+    "knplabs/knp-menu-bundle": "^3.2",
+    "knplabs/knp-paginator-bundle": "^6.2",
+    "liip/imagine-bundle": "^2.10",
+    "orhanerday/open-ai": "^5.1",
+    "phpdocumentor/reflection-docblock": "^5.3",
+    "phpstan/phpdoc-parser": "^1.18",
+    "rtheunissen/guzzle-log-middleware": "^2.0",
+    "scienta/doctrine-json-functions": "^5.3",
+    "symandy/database-backup-bundle": "^0.4.0",
+    "symfony/apache-pack": "^1.0",
+    "symfony/asset": "^7.1",
+    "symfony/console": "^6.2",
+    "symfony/doctrine-messenger": "^7.1",
+    "symfony/dotenv": "^6.2",
+    "symfony/expression-language": "^7.1",
+    "symfony/filesystem": "^7.1",
+    "symfony/finder": "^7.1",
+    "symfony/flex": "^2",
+    "symfony/form": "^7.1",
+    "symfony/framework-bundle": "^6.2",
+    "symfony/http-client": "^6.2",
+    "symfony/intl": "^7.1",
+    "symfony/mailer": "^6.2",
+    "symfony/mime": "^7.1",
+    "symfony/monolog-bundle": "^3.0",
+    "symfony/notifier": "^7.1",
+    "symfony/process": "^6.2",
+    "symfony/property-access": "^6.2",
+    "symfony/property-info": "^7.1",
+    "symfony/psr-http-message-bridge": "^7.1",
+    "symfony/runtime": "^7.1",
+    "symfony/security-bundle": "^6.2",
+    "symfony/serializer": "^6.2",
+    "symfony/stimulus-bundle": "^2.11",
+    "symfony/string": "^7.1",
+    "symfony/translation": "^7.1",
+    "symfony/twig-bundle": "^6.2",
+    "symfony/ux-autocomplete": "^2.11",
+    "symfony/ux-live-component": "^2.11",
+    "symfony/validator": "^6.2",
+    "symfony/web-link": "^6.2",
+    "symfony/webpack-encore-bundle": "^2.0",
+    "symfony/yaml": "^7.1",
+    "twig/extra-bundle": "^2.12|^3.0",
+    "twig/twig": "^2.12|^3.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "symfony/flex": true,
+      "symfony/runtime": true
     },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "sort-packages": true
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "src/",
-            "DoctrineMigrations\\": "migrations/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
-        }
-    },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*"
-    },
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ],
-        "test-phpstan": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/phpstan analyse --memory-limit=-1"
-        ],
-        "test-phpcs": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
-        ],
-        "phpcs": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src -vv --verbose  --config=.php-cs-fixer.dist.php"
-        ],
-        "test-rector": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/rector --dry-run"
-        ],
-        "rector": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/rector"
-        ],
-        "test-phpunit": [
-            "Composer\\Config::disableProcessTimeout",
-            "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
-        ],
-        "test": [
-            "@test-phpcs",
-            "@test-phpstan",
-            "@test-rector",
-            "mkdir -p data",
-            "rm -f data/database.sqlite",
-            "touch data/database.sqlite",
-            "@php bin/console doctrine:schema:update --complete --force --env=test -n",
-            "@php bin/console typesense:create --env=test",
-            "@php bin/console doctrine:fixtures:load --env=test --append -n",
-            "@test-phpunit"
-        ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": true,
-            "require": "^6.2"
-        }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/SergioMendolia/TypesenseBundle"
-        }
-    ],
-    "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.5",
-        "friendsofphp/php-cs-fixer": "^3.25",
-        "phpstan/phpstan": "^1.10",
-        "phpstan/phpstan-doctrine": "^1.3",
-        "phpstan/phpstan-strict-rules": "^1.0",
-        "phpstan/phpstan-symfony": "^1.2",
-        "phpunit/phpunit": "^9.5",
-        "rector/rector": "^1.1",
-        "roave/security-advisories": "dev-latest",
-        "symfony/browser-kit": "^7.1",
-        "symfony/css-selector": "^7.1",
-        "symfony/debug-bundle": "^7.1",
-        "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^7.0",
-        "symfony/stopwatch": "^6.2",
-        "symfony/web-profiler-bundle": "^7.1"
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/",
+      "DoctrineMigrations\\": "migrations/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests/"
+    }
+  },
+  "replace": {
+    "symfony/polyfill-ctype": "*",
+    "symfony/polyfill-iconv": "*",
+    "symfony/polyfill-php72": "*",
+    "symfony/polyfill-php73": "*",
+    "symfony/polyfill-php74": "*",
+    "symfony/polyfill-php80": "*",
+    "symfony/polyfill-php81": "*"
+  },
+  "scripts": {
+    "auto-scripts": {
+      "cache:clear": "symfony-cmd",
+      "assets:install %PUBLIC_DIR%": "symfony-cmd"
+    },
+    "post-install-cmd": [
+      "@auto-scripts"
+    ],
+    "post-update-cmd": [
+      "@auto-scripts"
+    ],
+    "test-phpstan": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/phpstan analyse --memory-limit=-1"
+    ],
+    "test-phpcs": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
+    ],
+    "phpcs": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src -vv --verbose  --config=.php-cs-fixer.dist.php"
+    ],
+    "test-rector": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/rector --dry-run"
+    ],
+    "rector": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/rector"
+    ],
+    "test-phpunit": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
+    ],
+    "test": [
+      "@test-phpcs",
+      "@test-phpstan",
+      "@test-rector",
+      "mkdir -p data",
+      "rm -f data/database.sqlite",
+      "touch data/database.sqlite",
+      "@php bin/console doctrine:schema:update --complete --force --env=test -n",
+      "@php bin/console typesense:create --env=test",
+      "@php bin/console doctrine:fixtures:load --env=test --append -n",
+      "@test-phpunit"
+    ]
+  },
+  "conflict": {
+    "symfony/symfony": "*"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": true,
+      "require": "^6.2"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/SergioMendolia/TypesenseBundle"
+    }
+  ],
+  "require-dev": {
+    "doctrine/doctrine-fixtures-bundle": "^3.5",
+    "friendsofphp/php-cs-fixer": "^3.25",
+    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan-doctrine": "^1.3",
+    "phpstan/phpstan-strict-rules": "^1.0",
+    "phpstan/phpstan-symfony": "^1.2",
+    "phpunit/phpunit": "^9.5",
+    "rector/rector": "^1.1",
+    "roave/security-advisories": "dev-latest",
+    "symfony/browser-kit": "^7.1",
+    "symfony/css-selector": "^7.1",
+    "symfony/debug-bundle": "^7.1",
+    "symfony/maker-bundle": "^1.0",
+    "symfony/phpunit-bridge": "^7.0",
+    "symfony/stopwatch": "^6.2",
+    "symfony/web-profiler-bundle": "^7.1"
+  }
 }
