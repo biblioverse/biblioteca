@@ -46,7 +46,7 @@ final class ChatGPTSuggestion
     public function __construct(
         private Security $security,
         private TagPrompt $tagPrompt,
-        private SummaryPrompt $summaryPrompt
+        private SummaryPrompt $summaryPrompt,
     ) {
         $user = $this->security->getUser();
         if (!$user instanceof User) {

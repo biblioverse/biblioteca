@@ -29,7 +29,7 @@ class KoboStateController extends AbstractController
         protected KoboStoreProxy $koboStoreProxy,
         protected SerializerInterface $serializer,
         protected EntityManagerInterface $em,
-        protected BookProgressionService $bookProgressionService
+        protected BookProgressionService $bookProgressionService,
     ) {
     }
 

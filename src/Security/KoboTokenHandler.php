@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 class KoboTokenHandler implements AccessTokenHandlerInterface
 {
     public function __construct(
-        private KoboDeviceRepository $repository
+        private KoboDeviceRepository $repository,
     ) {
     }
 
