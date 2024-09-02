@@ -54,7 +54,7 @@
     "symfony/property-info": "^7.1",
     "symfony/psr-http-message-bridge": "^7.1",
     "symfony/runtime": "^7.1",
-    "symfony/security-bundle": "^6.2",
+    "symfony/security-bundle": "^7.1",
     "symfony/serializer": "^6.2",
     "symfony/stimulus-bundle": "^2.11",
     "symfony/string": "^7.1",
