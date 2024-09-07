@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use ACSEO\TypesenseBundle\Finder\SpecificCollectionFinder;
+use Kiwilan\Ebook\EbookCover;
+use Kiwilan\Ebook\Models\BookAuthor;
 
 /**
  * @phpstan-type MetadataType array{ title:string, authors: BookAuthor[], main_author: ?BookAuthor, description: ?string, publisher: ?string, publish_date: ?\DateTime, language: ?string, tags: string[], serie:?string, serie_index: ?int, cover: ?EbookCover }
