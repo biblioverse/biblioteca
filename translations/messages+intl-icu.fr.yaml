@@ -63,7 +63,7 @@ menu.editshelves: 'Gérer étagères'
 "filter.authornot": "Exclure les auteurs"
 "filter.tags": "Par tags"
 "filter.picture": "Couverture"
-"filter.picture.any": "Tousany"
+"filter.picture.any": "Tous"
 "filter.picture.yes": "Avec"
 "filter.picture.no": "Sans"
 "filter.favorite": "Liste de lecture"
