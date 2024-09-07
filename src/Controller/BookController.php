@@ -101,7 +101,7 @@ class BookController extends AbstractController
         PaginatorInterface $paginator,
         ThemeSelector $themeSelector,
         EntityManagerInterface $manager,
-        BookProgressionService $bookProgressionService
+        BookProgressionService $bookProgressionService,
     ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {

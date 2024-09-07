@@ -22,7 +22,7 @@ class BooksTagCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly TagPrompt $tagPrompt
+        private readonly TagPrompt $tagPrompt,
     ) {
         parent::__construct();
     }
