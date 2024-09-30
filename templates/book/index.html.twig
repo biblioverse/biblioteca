@@ -195,6 +195,18 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            {% if sameTags is not empty %}
+                {% for tag,bookTags in sameTags %}
+                <h5>{{ tag }}</h5>
+                <div class="row">
+                    {% for indexBook in bookTags %}
+                        <div class="col-4 col-md-2">
+                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {%endfor%}
+            {% endif %}
         </div>
     </div>
     <div class="row">
