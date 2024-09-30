@@ -80,7 +80,7 @@ class FieldGuesser extends AbstractController
         $matches = [];
         preg_match('/(T|Volume |Vol. |Tome | v)(\d{1,3})/', $this->book->getTitle(), $matches);
 
-        if (count($matches) > 0) {
+        if ($matches !== []) {
             return $matches[2];
         }
 
