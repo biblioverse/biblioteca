@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed4cc787c96a354c5f27e6660c3d9652",
+    "content-hash": "80882fcf4ff17098c988ad7b0ee185ef",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -2593,28 +2593,27 @@
         },
         {
             "name": "kiwilan/php-ebook",
-            "version": "2.6.9",
+            "version": "3.0.01",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-ebook.git",
-                "reference": "801049d9785fa0ded8749827c9d9874c90ee5a4b"
+                "reference": "b035de65c2b8ffd1ad30a4aacfc923102cb42409"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/801049d9785fa0ded8749827c9d9874c90ee5a4b",
-                "reference": "801049d9785fa0ded8749827c9d9874c90ee5a4b",
+                "url": "https://api.github.com/repos/kiwilan/php-ebook/zipball/b035de65c2b8ffd1ad30a4aacfc923102cb42409",
+                "reference": "b035de65c2b8ffd1ad30a4aacfc923102cb42409",
                 "shasum": ""
             },
             "require": {
                 "kiwilan/php-archive": "^2.2.0",
-                "kiwilan/php-xml-reader": "^1.0.11",
+                "kiwilan/php-xml-reader": "^1.1.0",
                 "php": "^8.1"
             },
             "require-dev": {
-                "kiwilan/php-audio": "^3.0.08",
+                "kiwilan/php-audio": "^4.0.01",
                 "laravel/pint": "^1.7",
-                "pestphp/pest": "^1.20",
-                "pestphp/pest-plugin-parallel": "^1.2",
+                "pestphp/pest": "^2.0",
                 "phpstan/phpstan": "^1.10",
                 "spatie/ray": "^1.28"
             },
@@ -2665,7 +2664,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-ebook/issues",
-                "source": "https://github.com/kiwilan/php-ebook/tree/v2.6.9"
+                "source": "https://github.com/kiwilan/php-ebook/tree/v3.0.01"
             },
             "funding": [
                 {
@@ -2673,20 +2672,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-07-28T13:59:18+00:00"
+            "time": "2024-10-03T17:59:29+00:00"
         },
         {
             "name": "kiwilan/php-xml-reader",
-            "version": "1.0.11",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kiwilan/php-xml-reader.git",
-                "reference": "c271326317195cbcfb7ebef74e7ecf3dce59ce26"
+                "reference": "f7848a5e3dec0c4fd1814c9d5d71219867bd2273"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kiwilan/php-xml-reader/zipball/c271326317195cbcfb7ebef74e7ecf3dce59ce26",
-                "reference": "c271326317195cbcfb7ebef74e7ecf3dce59ce26",
+                "url": "https://api.github.com/repos/kiwilan/php-xml-reader/zipball/f7848a5e3dec0c4fd1814c9d5d71219867bd2273",
+                "reference": "f7848a5e3dec0c4fd1814c9d5d71219867bd2273",
                 "shasum": ""
             },
             "require": {
@@ -2723,7 +2722,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kiwilan/php-xml-reader/issues",
-                "source": "https://github.com/kiwilan/php-xml-reader/tree/v1.0.11"
+                "source": "https://github.com/kiwilan/php-xml-reader/tree/v1.1.0"
             },
             "funding": [
                 {
@@ -2731,7 +2730,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-20T10:38:26+00:00"
+            "time": "2024-10-03T17:34:14+00:00"
         },
         {
             "name": "knplabs/knp-components",
