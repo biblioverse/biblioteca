@@ -327,16 +327,13 @@ class BookController extends AbstractController
     }
 
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
-    public function relocate(Book $book, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): Response
+    public function relocate(Request $request, Book $book, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
         $book = $fileSystemManager->renameFiles($book);
         $entityManager->persist($book);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_book', [
-            'book' => $book->getId(),
-            'slug' => $book->getSlug(),
-        ]);
+        return $this->redirect($request->headers->get('referer') ?? '/');
     }
 
     private function updateProgression(Request $request, Book $book, User $user): JsonResponse
