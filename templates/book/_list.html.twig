@@ -51,6 +51,7 @@
 
                 {% if not book.verified %}
                     {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
+                    <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
                 {% endif %}
             </td>
         </tr>
