@@ -46,7 +46,7 @@ class SyncToken
 
     public function maxLastModified(?\DateTimeInterface ...$value): ?\DateTimeInterface
     {
-        return $this->max(
+        return self::max(
             $this->lastModified,
             ...$value
         );
@@ -54,13 +54,13 @@ class SyncToken
 
     public function maxLastCreated(?\DateTimeInterface ...$value): ?\DateTimeInterface
     {
-        return $this->max(
+        return self::max(
             $this->lastCreated,
             ...$value
         );
     }
 
-    protected function max(?\DateTimeInterface ...$dates): ?\DateTimeInterface
+    protected static function max(?\DateTimeInterface ...$dates): ?\DateTimeInterface
     {
         $max = null;
         foreach ($dates as $date) {

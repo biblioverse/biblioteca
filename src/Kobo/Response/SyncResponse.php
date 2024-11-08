@@ -3,8 +3,6 @@
 namespace App\Kobo\Response;
 
 use App\Entity\Book;
-use App\Entity\BookInteraction;
-use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
@@ -33,14 +31,17 @@ class SyncResponse
     public const READING_STATUS_UNREAD = 'ReadyToRead';
     public const READING_STATUS_FINISHED = 'Finished';
     public const READING_STATUS_IN_PROGRESS = 'Reading';
+    private SyncResponseHelper $helper;
 
     public function __construct(
         protected MetadataResponseService $metadataResponse,
         protected BookProgressionService $bookProgressionService,
         protected SyncToken $syncToken,
         protected KoboDevice $kobo,
-        protected SerializerInterface $serializer)
-    {
+        protected SerializerInterface $serializer,
+        protected ReadingStateResponseFactory $readingStateResponseFactory,
+    ) {
+        $this->helper = new SyncResponseHelper();
     }
 
     public function toJsonResponse(): JsonResponse
@@ -48,6 +49,7 @@ class SyncResponse
         $list = [];
         array_push($list, ...$this->getNewEntitlement());
         array_push($list, ...$this->getChangedEntitlement());
+        array_push($list, ...$this->getChangedReadingState());
         array_push($list, ...$this->getNewTags());
         array_push($list, ...$this->getChangedTag());
         array_filter($list);
@@ -114,44 +116,10 @@ class SyncResponse
     /**
      * @return BookReadingState
      */
-    private function createReadingState(Book $book): array
+    public function createReadingState(Book $book): array
     {
-        $uuid = $book->getUuid();
-
-        return [
-            'EntitlementId' => $uuid,
-            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
-            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate),
-
-            // PriorityTimestamp is always equal to LastModified.
-            'PriorityTimestamp' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
-
-            'StatusInfo' => [
-                'LastModified' => $this->syncToken->maxLastModified($book->getLastInteraction($this->kobo->getUser())?->getUpdated(), $this->getLastBookmarkDate($book), $this->syncToken->currentDate),
-                'Status' => match ($this->isReadingFinished($book)) {
-                    true => SyncResponse::READING_STATUS_FINISHED,
-                    false => SyncResponse::READING_STATUS_IN_PROGRESS,
-                    null => SyncResponse::READING_STATUS_UNREAD,
-                },
-                'TimesStartedReading' => 0,
-            ],
-
-            // "Statistics"=> get_statistics_response(kobo_reading_state.statistics),
-            'CurrentBookmark' => $this->createBookmark($this->kobo->getUser()->getBookmarkForBook($book)),
-        ];
-    }
-
-    /**
-     * @return bool|null Null if we do not now the reading state
-     */
-    private function isReadingFinished(Book $book): ?bool
-    {
-        $progression = $this->bookProgressionService->getProgression($book, $this->kobo->getUser());
-        if ($progression === null) {
-            return null;
-        }
-
-        return $progression >= 1.0;
+        return $this->readingStateResponseFactory->create($this->syncToken, $this->kobo, $book)
+            ->createReadingState();
     }
 
     /**
@@ -160,17 +128,7 @@ class SyncResponse
     private function getChangedEntitlement(): array
     {
         $books = array_filter($this->books, function (Book $book) {
-            // This book has not been synced before, so it's a NewEntitlement
-            if ($book->getKoboSyncedBook()->isEmpty()) {
-                return false;
-            }
-
-            $lastInteraction = $book->getLastInteraction($this->kobo->getUser());
-
-            return $book->getUpdated() >= $this->syncToken->lastModified
-                || !$book->getUpdated() instanceof \DateTimeInterface
-                || $book->getCreated() >= $this->syncToken->lastCreated
-                || ($lastInteraction instanceof BookInteraction && $lastInteraction->getUpdated() >= $this->syncToken->lastModified);
+            return $this->helper->isChangedEntitlement($book, $this->kobo, $this->syncToken);
         });
 
         return array_map(function (Book $book) {
@@ -188,7 +146,7 @@ class SyncResponse
     {
         $books = array_filter($this->books, function (Book $book) {
             // This book has never been synced before
-            return $book->getKoboSyncedBook()->isEmpty();
+            return $this->helper->isNewEntitlement($book, $this->syncToken);
         });
 
         return array_map(function (Book $book) {
@@ -266,31 +224,20 @@ class SyncResponse
         ];
     }
 
-    private function createBookmark(?BookmarkUser $bookMark): array
+    /**
+     * @return array<int, object>
+     */
+    private function getChangedReadingState(): array
     {
-        if (!$bookMark instanceof BookmarkUser) {
-            return [];
-        }
+        $books = array_filter($this->books, function (Book $book) {
+            return $this->helper->isChangedReadingState($book, $this->kobo, $this->syncToken);
+        });
 
-        $values = [
-            'Location' => [
-                'Type' => $bookMark->getLocationType(),
-                'Value' => $bookMark->getLocationValue(),
-                'Source' => $bookMark->getLocationSource(),
-            ],
-            'ProgressPercent' => $bookMark->getPercentAsInt(),
-            'ContentSourceProgressPercent' => $bookMark->getSourcePercentAsInt(),
-        ];
+        return array_map(function (Book $book) {
+            $response = new \stdClass();
+            $response->ChangedReadingState = $this->createReadingState($book);
 
-        if (false === $bookMark->hasLocation()) {
-            unset($values['Location']);
-        }
-
-        return array_filter($values); // Remove null values
-    }
-
-    private function getLastBookmarkDate(Book $book): ?\DateTimeInterface
-    {
-        return $this->kobo->getUser()->getBookmarkForBook($book)?->getUpdated();
+            return $response;
+        }, $books);
     }
 }

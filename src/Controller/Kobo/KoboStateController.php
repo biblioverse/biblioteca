@@ -9,7 +9,9 @@ use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Request\Bookmark;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatusInfo;
+use App\Kobo\Response\ReadingStateResponseFactory;
 use App\Kobo\Response\StateResponse;
+use App\Kobo\SyncToken;
 use App\Repository\BookRepository;
 use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,6 +32,7 @@ class KoboStateController extends AbstractController
         protected SerializerInterface $serializer,
         protected EntityManagerInterface $em,
         protected BookProgressionService $bookProgressionService,
+        protected ReadingStateResponseFactory $readingStateResponseFactory,
     ) {
     }
 
@@ -85,7 +88,7 @@ class KoboStateController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
+    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
@@ -93,17 +96,21 @@ class KoboStateController extends AbstractController
 
         $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
 
-        // Empty response if we know the book
-        if ($book instanceof Book) {
-            return $response;
+        // Unknown book
+        if (!$book instanceof Book) {
+            if ($this->koboStoreProxy->isEnabled()) {
+                return $this->koboStoreProxy->proxyOrRedirect($request);
+            }
+            $response->setData(['error' => 'Book not found']);
+
+            return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
         }
 
-        // If we do not know the book, we forward the query to the proxy
-        if ($this->koboStoreProxy->isEnabled()) {
-            return $this->koboStoreProxy->proxyOrRedirect($request);
-        }
+        $response->setContent(
+            $this->readingStateResponseFactory->create($syncToken, $kobo, $book)
+        );
 
-        return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
+        return $response;
     }
 
     private function handleBookmark(KoboDevice $kobo, Book $book, ?Bookmark $currentBookmark): void
