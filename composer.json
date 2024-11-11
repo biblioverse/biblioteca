@@ -64,7 +64,7 @@
     "symfony/ux-autocomplete": "^2.11",
     "symfony/ux-live-component": "^2.11",
     "symfony/validator": "^6.2",
-    "symfony/web-link": "^6.2",
+    "symfony/web-link": "^7.1",
     "symfony/webpack-encore-bundle": "^2.0",
     "symfony/yaml": "^7.1",
     "twig/extra-bundle": "^2.12|^3.0",
