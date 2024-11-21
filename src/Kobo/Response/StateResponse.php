@@ -26,6 +26,6 @@ class StateResponse extends JsonResponse
                     ],
                 ],
             ],
-        ], Response::HTTP_NO_CONTENT);
+        ], Response::HTTP_OK);
     }
 }

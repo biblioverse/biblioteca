@@ -2,8 +2,10 @@
 
 namespace App\Controller\Kobo;
 
+use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
+use App\Repository\KoboDeviceRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,8 +18,12 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/kobo/{accessKey}', name: 'kobo')]
 class KoboAnalyticsController extends AbstractController
 {
-    public function __construct(protected KoboProxyConfiguration $koboProxyConfiguration, protected KoboStoreProxy $koboStoreProxy, protected LoggerInterface $logger)
-    {
+    public function __construct(
+        protected KoboProxyConfiguration $koboProxyConfiguration,
+        protected KoboStoreProxy $koboStoreProxy,
+        protected KoboDeviceRepository $koboDeviceRepository,
+        protected LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -46,8 +52,17 @@ class KoboAnalyticsController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/v1/analytics/event', methods: ['POST'])]
-    public function analyticsEvent(Request $request): Response
+    public function analyticsEvent(Request $request, KoboDevice $kobo): Response
     {
+        // Save the device_id and model
+        if ($request->headers->has(KoboDevice::KOBO_DEVICE_ID_HEADER)) {
+            $kobo->setDeviceId($request->headers->get(KoboDevice::KOBO_DEVICE_ID_HEADER));
+            if ($request->headers->has(KoboDevice::KOBO_DEVICE_MODEL_HEADER)) {
+                $kobo->setModel($request->headers->get(KoboDevice::KOBO_DEVICE_MODEL_HEADER));
+            }
+            $this->koboDeviceRepository->save($kobo);
+        }
+
         $content = $request->getContent();
         $json = trim($content) === '' ? [] : (array) json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->logger->debug('Analytics event received', ['body' => $json]);
