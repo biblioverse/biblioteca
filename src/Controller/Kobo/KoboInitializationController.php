@@ -50,10 +50,11 @@ class KoboInitializationController extends AbstractController
 
         // Image host: https://<domain>
         $jsonData['Resources']['image_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/');
-
-        // TODO: Use router instead of hard-coding path.
         $jsonData['Resources']['image_url_template'] = $base.'/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg';
         $jsonData['Resources']['image_url_quality_template'] = $base.'/{ImageId}/{width}/{height}/false/image.jpg';
+
+        // Reading services
+        $jsonData['Resources']['reading_services_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/');
 
         $response = new JsonResponse($jsonData);
         $response->headers->set('kobo-api-token', 'e30=');

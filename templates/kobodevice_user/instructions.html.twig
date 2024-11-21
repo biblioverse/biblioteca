@@ -8,6 +8,7 @@
             <li>Edit the file with a text editor (vs-code, vim, etc).</li>
             <li>
                 Alter the line <code>api_endpoint</code> under the section <code>[OneStoreServices]</code> (or create it if it doesn't exist). <br>
+                Make sure to replace the <code>reading_services_host</code> if it exists, to avoid loosing your reading progression. <br>
                 You can also edit the <code>image_host</code> and <code>image_url_quality_template</code> entries.
                 <pre>
                     {% apply spaceless -%}
@@ -23,6 +24,7 @@
                         {{- "\n" }}image_host={{ app.request.getUriForPath("") -}}
                         {{- "\n" }}image_url_quality_template={{ url('koboapi_endpoint', {'accessKey': token}) ~ '/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg' -}}
                     {% endif %}
+                        {{- "\n" }}reading_services_host={{ app.request.getUriForPath("") -}}
                         {{- "\n"}}...
                     </code>
                     {%- endapply %}

@@ -23,6 +23,16 @@ class KoboType extends AbstractType
         $builder
             ->add('name')
             ->add('accessKey')
+            ->add('deviceId', null, [
+                'label' => 'Device ID',
+                'disabled' => true,
+                'required' => false,
+            ])
+            ->add('model', null, [
+                'label' => 'Model',
+                'disabled' => true,
+                'required' => false,
+            ])
             ->add('forceSync', null, [
                 'label' => 'Force Sync',
                 'required' => false,
