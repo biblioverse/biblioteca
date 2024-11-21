@@ -3,9 +3,13 @@
 namespace App\Tests\Controller\Kobo;
 
 
+use App\Entity\KoboDevice;
+
 class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
 {
     const SERIAL_NUMBER = 'N9413679432456';
+    const DEVICE_ID = '2a92bba197b1e0574a3f7d29cb2b05b399ab0d197e6b1aa230bfb75a920b14e7c';
+    const MODEL = 'Kobo Libra H2O';
     const APP_VERSION = '4.38.21908';
 
     public function testPostEvent(): void
@@ -442,9 +446,18 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
         ];
         $client = static::getClient();
         $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
+        $server = [
+            'HTTP_'.KoboDevice::KOBO_DEVICE_ID_HEADER => self::DEVICE_ID,
+            'HTTP_'.KoboDevice::KOBO_DEVICE_MODEL => self::MODEL,
+        ];
         $client?->request('POST', '/kobo/'.$this->accessKey.'/v1/analytics/event', [
             'json' => $body,
-        ]);
+        ], [], $server);
+
+        // Make sure we define Kobo's device_id and model
+        $kobo =  $this->getKoboDevice(true);
+        self::assertSame(self::DEVICE_ID,$kobo->getDeviceId());
+        self::assertSame(self::MODEL,$kobo->getModel());
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Connection', 'keep-alive');

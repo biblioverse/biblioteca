@@ -14,7 +14,11 @@
         <tbody>
         {% for kobo in kobos %}
             <tr>
-                <td>{{ kobo.name }}</td>
+                <td>{{ kobo.name }}
+                {% if kobo.model is not empty %}
+                   <br /><small class="text-muted">{{ kobo.model }}</small>
+                {% endif %}
+                </td>
                 <td>{{ kobo.accessKey }}</td>
                 <td>
                     {% if is_granted('EDIT', kobo) %}

@@ -11,10 +11,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KoboDeviceRepository::class)]
 #[ORM\UniqueConstraint(name: 'kobo_access_key', columns: ['access_key'])]
+#[ORM\Index(columns: ['device_id'], name: 'kobo_device_id')]
+#[ORM\Index(columns: ['access_key'], name: 'kobo_access_key')]
 #[UniqueEntity(fields: ['accessKey'])]
 class KoboDevice
 {
     use RandomGeneratorTrait;
+    public const KOBO_DEVICE_ID_HEADER = 'X-Kobo-Deviceid';
+    public const KOBO_DEVICE_MODEL = 'X-Kobo-Devicemodel';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -34,6 +38,11 @@ class KoboDevice
     #[Assert\Regex(pattern: '/^[a-f0-9]+$/', message: 'Need to be Hexadecimal')]
     private ?string $accessKey = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $deviceId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $model = null;
     /**
      * @var Collection<int, Shelf>
      */
@@ -161,5 +170,29 @@ class KoboDevice
     public function removeShelf(Shelf $shelf): void
     {
         $this->shelves->removeElement($shelf);
+    }
+
+    public function getDeviceId(): ?string
+    {
+        return $this->deviceId;
+    }
+
+    public function setDeviceId(?string $deviceId): self
+    {
+        $this->deviceId = $deviceId;
+
+        return $this;
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function setModel(?string $model): self
+    {
+        $this->model = $model;
+
+        return $this;
     }
 }
