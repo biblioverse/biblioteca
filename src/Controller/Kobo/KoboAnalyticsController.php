@@ -57,8 +57,8 @@ class KoboAnalyticsController extends AbstractController
         // Save the device_id and model
         if ($request->headers->has(KoboDevice::KOBO_DEVICE_ID_HEADER)) {
             $kobo->setDeviceId($request->headers->get(KoboDevice::KOBO_DEVICE_ID_HEADER));
-            if ($request->headers->has(KoboDevice::KOBO_DEVICE_MODEL)) {
-                $kobo->setModel($request->headers->get(KoboDevice::KOBO_DEVICE_MODEL));
+            if ($request->headers->has(KoboDevice::KOBO_DEVICE_MODEL_HEADER)) {
+                $kobo->setModel($request->headers->get(KoboDevice::KOBO_DEVICE_MODEL_HEADER));
             }
             $this->koboDeviceRepository->save($kobo);
         }

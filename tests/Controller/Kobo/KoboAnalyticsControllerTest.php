@@ -448,7 +448,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
         $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
         $server = [
             'HTTP_'.KoboDevice::KOBO_DEVICE_ID_HEADER => self::DEVICE_ID,
-            'HTTP_'.KoboDevice::KOBO_DEVICE_MODEL => self::MODEL,
+            'HTTP_'.KoboDevice::KOBO_DEVICE_MODEL_HEADER => self::MODEL,
         ];
         $client?->request('POST', '/kobo/'.$this->accessKey.'/v1/analytics/event', [
             'json' => $body,
