@@ -8,7 +8,6 @@ use App\Form\KoboType;
 use App\Repository\KoboDeviceRepository;
 use Devdot\Monolog\Parser;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,23 +30,26 @@ class KoboDeviceController extends AbstractController
         ]);
     }
 
-   #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
+    #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
     public function logs(ParameterBagInterface $parameterBag): Response
     {
         if (!$this->getUser() instanceof UserInterface) {
             throw $this->createAccessDeniedException();
         }
 
-        $records=[];
+        $records = [];
 
         try {
             $logDir = $parameterBag->get('kernel.logs_dir');
             $env = $parameterBag->get('kernel.environment');
 
-            $parser = new Parser($logDir . '/proxy.' . $env . '-' . date('Y-m-d') . '.log');
+            if (!is_string($logDir) || !is_string($env)) {
+                throw new \RuntimeException('Invalid log directory or environment');
+            }
+
+            $parser = new Parser($logDir.'/proxy.'.$env.'-'.date('Y-m-d').'.log');
 
             $records = $parser->get();
-
         } catch (\Exception $e) {
             $this->addFlash('warning', $e->getMessage());
         }
