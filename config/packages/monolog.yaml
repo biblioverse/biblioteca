@@ -14,10 +14,10 @@ monolog:
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
         proxy:
-            type: stream
-            path: "php://stdout"
+            type: rotating_file
             level: debug
             channels: ["proxy"]
+            path: "%kernel.logs_dir%/proxy.%kernel.environment%.log"
 
         deprecation:
             type: rotating_file

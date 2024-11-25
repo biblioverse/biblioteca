@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kobo Proxy Logs{% endblock %}
+
+{% block body %}
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Channel</th>
+                <th>Level</th>
+                <th>Message</th>
+                <th>Context</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>
+                   {{ record.channel }}
+                </td>
+                <td>
+                   {{ record.level }}
+                </td>
+                <td>
+                   {{ record.message }}
+                </td>
+                <td>
+                   {{ dump(record.context) }}
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
