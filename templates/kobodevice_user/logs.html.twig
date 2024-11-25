@@ -3,21 +3,20 @@
 {% block title %}Kobo Proxy Logs{% endblock %}
 
 {% block body %}
-    <table class="table table-bordered table-striped table-hover">
+    <table class="table table-bordered table-striped table-hover table-responsive">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Channel</th>
                 <th>Level</th>
                 <th>Message</th>
-                <th>Context</th>
             </tr>
         </thead>
         <tbody>
         {% for record in records %}
-            <tr>
+            <tr style="font-size: 0.8em">
                 <td>
-                   {{ record.datetime|date('d.m.Y H:i:s') }}
+                   {{ record.datetime|date('d.m.Y') }}&nbsp;{{ record.datetime|date('H:i:s') }}
                 </td>
                 <td>
                    {{ record.channel }}
@@ -26,12 +25,11 @@
                    {{ record.level }}
                 </td>
                 <td>
-                   {{ record.message }}
+                    <details>
+                        <summary style="max-width: 100%;">{{ record.message }}</summary>
+                        <div class="text-bg-primary">{{ record.context|json_encode(constant('JSON_PRETTY_PRINT')) }}</div>
+                    </details>
                 </td>
-                <td>
-                   {{ record.context|json_encode }}
-                </td>
-
             </tr>
         {% endfor %}
         </tbody>
