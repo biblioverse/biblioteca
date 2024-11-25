@@ -76,7 +76,7 @@ class ReadingStateResponse
                 'Value' => $bookMark->getLocationValue(),
                 'Source' => $bookMark->getLocationSource(),
             ],
-            'ProgressPercent' => $bookMark->getSourcePercentAsInt(),
+            'ProgressPercent' => $bookMark->getPercentAsInt(),
             'ContentSourceProgressPercent' => $bookMark->getSourcePercentAsInt(),
         ];
 
@@ -84,7 +84,7 @@ class ReadingStateResponse
             unset($values['Location']);
         }
 
-        return array_filter($values); // Remove null values
+        return $values; // Remove null values
     }
 
     public function __toString(): string
