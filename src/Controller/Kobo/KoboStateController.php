@@ -111,7 +111,7 @@ class KoboStateController extends AbstractController
 
         $response->setContent($rsResponse);
 
-        $logger->notice('Returned State for book', ['response'=>$rsResponse]);
+        $logger->info('Returned State for book', ['response'=>$rsResponse]);
 
         return $response;
     }
