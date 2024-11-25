@@ -9,6 +9,8 @@ monolog:
             type: rotating_file
             level: info
             channels: [ "!deprecation"]
+            max_files: 10
+
         console:
             type: console
             process_psr_3_messages: false
@@ -18,8 +20,10 @@ monolog:
             level: debug
             channels: ["proxy"]
             path: "%kernel.logs_dir%/proxy.%kernel.environment%.log"
+            max_files: 10
 
         deprecation:
             type: rotating_file
             channels: [deprecation]
             path: "%kernel.logs_dir%/deprecation.%kernel.environment%.log"
+            max_files: 10
