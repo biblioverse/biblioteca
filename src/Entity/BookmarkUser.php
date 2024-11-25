@@ -77,7 +77,7 @@ class BookmarkUser
 
     public function getSourcePercentAsInt(): ?int
     {
-        return $this->sourcePercent === null ? null : intval($this->sourcePercent * 100);
+        return $this->sourcePercent === null ? null : round($this->sourcePercent * 100);
     }
 
     public function setSourcePercent(?float $sourcePercent): static
