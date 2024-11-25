@@ -76,7 +76,7 @@ class ReadingStateResponse
                 'Value' => $bookMark->getLocationValue(),
                 'Source' => $bookMark->getLocationSource(),
             ],
-            'ProgressPercent' => $bookMark->getPercentAsInt(),
+            'ProgressPercent' => $bookMark->getSourcePercentAsInt(),
             'ContentSourceProgressPercent' => $bookMark->getSourcePercentAsInt(),
         ];
 
