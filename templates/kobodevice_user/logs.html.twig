@@ -25,7 +25,7 @@
                    {{ record.message }}
                 </td>
                 <td>
-                   {{ dump(record.context) }}
+                   {{ record.context|json_encode }}
                 </td>
 
             </tr>
