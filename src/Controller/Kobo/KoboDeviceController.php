@@ -56,7 +56,9 @@ class KoboDeviceController extends AbstractController
             $logRecords = $parser->get()->getArrayCopy();
 
             $logRecords = array_filter($logRecords, static function ($record) {
-                return str_contains(''.$record['message'], 'kobo') && !str_contains(''.$record['message'], 'kobodevice');
+                return (
+                    str_contains(strtolower($record['message']), 'kobo')||str_contains(strtolower($record['message']), '/api/'))
+                    && !str_contains(''.$record['message'], 'kobodevice');
             });
 
             $records = array_merge($records->getArrayCopy(), $logRecords);
