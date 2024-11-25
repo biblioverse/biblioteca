@@ -6,6 +6,7 @@
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
+                <th>Date</th>
                 <th>Channel</th>
                 <th>Level</th>
                 <th>Message</th>
@@ -15,6 +16,9 @@
         <tbody>
         {% for record in records %}
             <tr>
+                <td>
+                   {{ record.datetime|date('d.m.Y H:i:s') }}
+                </td>
                 <td>
                    {{ record.channel }}
                 </td>
