@@ -3,14 +3,13 @@
 namespace App\Controller\Kobo;
 
 use App\Kobo\Proxy\KoboStoreProxy;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboNextReadController extends AbstractController
+class KoboNextReadController extends AbstractKoboController
 {
     public function __construct(protected KoboStoreProxy $koboStoreProxy)
     {

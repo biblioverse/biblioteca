@@ -7,8 +7,6 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Channel</th>
-                <th>Level</th>
                 <th>Message</th>
             </tr>
         </thead>
@@ -17,12 +15,6 @@
             <tr style="font-size: 0.8em">
                 <td>
                    {{ record.datetime|date('d.m.Y') }}&nbsp;{{ record.datetime|date('H:i:s') }}
-                </td>
-                <td>
-                   {{ record.channel }}
-                </td>
-                <td>
-                   {{ record.level }}
                 </td>
                 <td>
                     <details>

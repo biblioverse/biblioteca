@@ -2,12 +2,11 @@
 
 namespace App\Controller\Kobo;
 
-use App\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ReadServiceCheckForChangesController extends AbstractController
+class ReadServiceCheckForChangesController extends AbstractKoboController
 {
     #[Route('/api/v3/content/checkforchanges', name: 'check_for_changes', methods: ['POST'])]
     public function checkForChanges(): Response

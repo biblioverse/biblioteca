@@ -17,7 +17,6 @@ use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboStateController extends AbstractController
+class KoboStateController extends AbstractKoboController
 {
     public function __construct(
         protected BookRepository $bookRepository,
@@ -111,7 +110,7 @@ class KoboStateController extends AbstractController
 
         $response->setContent($rsResponse);
 
-        $logger->info('Returned Kobo State for book', ['response'=>$rsResponse]);
+        $logger->info('Returned Kobo State for book', ['response' => $rsResponse]);
 
         return $response;
     }

@@ -10,7 +10,6 @@ use App\Repository\ShelfRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/kobo/{accessKey}', name: 'app_kobo')]
-class KoboTagController extends AbstractController
+class KoboTagController extends AbstractKoboController
 {
     public function __construct(
         protected ShelfRepository $shelfRepository,

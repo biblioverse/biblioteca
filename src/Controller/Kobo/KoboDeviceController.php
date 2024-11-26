@@ -47,25 +47,9 @@ class KoboDeviceController extends AbstractController
                 throw new \RuntimeException('Invalid log directory or environment');
             }
 
-            $parser = new Parser($logDir.'/proxy.'.$env.'-'.date('Y-m-d').'.log');
+            $parser = new Parser($logDir.'/kobo.'.$env.'-'.date('Y-m-d').'.log');
 
             $records = $parser->get();
-
-            $parser = new Parser($logDir.'/'.$env.'-'.date('Y-m-d').'.log');
-
-            $logRecords = $parser->get()->getArrayCopy();
-
-            $logRecords = array_filter($logRecords, static function ($record) {
-                return (
-                    str_contains(strtolower($record['message']), 'kobo')||str_contains(strtolower($record['message']), '/api/'))
-                    && !str_contains(''.$record['message'], 'kobodevice');
-            });
-
-            $records = array_merge($records->getArrayCopy(), $logRecords);
-
-            usort($records, static function ($a, $b) {
-                return $a['datetime'] <=> $b['datetime'];
-            });
         } catch (\Exception $e) {
             $this->addFlash('warning', $e->getMessage());
         }

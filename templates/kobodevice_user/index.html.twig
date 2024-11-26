@@ -43,10 +43,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new</a>
+    <div class="btn-group align-items-end">
+        <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new Kobo Device</a>
 
-    <a href="{{ path('app_kobodevice_user_logs') }}" class="btn btn-primary">Logs</a>
-
-
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_kobodevice_user_logs') }}" class="btn btn-warning">Show Kobo sync logs</a>
+        {% endif %}
+    </div>
     {{ include('kobodevice_user/instructions.html.twig') }}
 {% endblock %}

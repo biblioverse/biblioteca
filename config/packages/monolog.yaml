@@ -2,6 +2,7 @@ monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - proxy # Proxy logs are logged in the dedicated "proxy" channel when it exists
+        - kobo
 
 
     handlers:
@@ -18,8 +19,8 @@ monolog:
         proxy:
             type: rotating_file
             level: debug
-            channels: ["proxy"]
-            path: "%kernel.logs_dir%/proxy.%kernel.environment%.log"
+            channels: ["proxy","kobo"]
+            path: "%kernel.logs_dir%/kobo.%kernel.environment%.log"
             max_files: 10
 
         deprecation:
