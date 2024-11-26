@@ -113,7 +113,10 @@ class DownloadHelper
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
             ->deleteFileAfterSend($message?->destination !== null);
 
-        $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
+        $cleanExt = strtolower($format);
+        $cleanExt = str_replace('kepub', 'epub', $cleanExt);
+
+        $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($cleanExt);
         $encodedFilename = rawurlencode($filename);
         $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
 
