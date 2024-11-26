@@ -21,7 +21,15 @@ class KoboRequestSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->koboLogger->info('Response from '.$event->getRequest()->getPathInfo(), ['response' => $event->getResponse()->getContent(), 'headers' => $event->getResponse()->headers->all()]);
+        $content = $event->getResponse()->getContent();
+
+        try{
+            $content = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            $content = $event->getResponse()->getContent();
+        }
+
+        $this->koboLogger->info('Response from '.$event->getRequest()->getPathInfo(), ['response' => $content, 'headers' => $event->getResponse()->headers->all()]);
     }
 
     public function onKernelController(ControllerEvent $event): void
