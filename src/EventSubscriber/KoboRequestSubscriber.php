@@ -23,7 +23,11 @@ class KoboRequestSubscriber implements EventSubscriberInterface
 
         $content = $event->getResponse()->getContent();
 
-        try{
+        if (!is_string($content)) {
+            return;
+        }
+
+        try {
             $content = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             $content = $event->getResponse()->getContent();
@@ -45,7 +49,15 @@ class KoboRequestSubscriber implements EventSubscriberInterface
         }
         $event->getRequest()->attributes->set('isKoboRequest', true);
 
-        $this->koboLogger->info('Request on '.$event->getRequest()->getPathInfo(), ['response' => $event->getRequest()->getContent(), 'headers' => $event->getRequest()->headers->all()]);
+        $content = $event->getRequest()->getContent();
+
+        try {
+            $content = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            $content = $event->getRequest()->getContent();
+        }
+
+        $this->koboLogger->info('Request on '.$event->getRequest()->getPathInfo(), ['request' => $content, 'headers' => $event->getRequest()->headers->all()]);
     }
 
     public static function getSubscribedEvents(): array
