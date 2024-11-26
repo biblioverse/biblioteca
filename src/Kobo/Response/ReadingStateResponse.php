@@ -77,9 +77,7 @@ class ReadingStateResponse
                 'Source' => $bookMark->getLocationSource(),
             ],
             'ProgressPercent' => $bookMark->getPercentAsInt(),
-            'ProgressPercentOriginal' => $bookMark->getPercent(),
             'ContentSourceProgressPercent' => $bookMark->getSourcePercentAsInt(),
-            'ContentSourceProgressPercentOriginal' => $bookMark->getSourcePercent(),
         ];
 
         if (false === $bookMark->hasLocation()) {
