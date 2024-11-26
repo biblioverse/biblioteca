@@ -14,6 +14,8 @@ parameters:
     KOBO_API_URL:  '%env(KOBO_API_URL)%'
     env(KOBO_IMAGE_API_URL): "https://cdn.kobo.com/book-images"
     KOBO_IMAGE_API_URL:  '%env(KOBO_IMAGE_API_URL)%'
+    env(KEPUBIFY_BIN): "/usr/bin/kepubify"
+    KEPUBIFY_BIN:  '%env(KEPUBIFY_BIN)%'
 services:
     # default configuration for services in *this* file
     _defaults:
