@@ -26,6 +26,11 @@ framework:
         enable_attributes: true
         name_converter: 'App\Kobo\Serializer\KoboNameConverter'
 
+    cache:
+        pools:
+            kepubify_result_pool:
+                adapter: cache.app
+
 when@test:
     framework:
         test: true

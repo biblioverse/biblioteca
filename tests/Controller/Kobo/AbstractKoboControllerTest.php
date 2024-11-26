@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Kobo;
 
+use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Tests\InjectFakeFileSystemTrait;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use App\DataFixtures\BookFixture;
@@ -44,7 +45,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $this->koboDevice;
     }
 
-    private function getBook(): Book
+    protected function getBook(): Book
     {
         // @phpstan-ignore-next-line
         return $this->getEntityManager()->getRepository(Book::class)->find(BookFixture::ID);
@@ -82,6 +83,12 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $kobo;
     }
 
+    protected function getKepubifyEnabler(): KepubifyEnabler
+    {
+        $service = self::getContainer()->get(KepubifyEnabler::class);
+        assert($service instanceof KepubifyEnabler);
 
+        return $service;
+    }
 
 }

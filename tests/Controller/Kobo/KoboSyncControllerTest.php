@@ -3,6 +3,8 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\Entity\KoboSyncedBook;
+use App\Kobo\Response\MetadataResponseService;
+use App\Tests\Contraints\AssertHasDownloadWithFormat;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
 
 class KoboSyncControllerTest extends AbstractKoboControllerTest
@@ -20,6 +22,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     public function testSyncControllerWithForce() : void
     {
         $client = static::getClient();
+        $this->injectFakeFileSystemManager();
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync?force=1');
 
@@ -40,6 +43,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     public function testSyncControllerWithoutForce() : void
     {
         $client = static::getClient();
+        $this->injectFakeFileSystemManager();
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync');
 
@@ -55,5 +59,37 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
 
+    }
+
+    public function testSyncControllerMetadata() : void
+    {
+        $uuid = $this->getBook()->getUuid();
+        $client = static::getClient();
+        $this->injectFakeFileSystemManager();
+        $this->getKepubifyEnabler()->disable();
+
+        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$uuid."/metadata");
+
+        $response = self::getJsonResponse();
+        self::assertResponseIsSuccessful();
+        self::assertThat($response, new AssertHasDownloadWithFormat(MetadataResponseService::EPUB3_FORMAT), 'Response is not a valid download response');
+
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
+    }
+
+    public function testSyncControllerMetadataWithConversion() : void
+    {
+        $uuid = $this->getBook()->getUuid();
+        $client = static::getClient();
+        $this->injectFakeFileSystemManager();
+        self::assertTrue($this->getKepubifyEnabler()->isEnabled());
+
+        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$uuid."/metadata");
+
+        $response = self::getJsonResponse();
+        self::assertResponseIsSuccessful();
+        self::assertThat($response, new AssertHasDownloadWithFormat(MetadataResponseService::KEPUB_FORMAT), 'Response is not a valid download response');
+
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
     }
 }
