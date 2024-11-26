@@ -14,14 +14,13 @@ use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboImageController extends AbstractController
+class KoboImageController extends AbstractKoboController
 {
     public function __construct(
         protected KoboDeviceRepository $koboRepository,

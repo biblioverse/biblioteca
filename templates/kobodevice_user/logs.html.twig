@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kobo Proxy Logs{% endblock %}
+
+{% block body %}
+    <table class="table table-bordered table-striped table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr style="font-size: 0.8em">
+                <td>
+                   {{ record.datetime|date('d.m.Y') }}&nbsp;{{ record.datetime|date('H:i:s') }}
+                </td>
+                <td>
+                    <details>
+                        <summary style="max-width: 100%;">{{ record.message }}</summary>
+                        <pre class="text-bg-primary">{{ record.context|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                    </details>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

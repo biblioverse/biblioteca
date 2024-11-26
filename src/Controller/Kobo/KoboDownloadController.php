@@ -8,13 +8,12 @@ use App\Kobo\DownloadHelper;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Repository\BookRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/kobo/{accessKey}', name: 'app_kobo')]
-class KoboDownloadController extends AbstractController
+class KoboDownloadController extends AbstractKoboController
 {
     public function __construct(
         protected BookRepository $bookRepository,

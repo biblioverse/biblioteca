@@ -16,7 +16,7 @@ use App\Repository\BookRepository;
 use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboStateController extends AbstractController
+class KoboStateController extends AbstractKoboController
 {
     public function __construct(
         protected BookRepository $bookRepository,
@@ -88,7 +88,7 @@ class KoboStateController extends AbstractController
      * @throws GuzzleException
      */
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
+    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken, LoggerInterface $logger): Response|JsonResponse
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
@@ -106,9 +106,11 @@ class KoboStateController extends AbstractController
             return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
         }
 
-        $response->setContent(
-            $this->readingStateResponseFactory->create($syncToken, $kobo, $book)
-        );
+        $rsResponse = $this->readingStateResponseFactory->create($syncToken, $kobo, $book);
+
+        $response->setContent($rsResponse);
+
+        $logger->info('Returned Kobo State for book', ['response' => $rsResponse]);
 
         return $response;
     }

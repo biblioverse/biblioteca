@@ -2,6 +2,7 @@ monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - proxy # Proxy logs are logged in the dedicated "proxy" channel when it exists
+        - kobo
 
 
     handlers:
@@ -9,17 +10,21 @@ monolog:
             type: rotating_file
             level: info
             channels: [ "!deprecation"]
+            max_files: 10
+
         console:
             type: console
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
         proxy:
-            type: stream
-            path: "php://stdout"
+            type: rotating_file
             level: debug
-            channels: ["proxy"]
+            channels: ["proxy","kobo"]
+            path: "%kernel.logs_dir%/kobo.%kernel.environment%.log"
+            max_files: 10
 
         deprecation:
             type: rotating_file
             channels: [deprecation]
             path: "%kernel.logs_dir%/deprecation.%kernel.environment%.log"
+            max_files: 10

@@ -8,22 +8,31 @@
             <tr>
                 <th>Name</th>
                 <th>AccessKey</th>
-                <th>actions</th>
+                <th>{{'shelves'|trans}}</th>
             </tr>
         </thead>
         <tbody>
         {% for kobo in kobos %}
             <tr>
-                <td>{{ kobo.name }}
+                <td>
+                    {% if is_granted('EDIT', kobo) %}
+                        <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}">
+                    {% endif %}
+                    {{ kobo.name }}
+                    {% if is_granted('EDIT', kobo) %}
+                        </a>
+                    {% endif %}
                 {% if kobo.model is not empty %}
                    <br /><small class="text-muted">{{ kobo.model }}</small>
                 {% endif %}
                 </td>
-                <td>{{ kobo.accessKey }}</td>
+                <td><code>{{ kobo.accessKey }}</code></td>
                 <td>
-                    {% if is_granted('EDIT', kobo) %}
-                        <a href="{{ path('app_kobodevice_user_edit', {'id': kobo.id}) }}" class="btn btn-primary btn-sm">Edit</a>
-                    {% endif %}
+                    <ul>
+                    {% for shelf in kobo.shelves %}
+                        <li>{{ shelf.name }}</li>
+                    {% endfor %}
+                    </ul>
                 </td>
             </tr>
         {% else %}
@@ -34,8 +43,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new</a>
+    <div class="btn-group align-items-end">
+        <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new Kobo Device</a>
 
-
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_kobodevice_user_logs') }}" class="btn btn-warning">Show Kobo sync logs</a>
+        {% endif %}
+    </div>
     {{ include('kobodevice_user/instructions.html.twig') }}
 {% endblock %}

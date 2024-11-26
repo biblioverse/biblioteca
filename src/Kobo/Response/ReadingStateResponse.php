@@ -84,7 +84,7 @@ class ReadingStateResponse
             unset($values['Location']);
         }
 
-        return array_filter($values); // Remove null values
+        return $values; // Remove null values
     }
 
     public function __toString(): string

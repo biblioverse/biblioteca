@@ -13,14 +13,13 @@ use App\Repository\KoboSyncedBookRepository;
 use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboSyncController extends AbstractController
+class KoboSyncController extends AbstractKoboController
 {
     public const MAX_BOOKS_PER_SYNC = 100;
 

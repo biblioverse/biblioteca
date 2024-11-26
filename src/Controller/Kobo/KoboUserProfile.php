@@ -4,13 +4,12 @@ namespace App\Controller\Kobo;
 
 use App\Kobo\Proxy\KoboStoreProxy;
 use GuzzleHttp\Exception\GuzzleException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboUserProfile extends AbstractController
+class KoboUserProfile extends AbstractKoboController
 {
     public function __construct(
         protected KoboStoreProxy $koboStoreProxy,

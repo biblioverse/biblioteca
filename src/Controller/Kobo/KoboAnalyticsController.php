@@ -8,7 +8,6 @@ use App\Kobo\Proxy\KoboStoreProxy;
 use App\Repository\KoboDeviceRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboAnalyticsController extends AbstractController
+class KoboAnalyticsController extends AbstractKoboController
 {
     public function __construct(
         protected KoboProxyConfiguration $koboProxyConfiguration,
