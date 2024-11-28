@@ -33,7 +33,7 @@ class KoboRequestSubscriber implements EventSubscriberInterface
             $content = $event->getResponse()->getContent();
         }
 
-        $this->koboLogger->info('Response from '.$event->getRequest()->getPathInfo(), ['response' => $content, 'headers' => $event->getResponse()->headers->all()]);
+        $this->koboLogger->info('Response given '.$event->getRequest()->getPathInfo(), ['response' => $content, 'headers' => $event->getResponse()->headers->all()]);
     }
 
     public function onKernelController(ControllerEvent $event): void

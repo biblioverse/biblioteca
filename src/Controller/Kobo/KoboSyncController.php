@@ -9,6 +9,7 @@ use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponseFactory;
 use App\Kobo\SyncToken;
 use App\Repository\BookRepository;
+use App\Repository\KoboDeviceRepository;
 use App\Repository\KoboSyncedBookRepository;
 use App\Repository\ShelfRepository;
 use App\Service\KoboSyncTokenExtractor;
@@ -31,8 +32,9 @@ class KoboSyncController extends AbstractKoboController
         protected KoboSyncedBookRepository $koboSyncedBookRepository,
         protected ShelfRepository $shelfRepository,
         protected LoggerInterface $logger,
-        protected SyncResponseFactory $syncResponseFactory)
-    {
+        protected KoboDeviceRepository $koboDeviceRepository,
+        protected SyncResponseFactory $syncResponseFactory,
+    ) {
     }
 
     /**
@@ -55,6 +57,7 @@ class KoboSyncController extends AbstractKoboController
                 $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
                 $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
                 $kobo->setForceSync(false);
+                $this->koboDeviceRepository->save($kobo);
                 $syncToken->currentDate = new \DateTime('now');
             }
             $this->logger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);

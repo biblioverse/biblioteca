@@ -52,8 +52,15 @@ class KoboInitializationController extends AbstractKoboController
         $jsonData['Resources']['image_url_template'] = $base.'/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg';
         $jsonData['Resources']['image_url_quality_template'] = $base.'/{ImageId}/{width}/{height}/false/image.jpg';
 
+        foreach ($jsonData['Resources'] as $key => $url) {
+            if (!is_string($url)) {
+                continue;
+            }
+            $jsonData['Resources'][$key] = str_replace('https://storeapi.kobo.com', $base, $url);
+        }
+
         // Reading services
-        $jsonData['Resources']['reading_services_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/');
+        $jsonData['Resources']['reading_services_host'] = str_replace('https://', '', rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/'));
 
         $response = new JsonResponse($jsonData);
         $response->headers->set('kobo-api-token', 'e30=');

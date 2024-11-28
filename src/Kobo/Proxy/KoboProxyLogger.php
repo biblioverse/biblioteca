@@ -54,10 +54,27 @@ class KoboProxyLogger
 
     private function log(RequestInterface $request, ?ResponseInterface $response = null, ?\Throwable $error = null): void
     {
-        $this->logger->info(sprintf('Proxied: %s', (string) $request->getUri()), [
+        try {
+            $requestContent = json_decode($request->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            $requestContent = $request->getBody()->getContents();
+        }
+        $responseContent = $response?->getBody()->getContents();
+        if ($responseContent !== null) {
+            try {
+                $responseContent = json_decode($responseContent, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+            }
+        }
+
+        $this->logger->info(sprintf($request->getMethod().': %s', (string) $request->getUri()), [
             'method' => $request->getMethod(),
             'status' => $response?->getStatusCode(),
             'token_hash' => md5($this->accessToken),
+            'request' => $requestContent,
+            'response' => $responseContent,
+            'request_headers' => $request->getHeaders(),
+            'response_headers' => $response?->getHeaders(),
         ]);
 
         if ($error instanceof \Throwable) {
