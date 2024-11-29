@@ -8,6 +8,7 @@ use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponseFactory;
 use App\Kobo\SyncToken;
+use App\Kobo\UpstreamSyncMerger;
 use App\Repository\BookRepository;
 use App\Repository\KoboDeviceRepository;
 use App\Repository\KoboSyncedBookRepository;
@@ -31,9 +32,10 @@ class KoboSyncController extends AbstractKoboController
         protected KoboSyncTokenExtractor $koboSyncTokenExtractor,
         protected KoboSyncedBookRepository $koboSyncedBookRepository,
         protected ShelfRepository $shelfRepository,
-        protected LoggerInterface $logger,
+        protected LoggerInterface $koboSyncLogger,
         protected KoboDeviceRepository $koboDeviceRepository,
         protected SyncResponseFactory $syncResponseFactory,
+        protected UpstreamSyncMerger $upstreamSyncMerger,
     ) {
     }
 
@@ -54,13 +56,13 @@ class KoboSyncController extends AbstractKoboController
         $count = $this->koboSyncedBookRepository->countByKoboDevice($kobo);
         if ($forced || $count === 0) {
             if ($forced) {
-                $this->logger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
+                $this->koboSyncLogger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
                 $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
                 $kobo->setForceSync(false);
                 $this->koboDeviceRepository->save($kobo);
                 $syncToken->currentDate = new \DateTime('now');
             }
-            $this->logger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);
+            $this->koboSyncLogger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);
             $syncToken->lastCreated = null;
             $syncToken->lastModified = null;
             $syncToken->tagLastModified = null;
@@ -70,20 +72,23 @@ class KoboSyncController extends AbstractKoboController
         // We fetch a subset of book to sync, based on the SyncToken.
         $books = $this->bookRepository->getChangedBooks($kobo, $syncToken, 0, self::MAX_BOOKS_PER_SYNC);
         $count = $this->bookRepository->getChangedBooksCount($kobo, $syncToken);
-        $this->logger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $kobo->getId(), 'count' => $count, 'token' => $syncToken]);
+        $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $kobo->getId(), 'count' => $count, 'token' => $syncToken]);
 
         $response = $this->syncResponseFactory->create($syncToken, $kobo)
             ->addBooks($books)
             ->addShelves($this->shelfRepository->getShelvesToSync($kobo, $syncToken));
 
+        // Fetch the books upstream and merge the answer
+        $shouldContinue = $this->upstreamSyncMerger->merge($kobo, $response, $request);
+
         // TODO Pagination based on the sync token and lastSyncDate
         $httpResponse = $response->toJsonResponse();
-        $httpResponse->headers->set('x-kobo-sync-todo', count($books) < $count ? 'continue' : 'done');
+        $httpResponse->headers->set('x-kobo-sync-todo', $shouldContinue || count($books) < $count ? 'continue' : 'done');
 
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
         if (false === $forced) {
-            $this->logger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
+            $this->koboSyncLogger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
 
             $this->koboSyncedBookRepository->updateSyncedBooks($kobo, $books, $syncToken);
         }

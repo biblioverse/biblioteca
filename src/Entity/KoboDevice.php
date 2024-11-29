@@ -59,6 +59,9 @@ class KoboDevice
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $forceSync = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $upstreamSync = false;
+
     public function __construct()
     {
         $this->shelves = new ArrayCollection();
@@ -194,5 +197,15 @@ class KoboDevice
         $this->model = $model;
 
         return $this;
+    }
+
+    public function isUpstreamSync(): bool
+    {
+        return $this->upstreamSync;
+    }
+
+    public function setUpstreamSync(bool $upstreamSync): void
+    {
+        $this->upstreamSync = $upstreamSync;
     }
 }
