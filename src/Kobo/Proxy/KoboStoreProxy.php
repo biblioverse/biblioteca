@@ -167,10 +167,9 @@ class KoboStoreProxy
     {
         $httpFoundationFactory = new HttpFoundationFactory();
 
-        $response = $httpFoundationFactory->createResponse($psrResponse, $streamAllowed);
-        $this->cleanupResponse($response);
+        $psrResponse = $this->cleanupPsrResponse($psrResponse);
 
-        return $response;
+        return $httpFoundationFactory->createResponse($psrResponse, $streamAllowed);
     }
 
     private function getConfig(array $config): array

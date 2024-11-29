@@ -40,7 +40,7 @@ class KoboStateController extends AbstractKoboController
      * Update reading state.
      **/
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
-    public function state(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
+    public function putState(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
     {
         $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
 
