@@ -92,7 +92,7 @@ class MetadataResponseService
 
         // Add Serie information
         $data['Series'] = [
-            'Name' => $book->getSerieIndex(),
+            'Name' => $book->getSerie(),
             'Number' => (int) $book->getSerieIndex(),
             'NumberFloat' => $book->getSerieIndex(),
             'Id' => md5($book->getSerie()), //  Get a deterministic id based on the series name.
