@@ -7,6 +7,8 @@
         <thead>
             <tr>
                 <th>Date</th>
+                <th>Device</th>
+                <th>channel</th>
                 <th>Message</th>
             </tr>
         </thead>
@@ -14,7 +16,13 @@
         {% for record in records %}
             <tr style="font-size: 0.8em">
                 <td>
-                   {{ record.datetime|date('d.m.Y') }}&nbsp;{{ record.datetime|date('H:i:s') }}
+                    {{ record.datetime|date('d.m.Y') }}&nbsp;{{ record.datetime|date('H:i:s') }}
+                </td>
+                <td>
+                    {{ record.extra.kobo|default('unkown') }}
+                </td>
+                <td>
+                   {{ record.channel }}
                 </td>
                 <td>
                     <details>

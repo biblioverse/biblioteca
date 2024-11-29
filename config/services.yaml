@@ -113,6 +113,10 @@ services:
         tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 101 }
 
+    App\Kobo\LogProcessor\KoboContextProcessor:
+        tags:
+            - { name: monolog.processor }
+
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
