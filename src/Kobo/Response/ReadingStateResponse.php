@@ -29,7 +29,7 @@ class ReadingStateResponse
         $book = $this->book;
         $uuid = $book->getUuid();
 
-        $lastModified = $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getUpdated());
+        $lastModified = $this->syncToken->maxLastModified($this->kobo->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getUpdated());
 
         return [[
             'EntitlementId' => $uuid,
