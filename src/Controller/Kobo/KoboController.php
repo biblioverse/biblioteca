@@ -41,6 +41,7 @@ class KoboController extends AbstractKoboController
     #[Route('/v1/products/featured/{uuid}', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET', 'POST'])]
     #[Route('/v1/products/{uuid}/prices', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET', 'POST'])]
     #[Route('/v1/products/{uuid}/recommendations', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET', 'POST'])]
+    #[Route('/v1/user/recommendations/feedback', methods: ['GET', 'POST'])]
     #[Route('/v1/products/{uuid}/reviews', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET', 'POST'])]
     #[Route('/v1/user/profile')]
     #[Route('/v1/configuration')]
