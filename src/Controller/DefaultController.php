@@ -31,6 +31,10 @@ class DefaultController extends AbstractController
 
         $keys = $tags === [] ? [] : array_rand($tags, min(count($tags), 4));
 
+        if (!is_array($keys)) {
+            $keys = [];
+        }
+
         $inspiration = [];
         foreach ($keys as $key) {
             $randomBooks = $bookRepository->findByTag($tags[$key]['item'], 6);
