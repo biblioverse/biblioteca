@@ -20,7 +20,15 @@ class JSONIsValidSyncResponse extends Constraint
         }
     }
 
-    const KNOWN_TYPES = ["NewEntitlement", "ChangedTag", "NewTag", "RemovedPublication", "ChangedEntitlement"];
+    const KNOWN_TYPES = [
+        "ChangedEntitlement",
+        "ChangedReadingState",
+        "ChangedTag",
+        "DeletedTag",
+        "NewEntitlement",
+        "NewTag",
+        "RemovedPublication",
+    ];
     public function matches($other): bool{
         try{
             $this->test($other);
@@ -49,6 +57,8 @@ class JSONIsValidSyncResponse extends Constraint
                 "NewEntitlement" => $this->assertNewEntitlement($item['NewEntitlement']),
                 "ChangedTag" => $this->assertChangedTag(),
                 "NewTag" => $this->assertNewTag(),
+                "DeletedTag" => $this->assertDeletedTag(),
+                "ChangedReadingState" => null,
                 "RemovedPublication" => $this->assertRemovedPublication(),
                 "ChangedEntitlement" => $this->assertChangedEntitlement($item['ChangedEntitlement']),
                 default => throw new \InvalidArgumentException('Unknown type')
@@ -69,6 +79,9 @@ class JSONIsValidSyncResponse extends Constraint
     }
 
     private function assertNewTag(): void
+    {
+    }
+    private function assertDeletedTag(): void
     {
     }
 

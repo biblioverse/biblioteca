@@ -4,6 +4,7 @@ namespace App\Kobo\Proxy;
 
 use App\Security\KoboTokenExtractor;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -31,6 +32,7 @@ class KoboStoreProxy
         protected KoboProxyConfiguration $configuration,
         protected LoggerInterface $koboProxyLogger,
         protected KoboTokenExtractor $tokenExtractor,
+        protected ?ClientInterface $client = null,
     ) {
     }
 
@@ -93,12 +95,10 @@ class KoboStoreProxy
         $config = $this->getConfig($config);
         $psrRequest = $this->convertRequest($request, $hostname);
 
-        $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
+        $client = $this->getClient($request);
 
-        $client = new Client();
         $psrResponse = $client->send($psrRequest, [
             'base_uri' => $hostname,
-            'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
             'http_errors' => false,
             'connect_timeout' => 5,
         ] + $config
@@ -141,7 +141,7 @@ class KoboStoreProxy
 
         $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
 
-        $client = new Client();
+        $client = $this->getClient($request);
 
         return $client->sendAsync($psrRequest, [
             'base_uri' => $upstreamUrl,
@@ -196,5 +196,23 @@ class KoboStoreProxy
         $config['stream'] ??= true;
 
         return $config;
+    }
+
+    public function setClient(?ClientInterface $client): void
+    {
+        $this->client = $client;
+    }
+
+    private function getClient(Request $request): ClientInterface
+    {
+        if ($this->client instanceof ClientInterface) {
+            return $this->client;
+        }
+
+        $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
+
+        return new Client([
+            'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
+        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Kobo;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponse;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,15 @@ class UpstreamSyncMerger
             return false;
         }
 
-        $response = $this->koboStoreProxy->proxy($request, ['stream' => false]);
+        try {
+            $response = $this->koboStoreProxy->proxy($request, ['stream' => false]);
+        } catch (GuzzleException $e) {
+            $this->koboSyncLogger->error('Unable to sync with upstream: {exception}', [
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
         if (false === $response->isOk()) {
             $this->koboSyncLogger->error('Sync response is not ok. Got '.$response->getStatusCode());
 
