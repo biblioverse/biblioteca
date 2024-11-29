@@ -16,7 +16,6 @@ use App\Repository\BookRepository;
 use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,7 +87,7 @@ class KoboStateController extends AbstractKoboController
      * @throws GuzzleException
      */
     #[Route('/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken, LoggerInterface $logger): Response|JsonResponse
+    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
@@ -109,8 +108,6 @@ class KoboStateController extends AbstractKoboController
         $rsResponse = $this->readingStateResponseFactory->create($syncToken, $kobo, $book);
 
         $response->setContent($rsResponse);
-
-        $logger->info('Returned Kobo State for book', ['response' => $rsResponse]);
 
         return $response;
     }

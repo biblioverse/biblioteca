@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class KoboRequestSubscriber implements EventSubscriberInterface
 {
-    public function __construct(protected LoggerInterface $koboLogger)
+    public function __construct(protected LoggerInterface $koboHttpLogger)
     {
     }
 
@@ -33,7 +33,7 @@ class KoboRequestSubscriber implements EventSubscriberInterface
             $content = $event->getResponse()->getContent();
         }
 
-        $this->koboLogger->info('Response given '.$event->getRequest()->getPathInfo(), ['response' => $content, 'headers' => $event->getResponse()->headers->all()]);
+        $this->koboHttpLogger->info('Response given '.$event->getRequest()->getPathInfo(), ['response' => $content, 'headers' => $event->getResponse()->headers->all()]);
     }
 
     public function onKernelController(ControllerEvent $event): void
@@ -57,7 +57,7 @@ class KoboRequestSubscriber implements EventSubscriberInterface
             $content = $event->getRequest()->getContent();
         }
 
-        $this->koboLogger->info($event->getRequest()->getMethod().' on '.$event->getRequest()->getPathInfo(), ['request' => $content, 'headers' => $event->getRequest()->headers->all()]);
+        $this->koboHttpLogger->info($event->getRequest()->getMethod().' on '.$event->getRequest()->getPathInfo(), ['request' => $content, 'headers' => $event->getRequest()->headers->all()]);
     }
 
     public static function getSubscribedEvents(): array

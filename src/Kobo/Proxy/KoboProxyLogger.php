@@ -11,8 +11,11 @@ class KoboProxyLogger
 {
     use KoboHeaderFilterTrait;
 
-    public function __construct(protected KoboProxyConfiguration $configuration, protected LoggerInterface $logger, protected string $accessToken)
-    {
+    public function __construct(
+        protected KoboProxyConfiguration $configuration,
+        protected LoggerInterface $koboProxyLogger,
+        protected string $accessToken,
+    ) {
     }
 
     /**
@@ -67,7 +70,7 @@ class KoboProxyLogger
             }
         }
 
-        $this->logger->info(sprintf($request->getMethod().': %s', (string) $request->getUri()), [
+        $this->koboProxyLogger->info(sprintf($request->getMethod().': %s', (string) $request->getUri()), [
             'method' => $request->getMethod(),
             'status' => $response?->getStatusCode(),
             'token_hash' => md5($this->accessToken),
@@ -78,7 +81,7 @@ class KoboProxyLogger
         ]);
 
         if ($error instanceof \Throwable) {
-            $this->logger->error('Proxy error: '.$error->getMessage(), [
+            $this->koboProxyLogger->error('Proxy error: '.$error->getMessage(), [
                 'exception' => $error,
                 'token_hash' => md5($this->accessToken),
             ]);

@@ -25,7 +25,7 @@ class KoboTagController extends AbstractKoboController
         protected ShelfRepository $shelfRepository,
         protected KoboStoreProxy $koboStoreProxy,
         protected SerializerInterface $serializer,
-        protected LoggerInterface $logger)
+        protected LoggerInterface $koboLogger)
     {
     }
 
@@ -44,7 +44,7 @@ class KoboTagController extends AbstractKoboController
 
             // Avoid the Kobo to send the request over and over again by marking it successful
             if ($response->getStatusCode() === Response::HTTP_NOT_FOUND) {
-                $this->logger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
+                $this->koboLogger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
 
                 return new JsonResponse($shelfId, Response::HTTP_CREATED);
             }
@@ -54,7 +54,7 @@ class KoboTagController extends AbstractKoboController
 
         /** @var TagDeleteRequest $deleteRequest */
         $deleteRequest = $this->serializer->deserialize($request->getContent(false), TagDeleteRequest::class, 'json');
-        $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
+        $this->koboLogger->debug('Tag delete request', ['request' => $deleteRequest]);
 
         try {
             if (!$shelf instanceof Shelf) {
@@ -91,14 +91,14 @@ class KoboTagController extends AbstractKoboController
 
         if ($request->isMethod('DELETE')) {
             if ($shelf instanceof Shelf) {
-                $this->logger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
+                $this->koboLogger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
                 $shelf->removeKoboDevice($kobo);
                 $this->shelfRepository->flush();
 
                 return new JsonResponse(['deleted'], Response::HTTP_OK);
             }
             if ($this->koboStoreProxy->isEnabled()) {
-                $this->logger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
+                $this->koboLogger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
 
                 $proxyResponse = $this->koboStoreProxy->proxy($request);
                 if ($proxyResponse->getStatusCode() === Response::HTTP_NOT_FOUND) {

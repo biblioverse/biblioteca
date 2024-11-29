@@ -26,8 +26,12 @@ class KoboStoreProxy
 {
     use KoboHeaderFilterTrait;
 
-    public function __construct(protected KoboProxyLoggerFactory $koboProxyLoggerFactory, protected KoboProxyConfiguration $configuration, protected LoggerInterface $proxyLogger, protected KoboTokenExtractor $tokenExtractor)
-    {
+    public function __construct(
+        protected KoboProxyLoggerFactory $koboProxyLoggerFactory,
+        protected KoboProxyConfiguration $configuration,
+        protected LoggerInterface $koboProxyLogger,
+        protected KoboTokenExtractor $tokenExtractor,
+    ) {
     }
 
     protected function assertEnabled(): void

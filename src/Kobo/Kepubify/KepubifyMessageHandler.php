@@ -19,7 +19,7 @@ class KepubifyMessageHandler
     public function __construct(
         #[Autowire(param: 'kernel.cache_dir')]
         private readonly string $cacheDir,
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $koboKepubify,
         private readonly KepubifyEnabler $kepubifyEnabler,
         private readonly CacheItemPoolInterface $kepubifyCachePool,
     ) {
@@ -35,7 +35,7 @@ class KepubifyMessageHandler
         // Create a temporary file
         $temporaryFile = $this->getTemporaryFilename();
         if ($temporaryFile === false) {
-            $this->logger->error('Error while creating temporary file');
+            $this->koboKepubify->error('Error while creating temporary file');
 
             return;
         }
@@ -44,7 +44,7 @@ class KepubifyMessageHandler
         try {
             $item = $this->kepubifyCachePool->getItem('kepubify_object_'.md5($message->source));
         } catch (InvalidArgumentException $e) {
-            $this->logger->error('Error while caching kepubify: {error}', [
+            $this->koboKepubify->error('Error while caching kepubify: {error}', [
                 'error' => $e->getMessage(),
                 'exception' => $e,
             ]);
@@ -79,7 +79,7 @@ class KepubifyMessageHandler
             try {
                 $this->kepubifyCachePool->deleteItem($item->getKey());
             } catch (InvalidArgumentException $e) {
-                $this->logger->error('Error while deleting cached kepubify data: {error}', [
+                $this->koboKepubify->error('Error while deleting cached kepubify data: {error}', [
                     'error' => $e->getMessage(),
                     'exception' => $e,
                 ]);
@@ -90,7 +90,7 @@ class KepubifyMessageHandler
 
         $result = file_put_contents($temporaryFile, $data->getContent());
         if ($result === false) {
-            $this->logger->error('Error while restoring cached kepubify data');
+            $this->koboKepubify->error('Error while restoring cached kepubify data');
             $temporaryFile = null;
         }
         $message->destination = $temporaryFile;
@@ -118,11 +118,11 @@ class KepubifyMessageHandler
     {
         // Run the conversion
         $process = new Process([$this->kepubifyEnabler->getKepubifyBinary(), '--output', $temporaryFile, $message->source]);
-        $this->logger->debug('Run kepubify command: {command}', ['command' => $process->getCommandLine()]);
+        $this->koboKepubify->debug('Run kepubify command: {command}', ['command' => $process->getCommandLine()]);
         $process->run();
 
         if (!$process->isSuccessful()) {
-            $this->logger->error('Error while running kepubify: {output}: {error}', [
+            $this->koboKepubify->error('Error while running kepubify: {output}: {error}', [
                 'output' => $process->getOutput(),
                 'error' => $process->getErrorOutput(),
             ]);

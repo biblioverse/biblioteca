@@ -8,13 +8,15 @@ use Psr\Log\LoggerInterface;
 
 class KoboProxyLoggerFactory
 {
-    public function __construct(protected KoboProxyConfiguration $configuration, protected LoggerInterface $proxyLogger)
+    public function __construct(
+        protected KoboProxyConfiguration $configuration,
+        protected LoggerInterface $koboProxyLogger)
     {
     }
 
     public function create(string $accessToken): KoboProxyLogger
     {
-        return new KoboProxyLogger($this->configuration, $this->proxyLogger, $accessToken);
+        return new KoboProxyLogger($this->configuration, $this->koboProxyLogger, $accessToken);
     }
 
     public function createStack(string $accessToken): HandlerStack
