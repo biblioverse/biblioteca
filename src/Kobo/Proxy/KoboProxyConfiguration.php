@@ -12,6 +12,7 @@ class KoboProxyConfiguration
 
     private string $imageApiUrl = '';
     private string $storeApiUrl = '';
+    private string $readingServiceUrl = '';
 
     public function useProxy(): bool
     {
@@ -55,6 +56,13 @@ class KoboProxyConfiguration
         return str_ends_with($uri, '.jpg')
             || str_ends_with($uri, '.png')
             || str_ends_with($uri, '.jpeg');
+    }
+
+    public function isReadingServiceUrl(Request|RequestInterface $request): bool
+    {
+        $uri = $request instanceof Request ? $request->getRequestUri() : (string) $request->getUri();
+
+        return str_contains($uri, '/api/v3/content/');
     }
 
     public function setImageApiUrl(string $imageApiUrl): KoboProxyConfiguration
@@ -228,6 +236,22 @@ class KoboProxyConfiguration
     public function setUseProxyEverywhere(bool $useProxyEverywhere): self
     {
         $this->useProxyEverywhere = $useProxyEverywhere;
+
+        return $this;
+    }
+
+    public function getReadingServiceUrl(): string
+    {
+        if ($this->readingServiceUrl === '') {
+            throw new \InvalidArgumentException('Reading Service URL is not set');
+        }
+
+        return $this->readingServiceUrl;
+    }
+
+    public function setReadingServiceUrl(string $readingServiceUrl): self
+    {
+        $this->readingServiceUrl = $readingServiceUrl;
 
         return $this;
     }

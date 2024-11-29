@@ -16,6 +16,8 @@ parameters:
     KOBO_IMAGE_API_URL:  '%env(KOBO_IMAGE_API_URL)%'
     env(KEPUBIFY_BIN): "/usr/bin/kepubify"
     KEPUBIFY_BIN:  '%env(KEPUBIFY_BIN)%'
+    KOBO_READINGSERVICES_URL: '%env(bool:KOBO_READINGSERVICES_URL)%'
+    env(KOBO_READINGSERVICES_URL): 'https://readingservices.kobo.com'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -98,6 +100,7 @@ services:
     App\Kobo\Proxy\KoboProxyConfiguration:
       calls:
         - [ setStoreApiUrl, ['%KOBO_API_URL%'] ]
+        - [ setReadingServiceUrl, ['%KOBO_READINGSERVICES_URL%'] ]
         - [ setImageApiUrl, ['%KOBO_IMAGE_API_URL%'] ]
         - [ setEnabled, ['%KOBO_PROXY_ENABLED%'] ]
         - [ setUseProxyEverywhere, ['%KOBO_PROXY_USE_EVERYWHERE%'] ]

@@ -44,7 +44,7 @@ class KoboStoreProxy
     {
         $this->assertEnabled();
 
-        $url = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        $url = $this->getUpstreamUrl($request);
 
         return $this->_proxy($request, $url, $options);
     }
@@ -106,16 +106,16 @@ class KoboStoreProxy
     protected function getTransformedUrl(Request $request): UriInterface
     {
         $psrRequest = $this->toPsrRequest($request);
-        $hostname = $this->configuration->isImageHostUrl($psrRequest) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        $upstreamUrl = $this->getUpstreamUrl($request);
 
-        return $this->transformUrl($psrRequest, $hostname);
+        return $this->transformUrl($psrRequest, $upstreamUrl);
     }
 
-    private function transformUrl(ServerRequestInterface $psrRequest, string $hostname): UriInterface
+    private function transformUrl(ServerRequestInterface $psrRequest, string $hostnameOrUrl): UriInterface
     {
-        $host = parse_url($hostname, PHP_URL_HOST);
-        $host = $host === false ? $hostname : $host;
-        $host = $host ?? $hostname;
+        $host = parse_url($hostnameOrUrl, PHP_URL_HOST);
+        $host = $host === false ? $hostnameOrUrl : $host;
+        $host = $host ?? $hostnameOrUrl;
         $path = $this->tokenExtractor->getOriginalPath($psrRequest, $psrRequest->getUri()->getPath());
 
         return $psrRequest->getUri()->withHost($host)->withPath($path);
@@ -131,15 +131,16 @@ class KoboStoreProxy
 
     public function proxyAsync(Request $request, bool $streamAllowed): PromiseInterface
     {
-        $hostname = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
-        $psrRequest = $this->convertRequest($request, $hostname);
+        $upstreamUrl = $this->getUpstreamUrl($request);
+
+        $psrRequest = $this->convertRequest($request, $upstreamUrl);
 
         $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
 
         $client = new Client();
 
         return $client->sendAsync($psrRequest, [
-            'base_uri' => $hostname,
+            'base_uri' => $upstreamUrl,
             'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
             'http_errors' => false,
             'connect_timeout' => 5,
@@ -170,6 +171,16 @@ class KoboStoreProxy
         $psrResponse = $this->cleanupPsrResponse($psrResponse);
 
         return $httpFoundationFactory->createResponse($psrResponse, $streamAllowed);
+    }
+
+    private function getUpstreamUrl(Request $request): string
+    {
+        $url = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        if ($this->configuration->isReadingServiceUrl($request)) {
+            $url = $this->configuration->getReadingServiceUrl();
+        }
+
+        return $url;
     }
 
     private function getConfig(array $config): array
