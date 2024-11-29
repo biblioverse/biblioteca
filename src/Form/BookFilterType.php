@@ -249,13 +249,17 @@ class BookFilterType extends AbstractType
             'choices' => User::AGE_CATEGORIES + ['filter.age.notset' => 'null'],
             'required' => false,
             'mapped' => false,
-            'expanded' => true,
+            'expanded' => false,
             'label' => 'filter.age',
-            'multiple' => true,
-            'target_callback' => function (QueryBuilder $qb, array $readValue): void {
-                if (in_array('null', $readValue, true)) {
+            'multiple' => false,
+            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
+                if ($readValue === null) {
+                    return;
+                }
+
+                if ($readValue === 'null') {
                     $qb->andWhere('book.ageCategory is null');
-                } elseif ($readValue !== []) {
+                } else {
                     $qb->andWhere($qb->expr()->in('book.ageCategory', ':ageCategory'));
                     $qb->setParameter('ageCategory', $readValue);
                 }

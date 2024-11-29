@@ -2,10 +2,10 @@
 {% if isEditing and is_granted('ROLE_ADMIN') %}
     <form class="input-group">
             <select
-                {{ field!='ageCategory'?'multiple' }}
+                multiple
                 class="form-select form-select-sm"
                 id="books_{{ field }}"
-                data-model="fieldValue{{ field=='ageCategory'?'Int' }}"
+                data-model="fieldValue"
                 {{ stimulus_controller('symfony/ux-autocomplete/autocomplete', {
                     url: path('app_autocomplete_group', {type: field}),
                 }) }}

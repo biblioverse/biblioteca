@@ -28,9 +28,6 @@ class InlineEditMultiple extends AbstractController
     #[LiveProp(writable: true)]
     public array $fieldValue;
 
-    #[LiveProp(writable: true)]
-    public ?int $fieldValueInt = null;
-
     #[LiveProp()]
     public bool $isEditing = false;
 
@@ -63,8 +60,8 @@ class InlineEditMultiple extends AbstractController
                     $book->setSerie(implode(',', $this->fieldValue));
                     break;
                 case 'ageCategory':
-                    $value = $this->fieldValueInt;
-                    $book->setAgeCategory($value);
+                    $value = reset($this->fieldValue);
+                    $book->setAgeCategory((int) $value);
 
                     break;
                 default:
@@ -76,6 +73,6 @@ class InlineEditMultiple extends AbstractController
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 
-        $this->flashMessage = ' book updated';
+        $this->flashMessage = 'books updated!';
     }
 }
