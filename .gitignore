@@ -9,8 +9,6 @@
 /.composer
 /vendor/
 docker-compose.override.yml
-docker-compose.yml
-Dockerfile
 /backups/*.sql
 /public/media/cache/*
 !/public/images/.gitkeep

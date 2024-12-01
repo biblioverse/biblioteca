@@ -29,7 +29,11 @@ class DefaultController extends AbstractController
 
         $tags = $bookRepository->getAllTags();
 
-        $keys = $tags === [] ? [] : array_rand($tags, 4);
+        $keys = $tags === [] ? [] : array_rand($tags, min(count($tags), 4));
+
+        if (!is_array($keys)) {
+            $keys = [];
+        }
 
         $inspiration = [];
         foreach ($keys as $key) {
