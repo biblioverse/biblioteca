@@ -20,13 +20,13 @@ class ReadingStateResponseFactory
     ) {
     }
 
-    public function create(SyncToken $syncToken, KoboDevice $kobo, Book $book): ReadingStateResponse
+    public function create(SyncToken $syncToken, KoboDevice $koboDevice, Book $book): ReadingStateResponse
     {
         return new ReadingStateResponse(
             $this->bookProgressionService,
             $this->serializer,
             $syncToken,
-            $kobo,
+            $koboDevice,
             $book
         );
     }

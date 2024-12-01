@@ -16,7 +16,7 @@ class ReadingStateResponse
         protected BookProgressionService $bookProgressionService,
         protected SerializerInterface $serializer,
         protected SyncToken $syncToken,
-        protected KoboDevice $kobo,
+        protected KoboDevice $koboDevice,
         protected Book $book,
     ) {
     }
@@ -29,11 +29,11 @@ class ReadingStateResponse
         $book = $this->book;
         $uuid = $book->getUuid();
 
-        $lastModified = $this->syncToken->maxLastModified($this->kobo->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getUpdated());
+        $lastModified = $this->syncToken->maxLastModified($this->koboDevice->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->koboDevice->getUser())?->getUpdated());
 
         return [[
             'EntitlementId' => $uuid,
-            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getCreated()),
+            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate, $book->getLastInteraction($this->koboDevice->getUser())?->getCreated()),
             'LastModified' => $lastModified,
             'PriorityTimestamp' => $lastModified,
             'StatusInfo' => [
@@ -47,7 +47,7 @@ class ReadingStateResponse
             ],
 
             // "Statistics"=> get_statistics_response(kobo_reading_state.statistics),
-            'CurrentBookmark' => $this->createBookmark($this->kobo->getUser()->getBookmarkForBook($book)),
+            'CurrentBookmark' => $this->createBookmark($this->koboDevice->getUser()->getBookmarkForBook($book)),
         ]];
     }
 
@@ -56,7 +56,7 @@ class ReadingStateResponse
      */
     private function isReadingFinished(Book $book): ?bool
     {
-        $progression = $this->bookProgressionService->getProgression($book, $this->kobo->getUser());
+        $progression = $this->bookProgressionService->getProgression($book, $this->koboDevice->getUser());
         if ($progression === null) {
             return null;
         }

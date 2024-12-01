@@ -28,7 +28,7 @@ class InitializationController extends AbstractKoboController
      * @throws GuzzleException
      */
     #[Route('/initialization')]
-    public function initialization(Request $request, KoboDevice $kobo): Response
+    public function initialization(Request $request, KoboDevice $koboDevice): Response
     {
         $this->koboSynclogger->info('Initialization request');
         // Load the JSON data from the store
@@ -42,7 +42,7 @@ class InitializationController extends AbstractKoboController
 
         // Override the Image Endpoint with the one from this server
         $base = $this->generateUrl('kobo_api_endpoint', [
-            'accessKey' => $kobo->getAccessKey(),
+            'accessKey' => $koboDevice->getAccessKey(),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $base = rtrim($base, '/');

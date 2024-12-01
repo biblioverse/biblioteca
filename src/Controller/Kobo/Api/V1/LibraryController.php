@@ -58,9 +58,9 @@ class LibraryController extends AbstractKoboController
      * Update reading state.
      **/
     #[Route('/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
-    public function putState(KoboDevice $kobo, string $uuid, Request $request): Response|JsonResponse
+    public function putState(KoboDevice $koboDevice, string $uuid, Request $request): Response|JsonResponse
     {
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
 
         // Handle book not found
         if (!$book instanceof Book) {
@@ -81,21 +81,21 @@ class LibraryController extends AbstractKoboController
         $state = $entity->readingStates[0];
         switch ($state->statusInfo?->status) {
             case ReadingStateStatusInfo::STATUS_FINISHED:
-                $this->bookProgressionService->setProgression($book, $kobo->getUser(), 1.0);
+                $this->bookProgressionService->setProgression($book, $koboDevice->getUser(), 1.0);
                 break;
             case ReadingStateStatusInfo::STATUS_READY_TO_READ:
-                $this->bookProgressionService->setProgression($book, $kobo->getUser(), null);
+                $this->bookProgressionService->setProgression($book, $koboDevice->getUser(), null);
                 break;
             case ReadingStateStatusInfo::STATUS_READING:
                 $progress = $state->currentBookmark?->progressPercent;
                 $progress = $progress !== null ? $progress / 100 : null;
-                $this->bookProgressionService->setProgression($book, $kobo->getUser(), $progress);
+                $this->bookProgressionService->setProgression($book, $koboDevice->getUser(), $progress);
                 break;
             case null:
                 break;
         }
 
-        $this->handleBookmark($kobo, $book, $state->currentBookmark);
+        $this->handleBookmark($koboDevice, $book, $state->currentBookmark);
 
         $this->em->flush();
 
@@ -106,13 +106,13 @@ class LibraryController extends AbstractKoboController
      * @throws GuzzleException
      */
     #[Route('/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(KoboDevice $kobo, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
+    public function getState(KoboDevice $koboDevice, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
         $response->headers->set('x-kobo-api-token', 'e30=');
 
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
 
         // Unknown book
         if (!$book instanceof Book) {
@@ -124,22 +124,22 @@ class LibraryController extends AbstractKoboController
             return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
         }
 
-        $rsResponse = $this->readingStateResponseFactory->create($syncToken, $kobo, $book);
+        $rsResponse = $this->readingStateResponseFactory->create($syncToken, $koboDevice, $book);
 
         $response->setContent($rsResponse);
 
         return $response;
     }
 
-    private function handleBookmark(KoboDevice $kobo, Book $book, ?Bookmark $currentBookmark): void
+    private function handleBookmark(KoboDevice $koboDevice, Book $book, ?Bookmark $currentBookmark): void
     {
         if (!$currentBookmark instanceof Bookmark) {
-            $kobo->getUser()->removeBookmarkForBook($book);
+            $koboDevice->getUser()->removeBookmarkForBook($book);
 
             return;
         }
 
-        $bookmark = $kobo->getUser()->getBookmarkForBook($book) ?? new BookmarkUser($book, $kobo->getUser());
+        $bookmark = $koboDevice->getUser()->getBookmarkForBook($book) ?? new BookmarkUser($book, $koboDevice->getUser());
         $this->em->persist($bookmark);
 
         $bookmark->setPercent($currentBookmark->progressPercent === null ? null : $currentBookmark->progressPercent / 100);
@@ -156,23 +156,23 @@ class LibraryController extends AbstractKoboController
      * See KoboSyncTokenExtractor and Kobo
      * Both
      * Kobo will call this url multiple times if there are more book to sync (x-kobo-sync: continue)
-     * @param KoboDevice $kobo The kobo entity is retrieved via the accessKey in the url
+     * @param KoboDevice $koboDevice The kobo entity is retrieved via the accessKey in the url
      * @param SyncToken $syncToken It's provided from HTTP Headers + Get parameters, see SyncTokenParamConverter and    KoboSyncTokenExtractor
      **/
     #[Route('/sync', name: 'api_endpoint_v1_library_sync')]
-    public function apiEndpoint(KoboDevice $kobo, SyncToken $syncToken, Request $request): Response
+    public function apiEndpoint(KoboDevice $koboDevice, SyncToken $syncToken, Request $request): Response
     {
-        $forced = $kobo->isForceSync() || $request->query->has('force');
-        $count = $this->koboSyncedBookRepository->countByKoboDevice($kobo);
+        $forced = $koboDevice->isForceSync() || $request->query->has('force');
+        $count = $this->koboSyncedBookRepository->countByKoboDevice($koboDevice);
         if ($forced || $count === 0) {
             if ($forced) {
-                $this->koboSyncLogger->debug('Force sync for Kobo {id}', ['id' => $kobo->getId()]);
-                $this->koboSyncedBookRepository->deleteAllSyncedBooks($kobo);
-                $kobo->setForceSync(false);
-                $this->koboDeviceRepository->save($kobo);
+                $this->koboSyncLogger->debug('Force sync for Kobo {id}', ['id' => $koboDevice->getId()]);
+                $this->koboSyncedBookRepository->deleteAllSyncedBooks($koboDevice);
+                $koboDevice->setForceSync(false);
+                $this->koboDeviceRepository->save($koboDevice);
                 $syncToken->currentDate = new \DateTime('now');
             }
-            $this->koboSyncLogger->debug('First sync for Kobo {id}', ['id' => $kobo->getId()]);
+            $this->koboSyncLogger->debug('First sync for Kobo {id}', ['id' => $koboDevice->getId()]);
             $syncToken->lastCreated = null;
             $syncToken->lastModified = null;
             $syncToken->tagLastModified = null;
@@ -180,16 +180,16 @@ class LibraryController extends AbstractKoboController
         }
 
         // We fetch a subset of book to sync, based on the SyncToken.
-        $books = $this->bookRepository->getChangedBooks($kobo, $syncToken, 0, self::MAX_BOOKS_PER_SYNC);
-        $count = $this->bookRepository->getChangedBooksCount($kobo, $syncToken);
-        $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $kobo->getId(), 'count' => $count, 'token' => $syncToken]);
+        $books = $this->bookRepository->getChangedBooks($koboDevice, $syncToken, 0, self::MAX_BOOKS_PER_SYNC);
+        $count = $this->bookRepository->getChangedBooksCount($koboDevice, $syncToken);
+        $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $koboDevice->getId(), 'count' => $count, 'token' => $syncToken]);
 
-        $response = $this->syncResponseFactory->create($syncToken, $kobo)
+        $response = $this->syncResponseFactory->create($syncToken, $koboDevice)
             ->addBooks($books)
-            ->addShelves($this->shelfRepository->getShelvesToSync($kobo, $syncToken));
+            ->addShelves($this->shelfRepository->getShelvesToSync($koboDevice, $syncToken));
 
         // Fetch the books upstream and merge the answer
-        $shouldContinue = $this->upstreamSyncMerger->merge($kobo, $response, $request);
+        $shouldContinue = $this->upstreamSyncMerger->merge($koboDevice, $response, $request);
 
         // TODO Pagination based on the sync token and lastSyncDate
         $httpResponse = $response->toJsonResponse();
@@ -200,14 +200,14 @@ class LibraryController extends AbstractKoboController
         if (false === $forced) {
             $this->koboSyncLogger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
 
-            $this->koboSyncedBookRepository->updateSyncedBooks($kobo, $books, $syncToken);
+            $this->koboSyncedBookRepository->updateSyncedBooks($koboDevice, $books, $syncToken);
         }
 
         return $httpResponse;
     }
 
     #[Route('/{uuid}/metadata', name: 'api_endpoint_v1_library_metadata')]
-    public function metadataEndpoint(KoboDevice $kobo, ?Book $book, Request $request): Response
+    public function metadataEndpoint(KoboDevice $koboDevice, ?Book $book, Request $request): Response
     {
         if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
@@ -217,6 +217,6 @@ class LibraryController extends AbstractKoboController
             return new JsonResponse(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->syncResponseFactory->createMetadata($kobo, $book);
+        return $this->syncResponseFactory->createMetadata($koboDevice, $book);
     }
 }

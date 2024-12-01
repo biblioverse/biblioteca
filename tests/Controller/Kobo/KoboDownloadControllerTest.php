@@ -84,8 +84,8 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
 
     }
 
-    private function findByIdAndKobo(int $bookId, KoboDevice $kobo): ?Book
+    private function findByIdAndKobo(int $bookId, KoboDevice $koboDevice): ?Book
     {
-        return $this->getEntityManager()->getRepository(Book::class)->findByIdAndKoboDevice($bookId, $kobo);
+        return $this->getEntityManager()->getRepository(Book::class)->findByIdAndKoboDevice($bookId, $koboDevice);
     }
 }

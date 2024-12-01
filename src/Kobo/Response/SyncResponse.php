@@ -44,7 +44,7 @@ class SyncResponse
         protected MetadataResponseService $metadataResponse,
         protected BookProgressionService $bookProgressionService,
         protected SyncToken $syncToken,
-        protected KoboDevice $kobo,
+        protected KoboDevice $koboDevice,
         protected SerializerInterface $serializer,
         protected ReadingStateResponseFactory $readingStateResponseFactory,
     ) {
@@ -128,7 +128,7 @@ class SyncResponse
      */
     public function createReadingState(Book $book): array
     {
-        return $this->readingStateResponseFactory->create($this->syncToken, $this->kobo, $book)
+        return $this->readingStateResponseFactory->create($this->syncToken, $this->koboDevice, $book)
             ->createReadingState();
     }
 
@@ -138,7 +138,7 @@ class SyncResponse
     private function getChangedEntitlement(): array
     {
         $books = array_filter($this->books, function (Book $book) {
-            return $this->helper->isChangedEntitlement($book, $this->kobo, $this->syncToken);
+            return $this->helper->isChangedEntitlement($book, $this->koboDevice, $this->syncToken);
         });
 
         return array_map(function (Book $book) {
@@ -232,7 +232,7 @@ class SyncResponse
 
         return [
             'BookEntitlement' => $this->createEntitlement($book),
-            'BookMetadata' => $this->metadataResponse->fromBook($book, $this->kobo, $this->syncToken),
+            'BookMetadata' => $this->metadataResponse->fromBook($book, $this->koboDevice, $this->syncToken),
             'ReadingState' => $rs,
         ];
     }
@@ -243,7 +243,7 @@ class SyncResponse
     private function getChangedReadingState(): array
     {
         $books = array_filter($this->books, function (Book $book) {
-            return $this->helper->isChangedReadingState($book, $this->kobo, $this->syncToken);
+            return $this->helper->isChangedReadingState($book, $this->koboDevice, $this->syncToken);
         });
 
         return array_map(function (Book $book) {

@@ -21,17 +21,17 @@ class DownloadController extends AbstractKoboController
     }
 
     #[Route('/{id}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
-    public function download(KoboDevice $kobo, Book $book, string $extension): Response
+    public function download(KoboDevice $koboDevice, Book $book, string $extension): Response
     {
-        $this->assertCanDownload($kobo, $book);
+        $this->assertCanDownload($koboDevice, $book);
 
         return $this->downloadHelper->getResponse($book, $extension);
     }
 
-    private function assertCanDownload(KoboDevice $kobo, Book $book): void
+    private function assertCanDownload(KoboDevice $koboDevice, Book $book): void
     {
         // TODO Check permissions with is_granted and a dedicated voter ?
-        if (!$this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $kobo) instanceof Book) {
+        if (!$this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $koboDevice) instanceof Book) {
             throw new AccessDeniedException('You are not allowed to download this book');
         }
     }

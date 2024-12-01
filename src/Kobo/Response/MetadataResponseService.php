@@ -23,7 +23,7 @@ class MetadataResponseService
     ) {
     }
 
-    protected function getDownloadUrls(Book $book, KoboDevice $kobo, ?array $filters = []): array
+    protected function getDownloadUrls(Book $book, KoboDevice $koboDevice, ?array $filters = []): array
     {
         $platforms = $filters['DownloadUrlFilter'] ?? [];
         $platform = reset($platforms);
@@ -32,7 +32,7 @@ class MetadataResponseService
         // If format conversion is enabled, we convert the book to KEPUB and return it
         if ($this->kepubifyEnabler->isEnabled()) {
             try {
-                $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $kobo, self::KEPUB_FORMAT);
+                $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_FORMAT);
 
                 return [0 => [
                     'Format' => self::KEPUB_FORMAT,
@@ -46,7 +46,7 @@ class MetadataResponseService
         }
 
         // Otherwise, we return the original book with a EPUB3 format
-        $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $kobo, $book->getExtension());
+        $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, $book->getExtension());
 
         return [0 => [
             'Format' => self::EPUB3_FORMAT,
@@ -56,7 +56,7 @@ class MetadataResponseService
         ]];
     }
 
-    public function fromBook(Book $book, KoboDevice $kobo, ?SyncToken $syncToken = null): array
+    public function fromBook(Book $book, KoboDevice $koboDevice, ?SyncToken $syncToken = null): array
     {
         $data = [
             'Categories' => ['00000000-0000-0000-0000-000000000001'],
@@ -65,7 +65,7 @@ class MetadataResponseService
             'CurrentDisplayPrice' => ['CurrencyCode' => 'USD', 'TotalAmount' => 0],
             'CurrentLoveDisplayPrice' => ['TotalAmount' => 0],
             'Description' => $book->getSummary(),
-            'DownloadUrls' => $this->getDownloadUrls($book, $kobo, $syncToken?->filters),
+            'DownloadUrls' => $this->getDownloadUrls($book, $koboDevice, $syncToken?->filters),
             'EntitlementId' => $book->getUuid(),
             'ExternalIds' => [],
             'Genre' => '00000000-0000-0000-0000-000000000001',

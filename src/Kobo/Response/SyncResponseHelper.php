@@ -17,13 +17,13 @@ use App\Kobo\SyncToken;
  */
 class SyncResponseHelper
 {
-    public function isChangedEntitlement(Book $book, KoboDevice $kobo, SyncToken $syncToken): bool
+    public function isChangedEntitlement(Book $book, KoboDevice $koboDevice, SyncToken $syncToken): bool
     {
         if ($this->isNewEntitlement($book, $syncToken)) {
             return false;
         }
 
-        if ($this->isChangedReadingState($book, $kobo, $syncToken)) {
+        if ($this->isChangedReadingState($book, $koboDevice, $syncToken)) {
             return false;
         }
 
@@ -37,12 +37,12 @@ class SyncResponseHelper
         return $book->getKoboSyncedBook()->isEmpty() || $book->getCreated() < $syncToken->lastCreated;
     }
 
-    public function isChangedReadingState(Book $book, KoboDevice $kobo, SyncToken $syncToken): bool
+    public function isChangedReadingState(Book $book, KoboDevice $koboDevice, SyncToken $syncToken): bool
     {
         if ($this->isNewEntitlement($book, $syncToken)) {
             return false;
         }
-        $lastInteraction = $book->getLastInteraction($kobo->getUser());
+        $lastInteraction = $book->getLastInteraction($koboDevice->getUser());
 
         return ($lastInteraction instanceof BookInteraction) && $lastInteraction->getUpdated() >= $syncToken->readingStateLastModified;
     }
