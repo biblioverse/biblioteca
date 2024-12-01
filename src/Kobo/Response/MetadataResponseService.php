@@ -19,7 +19,7 @@ class MetadataResponseService
     public function __construct(
         protected DownloadHelper $downloadHelper,
         protected KepubifyEnabler $kepubifyEnabler,
-        protected LoggerInterface $koboLogger,
+        protected LoggerInterface $koboKepubifyLogger,
     ) {
     }
 
@@ -41,7 +41,7 @@ class MetadataResponseService
                     'Platform' => $platform,
                 ]];
             } catch (KepubifyConversionFailed $e) {
-                $this->koboLogger->info('Conversion failed for book {book}', ['book' => $book->getUuid(), 'exception' => $e]);
+                $this->koboKepubifyLogger->info('Conversion failed for book {book}', ['book' => $book->getUuid(), 'exception' => $e]);
             }
         }
 

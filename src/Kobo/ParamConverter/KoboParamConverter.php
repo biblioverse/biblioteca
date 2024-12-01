@@ -24,6 +24,9 @@ class KoboParamConverter implements ValueResolverInterface
     public function apply(Request $request): ?KoboDevice
     {
         $value = $this->getFieldValue($request);
+        if ($value === null) {
+            return null;
+        }
 
         return $this->bookRepository->findOneBy([$this->getFieldName() => $value]);
     }

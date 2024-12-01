@@ -135,6 +135,10 @@
       "Composer\\Config::disableProcessTimeout",
       "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
     ],
+    "test-phpunit-xdebug": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 ./vendor/bin/phpunit --colors=always"
+    ],
     "test": [
       "@test-phpcs",
       "@test-phpstan",

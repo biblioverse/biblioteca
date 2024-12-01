@@ -3,7 +3,13 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\Kobo\Kepubify\KepubifyEnabler;
+use App\Kobo\Proxy\KoboProxyConfiguration;
+use App\Kobo\Proxy\KoboStoreProxy;
 use App\Tests\InjectFakeFileSystemTrait;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
@@ -90,5 +96,27 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
         return $service;
     }
+    protected function getKoboStoreProxy(): KoboStoreProxy
+    {
+        $service = self::getContainer()->get(KoboStoreProxy::class);
+        assert($service instanceof KoboStoreProxy);
 
+        return $service;
+    }
+    protected function getKoboProxyConfiguration(): KoboProxyConfiguration
+    {
+        $service = self::getContainer()->get(KoboProxyConfiguration::class);
+        assert($service instanceof KoboProxyConfiguration);
+
+        return $service;
+    }
+    protected function getMockClient(string $returnValue): ClientInterface
+    {
+        $mock = new MockHandler([
+            new \GuzzleHttp\Psr7\Response(200, ['Content-Type' => 'application/json'], $returnValue),
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+        return new Client(['handler' => $handlerStack]);
+    }
 }

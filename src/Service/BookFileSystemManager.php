@@ -22,12 +22,12 @@ class BookFileSystemManager
     public const VALID_COVER_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
     public function __construct(
-        private Security $security,
-        private string $publicDir,
-        private string $bookFolderNamingFormat,
-        private string $bookFileNamingFormat,
-        private SluggerInterface $slugger,
-        private LoggerInterface $logger)
+        private readonly Security $security,
+        private readonly string $publicDir,
+        private readonly string $bookFolderNamingFormat,
+        private readonly string $bookFileNamingFormat,
+        private readonly SluggerInterface $slugger,
+        private readonly LoggerInterface $logger)
     {
         if ($this->bookFolderNamingFormat === '') {
             throw new \RuntimeException('Could not get filename format');

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
+use App\Kobo\Proxy\KoboProxyConfiguration;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,8 +15,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class KoboType extends AbstractType
 {
-    public function __construct(protected Security $security)
-    {
+    public function __construct(
+        protected Security $security,
+        protected KoboProxyConfiguration $koboProxyConfiguration,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -36,6 +39,11 @@ class KoboType extends AbstractType
             ->add('forceSync', null, [
                 'label' => 'Force Sync',
                 'required' => false,
+            ])
+            ->add('upstreamSync', null, [
+                'label' => 'Sync books with the official store too',
+                'required' => false,
+                'disabled' => !$this->koboProxyConfiguration->useProxy(),
             ]);
         $builder->add('shelves', EntityType::class, [
             'label' => 'Sync with Shelves',

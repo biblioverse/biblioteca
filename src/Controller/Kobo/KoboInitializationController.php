@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/kobo/{accessKey}')]
@@ -48,19 +47,19 @@ class KoboInitializationController extends AbstractKoboController
         $base = rtrim($base, '/');
 
         // Image host: https://<domain>
-        $jsonData['Resources']['image_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/');
+        $jsonData['Resources']['image_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/');
         $jsonData['Resources']['image_url_template'] = $base.'/image/{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg';
         $jsonData['Resources']['image_url_quality_template'] = $base.'/{ImageId}/{width}/{height}/false/image.jpg';
 
-        foreach ($jsonData['Resources'] as $key => $url) {
+        // Original value is "https://readingservices.kobo.com" event if the name is "host", it's an url.
+        $jsonData['Resources']['reading_services_host'] = rtrim($this->generateUrl('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/');
+
+        foreach ($jsonData['Resources'] as &$url) {
             if (!is_string($url)) {
                 continue;
             }
-            $jsonData['Resources'][$key] = str_replace('https://storeapi.kobo.com', $base, $url);
+            $url = str_replace('https://storeapi.kobo.com', $base, $url);
         }
-
-        // Reading services
-        $jsonData['Resources']['reading_services_host'] = str_replace('https://', '', rtrim($this->generateUrl('app_dashboard', [], UrlGenerator::ABSOLUTE_URL), '/'));
 
         $response = new JsonResponse($jsonData);
         $response->headers->set('kobo-api-token', 'e30=');

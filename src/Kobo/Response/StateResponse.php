@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StateResponse extends JsonResponse
 {
-    public function __construct(Book $book)
+    public function __construct(Book $book, bool $isSuccess = true)
     {
         parent::__construct([
-            'RequestResult' => 'Success',
+            'RequestResult' => $isSuccess ? 'Success' : 'FailedCommands',
             'UpdateResults' => [
                 [
                     'CurrentBookmarkResult' => [
@@ -22,7 +22,7 @@ class StateResponse extends JsonResponse
                         'Result' => 'Success',
                     ],
                     'StatusInfoResult' => [
-                        'Result' => 'Success',
+                        'Result' => $isSuccess ? 'Success' : 'Conflict',
                     ],
                 ],
             ],

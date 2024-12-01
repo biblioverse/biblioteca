@@ -18,6 +18,8 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @phpstan-type BookMetadata array<string, mixed>
  * @phpstan-type BookReadingState array<int,array<string, mixed>>
  * @phpstan-type BookTag array<string, mixed>
+ * @phpstan-type RemoteItem array<int, object>
+ * @phpstan-type RemoteItems array<int, RemoteItem>
  */
 class SyncResponse
 {
@@ -32,6 +34,11 @@ class SyncResponse
     public const READING_STATUS_FINISHED = 'Finished';
     public const READING_STATUS_IN_PROGRESS = 'Reading';
     private SyncResponseHelper $helper;
+
+    /**
+     * @var RemoteItems
+     */
+    private array $remoteItems = [];
 
     public function __construct(
         protected MetadataResponseService $metadataResponse,
@@ -52,6 +59,9 @@ class SyncResponse
         array_push($list, ...$this->getChangedReadingState());
         array_push($list, ...$this->getNewTags());
         array_push($list, ...$this->getChangedTag());
+
+        $list = array_merge($list, $this->remoteItems);
+
         array_filter($list);
 
         $response = new JsonResponse();
@@ -244,5 +254,15 @@ class SyncResponse
 
             return $response;
         }, $books);
+    }
+
+    /**
+     * @param RemoteItems $items
+     */
+    public function addRemoteItems(array $items): self
+    {
+        $this->remoteItems = array_merge($this->remoteItems, $items);
+
+        return $this;
     }
 }
