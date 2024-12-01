@@ -4,16 +4,21 @@ namespace App\Kobo\ParamConverter;
 
 use App\Entity\KoboDevice;
 use App\Repository\KoboDeviceRepository;
+use App\Security\Token\PostAuthenticationTokenWithKoboDevice;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 #[AutoconfigureTag('controller.argument_value_resolver', ['priority' => 150])]
 class KoboParamConverter implements ValueResolverInterface
 {
-    public function __construct(protected KoboDeviceRepository $bookRepository)
-    {
+    public function __construct(
+        protected KoboDeviceRepository $bookRepository,
+        protected Security $security,
+    ) {
     }
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
@@ -28,7 +33,19 @@ class KoboParamConverter implements ValueResolverInterface
             return null;
         }
 
-        return $this->bookRepository->findOneBy([$this->getFieldName() => $value]);
+        $fieldName = $this->getFieldName();
+
+        // Load the KoboDevice from the security token if it matches the parameter value
+        $token = $this->security->getToken();
+        if ($token instanceof PostAuthenticationTokenWithKoboDevice) {
+            $loadedKobo = $token->getKoboDevice();
+            $propertyAccessor = new PropertyAccessor();
+            if ($propertyAccessor->isReadable($loadedKobo, $fieldName) && $propertyAccessor->getValue($loadedKobo, $fieldName) === $value) {
+                return $loadedKobo;
+            }
+        }
+
+        return $this->bookRepository->findOneBy([$fieldName => $value]);
     }
 
     /**

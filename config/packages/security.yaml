@@ -21,11 +21,8 @@ security:
           lazy: true
           stateless: true
           pattern: ^/kobo
-
-          access_token:
-            token_handler: App\Security\KoboTokenHandler
-            token_extractors:
-              - App\Security\KoboTokenExtractor
+          custom_authenticators:
+            - App\Security\KoboAccessTokenAuthenticator
         main:
           lazy: true
           remember_me:
