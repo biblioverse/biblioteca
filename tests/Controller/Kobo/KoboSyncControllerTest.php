@@ -9,7 +9,14 @@ use App\Tests\Contraints\JSONIsValidSyncResponse;
 
 class KoboSyncControllerTest extends AbstractKoboControllerTest
 {
+    protected function tearDown(): void
+    {
+        $this->getKoboStoreProxy()->setClient(null);
+        $this->getKoboProxyConfiguration()->setEnabled(false);
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
 
+        parent::tearDown();
+    }
     public function assertPreConditions(): void
     {
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
@@ -23,6 +30,8 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     {
         $client = static::getClient();
         $this->injectFakeFileSystemManager();
+
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync?force=1');
 
@@ -59,6 +68,43 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
 
+    }
+
+    public function testSyncControllerWithRemote() : void
+    {
+        $client = static::getClient();
+
+        // Enable remote sync
+        $this->getKoboDevice()->setUpstreamSync(true);
+        $this->getKoboProxyConfiguration()->setEnabled(true);
+        $this->getEntityManager()->flush();
+        $this->getKoboDevice(true);
+
+        $this->getKoboStoreProxy()->setClient($this->getMockClient('[{
+                "DeletedTag": {
+                    "Tag": {
+                        "Id": "28521096-ed64-4709-a043-781a0ed0695f",
+                        "LastModified": "2024-02-02T13:35:31.0000000Z"
+                    }
+                }
+            }]'));
+
+        $this->injectFakeFileSystemManager();
+
+        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync');
+
+        $response = self::getJsonResponse();
+        self::assertResponseIsSuccessful();
+        self::assertThat($response, new JSONIsValidSyncResponse([
+            'NewEntitlement' => 1,
+            'NewTag' => 1,
+            'DeletedTag' => 1
+        ]), 'Response is not a valid sync response');
+
+
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
+        $this->getKoboDevice()->setUpstreamSync(false);
+        $this->getEntityManager()->flush();
     }
 
     public function testSyncControllerMetadata() : void

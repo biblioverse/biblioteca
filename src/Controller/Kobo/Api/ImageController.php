@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller\Kobo;
+namespace App\Controller\Kobo\Api;
 
+use App\Controller\Kobo\AbstractKoboController;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
@@ -19,8 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboImageController extends AbstractKoboController
+#[Route('/kobo/{accessKey}', name: 'kobo_')]
+class ImageController extends AbstractKoboController
 {
     public function __construct(
         protected KoboDeviceRepository $koboRepository,

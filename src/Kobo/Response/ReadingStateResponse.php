@@ -22,16 +22,16 @@ class ReadingStateResponse
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int,array<string, mixed>>
      */
     public function createReadingState(): array
     {
         $book = $this->book;
         $uuid = $book->getUuid();
 
-        $lastModified = $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getUpdated());
+        $lastModified = $this->syncToken->maxLastModified($this->kobo->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getUpdated());
 
-        return [
+        return [[
             'EntitlementId' => $uuid,
             'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate, $book->getLastInteraction($this->kobo->getUser())?->getCreated()),
             'LastModified' => $lastModified,
@@ -48,7 +48,7 @@ class ReadingStateResponse
 
             // "Statistics"=> get_statistics_response(kobo_reading_state.statistics),
             'CurrentBookmark' => $this->createBookmark($this->kobo->getUser()->getBookmarkForBook($book)),
-        ];
+        ]];
     }
 
     /**

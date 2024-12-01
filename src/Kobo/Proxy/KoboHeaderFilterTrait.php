@@ -2,10 +2,10 @@
 
 namespace App\Kobo\Proxy;
 
+use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 trait KoboHeaderFilterTrait
 {
@@ -39,36 +39,32 @@ trait KoboHeaderFilterTrait
         ;
     }
 
-    private function cleanupGuzzle(\GuzzleHttp\Psr7\Response $response): MessageInterface
+    private function cleanupGuzzle(Response $response): MessageInterface
     {
         return $response
             ->withoutHeader('X-debug-token')
             ->withoutHeader('X-debug-link');
     }
 
-    private function cleanupResponse(Response $response): void
-    {
-        $response->headers->remove('X-debug-token');
-        $response->headers->remove('X-debug-link');
-        // $response->headers->remove('x-powered-By');
-        // $response->headers->remove('x-forwarded-for');
-        // $response->headers->remove('x-forwarded-port');
-        // $response->headers->remove('x-forwarded-proto');
-        // $response->headers->remove('x-forwarded-host');
-        // $response->headers->remove('x-scheme');
-        // $response->headers->remove('x-php-ob-level');;
-        // $response->headers->remove('server');;
-        // $response->headers->remove('connection');;
-        // $response->headers->remove('content-encoding');;
-        // $response->headers->remove('content-length');;
-        // $response->headers->remove('"transfer-encoding');;
-        // $response->headers->remove('"transfer-encoding');;
-    }
-
     private function cleanupPsrResponse(ResponseInterface $response): ResponseInterface
     {
         return $response
             ->withoutHeader('X-Debug-Token')
-            ->withoutHeader('X-Debug-Link');
+            ->withoutHeader('X-Debug-Link')
+            ->withoutHeader('X-powered-By')
+            ->withoutHeader('X-Forwarded-For')
+            ->withoutHeader('X-Forwarded-Port')
+            ->withoutHeader('X-Forwarded-Proto')
+            ->withoutHeader('X-Forwarded-Host')
+            ->withoutHeader('X-Powered-By')
+            ->withoutHeader('X-Scheme')
+            ->withoutHeader('Server')
+            ->withoutHeader('Connection')
+            ->withoutHeader('Content-Encoding')
+            ->withoutHeader('Content-Length')
+            ->withoutHeader('Transfer-Encoding')
+            ->withoutHeader('Host')
+            ->withoutHeader('Server')
+        ;
     }
 }

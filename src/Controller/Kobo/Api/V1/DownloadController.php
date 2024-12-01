@@ -1,29 +1,26 @@
 <?php
 
-namespace App\Controller\Kobo;
+namespace App\Controller\Kobo\Api\V1;
 
+use App\Controller\Kobo\AbstractKoboController;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
-use App\Kobo\Proxy\KoboStoreProxy;
 use App\Repository\BookRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/kobo/{accessKey}', name: 'app_kobo')]
-class KoboDownloadController extends AbstractKoboController
+#[Route('/kobo/{accessKey}/v1/download', name: 'kobo_')]
+class DownloadController extends AbstractKoboController
 {
     public function __construct(
         protected BookRepository $bookRepository,
         protected DownloadHelper $downloadHelper,
-        protected KoboStoreProxy $koboStoreProxy,
-        protected LoggerInterface $logger)
-    {
+    ) {
     }
 
-    #[Route('/v1/download/{id}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
+    #[Route('/{id}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
     public function download(KoboDevice $kobo, Book $book, string $extension): Response
     {
         $this->assertCanDownload($kobo, $book);

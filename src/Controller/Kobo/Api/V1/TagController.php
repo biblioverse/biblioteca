@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller\Kobo;
+namespace App\Controller\Kobo\Api\V1;
 
+use App\Controller\Kobo\AbstractKoboController;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\Proxy\KoboStoreProxy;
@@ -18,22 +19,22 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/kobo/{accessKey}', name: 'app_kobo')]
-class KoboTagController extends AbstractKoboController
+#[Route('/kobo/{accessKey}/v1/library/tags', name: 'kobo_')]
+class TagController extends AbstractKoboController
 {
     public function __construct(
         protected ShelfRepository $shelfRepository,
         protected KoboStoreProxy $koboStoreProxy,
         protected SerializerInterface $serializer,
-        protected LoggerInterface $logger)
-    {
+        protected LoggerInterface $koboSyncLogger,
+    ) {
     }
 
     /**
      * @throws GuzzleException
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
-    #[Route('/v1/library/tags/{shelfId}/items/delete', methods: ['POST'])]
+    #[Route('/{shelfId}/items/delete', methods: ['POST'])]
     public function delete(Request $request, KoboDevice $kobo, string $shelfId): Response
     {
         $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $shelfId);
@@ -44,7 +45,7 @@ class KoboTagController extends AbstractKoboController
 
             // Avoid the Kobo to send the request over and over again by marking it successful
             if ($response->getStatusCode() === Response::HTTP_NOT_FOUND) {
-                $this->logger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
+                $this->koboSyncLogger->debug('Shelf not found locally and via the proxy, marking deletion as successful anyway', ['shelfId' => $shelfId]);
 
                 return new JsonResponse($shelfId, Response::HTTP_CREATED);
             }
@@ -54,7 +55,7 @@ class KoboTagController extends AbstractKoboController
 
         /** @var TagDeleteRequest $deleteRequest */
         $deleteRequest = $this->serializer->deserialize($request->getContent(false), TagDeleteRequest::class, 'json');
-        $this->logger->debug('Tag delete request', ['request' => $deleteRequest]);
+        $this->koboSyncLogger->debug('Tag delete request', ['request' => $deleteRequest]);
 
         try {
             if (!$shelf instanceof Shelf) {
@@ -74,8 +75,8 @@ class KoboTagController extends AbstractKoboController
         return new JsonResponse($shelfId, Response::HTTP_CREATED);
     }
 
-    #[Route('/v1/library/tags')]
-    #[Route('/v1/library/tags/{tagId}')]
+    #[Route('/')]
+    #[Route('/{tagId}')]
     public function tags(Request $request, KoboDevice $kobo, ?string $tagId = null): Response
     {
         try {
@@ -91,14 +92,14 @@ class KoboTagController extends AbstractKoboController
 
         if ($request->isMethod('DELETE')) {
             if ($shelf instanceof Shelf) {
-                $this->logger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
+                $this->koboSyncLogger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
                 $shelf->removeKoboDevice($kobo);
                 $this->shelfRepository->flush();
 
                 return new JsonResponse(['deleted'], Response::HTTP_OK);
             }
             if ($this->koboStoreProxy->isEnabled()) {
-                $this->logger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
+                $this->koboSyncLogger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
 
                 $proxyResponse = $this->koboStoreProxy->proxy($request);
                 if ($proxyResponse->getStatusCode() === Response::HTTP_NOT_FOUND) {

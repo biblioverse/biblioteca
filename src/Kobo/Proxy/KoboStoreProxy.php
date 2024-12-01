@@ -4,6 +4,7 @@ namespace App\Kobo\Proxy;
 
 use App\Security\KoboTokenExtractor;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -26,8 +27,13 @@ class KoboStoreProxy
 {
     use KoboHeaderFilterTrait;
 
-    public function __construct(protected KoboProxyLoggerFactory $koboProxyLoggerFactory, protected KoboProxyConfiguration $configuration, protected LoggerInterface $proxyLogger, protected KoboTokenExtractor $tokenExtractor)
-    {
+    public function __construct(
+        protected KoboProxyLoggerFactory $koboProxyLoggerFactory,
+        protected KoboProxyConfiguration $configuration,
+        protected LoggerInterface $koboProxyLogger,
+        protected KoboTokenExtractor $tokenExtractor,
+        protected ?ClientInterface $client = null,
+    ) {
     }
 
     protected function assertEnabled(): void
@@ -44,7 +50,7 @@ class KoboStoreProxy
     {
         $this->assertEnabled();
 
-        $url = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        $url = $this->getUpstreamUrl($request);
 
         return $this->_proxy($request, $url, $options);
     }
@@ -89,12 +95,10 @@ class KoboStoreProxy
         $config = $this->getConfig($config);
         $psrRequest = $this->convertRequest($request, $hostname);
 
-        $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
+        $client = $this->getClient($request);
 
-        $client = new Client();
         $psrResponse = $client->send($psrRequest, [
             'base_uri' => $hostname,
-            'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
             'http_errors' => false,
             'connect_timeout' => 5,
         ] + $config
@@ -106,16 +110,16 @@ class KoboStoreProxy
     protected function getTransformedUrl(Request $request): UriInterface
     {
         $psrRequest = $this->toPsrRequest($request);
-        $hostname = $this->configuration->isImageHostUrl($psrRequest) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        $upstreamUrl = $this->getUpstreamUrl($request);
 
-        return $this->transformUrl($psrRequest, $hostname);
+        return $this->transformUrl($psrRequest, $upstreamUrl);
     }
 
-    private function transformUrl(ServerRequestInterface $psrRequest, string $hostname): UriInterface
+    private function transformUrl(ServerRequestInterface $psrRequest, string $hostnameOrUrl): UriInterface
     {
-        $host = parse_url($hostname, PHP_URL_HOST);
-        $host = $host === false ? $hostname : $host;
-        $host = $host ?? $hostname;
+        $host = parse_url($hostnameOrUrl, PHP_URL_HOST);
+        $host = $host === false ? $hostnameOrUrl : $host;
+        $host = $host ?? $hostnameOrUrl;
         $path = $this->tokenExtractor->getOriginalPath($psrRequest, $psrRequest->getUri()->getPath());
 
         return $psrRequest->getUri()->withHost($host)->withPath($path);
@@ -131,15 +135,16 @@ class KoboStoreProxy
 
     public function proxyAsync(Request $request, bool $streamAllowed): PromiseInterface
     {
-        $hostname = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
-        $psrRequest = $this->convertRequest($request, $hostname);
+        $upstreamUrl = $this->getUpstreamUrl($request);
+
+        $psrRequest = $this->convertRequest($request, $upstreamUrl);
 
         $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
 
-        $client = new Client();
+        $client = $this->getClient($request);
 
         return $client->sendAsync($psrRequest, [
-            'base_uri' => $hostname,
+            'base_uri' => $upstreamUrl,
             'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
             'http_errors' => false,
             'connect_timeout' => 5,
@@ -167,10 +172,19 @@ class KoboStoreProxy
     {
         $httpFoundationFactory = new HttpFoundationFactory();
 
-        $response = $httpFoundationFactory->createResponse($psrResponse, $streamAllowed);
-        $this->cleanupResponse($response);
+        $psrResponse = $this->cleanupPsrResponse($psrResponse);
 
-        return $response;
+        return $httpFoundationFactory->createResponse($psrResponse, $streamAllowed);
+    }
+
+    private function getUpstreamUrl(Request $request): string
+    {
+        $url = $this->configuration->isImageHostUrl($request) ? $this->configuration->getImageApiUrl() : $this->configuration->getStoreApiUrl();
+        if ($this->configuration->isReadingServiceUrl($request)) {
+            $url = $this->configuration->getReadingServiceUrl();
+        }
+
+        return $url;
     }
 
     private function getConfig(array $config): array
@@ -182,5 +196,23 @@ class KoboStoreProxy
         $config['stream'] ??= true;
 
         return $config;
+    }
+
+    public function setClient(?ClientInterface $client): void
+    {
+        $this->client = $client;
+    }
+
+    private function getClient(Request $request): ClientInterface
+    {
+        if ($this->client instanceof ClientInterface) {
+            return $this->client;
+        }
+
+        $accessToken = $this->tokenExtractor->extractAccessToken($request) ?? 'unknown';
+
+        return new Client([
+            'handler' => $this->koboProxyLoggerFactory->createStack($accessToken),
+        ]);
     }
 }

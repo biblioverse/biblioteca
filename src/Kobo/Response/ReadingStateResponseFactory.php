@@ -16,8 +16,8 @@ class ReadingStateResponseFactory
     public function __construct(
         protected MetadataResponseService $metadataResponseService,
         protected BookProgressionService $bookProgressionService,
-        protected SerializerInterface $serializer)
-    {
+        protected SerializerInterface $serializer,
+    ) {
     }
 
     public function create(SyncToken $syncToken, KoboDevice $kobo, Book $book): ReadingStateResponse

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller\Kobo;
+namespace App\Controller\Kobo\Api\V1;
 
+use App\Controller\Kobo\AbstractKoboController;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
@@ -14,8 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}', name: 'kobo')]
-class KoboAnalyticsController extends AbstractKoboController
+#[Route('/kobo/{accessKey}/v1/analytics', name: 'kobo_')]
+class AnalyticsController extends AbstractKoboController
 {
     public function __construct(
         protected KoboProxyConfiguration $koboProxyConfiguration,
@@ -30,7 +31,7 @@ class KoboAnalyticsController extends AbstractKoboController
      * @throws GuzzleException
      * @throws \JsonException
      */
-    #[Route('/v1/analytics/gettests', methods: ['POST', 'GET'])]
+    #[Route('/gettests', methods: ['POST', 'GET'])]
     public function analyticsTests(Request $request): Response
     {
         $content = $request->getContent();
@@ -50,7 +51,7 @@ class KoboAnalyticsController extends AbstractKoboController
      * @throws \JsonException
      * @throws GuzzleException
      */
-    #[Route('/v1/analytics/event', methods: ['POST'])]
+    #[Route('/event', methods: ['POST'])]
     public function analyticsEvent(Request $request, KoboDevice $kobo): Response
     {
         // Save the device_id and model

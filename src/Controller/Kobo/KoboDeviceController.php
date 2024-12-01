@@ -9,7 +9,7 @@ use App\Repository\KoboDeviceRepository;
 use Devdot\Monolog\Parser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,6 +18,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Route('/user/kobo')]
 class KoboDeviceController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(param: 'kernel.logs_dir')]
+        protected string $kernelLogsDir,
+        #[Autowire(param: 'kernel.environment')]
+        protected string $kernelEnvironment,
+    ) {
+    }
+
     #[Route('/', name: 'app_kobodevice_user_index', methods: ['GET'])]
     public function index(KoboDeviceRepository $koboDeviceRepository): Response
     {
@@ -27,35 +35,6 @@ class KoboDeviceController extends AbstractController
 
         return $this->render('kobodevice_user/index.html.twig', [
             'kobos' => $koboDeviceRepository->findAllByUser($this->getUser()),
-        ]);
-    }
-
-    #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
-    public function logs(ParameterBagInterface $parameterBag): Response
-    {
-        if (!$this->getUser() instanceof UserInterface) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $records = [];
-
-        try {
-            $logDir = $parameterBag->get('kernel.logs_dir');
-            $env = $parameterBag->get('kernel.environment');
-
-            if (!is_string($logDir) || !is_string($env)) {
-                throw new \RuntimeException('Invalid log directory or environment');
-            }
-
-            $parser = new Parser($logDir.'/kobo.'.$env.'-'.date('Y-m-d').'.log');
-
-            $records = $parser->get();
-        } catch (\Exception $e) {
-            $this->addFlash('warning', $e->getMessage());
-        }
-
-        return $this->render('kobodevice_user/logs.html.twig', [
-            'records' => $records,
         ]);
     }
 
@@ -124,5 +103,27 @@ class KoboDeviceController extends AbstractController
         }
 
         return $this->redirectToRoute('app_kobodevice_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
+    public function logs(): Response
+    {
+        if (!$this->getUser() instanceof UserInterface) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $records = [];
+
+        try {
+            $parser = new Parser($this->kernelLogsDir.'/kobo.'.$this->kernelEnvironment.'-'.date('Y-m-d').'.log');
+
+            $records = $parser->get();
+        } catch (\Exception $e) {
+            $this->addFlash('warning', $e->getMessage());
+        }
+
+        return $this->render('kobodevice_user/logs.html.twig', [
+            'records' => $records,
+        ]);
     }
 }
