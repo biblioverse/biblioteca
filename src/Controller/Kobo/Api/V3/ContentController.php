@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller\Kobo;
+namespace App\Controller\Kobo\Api\V3;
 
+use App\Controller\Kobo\AbstractKoboController;
 use App\Kobo\Proxy\KoboStoreProxy;
 use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -9,13 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ReadServiceCheckForChangesController extends AbstractKoboController
+#[Route('/api/v3/content', name: 'kobo_')]
+class ContentController extends AbstractKoboController
 {
-    public function __construct(private KoboStoreProxy $koboStoreProxy)
+    public function __construct(private readonly KoboStoreProxy $koboStoreProxy)
     {
     }
 
-    #[Route('/api/v3/content/checkforchanges', name: 'check_for_changes', methods: ['POST'])]
+    #[Route('/checkforchanges', name: 'check_for_changes', methods: ['POST'])]
     public function checkForChanges(): Response
     {
         // If you set "reading_services_host" on your Kobo's config you should point here.
@@ -28,7 +30,7 @@ class ReadServiceCheckForChangesController extends AbstractKoboController
     /**
      * @throws GuzzleException
      */
-    #[Route('/api/v3/content/{uuid}/annotations', name: 'check_for_annotations', methods: ['GET'])]
+    #[Route('/{uuid}/annotations', name: 'check_for_annotations', methods: ['GET'])]
     public function getAnnotations(Request $request): Response
     {
         if ($this->koboStoreProxy->isEnabled()) {
