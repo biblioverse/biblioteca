@@ -42,7 +42,7 @@ class DownloadHelper
 
     private function getUrlForKoboDevice(Book $book, KoboDevice $kobo, string $extension): string
     {
-        return $this->urlGenerator->generate('app_kobodownload', [
+        return $this->urlGenerator->generate('kobo_download', [
             'id' => $book->getId(),
             'accessKey' => $kobo->getAccessKey(),
             'extension' => strtolower($extension),
