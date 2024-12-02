@@ -43,10 +43,10 @@ class ImageController extends AbstractKoboController
     #[Route('//{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality_bad', defaults: ['isGreyscale' => false])]
     #[Route('/{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image')]
     #[Route('//{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image_bad')]
-    public function imageQuality(Request $request, KoboDevice $kobo, string $uuid, int $width, int $height, string $isGreyscale): Response
+    public function imageQuality(Request $request, KoboDevice $koboDevice, string $uuid, int $width, int $height, string $isGreyscale): Response
     {
         $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $kobo);
+        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
         if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);

@@ -22,20 +22,20 @@ class SyncResponseFactory
     ) {
     }
 
-    public function create(SyncToken $syncToken, KoboDevice $kobo): SyncResponse
+    public function create(SyncToken $syncToken, KoboDevice $koboDevice): SyncResponse
     {
         return new SyncResponse(
             $this->metadataResponseService,
             $this->bookProgressionService,
             $syncToken,
-            $kobo,
+            $koboDevice,
             $this->serializer,
             $this->readingStateResponseFactory,
         );
     }
 
-    public function createMetadata(KoboDevice $kobo, Book $book): JsonResponse
+    public function createMetadata(KoboDevice $koboDevice, Book $book): JsonResponse
     {
-        return new JsonResponse([$this->metadataResponseService->fromBook($book, $kobo)]);
+        return new JsonResponse([$this->metadataResponseService->fromBook($book, $koboDevice)]);
     }
 }

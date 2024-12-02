@@ -117,6 +117,11 @@ services:
         tags:
             - { name: monolog.processor }
 
+    App\Security\KoboAccessTokenAuthenticator:
+        bind:
+            $accessTokenExtractor: '@App\Security\KoboTokenExtractor'
+            $accessTokenHandler: '@App\Security\KoboTokenHandler'
+
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'

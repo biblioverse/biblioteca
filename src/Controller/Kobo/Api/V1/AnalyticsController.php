@@ -52,15 +52,15 @@ class AnalyticsController extends AbstractKoboController
      * @throws GuzzleException
      */
     #[Route('/event', methods: ['POST'])]
-    public function analyticsEvent(Request $request, KoboDevice $kobo): Response
+    public function analyticsEvent(Request $request, KoboDevice $koboDevice): Response
     {
         // Save the device_id and model
         if ($request->headers->has(KoboDevice::KOBO_DEVICE_ID_HEADER)) {
-            $kobo->setDeviceId($request->headers->get(KoboDevice::KOBO_DEVICE_ID_HEADER));
+            $koboDevice->setDeviceId($request->headers->get(KoboDevice::KOBO_DEVICE_ID_HEADER));
             if ($request->headers->has(KoboDevice::KOBO_DEVICE_MODEL_HEADER)) {
-                $kobo->setModel($request->headers->get(KoboDevice::KOBO_DEVICE_MODEL_HEADER));
+                $koboDevice->setModel($request->headers->get(KoboDevice::KOBO_DEVICE_MODEL_HEADER));
             }
-            $this->koboDeviceRepository->save($kobo);
+            $this->koboDeviceRepository->save($koboDevice);
         }
 
         $content = $request->getContent();

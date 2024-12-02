@@ -154,21 +154,21 @@ class Shelf
         return $this;
     }
 
-    public function addKoboDevice(KoboDevice $kobo): self
+    public function addKoboDevice(KoboDevice $koboDevice): self
     {
-        if (!$this->koboDevices->contains($kobo)) {
-            $this->koboDevices->add($kobo);
-            $kobo->addShelf($this);
+        if (!$this->koboDevices->contains($koboDevice)) {
+            $this->koboDevices->add($koboDevice);
+            $koboDevice->addShelf($this);
         }
 
         return $this;
     }
 
-    public function removeKoboDevice(KoboDevice $kobo): self
+    public function removeKoboDevice(KoboDevice $koboDevice): self
     {
-        if ($this->koboDevices->contains($kobo)) {
-            $this->koboDevices->removeElement($kobo);
-            $kobo->removeShelf($this);
+        if ($this->koboDevices->contains($koboDevice)) {
+            $this->koboDevices->removeElement($koboDevice);
+            $koboDevice->removeShelf($this);
         }
 
         return $this;

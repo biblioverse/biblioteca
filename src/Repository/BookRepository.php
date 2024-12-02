@@ -343,9 +343,9 @@ class BookRepository extends ServiceEntityRepository
     /**
      * @return array<int, Book>
      */
-    public function getChangedBooks(KoboDevice $kobo, SyncToken $syncToken, int $firstResult, int $maxResults): array
+    public function getChangedBooks(KoboDevice $koboDevice, SyncToken $syncToken, int $firstResult, int $maxResults): array
     {
-        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
         $qb->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
         $qb->orderBy('book.updated', 'ASC');
@@ -355,9 +355,9 @@ class BookRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function getChangedBooksCount(KoboDevice $kobo, SyncToken $syncToken): int
+    public function getChangedBooksCount(KoboDevice $koboDevice, SyncToken $syncToken): int
     {
-        $qb = $this->getChangedBooksQueryBuilder($kobo, $syncToken);
+        $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
         $qb->select('count(book.id) as nb');
 
         return (int) $qb->getQuery()->getSingleColumnResult();
@@ -405,7 +405,7 @@ class BookRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    public function findByIdAndKoboDevice(int $bookId, KoboDevice $kobo): ?Book
+    public function findByIdAndKoboDevice(int $bookId, KoboDevice $koboDevice): ?Book
     {
         /** @var Book|null $result */
         $result = $this->createQueryBuilder('book')
@@ -414,7 +414,7 @@ class BookRepository extends ServiceEntityRepository
             ->join('shelves.koboDevices', 'koboDevice')
             ->where('koboDevice.id = :koboId')
             ->andWhere('book.id = :bookId')
-            ->setParameter('koboId', $kobo->getId())
+            ->setParameter('koboId', $koboDevice->getId())
             ->setParameter('bookId', $bookId)
             ->getQuery()
             ->getOneOrNullResult();

@@ -35,9 +35,9 @@ class TagController extends AbstractKoboController
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
     #[Route('/{shelfId}/items/delete', methods: ['POST'])]
-    public function delete(Request $request, KoboDevice $kobo, string $shelfId): Response
+    public function delete(Request $request, KoboDevice $koboDevice, string $shelfId): Response
     {
-        $shelf = $this->shelfRepository->findByKoboAndUuid($kobo, $shelfId);
+        $shelf = $this->shelfRepository->findByKoboAndUuid($koboDevice, $shelfId);
 
         // Proxy query if we do not know the shelf
         if ($this->koboStoreProxy->isEnabled() && !$shelf instanceof Shelf) {
@@ -77,7 +77,7 @@ class TagController extends AbstractKoboController
 
     #[Route('/')]
     #[Route('/{tagId}')]
-    public function tags(Request $request, KoboDevice $kobo, ?string $tagId = null): Response
+    public function tags(Request $request, KoboDevice $koboDevice, ?string $tagId = null): Response
     {
         try {
             $content = $request->getContent();
@@ -88,12 +88,12 @@ class TagController extends AbstractKoboController
         }
         $name = (string) ($data['Name'] ?? null);
         $name = trim($name) === '' ? null : $name;
-        $shelf = $this->findShelfByNameOrTagId($kobo, $name, $tagId);
+        $shelf = $this->findShelfByNameOrTagId($koboDevice, $name, $tagId);
 
         if ($request->isMethod('DELETE')) {
             if ($shelf instanceof Shelf) {
-                $this->koboSyncLogger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $kobo]);
-                $shelf->removeKoboDevice($kobo);
+                $this->koboSyncLogger->debug('Removing kobo from shelf', ['shelf' => $shelf, 'kobo' => $koboDevice]);
+                $shelf->removeKoboDevice($koboDevice);
                 $this->shelfRepository->flush();
 
                 return new JsonResponse(['deleted'], Response::HTTP_OK);
@@ -120,16 +120,16 @@ class TagController extends AbstractKoboController
         return new JsonResponse($shelf->getId(), Response::HTTP_CREATED);
     }
 
-    private function findShelfByNameOrTagId(KoboDevice $kobo, ?string $name, ?string $tagId): ?Shelf
+    private function findShelfByNameOrTagId(KoboDevice $koboDevice, ?string $name, ?string $tagId): ?Shelf
     {
         if ($tagId !== null) {
-            return $this->shelfRepository->findByKoboAndUuid($kobo, $tagId);
+            return $this->shelfRepository->findByKoboAndUuid($koboDevice, $tagId);
         }
 
         if ($name === null || trim($name) === '') {
             throw new BadRequestException('Name is required');
         }
 
-        return $this->shelfRepository->findByKoboAndName($kobo, $name);
+        return $this->shelfRepository->findByKoboAndName($koboDevice, $name);
     }
 }

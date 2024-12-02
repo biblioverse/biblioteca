@@ -40,11 +40,11 @@ class DownloadHelper
         return $this->fileSystemManager->getBookSize($book) ?? 0;
     }
 
-    private function getUrlForKoboDevice(Book $book, KoboDevice $kobo, string $extension): string
+    private function getUrlForKoboDevice(Book $book, KoboDevice $koboDevice, string $extension): string
     {
         return $this->urlGenerator->generate('kobo_download', [
             'id' => $book->getId(),
-            'accessKey' => $kobo->getAccessKey(),
+            'accessKey' => $koboDevice->getAccessKey(),
             'extension' => strtolower($extension),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
     }
