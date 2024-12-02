@@ -5,10 +5,7 @@
 
 name: Tests
 
-on:
-  push:
-  pull_request:
-    types: [opened, reopened]
+on: [push,pull_request]
 
 permissions:
   contents: read
