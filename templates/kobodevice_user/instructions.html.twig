@@ -22,7 +22,7 @@
                             {{- "\n" }}...{{ "" -}}
                             {{- "\n" }}api_endpoint={{ app.request.getUriForPath("/kobo/" ~ (token|default("TOKEN"))) -}}
                             {{- "\n" }}image_host={{ app.request.getUriForPath("") -}}
-                            {{- "\n" }}image_url_quality_template={{ url('koboapi_endpoint', {'accessKey': token|default('TOKEN')}) |raw~ '{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg' -}}
+                            {{- "\n" }}image_url_quality_template={{ url('kobo_api_endpoint', {'accessKey': token|default('TOKEN')}) |raw~ '{ImageId}/{width}/{height}/{Quality}/isGreyscale/image.jpg' -}}
                             {{- "\n" }}reading_services_host={{ app.request.getUriForPath("") -}}
                             {{- "\n"}}...
                         </code>
