@@ -23,7 +23,8 @@
                 {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
             </div>
             <div class="col-3">
-                <h5>{{ bookInteraction.book.serie }} {{ bookInteraction.book.serieIndex }} {{ bookInteraction.book.title }}</h5>
+                <h5>{{ bookInteraction.book.title }}</h5>
+                <h6>{{ bookInteraction.book.serie }} #{{ bookInteraction.book.serieIndex }}</h6>
                 <div class="progress">
                     <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
                         {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
@@ -44,7 +45,7 @@
 <div class="row mb-4">
     {% if readlist|length>0 %}
     {% for bookInteraction in readlist %}
-        <div class="col-4 col-md-{{ readlist|length>6?'1':'2' }}">
+        <div class="col-4 col-md-2">
             {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
         </div>
     {% endfor %}
