@@ -60,4 +60,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.biblioteca.outputs.tags }}
           labels: ${{ steps.biblioteca.outputs.labels }}
+          target: prod
           
