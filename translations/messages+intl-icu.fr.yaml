@@ -34,6 +34,8 @@ books.same.author: 'Livres du même auteur'
 'Read state': 'Etat de lecture'
 Age: Âge
 reading.list: 'Liste de lecture'
+reading.list.finished: 'Terminés'
+reading.list.showall: 'Voir tous les livres de la liste de lecture'
 add_to_favorites: 'Ajoutez des livres à votre liste de lecture en utilisant le bouton signet sur la page du livre.'
 series_in_progress: 'Séries en cours'
 need_inspiration: 'Besoin d''inspiration?'
@@ -56,6 +58,7 @@ menu.logout: 'Déconnexion'
 menu.timeline: 'Mon historique des lectures'
 menu.kobodevices: 'Appareils Kobo'
 menu.editshelves: 'Gérer étagères'
+menu.readinglist: 'Liste de lecture'
 
 "filter.title": "Par titre"
 "filter.serie": "Par série"

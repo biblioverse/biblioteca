@@ -30,23 +30,16 @@
             <div class="col-md-3 col-12">
                 {% for facet in computed.results.facets|default([]) %}
                     {% if facet.counts|length>0 %}
-                        <h5 class="m-0 mb-2">{{ facet.field_name|capitalize }}</h5>
+                        <h5 class="m-0 mb-2 fs-6">{{ facet.field_name|capitalize }}</h5>
                         <ul class="list-group mb-4">
                         {% for count in facet.counts %}
                             <li class="list-group-item {{ count.value in query?'active' }}">
-                                <button type="button" class="btn btn-sm btn-bare position-relative"
-
-                                        data-action="live#action"
-                                        data-live-action-param="addToQuery(value={{ count.value|e('html') }})"
-                                        data-live-action-param="addToQuery"
-                                        data-live-value-param="{{ count.value }}"
-                                >
+                                <small>
                                     {{ count.value }}
                                     <span class="badge rounded-pill bg-primary">
                                 {{ count.count }}
-                                <span class="visually-hidden">records</span>
+                                <span class="visually-hidden">records</span></small>
                             </span>
-                                </button>
                             </li>
                         {% endfor %}
                             </ul>

@@ -1,0 +1,27 @@
+<div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+
+    <div class="px-2 w-100">
+        <div class="card">
+
+            <div class="card-body p-1">
+                <button class="btn btn-sm w-100" data-bs-toggle="modal" data-bs-target="#searchmodal" type="button"
+                        data-toggle="tooltip" data-placement="bottom" >
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% component BootstrapModal with {id: 'searchmodal'} %}
+        {% block modal_header %}
+            <h5>{{ 'search'|trans }}</h5>
+        {% endblock %}
+        {% block modal_body %}
+
+            {{ component('Search') }}
+        {% endblock %}
+
+    {% endcomponent %}
+</div>

@@ -1,7 +1,7 @@
 {% extends themedTemplate('bare.html.twig') %}
 {% block content %}
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-    <div class="navbar-brand col-12 me-0 px-3 fs-6 text-white">
+    <div class="navbar-brand col-12 me-0 px-3 fs-6 text-white overflow-auto">
         <i class="bi bi-house-fill"></i> <a class="text-white d-inline-block mx-2" href="{{ path('app_dashboard') }}">Biblioteca</a>
         <i class="bi bi-chevron-right"></i><h1 class="h6 m-2 d-inline-block">{% block title %}{{ 'page'|trans }}{% endblock %}</h1>
     </div>
@@ -23,6 +23,8 @@
             <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu"
                  aria-labelledby="sidebarMenuLabel">
                 <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+
+                    {{ component('SearchModal') }}
 
                     {{ knp_menu_render('main',{'currentClass':'active','ancestorClass':'active'}) }}
 

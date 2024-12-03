@@ -152,17 +152,24 @@ class BookRepository extends ServiceEntityRepository
      */
     public function getWithSameAuthors(Book $book, int $maxResults = 6): array
     {
-        $qb = $this->getAllBooksQueryBuilder();
+        try {
+            $qb = $this->getAllBooksQueryBuilder();
 
-        $orModule = $qb->expr()->orX();
+            $orModule = $qb->expr()->orX();
 
-        foreach ($book->getAuthors() as $key => $author) {
-            $orModule->add('JSON_CONTAINS(lower(book.authors), :author'.$key.')=1');
-            $qb->setParameter('author'.$key, json_encode([strtolower($author)]));
+            foreach ($book->getAuthors() as $key => $author) {
+                $orModule->add('JSON_CONTAINS(lower(book.authors), :author'.$key.')=1');
+                $qb->setParameter('author'.$key, json_encode([strtolower($author)]));
+            }
+            $qb->andWhere($orModule);
+
+            $results = $qb->getQuery()->getResult();
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Operation 'JSON_CONTAINS' is not supported by platform.") {
+                return [];
+            }
+            throw $e;
         }
-        $qb->andWhere($orModule);
-
-        $results = $qb->getQuery()->getResult();
 
         if (!is_array($results)) {
             return [];

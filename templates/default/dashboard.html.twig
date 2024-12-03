@@ -5,11 +5,6 @@
 {% endblock %}
 
 {% block body %}
-<div class="row ">
-    <div class="col-md-12">
-        {{ component('Search') }}
-    </div>
-</div>
 
 {% if books|length>0 %}
     <div class="row mt-4">
@@ -54,6 +49,9 @@
             {{ 'add_to_favorites'|trans }}
         </div>
     {% endif %}
+    <div class="col-12 mt-0">
+        <a  class="btn btn-bare btn-sm" href="{{ path('app_readinglist') }}" >{{ 'reading.list.showall'|trans }} <i class="bi bi-caret-right-fill"></i></a>
+    </div>
 </div>
 
 {% if series|length >0 %}

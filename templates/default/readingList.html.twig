@@ -1,0 +1,49 @@
+{% extends themedTemplate('base.html.twig') %}
+
+{% block title %}
+    {{ 'reading.list'|trans }}
+{% endblock %}
+
+{% block body %}
+
+    {% if readlist.unread|length>0 %}
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h3>{{ 'reading.list'|trans }}</h3>
+            </div>
+        </div>
+        <div class="row mb-4">
+            {% for book in readlist.unread %}
+                <div class="col-4 col-md-2">
+                    {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+                </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <div class="col-12 text-muted">
+            {{ 'add_to_favorites'|trans }}
+        </div>
+    {% endif %}
+
+    {% if readlist.finished|length>0 %}
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h3>{{ 'reading.list.finished'|trans }}</h3>
+            </div>
+        </div>
+        <div class="row mb-4">
+            {% for book in readlist.finished %}
+                <div class="col- col-md-1">
+                    {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+
+

@@ -42,18 +42,24 @@ class BookInteractionRepository extends ServiceEntityRepository
         return $results;
     }
 
-    public function getFavourite(): array
+    /**
+     * @return array<BookInteraction>
+     */
+    public function getFavourite(?int $max = null, bool $hideFinished = true): array
     {
-        $results = $this->createQueryBuilder('b')
-            ->andWhere('b.favorite = true')
-            ->andWhere('b.hidden = false')
-            ->andWhere('b.finished = false')
+        $qb = $this->createQueryBuilder('b')
+            ->andWhere('b.favorite = true');
+        if ($hideFinished) {
+            $qb->andWhere('b.finished = false');
+        }
+
+        $qb->andWhere('b.hidden = false')
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
             ->orderBy('b.created', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
+            ->setMaxResults($max);
+
+        $results = $qb->getQuery()->getResult();
         if (!is_array($results)) {
             return [];
         }

@@ -1,10 +1,10 @@
 <div {{ attributes.defaults({
-    class: 'modal fade text-start modal-lg',
+    class: 'modal fade text-start modal-xl',
     tabindex: '-1',
     'aria-hidden': 'true',
     id: id ? id : false,
 }).defaults(stimulus_controller('bootstrap-modal')) }}>
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             {% block modal_full_content %}
                 {% if block('modal_header') %}
@@ -23,6 +23,10 @@
                     </div>
                 {% endif %}
             {% endblock %}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
         </div>
     </div>
 </div>
