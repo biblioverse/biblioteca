@@ -23,7 +23,7 @@ class DefaultController extends AbstractController
         $types = $bookRepository->countBooks(true);
 
         $books = $bookInteractionRepository->getStartedBooks();
-        $readList = $bookInteractionRepository->getFavourite();
+        $readList = $bookInteractionRepository->getFavourite(6);
 
         $series = $bookRepository->getStartedSeries()->getResult();
 
@@ -51,6 +51,28 @@ class DefaultController extends AbstractController
             'readlist' => $readList,
             'series' => $series,
             'inspiration' => $inspiration,
+        ]);
+    }
+
+    #[Route('/reading-list', name: 'app_readinglist')]
+    public function readingList(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository): Response
+    {
+        $readList = $bookInteractionRepository->getFavourite(hideFinished: false);
+
+        $statuses = [
+            'unread' => [],
+            'finished' => [],
+        ];
+        foreach ($readList as $bookInteraction) {
+            if ($bookInteraction->isFinished()) {
+                $statuses['finished'][] = $bookInteraction->getBook();
+            } else {
+                $statuses['unread'][] = $bookInteraction->getBook();
+            }
+        }
+
+        return $this->render('default/readingList.html.twig', [
+            'readlist' => $statuses,
         ]);
     }
 

@@ -29,14 +29,12 @@ class ShelfFixture extends Fixture implements DependentFixtureInterface
 
     protected function getUser(): User
     {
-        // @phpstan-ignore-next-line
-        return $this->getReference(UserFixture::USER_REFERENCE);
+        return $this->getReference(UserFixture::USER_REFERENCE, User::class);
     }
 
     protected function getBook(): Book
     {
-        // @phpstan-ignore-next-line
-        return $this->getReference(BookFixture::BOOK_REFERENCE);
+        return $this->getReference(BookFixture::BOOK_REFERENCE, Book::class);
     }
 
     public function getDependencies(): array

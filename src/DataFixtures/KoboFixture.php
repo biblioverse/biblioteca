@@ -26,8 +26,7 @@ class KoboFixture extends Fixture implements DependentFixtureInterface
 
     protected function getUser(): User
     {
-        // @phpstan-ignore-next-line
-        return $this->getReference(UserFixture::USER_REFERENCE);
+        return $this->getReference(UserFixture::USER_REFERENCE, User::class);
     }
 
     public function getDependencies(): array

@@ -77,6 +77,18 @@ final class MenuBuilder
         if ($user->isDisplayPublishers()) {
             $books->addChild('menu.publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
+        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
+        $profile->addChild('menu.readinglist', ['route' => 'app_readinglist', ...$this->defaultAttr])->setExtra('icon', 'list-task');
+        if ($user->isDisplayTimeline()) {
+            $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
+        }
+        if ($user->isUseKoboDevices()) {
+            $profile->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+        }
+
+        $profile->addChild('menu.profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
+        $profile->addChild('menu.logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
+
         $shelves = $menu->addChild('shelves_divider', ['label' => 'menu.shelves'])->setExtra('divider', true);
         if ($user->getShelves()->count() > 0) {
             foreach ($user->getShelves() as $shelf) {
@@ -90,18 +102,7 @@ final class MenuBuilder
                 }
             }
         }
-        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
-
-        if ($user->isUseKoboDevices()) {
-            $profile->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-        }
-
-        $profile->addChild('menu.profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $shelves->addChild('menu.editshelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'building-fill-gear');
-        if ($user->isDisplayTimeline()) {
-            $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
-        }
-        $profile->addChild('menu.logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $admin = $menu->addChild('admin_divider', ['label' => 'menu.admin'])->setExtra('divider', true);
