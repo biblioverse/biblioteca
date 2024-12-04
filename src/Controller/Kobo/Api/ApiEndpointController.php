@@ -3,6 +3,7 @@
 namespace App\Controller\Kobo\Api;
 
 use App\Controller\Kobo\AbstractKoboController;
+use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,8 +17,8 @@ class ApiEndpointController extends AbstractKoboController
     }
 
     #[Route('/', name: 'api_endpoint')]
-    public function index(): Response
+    public function index(KoboDevice $koboDevice): Response
     {
-        return new Response('<html><body>Hello Kobo</body></html>');
+        return new Response(sprintf('<html><body>%s</body></html>', htmlentities('Hello Kobo "'.($koboDevice->getName() ?? $koboDevice->getId()).'"')));
     }
 }
