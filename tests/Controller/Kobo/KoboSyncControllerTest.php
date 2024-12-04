@@ -5,6 +5,9 @@ namespace App\Tests\Controller\Kobo;
 use App\DataFixtures\BookFixture;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\Response\MetadataResponseService;
+use App\Kobo\SyncToken;
+use App\Repository\KoboSyncedBookRepository;
+use App\Service\KoboSyncTokenExtractor;
 use App\Tests\Contraints\AssertHasDownloadWithFormat;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
 
@@ -18,10 +21,12 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
         parent::tearDown();
     }
-    public function assertPreConditions(): void
+
+    protected function setUp():void
     {
-        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
-        self::assertSame(0, $count, 'There should be no synced books');
+        parent::setUp();
+
+        $this->getService(KoboSyncedBookRepository::class)->deleteAllSyncedBooks(1);
     }
 
     /**
@@ -68,6 +73,62 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertSame(BookFixture::NUMBER_OF_YAML_BOOKS, $count, 'Number of synced book is invalid');
 
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
+
+    }
+
+    /**
+     * @covers pagination
+     * @throws \JsonException
+     */
+    public function testSyncControllerPaginated() : void
+    {
+        $client = static::getClient();
+        
+
+        $perPage = 7;
+        $numberOfPages = (int)ceil(BookFixture::NUMBER_OF_YAML_BOOKS / $perPage);
+
+        $syncToken = new SyncToken();
+        $syncToken->lastCreated = new \DateTime('now');
+        $syncToken->lastModified = null;
+
+        foreach(range(1, $numberOfPages) as $pageNum) {
+            // Build the sync-token header
+            $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+
+            $client?->request('GET', '/kobo/' . $this->accessKey . '/v1/library/sync?per_page=' . $perPage, [], [], $headers);
+
+            $response = self::getJsonResponse();
+            self::assertResponseIsSuccessful();
+
+            // We have 20 books, with 7 book per page, we do 3 calls that have respectively 7, 7 and 6 books
+            self::assertThat($response, new JSONIsValidSyncResponse(match($pageNum){
+                1 => [
+                    'NewTag' => 1,
+                    'NewEntitlement' => 7,
+                ],
+                2 => [
+                    'NewEntitlement' => 7,
+                ],
+                3 => [
+                    'NewEntitlement' => 6,
+                ],
+                default => [],
+            }, $pageNum), 'Response is not a valid sync response for page '.$pageNum);
+
+            $expectedContinueHeader = $pageNum === $numberOfPages ? 'done' : 'continue';
+            self::assertResponseHeaderSame('x-kobo-sync', $expectedContinueHeader, 'x-kobo-sync is invalid');
+        }
+
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
+        self::assertSame(BookFixture::NUMBER_OF_YAML_BOOKS, $count, 'Number of synced book is invalid');
+
+        // Calling one more time should have an empty result
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/' . $this->accessKey . '/v1/library/sync?per_page=' . $perPage, [], [], $headers);
+        self::assertResponseIsSuccessful();
+        self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([], $numberOfPages+1));
+
 
     }
 

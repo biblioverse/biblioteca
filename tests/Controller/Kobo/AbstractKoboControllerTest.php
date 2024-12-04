@@ -107,6 +107,22 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
         return $service;
     }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $name
+     * @return T
+     */
+    protected function getService(string $name): mixed
+    {
+        $service = self::getContainer()->get($name);
+        if(!$service instanceof $name){
+            throw new \RuntimeException(sprintf('Service %s not found', $name));
+        }
+        assert($service instanceof $name);
+        return $service;
+    }
+
     protected function getMockClient(string $returnValue): ClientInterface
     {
         $mock = new MockHandler([

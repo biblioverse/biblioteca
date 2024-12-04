@@ -192,7 +192,7 @@ class SyncResponse
     private function getChangedTag(): array
     {
         $shelves = array_filter($this->shelves, function (Shelf $shelf) {
-            return $shelf->getCreated() < $this->syncToken->lastCreated;
+            return $this->syncToken->lastModified instanceof \DateTimeInterface && $shelf->getUpdated() < $this->syncToken->lastModified;
         });
 
         return array_map(function (Shelf $shelf) {
