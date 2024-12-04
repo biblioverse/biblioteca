@@ -9,7 +9,7 @@ use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyMessage;
 use App\Kobo\Response\MetadataResponseService;
-use App\Service\BookFileSystemManager;
+use App\Service\BookFileSystemManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class DownloadHelper
 {
     public function __construct(
-        private readonly BookFileSystemManager $fileSystemManager,
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
         private readonly CoverTransformer $coverTransformer,
         protected UrlGeneratorInterface $urlGenerator,
         protected LoggerInterface $logger,

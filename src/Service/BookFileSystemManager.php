@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class BookFileSystemManager
+class BookFileSystemManager implements BookFileSystemManagerInterface
 {
     public const ALLOWED_FILE_EXTENSIONS = [
         '*.epub', '*.cbr', '*.cbz', '*.pdf', '*.mobi',

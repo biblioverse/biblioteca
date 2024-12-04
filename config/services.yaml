@@ -96,6 +96,8 @@ services:
             '$bookFolderNamingFormat': '%BOOK_FOLDER_NAMING_FORMAT%'
             '$bookFileNamingFormat': '%BOOK_FILE_NAMING_FORMAT%'
 
+    App\Service\BookFileSystemManagerInterface: '@App\Service\BookFileSystemManager'
+
     App\Kobo\ParamConverter\SyncTokenParamConverter:
       tags:
         - { name: request.param_converter, priority: 100 }
@@ -128,3 +130,12 @@ services:
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
+
+when@test:
+    services:
+        App\Tests\FileSystemManagerForTests:
+            autowire: true
+            bind:
+                $publicDirectory: '%kernel.project_dir%/tests/Resources'
+        App\Service\BookFileSystemManagerInterface:
+            alias: 'App\Tests\FileSystemManagerForTests'
