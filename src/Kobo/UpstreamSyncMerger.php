@@ -80,6 +80,6 @@ class UpstreamSyncMerger
 
     private function shouldContinue(Response $response): bool
     {
-        return $response->headers->get('x-kobo-sync') === 'continue';
+        return $response->headers->get(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER) === 'continue';
     }
 }
