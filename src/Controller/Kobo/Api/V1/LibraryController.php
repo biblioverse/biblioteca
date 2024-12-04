@@ -179,8 +179,9 @@ class LibraryController extends AbstractKoboController
             $syncToken->archiveLastModified = null;
         }
 
+        $maxBookPerSync = $request->query->getInt('per_page', self::MAX_BOOKS_PER_SYNC);
         // We fetch a subset of book to sync, based on the SyncToken.
-        $books = $this->bookRepository->getChangedBooks($koboDevice, $syncToken, 0, self::MAX_BOOKS_PER_SYNC);
+        $books = $this->bookRepository->getChangedBooks($koboDevice, $syncToken, 0, $maxBookPerSync);
         $count = $this->bookRepository->getChangedBooksCount($koboDevice, $syncToken);
         $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $koboDevice->getId(), 'count' => $count, 'token' => $syncToken]);
 
@@ -191,17 +192,14 @@ class LibraryController extends AbstractKoboController
         // Fetch the books upstream and merge the answer
         $shouldContinue = $this->upstreamSyncMerger->merge($koboDevice, $response, $request);
 
-        // TODO Pagination based on the sync token and lastSyncDate
         $httpResponse = $response->toJsonResponse();
-        $httpResponse->headers->set('x-kobo-sync-todo', $shouldContinue || count($books) < $count ? 'continue' : 'done');
+        $httpResponse->headers->set('x-kobo-sync', $shouldContinue || count($books) < $count ? 'continue' : 'done');
 
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
-        if (false === $forced) {
-            $this->koboSyncLogger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
+        $this->koboSyncLogger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
 
-            $this->koboSyncedBookRepository->updateSyncedBooks($koboDevice, $books, $syncToken);
-        }
+        $this->koboSyncedBookRepository->updateSyncedBooks($koboDevice, $books, $syncToken);
 
         return $httpResponse;
     }

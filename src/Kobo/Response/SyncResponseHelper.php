@@ -27,14 +27,14 @@ class SyncResponseHelper
             return false;
         }
 
-        return ($book->getUpdated() instanceof \DateTimeInterface
+        return ($syncToken->lastModified instanceof \DateTimeInterface && $book->getUpdated() instanceof \DateTimeInterface
             && $book->getUpdated() >= $syncToken->lastModified)
-            || $book->getCreated() >= $syncToken->lastCreated;
+            || ($syncToken->lastCreated instanceof \DateTimeInterface && $book->getCreated() >= $syncToken->lastCreated);
     }
 
     public function isNewEntitlement(Book $book, SyncToken $syncToken): bool
     {
-        return $book->getKoboSyncedBook()->isEmpty() || $book->getCreated() < $syncToken->lastCreated;
+        return $book->getKoboSyncedBook()->isEmpty(); // $book->getCreated() >= $syncToken->lastCreated;
     }
 
     public function isChangedReadingState(Book $book, KoboDevice $koboDevice, SyncToken $syncToken): bool

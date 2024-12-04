@@ -21,8 +21,10 @@ class BookRepository extends ServiceEntityRepository
 {
     private Security $security;
 
-    public function __construct(ManagerRegistry $registry, Security $security)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        Security $security,
+    ) {
         parent::__construct($registry, Book::class);
         $this->security = $security;
     }
@@ -371,8 +373,10 @@ class BookRepository extends ServiceEntityRepository
         $qb->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
         $qb->orderBy('book.updated', 'ASC');
+
+        $query = $qb->getQuery();
         /** @var Book[] $result */
-        $result = $qb->getQuery()->getResult();
+        $result = $query->getResult();
 
         return $result;
     }
@@ -380,9 +384,13 @@ class BookRepository extends ServiceEntityRepository
     public function getChangedBooksCount(KoboDevice $koboDevice, SyncToken $syncToken): int
     {
         $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
-        $qb->select('count(book.id) as nb');
+        $qb->select('count(distinct book.id) as nb');
+        $qb->resetDQLPart('groupBy');
 
-        return (int) $qb->getQuery()->getSingleColumnResult();
+        /** @var array{0: int} $result */
+        $result = $qb->getQuery()->getSingleColumnResult();
+
+        return $result[0];
     }
 
     private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
@@ -397,13 +405,12 @@ class BookRepository extends ServiceEntityRepository
             ->andWhere('book.extension = :extension')
             ->setParameter('id', $koboDevice->getId())
             ->setParameter('koboDevice', $koboDevice)
-            ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
-
+            ->setParameter('extension', 'epub') // Pdf is not supported by kobo sync
+            ->groupBy('book.id');
         if ($syncToken->lastCreated instanceof \DateTimeInterface) {
-            $qb->andWhere('book.created > :lastCreated');
-            $qb->orWhere($qb->expr()->orX(
-                $qb->expr()->isNull('koboSyncedBooks.created is null'),
-                $qb->expr()->isNull('koboSyncedBooks.created > :lastCreated'),
+            $qb->andWhere($qb->expr()->orX(
+                $qb->expr()->isNull('koboSyncedBooks.created'),
+                $qb->expr()->gte('book.created', ':lastCreated'),
             ))
             ->setParameter('lastCreated', $syncToken->lastCreated);
         }

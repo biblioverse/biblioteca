@@ -25,33 +25,14 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         parent::__construct($registry, KoboSyncedBook::class);
     }
 
-    //    /**
-    //     * @return KoboSyncedBook[] Returns an array of KoboSyncedBook objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('k')
-    //            ->andWhere('k.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('k.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?KoboSyncedBook
-    //    {
-    //        return $this->createQueryBuilder('k')
-    //            ->andWhere('k.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function updateSyncedBooks(KoboDevice $koboDevice, array $books, SyncToken $syncToken): void
     {
+        if ($books === []) {
+            return;
+        }
+
         $updatedAt = $syncToken->lastModified ?? new \DateTime();
+        $createdAt = $syncToken->lastCreated ?? new \DateTime();
 
         $qb = $this->createQueryBuilder('koboSyncedBook')
              ->select('book.id')
@@ -65,8 +46,8 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             ->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
 
         $qb->update()
-            ->set('koboSyncedBook.created', ':updatedA')
-            ->setParameter('updatedA', $updatedAt)
+            ->set('koboSyncedBook.updated', ':updatedAt')
+            ->setParameter('updatedAt', $updatedAt)
         ->getQuery()
             ->execute();
 
@@ -95,11 +76,12 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             $object->setBook($book);
             $object->setKoboDevice($koboDevice);
             $object->setUpdated($updatedAt);
-            $object->setCreated($updatedAt);
+            $object->setCreated($createdAt);
             $book->addKoboSyncedBook($object);
             $koboDevice->addKoboSyncedBook($object);
             $this->_em->persist($object);
         }
+
         $this->_em->flush();
     }
 

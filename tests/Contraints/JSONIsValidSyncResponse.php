@@ -8,7 +8,7 @@ use PHPUnit\Framework\Constraint\IsIdentical;
 class JSONIsValidSyncResponse extends Constraint
 {
 
-    public function __construct(protected array $expectedKeysCount)
+    public function __construct(protected array $expectedKeysCount, protected int $pageNum = 1)
     {
         foreach($this->expectedKeysCount as $key => $count){
             if(false === in_array($key, self::KNOWN_TYPES, true)){
@@ -69,7 +69,7 @@ class JSONIsValidSyncResponse extends Constraint
         asort($count);
         asort($this->expectedKeysCount);
 
-        (new IsIdentical($this->expectedKeysCount))->evaluate($count, 'Sync response doesnt contains the right entries count', false);
+        (new IsIdentical($this->expectedKeysCount))->evaluate($count, 'Sync response doesnt contains the right entries count for page '.$this->pageNum, false);
 
     }
 
