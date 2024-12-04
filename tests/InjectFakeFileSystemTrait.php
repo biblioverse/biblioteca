@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests;
 
+use App\DataFixtures\BookFixture;
 use App\Service\BookFileSystemManager;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,7 +34,7 @@ trait InjectFakeFileSystemTrait
         $mock->expects(self::any())->method('getBooksDirectory')->willReturn($fixtureBookPath);
         $mock->expects(self::any())->method('getCoverDirectory')->willReturn($fixtureBookPath);
 
-        self::assertSame(realpath($resources).'/books/TheOdysses.epub', $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
+        self::assertSame(realpath($resources).'/books/'.BookFixture::BOOK_ODYSSEY_FILENAME, $mock->getBookFilename($this->getBook()), "Faking Filesystem failed");
         self::getContainer()->set(BookFileSystemManager::class, $mock);
     }
 }
