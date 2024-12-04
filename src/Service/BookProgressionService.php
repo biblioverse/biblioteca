@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 class BookProgressionService
 {
     public function __construct(
-        private BookFileSystemManager $fileSystemManager,
+        private BookFileSystemManagerInterface $fileSystemManager,
         private LoggerInterface $logger,
         private EntityManagerInterface $em,
     ) {

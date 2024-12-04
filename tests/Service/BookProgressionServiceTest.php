@@ -10,18 +10,15 @@ use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
 use App\Service\BookProgressionService;
-use App\Tests\InjectFakeFileSystemTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BookProgressionServiceTest extends KernelTestCase
 {
-    use InjectFakeFileSystemTrait;
     protected function setUp(): void
     {
         parent::setUp();
 
         self::bootKernel();
-        $this->injectFakeFileSystemManager();
     }
 
     public function testPageNumber(): void{

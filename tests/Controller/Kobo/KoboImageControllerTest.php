@@ -12,8 +12,6 @@ class KoboImageControllerTest extends AbstractKoboControllerTest
     public function testDownload(): void
     {
         $client = static::getClient();
-        $this->injectFakeFileSystemManager();
-
 
         $book = $this->findByIdAndKobo(BookFixture::ID, $this->getKoboDevice());
         self::assertNotNull($book, 'The book is not linked to the Kobo');

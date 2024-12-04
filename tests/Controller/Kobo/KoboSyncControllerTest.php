@@ -30,7 +30,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     public function testSyncControllerWithForce() : void
     {
         $client = static::getClient();
-        $this->injectFakeFileSystemManager();
+        
 
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
 
@@ -53,7 +53,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     public function testSyncControllerWithoutForce() : void
     {
         $client = static::getClient();
-        $this->injectFakeFileSystemManager();
+        
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync');
 
@@ -90,7 +90,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
                 }
             }]'));
 
-        $this->injectFakeFileSystemManager();
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/sync');
 
@@ -112,7 +111,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     {
         $uuid = $this->getBook()->getUuid();
         $client = static::getClient();
-        $this->injectFakeFileSystemManager();
         $this->getKepubifyEnabler()->disable();
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$uuid."/metadata");
@@ -128,7 +126,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     {
         $uuid = $this->getBook()->getUuid();
         $client = static::getClient();
-        $this->injectFakeFileSystemManager();
         self::assertTrue($this->getKepubifyEnabler()->isEnabled());
 
         $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$uuid."/metadata");

@@ -5,7 +5,6 @@ namespace App\Tests\Controller\Kobo;
 use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
-use App\Tests\InjectFakeFileSystemTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Handler\MockHandler;
@@ -20,8 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractKoboControllerTest extends WebTestCase
 {
-    use InjectFakeFileSystemTrait;
-
     protected ?string $accessKey = null;
     protected ?KoboDevice $koboDevice = null;
 
