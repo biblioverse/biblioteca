@@ -10,6 +10,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use Symfony\Bridge\Doctrine\DataCollector\DoctrineDataCollector;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use App\DataFixtures\BookFixture;
 use App\Entity\Book;
@@ -17,6 +19,7 @@ use App\Entity\KoboDevice;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 abstract class AbstractKoboControllerTest extends WebTestCase
 {
@@ -118,5 +121,23 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
         $handlerStack = HandlerStack::create($mock);
         return new Client(['handler' => $handlerStack]);
+    }
+
+    /**
+     * Return the number of doctrine queries
+     * Make sure to call "$client->enableProfiler();" before making the request
+     */
+    protected function getNumberOfQueries(KernelBrowser $client): int{
+        $profile = $client->getProfile();
+        if(!$profile instanceof Profile){
+            self::markTestSkipped('Profile is not available');
+        }
+
+        $dbCollector = $profile->getCollector('db');
+        if(!$dbCollector instanceof DoctrineDataCollector){
+            self::markTestSkipped('DoctrineDataCollector is not available');
+        }
+
+        return $dbCollector->getQueryCount();
     }
 }
