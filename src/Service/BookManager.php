@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class BookManager
 {
-    public function __construct(private BookFileSystemManager $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
+    public function __construct(private BookFileSystemManagerInterface $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
     {
     }
 

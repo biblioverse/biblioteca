@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
-use App\Service\BookFileSystemManager;
+use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,7 +31,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManager $fileSystemManager): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -118,7 +118,7 @@ class BookController extends AbstractController
         Request $request,
         Book $book,
         string $slug,
-        BookFileSystemManager $fileSystemManager,
+        BookFileSystemManagerInterface $fileSystemManager,
         PaginatorInterface $paginator,
         ThemeSelector $themeSelector,
         EntityManagerInterface $manager,
@@ -233,7 +233,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
-    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
+    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted(BookVoter::EDIT, $book)) {
             $this->addFlash('danger', 'You are not allowed to edit this book');
@@ -261,7 +261,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
-    public function deleteBook(int $id, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
+    public function deleteBook(int $id, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         /** @var Book $book */
         $book = $entityManager->getRepository(Book::class)->find($id);
@@ -287,7 +287,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/new/consume/upload', name: 'app_book_upload_consume')]
-    public function upload(Request $request, BookFileSystemManager $fileSystemManager): Response
+    public function upload(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You are not allowed to add books');
@@ -330,7 +330,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/new/consume/files', name: 'app_book_consume')]
-    public function consume(Request $request, BookFileSystemManager $fileSystemManager): Response
+    public function consume(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You are not allowed to add books');
@@ -380,7 +380,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
-    public function relocate(Request $request, Book $book, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): Response
+    public function relocate(Request $request, Book $book, BookFileSystemManagerInterface $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
             throw $this->createAccessDeniedException('Book relocation is not allowed');

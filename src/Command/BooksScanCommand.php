@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\BookFileSystemManager;
+use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -18,8 +18,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksScanCommand extends Command
 {
-    public function __construct(private EntityManagerInterface $entityManager, private BookManager $bookManager, private BookFileSystemManager $fileSystemManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private BookManager $bookManager,
+        private BookFileSystemManagerInterface $fileSystemManager,
+    ) {
         parent::__construct();
     }
 
