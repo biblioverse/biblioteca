@@ -74,4 +74,6 @@ jobs:
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: |
+          npm i
+          npm run build
           composer test
