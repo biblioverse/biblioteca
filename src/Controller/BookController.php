@@ -257,6 +257,9 @@ class BookController extends AbstractController
                 'label' => 'Book',
                 'required' => false,
                 'multiple' => true,
+                'attr' => [
+                    'accept' => '.epub,.pdf,.mobi,.cbr,.cbz',
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Upload',

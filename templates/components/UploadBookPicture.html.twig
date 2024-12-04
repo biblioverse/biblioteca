@@ -2,7 +2,7 @@
     {% if isEditing and is_granted('EDIT', book) %}
         <div class="btn-group mt-2">
 
-            <input type="file" name="cover" class="form-control"/>
+            <input type="file" name="cover" accept="image/png, image/jpeg, image/webp" class="form-control"/>
             <button data-action="live#action" class="btn btn-sm btn-outline-primary" data-live-action-param="files|uploadFiles">
                 {{ 'upload'|trans }}
             </button>
