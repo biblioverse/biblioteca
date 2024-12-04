@@ -149,8 +149,6 @@
       "@php bin/console doctrine:schema:update --complete --force --env=test -n",
       "@php bin/console typesense:create --env=test",
       "@php bin/console doctrine:fixtures:load --env=test --append -n",
-      "npm i",
-      "npm run build",
       "@test-phpunit"
     ]
   },
