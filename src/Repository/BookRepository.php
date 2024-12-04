@@ -407,23 +407,27 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('koboDevice', $koboDevice)
             ->setParameter('extension', 'epub') // Pdf is not supported by kobo sync
             ->groupBy('book.id');
+        $bigOr = $qb->expr()->orX();
+
         if ($syncToken->lastCreated instanceof \DateTimeInterface) {
-            $qb->andWhere($qb->expr()->orX(
+            $bigOr->addMultiple([
                 $qb->expr()->isNull('koboSyncedBooks.created'),
                 $qb->expr()->gte('book.created', ':lastCreated'),
-            ))
-            ->setParameter('lastCreated', $syncToken->lastCreated);
+            ]);
+            $qb->setParameter('lastCreated', $syncToken->lastCreated);
         }
 
         if ($syncToken->lastModified instanceof \DateTimeInterface) {
-            $qb->andWhere($qb->expr()->orX(
+            $bigOr->addMultiple([
                 'book.updated > :lastModified',
                 'book.created  > :lastModified',
                 'koboSyncedBooks.updated > :lastModified',
                 $qb->expr()->isNull('koboSyncedBooks.updated'),
-            ));
+            ]);
             $qb->setParameter('lastModified', $syncToken->lastModified);
         }
+
+        $qb->andWhere($bigOr);
 
         $qb->orderBy('book.updated');
         if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {

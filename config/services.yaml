@@ -62,6 +62,7 @@ services:
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
             - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]
+            - [ setClock, ['@Psr\Clock\ClockInterface'] ]
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -139,3 +140,8 @@ when@test:
                 $publicDirectory: '%kernel.project_dir%/tests/Resources'
         App\Service\BookFileSystemManagerInterface:
             alias: 'App\Tests\FileSystemManagerForTests'
+
+        App\Tests\TestClock:
+            public: true
+
+        Psr\Clock\ClockInterface: '@App\Tests\TestClock'

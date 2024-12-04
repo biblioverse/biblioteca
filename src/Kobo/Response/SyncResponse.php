@@ -138,7 +138,7 @@ class SyncResponse
     private function getChangedEntitlement(): array
     {
         $books = array_filter($this->books, function (Book $book) {
-            return $this->helper->isChangedEntitlement($book, $this->koboDevice, $this->syncToken);
+            return $this->helper->isChangedEntitlement($book, $this->syncToken);
         });
 
         return array_map(function (Book $book) {
@@ -174,7 +174,7 @@ class SyncResponse
     private function getNewTags(): array
     {
         $shelves = array_filter($this->shelves, function (Shelf $shelf) {
-            return $shelf->getCreated() >= $this->syncToken->lastCreated;
+            return $this->helper->isNewTag($shelf, $this->syncToken);
         });
 
         return array_map(function (Shelf $shelf) {
@@ -192,7 +192,7 @@ class SyncResponse
     private function getChangedTag(): array
     {
         $shelves = array_filter($this->shelves, function (Shelf $shelf) {
-            return $this->syncToken->lastModified instanceof \DateTimeInterface && $shelf->getUpdated() < $this->syncToken->lastModified;
+            return $this->helper->isChangedTag($shelf, $this->syncToken);
         });
 
         return array_map(function (Shelf $shelf) {

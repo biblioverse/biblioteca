@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\BookFixture;
+use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\Response\MetadataResponseService;
 use App\Kobo\SyncToken;
@@ -10,6 +11,7 @@ use App\Repository\KoboSyncedBookRepository;
 use App\Service\KoboSyncTokenExtractor;
 use App\Tests\Contraints\AssertHasDownloadWithFormat;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
+use App\Tests\TestClock;
 
 class KoboSyncControllerTest extends AbstractKoboControllerTest
 {
@@ -18,7 +20,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $this->getKoboStoreProxy()->setClient(null);
         $this->getKoboProxyConfiguration()->setEnabled(false);
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
-
+        $this->getService(TestClock::class)->setTime(null);
         parent::tearDown();
     }
 
@@ -117,7 +119,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
             }, $pageNum), 'Response is not a valid sync response for page '.$pageNum);
 
             $expectedContinueHeader = $pageNum === $numberOfPages ? 'done' : 'continue';
-            self::assertResponseHeaderSame('x-kobo-sync', $expectedContinueHeader, 'x-kobo-sync is invalid');
+            self::assertResponseHeaderSame(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $expectedContinueHeader, 'x-kobo-sync is invalid');
         }
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
@@ -131,6 +133,50 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
 
     }
+
+    /**
+     * @covers ChangedEntitlement
+     * @throws \JsonException
+     * @throws \DateMalformedStringException
+     */
+    public function testSyncControllerEdited() : void{
+        $client = static::getClient();
+
+        // Create an old sync token
+        $clock = $this->getService(TestClock::class)
+            ->setTime(new \DateTimeImmutable('now'));
+        $syncToken = new SyncToken();
+        $syncToken->lastCreated = $clock->now();
+        $syncToken->lastModified = $clock->now();
+        $syncToken->tagLastModified = $clock->now();
+
+        // Sync all the books
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/' . $this->accessKey . '/v1/library/sync', [], [], $headers);
+        self::assertResponseIsSuccessful();
+
+        // Edit the book detail
+        $clock->setTime($clock->now()->modify('+ 1 hour'));
+        $book = $this->getBook();
+        $slug = $book->getSlug();
+        $book->setSlug($slug."..");
+        $this->getEntityManager()->flush();
+        $book->setSlug($slug);
+        $this->getEntityManager()->flush();
+
+        // Restore the real time
+        $clock->setTime(null);
+
+        // Make sure the book has changed.
+        $client?->request('GET', '/kobo/' . $this->accessKey . '/v1/library/sync', [], [], $headers);
+        self::assertResponseIsSuccessful();
+        self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([
+            'ChangedEntitlement' => 1,
+        ]));
+
+        self::assertResponseHeaderSame(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, 'done', 'x-kobo-sync is invalid');
+    }
+
 
     public function testSyncControllerWithRemote() : void
     {

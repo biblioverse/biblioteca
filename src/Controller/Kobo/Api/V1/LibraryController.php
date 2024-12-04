@@ -193,7 +193,7 @@ class LibraryController extends AbstractKoboController
         $shouldContinue = $this->upstreamSyncMerger->merge($koboDevice, $response, $request);
 
         $httpResponse = $response->toJsonResponse();
-        $httpResponse->headers->set('x-kobo-sync', $shouldContinue || count($books) < $count ? 'continue' : 'done');
+        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue || count($books) < $count ? 'continue' : 'done');
 
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
