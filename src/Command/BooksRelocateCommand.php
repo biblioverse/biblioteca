@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Repository\BookRepository;
-use App\Service\BookFileSystemManager;
+use App\Service\BookFileSystemManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,16 +19,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksRelocateCommand extends Command
 {
-    private BookRepository $bookRepository;
-    private EntityManagerInterface $entityManager;
-    private BookFileSystemManager $fileSystemManager;
-
-    public function __construct(BookFileSystemManager $fileSystemManager, BookRepository $bookRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
+        private readonly BookRepository $bookRepository,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct();
-        $this->bookRepository = $bookRepository;
-        $this->entityManager = $entityManager;
-        $this->fileSystemManager = $fileSystemManager;
     }
 
     protected function configure(): void

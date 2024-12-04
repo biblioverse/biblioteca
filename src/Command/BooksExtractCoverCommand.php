@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Repository\BookRepository;
-use App\Service\BookFileSystemManager;
+use App\Service\BookFileSystemManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 )]
 class BooksExtractCoverCommand extends Command
 {
-    public function __construct(private BookFileSystemManager $fileSystemManager, private BookRepository $bookRepository, private EntityManagerInterface $entityManager)
+    public function __construct(private BookFileSystemManagerInterface $fileSystemManager, private BookRepository $bookRepository, private EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
