@@ -28,7 +28,8 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
         self::assertResponseHasHeader('Content-Length');
-        $expectedDisposition = "attachment; filename=book-1-TheOdysses.epub; filename*=utf-8''TheOdysses.epub";
+
+        $expectedDisposition = "attachment; filename=book-1-".BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
 
     }
@@ -79,7 +80,8 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
         self::assertResponseHasHeader('Content-Length');
 
-        $expectedDisposition = "attachment; filename=book-1-TheOdysses.kepub; filename*=utf-8''TheOdysses.kepub";
+        $expectedDisposition = "attachment; filename=book-1-".BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
+        $expectedDisposition = str_replace('.epub', '.kepub', $expectedDisposition);
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
 
     }
