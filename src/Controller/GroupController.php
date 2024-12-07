@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/groups')]
 class GroupController extends AbstractController
 {
-    public function __construct(private BookRepository $bookRepository)
+    public function __construct(private readonly BookRepository $bookRepository)
     {
     }
 
@@ -48,13 +48,9 @@ class GroupController extends AbstractController
         }
 
         if ($search !== '') {
-            $group = array_filter($group, static function ($item) use ($search) {
-                return str_contains(strtolower($item['item']), strtolower($search));
-            });
+            $group = array_filter($group, static fn ($item) => str_contains(strtolower((string) $item['item']), strtolower($search)));
         } else {
-            $group = array_filter($group, static function ($item) use ($letter) {
-                return str_starts_with(strtolower($item['item']), $letter);
-            });
+            $group = array_filter($group, static fn ($item) => str_starts_with(strtolower((string) $item['item']), $letter));
         }
 
         return $this->render('group/index.html.twig', [

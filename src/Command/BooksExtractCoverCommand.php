@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 )]
 class BooksExtractCoverCommand extends Command
 {
-    public function __construct(private BookFileSystemManagerInterface $fileSystemManager, private BookRepository $bookRepository, private EntityManagerInterface $entityManager)
+    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly BookRepository $bookRepository, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }

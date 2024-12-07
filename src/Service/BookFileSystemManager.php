@@ -51,16 +51,14 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         try {
             $finder = new Finder();
-            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(function (\SplFileInfo $a, \SplFileInfo $b): int {
-                return strcmp($a->getRealPath(), $b->getRealPath());
-            });
+            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(fn (\SplFileInfo $a, \SplFileInfo $b): int => strcmp($a->getRealPath(), $b->getRealPath()));
             if ($onlyConsumeDirectory) {
                 $finder->in($this->getBooksDirectory().'/consume');
             } else {
                 $finder->in($this->getBooksDirectory());
             }
             $iterator = $finder->getIterator();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $iterator = new \ArrayIterator();
         }
 

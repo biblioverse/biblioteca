@@ -119,7 +119,7 @@ class KoboStoreProxy
     {
         $host = parse_url($hostnameOrUrl, PHP_URL_HOST);
         $host = $host === false ? $hostnameOrUrl : $host;
-        $host = $host ?? $hostnameOrUrl;
+        $host ??= $hostnameOrUrl;
         $path = $this->tokenExtractor->getOriginalPath($psrRequest, $psrRequest->getUri()->getPath());
 
         return $psrRequest->getUri()->withHost($host)->withPath($path);
@@ -149,9 +149,7 @@ class KoboStoreProxy
             'http_errors' => false,
             'connect_timeout' => 5,
             'stream' => $streamAllowed,
-        ])->then(function (ResponseInterface $response) {
-            return $this->cleanupPsrResponse($response);
-        });
+        ])->then(fn (ResponseInterface $response) => $this->cleanupPsrResponse($response));
     }
 
     private function convertRequest(Request $request, string $hostname): RequestInterface

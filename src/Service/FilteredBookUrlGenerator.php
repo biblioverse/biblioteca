@@ -27,7 +27,7 @@ class FilteredBookUrlGenerator
         'submit' => '',
     ];
 
-    public function __construct(private RequestStack $request)
+    public function __construct(private readonly RequestStack $request)
     {
     }
 

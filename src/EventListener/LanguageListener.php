@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class LanguageListener
 {
-    public function __construct(private RequestStack $requestStack, private Security $security)
+    public function __construct(private readonly RequestStack $requestStack, private readonly Security $security)
     {
     }
 

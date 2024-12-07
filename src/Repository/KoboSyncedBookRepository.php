@@ -58,9 +58,7 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             ->from(Book::class, 'book')
             ->select('book')
             ->where($qb->expr()->in('book.id', ':booksIds'))
-            ->setParameter('booksIds', array_map(function (Book $book) {
-                return $book->getId();
-            }, $books));
+            ->setParameter('booksIds', array_map(fn (Book $book) => $book->getId(), $books));
 
         if ($updatedBooks !== []) {
             $qb->andWhere($qb->expr()->notIn('book.id', ':excludedIds'))

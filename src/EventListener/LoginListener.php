@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
 final class LoginListener
 {
-    public function __construct(private EntityManagerInterface $entityManager, private RequestStack $requestStack, private Security $security)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly RequestStack $requestStack, private readonly Security $security)
     {
     }
 

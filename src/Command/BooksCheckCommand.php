@@ -21,10 +21,10 @@ use Symfony\Component\Routing\RouterInterface;
 class BooksCheckCommand extends Command
 {
     public function __construct(
-        private BookFileSystemManagerInterface $fileSystemManager,
-        private BookRepository $bookRepository,
-        private RouterInterface $router,
-        private BookProgressionService $bookProgressionService,
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
+        private readonly BookRepository $bookRepository,
+        private readonly RouterInterface $router,
+        private readonly BookProgressionService $bookProgressionService,
     ) {
         parent::__construct();
     }
@@ -61,7 +61,7 @@ class BooksCheckCommand extends Command
 
             try {
                 $file = $this->fileSystemManager->getBookFile($book);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $io->writeln('');
                 $io->writeln('Book not found: '.$book->getBookPath().'/'.$book->getBookFilename());
                 $io->writeln('Book not found: '.$this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()]));

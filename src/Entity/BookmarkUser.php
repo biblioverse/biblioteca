@@ -30,22 +30,16 @@ class BookmarkUser
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationSource = null;
 
-    #[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user;
-
-    #[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Book $book;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated;
+    private ?\DateTimeInterface $updated = null;
 
-    public function __construct(?Book $book, ?User $user)
+    public function __construct(#[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?Book $book, #[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?User $user)
     {
-        $this->book = $book;
-        $this->user = $user;
     }
 
     public function getId(): ?int

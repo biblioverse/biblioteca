@@ -33,7 +33,7 @@ class SyncResponse
     public const READING_STATUS_UNREAD = 'ReadyToRead';
     public const READING_STATUS_FINISHED = 'Finished';
     public const READING_STATUS_IN_PROGRESS = 'Reading';
-    private SyncResponseHelper $helper;
+    private readonly SyncResponseHelper $helper;
 
     /**
      * @var RemoteItems
@@ -137,9 +137,7 @@ class SyncResponse
      */
     private function getChangedEntitlement(): array
     {
-        $books = array_filter($this->books, function (Book $book) {
-            return $this->helper->isChangedEntitlement($book, $this->syncToken);
-        });
+        $books = array_filter($this->books, fn (Book $book) => $this->helper->isChangedEntitlement($book, $this->syncToken));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();
@@ -154,10 +152,9 @@ class SyncResponse
      */
     private function getNewEntitlement(): array
     {
-        $books = array_filter($this->books, function (Book $book) {
+        $books = array_filter($this->books, fn (Book $book) =>
             // This book has never been synced before
-            return $this->helper->isNewEntitlement($book, $this->syncToken);
-        });
+            $this->helper->isNewEntitlement($book, $this->syncToken));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();
@@ -173,9 +170,7 @@ class SyncResponse
      */
     private function getNewTags(): array
     {
-        $shelves = array_filter($this->shelves, function (Shelf $shelf) {
-            return $this->helper->isNewTag($shelf, $this->syncToken);
-        });
+        $shelves = array_filter($this->shelves, fn (Shelf $shelf) => $this->helper->isNewTag($shelf, $this->syncToken));
 
         return array_map(function (Shelf $shelf) {
             $response = new \stdClass();
@@ -191,9 +186,7 @@ class SyncResponse
      */
     private function getChangedTag(): array
     {
-        $shelves = array_filter($this->shelves, function (Shelf $shelf) {
-            return $this->helper->isChangedTag($shelf, $this->syncToken);
-        });
+        $shelves = array_filter($this->shelves, fn (Shelf $shelf) => $this->helper->isChangedTag($shelf, $this->syncToken));
 
         return array_map(function (Shelf $shelf) {
             $response = new \stdClass();
@@ -212,12 +205,10 @@ class SyncResponse
             'Tag' => [
                 'Created' => $this->syncToken->maxLastCreated($shelf->getCreated()),
                 'Id' => $shelf->getUuid(),
-                'Items' => array_map(function (Book $book) {
-                    return [
-                        'RevisionId' => $book->getUuid(),
-                        'Type' => 'ProductRevisionTagItem',
-                    ];
-                }, $this->books),
+                'Items' => array_map(fn (Book $book) => [
+                    'RevisionId' => $book->getUuid(),
+                    'Type' => 'ProductRevisionTagItem',
+                ], $this->books),
                 'LastModified' => $this->syncToken->maxLastModified($shelf->getUpdated()),
                 'Name' => $shelf->getName(),
                 'Type' => 'UserTag',
@@ -242,9 +233,7 @@ class SyncResponse
      */
     private function getChangedReadingState(): array
     {
-        $books = array_filter($this->books, function (Book $book) {
-            return $this->helper->isChangedReadingState($book, $this->koboDevice, $this->syncToken);
-        });
+        $books = array_filter($this->books, fn (Book $book) => $this->helper->isChangedReadingState($book, $this->koboDevice, $this->syncToken));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();

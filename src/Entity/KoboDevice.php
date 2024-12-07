@@ -29,7 +29,7 @@ class KoboDevice
 
     #[Assert\NotBlank(allowNull: false)]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'kobos')]
     #[ORM\JoinColumn(nullable: false)]

@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
 )]
 class TranslationRetrieveFromProfilerCommand extends Command
 {
-    public function __construct(private ?Profiler $profiler, private KernelInterface $kernel)
+    public function __construct(private readonly ?Profiler $profiler, private readonly KernelInterface $kernel)
     {
         parent::__construct();
     }
@@ -60,9 +60,7 @@ class TranslationRetrieveFromProfilerCommand extends Command
                     continue;
                 }
 
-                $filtered_values = array_filter($raw_values, function ($value) {
-                    return $value['state'] !== 0;
-                });
+                $filtered_values = array_filter($raw_values, fn ($value) => $value['state'] !== 0);
 
                 $grouped = self::groupBy($filtered_values, 'domain');
 

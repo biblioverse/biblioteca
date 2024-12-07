@@ -18,14 +18,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 )]
 class CreateUserCommand extends Command
 {
-    private UserPasswordHasherInterface $passwordHasher;
-    private UserRepository $userRepository;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserRepository $userRepository)
     {
         parent::__construct();
-        $this->passwordHasher = $passwordHasher;
-        $this->userRepository = $userRepository;
     }
 
     protected function configure(): void
