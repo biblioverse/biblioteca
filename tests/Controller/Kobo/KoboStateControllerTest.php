@@ -12,10 +12,11 @@ use App\Kobo\Request\ReadingStateLocation;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatistics;
 use App\Kobo\Request\ReadingStateStatusInfo;
+use App\Kobo\Response\StateResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int, 'finished': boolean}
+ * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int|null, 'finished': boolean}
  */
 class KoboStateControllerTest extends AbstractKoboControllerTest
 {
@@ -31,6 +32,19 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Connection', 'keep-alive');
+    }
+
+    public function testGetStateWithProxy(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient($this->getStateResponseString($unknownUuid)));
+
+        $client = static::getClient();
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$unknownUuid.'/state');
+
+        self::assertResponseStatusCodeSame(307);
     }
 
     /**
@@ -66,6 +80,33 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         assert($service instanceof SerializerInterface);
 
         return $service;
+    }
+
+    public function testPutStateWithProxy(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+
+        $client = self::getClient();
+
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient($this->getStateResponseString($unknownUuid)));
+
+        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testPutStateUnknownBook(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+
+        $client = self::getClient();
+
+        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
+        self::assertResponseStatusCodeSame(404);
     }
 
     private function getReadingStates(string $bookUuid, int $percent = 50): ReadingStates
@@ -119,6 +160,25 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
                     'finished' => true,
                 ],
             ],
+            [
+                BookFixture::ID,
+                $this->getReadingStates(BookFixture::UUID, 0),
+                [
+                    'book' => BookFixture::ID,
+                    'readPages' => null,
+                    'finished' => false,
+                ],
+            ],
         ];
+    }
+
+    private function getStateResponseString(Book|string $unknownUuid): string
+    {
+        $content = (new StateResponse($unknownUuid))->getContent();
+        if ($content === false) {
+            throw new \RuntimeException('Unable to generate a state response');
+        }
+
+        return $content;
     }
 }
