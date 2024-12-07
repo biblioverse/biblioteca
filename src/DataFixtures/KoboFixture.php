@@ -11,11 +11,12 @@ use Doctrine\Persistence\ObjectManager;
 class KoboFixture extends Fixture implements DependentFixtureInterface
 {
     public const KOBO_REFERENCE = 'kobo';
+    public const ACCESS_KEY = '0000-0000-0000-0000';
 
     public function load(ObjectManager $manager): void
     {
         $kobo = new KoboDevice();
-        $kobo->setAccessKey('0000-0000-0000-0000');
+        $kobo->setAccessKey(self::ACCESS_KEY);
         $kobo->setName('test kobo');
         $kobo->setUser($this->getUser());
 

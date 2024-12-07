@@ -19,9 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractKoboControllerTest extends WebTestCase
 {
-    protected ?string $accessKey = null;
-    protected ?KoboDevice $koboDevice = null;
-
     protected function getEntityManager(): EntityManagerInterface{
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
@@ -32,20 +29,18 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     {
         parent::setUp();
         self::createClient();
-
-        $this->koboDevice = $this->loadKoboDevice();
-        $this->accessKey = $this->koboDevice->getAccessKey();
     }
 
     public function getKoboDevice(bool $refresh = false): KoboDevice
     {
-        if($refresh && $this->koboDevice instanceof KoboDevice){
-            $this->getEntityManager()->refresh($this->koboDevice);
+        static $koboDevice = null;
+        if($refresh && $koboDevice instanceof KoboDevice){
+            $this->getEntityManager()->refresh($koboDevice);
         }
-        if(!$this->koboDevice instanceof KoboDevice) {
-            throw new \RuntimeException('Kobo not initialized');
+        if(!$koboDevice instanceof KoboDevice) {
+            $koboDevice = $this->loadKoboDevice();
         }
-        return $this->koboDevice;
+        return $koboDevice;
     }
 
     protected function getBook(): Book
@@ -54,9 +49,6 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $this->getEntityManager()->getRepository(Book::class)->find(BookFixture::ID);
     }
 
-    /**
-     * @throws \JsonException
-     */
     protected static function getJsonResponse(): array
     {
         if (!self::getClient() instanceof AbstractBrowser) {
@@ -72,7 +64,11 @@ abstract class AbstractKoboControllerTest extends WebTestCase
             static::fail('Unable to read response content');
         }
 
-        return (array)json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        try {
+            return (array)json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        }catch (\JsonException $exception){
+            throw new \RuntimeException('Invalid JSON', 0, $exception);
+        }
     }
 
     private function loadKoboDevice(): KoboDevice

@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\BookFixture;
+use App\DataFixtures\KoboFixture;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Kobo\Request\Bookmark;
@@ -26,7 +27,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $book = $this->getBookById(BookFixture::ID);
         self::assertNotNull($book, 'Book '.BookFixture::ID.' not found');
 
-        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$book->getUuid().'/state');
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$book->getUuid().'/state');
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Connection', 'keep-alive');
@@ -46,7 +47,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
 
         $json = $serializer->serialize($readingStates, 'json');
-        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', $this->accessKey, $book->getUuid()), [],[],[] , $json);
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [],[],[] , $json);
 
         self::assertResponseIsSuccessful();
 

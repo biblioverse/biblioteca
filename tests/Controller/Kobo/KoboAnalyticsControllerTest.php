@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Kobo;
 
 
+use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
 
 class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
@@ -450,7 +451,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
             'HTTP_'.KoboDevice::KOBO_DEVICE_ID_HEADER => self::DEVICE_ID,
             'HTTP_'.KoboDevice::KOBO_DEVICE_MODEL_HEADER => self::MODEL,
         ];
-        $client?->request('POST', '/kobo/'.$this->accessKey.'/v1/analytics/event', [
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/event', [
             'json' => $body,
         ], [], $server);
 
