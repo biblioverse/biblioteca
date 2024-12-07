@@ -20,7 +20,7 @@ class InitializationController extends AbstractKoboController
     public function __construct(
         protected KoboStoreProxy $koboStoreProxy,
         protected KoboProxyConfiguration $koboProxyConfiguration,
-        protected LoggerInterface $koboSynclogger,
+        protected LoggerInterface $koboSyncLogger,
     ) {
     }
 
@@ -30,7 +30,7 @@ class InitializationController extends AbstractKoboController
     #[Route('/initialization')]
     public function initialization(Request $request, KoboDevice $koboDevice): Response
     {
-        $this->koboSynclogger->info('Initialization request');
+        $this->koboSyncLogger->info('Initialization request');
         // Load the JSON data from the store
         // A hardcoded value is returned as fallback (see KoboProxyConfiguration::getNativeInitializationJson)
         $jsonData = $this->getJsonData($request);
@@ -77,7 +77,7 @@ class InitializationController extends AbstractKoboController
 
         // Proxy is disabled, return the generic data
         if ($this->koboProxyConfiguration->useProxy() === false) {
-            $this->koboSynclogger->info('Proxy is disabled, returning generic data');
+            $this->koboSyncLogger->info('Proxy is disabled, returning generic data');
 
             return $genericData;
         }
@@ -94,7 +94,7 @@ class InitializationController extends AbstractKoboController
 
             return (array) json_decode((string) $jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (GuzzleException|\RuntimeException|\JsonException $exception) {
-            $this->koboSynclogger->warning('Unable to fetch initialization data', ['exception' => $exception]);
+            $this->koboSyncLogger->warning('Unable to fetch initialization data', ['exception' => $exception]);
 
             return $genericData;
         }
