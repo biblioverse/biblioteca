@@ -85,11 +85,8 @@ class InitializationController extends AbstractKoboController
         try {
             // Load configuration from Kobo
             $jsonResponse = $this->koboStoreProxy->proxyAndFollowRedirects($request, ['stream' => false]);
-            if ($jsonResponse->getStatusCode() === Response::HTTP_UNAUTHORIZED) {
-                throw new \RuntimeException('Unauthorized request while contacting Kobo API');
-            }
             if ($jsonResponse->getStatusCode() !== Response::HTTP_OK) {
-                throw new \RuntimeException('Bad status code');
+                throw new \RuntimeException('Bad status code: '.$jsonResponse->getStatusCode());
             }
 
             return (array) json_decode((string) $jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
