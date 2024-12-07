@@ -116,4 +116,11 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         $handlerStack = HandlerStack::create($mock);
         return new Client(['handler' => $handlerStack]);
     }
+    protected function enableRemoteSync(): void
+    {
+        // Enable remote sync
+        $this->getKoboDevice()->setUpstreamSync(true);
+        $this->getKoboProxyConfiguration()->setEnabled(true);
+        $this->getEntityManager()->flush();
+    }
 }

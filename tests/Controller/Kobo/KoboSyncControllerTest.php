@@ -64,7 +64,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     }
 
     /**
-     * @covers pagination
      * @throws \JsonException
      */
     public function testSyncControllerPaginated() : void
@@ -119,7 +118,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     }
 
     /**
-     * @covers ChangedEntitlement
      * @throws \JsonException
      * @throws \DateMalformedStringException
      */
@@ -166,10 +164,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     {
         $client = static::getClient();
 
-        // Enable remote sync
-        $this->getKoboDevice()->setUpstreamSync(true);
-        $this->getKoboProxyConfiguration()->setEnabled(true);
-        $this->getEntityManager()->flush();
+        $this->enableRemoteSync();
 
         $this->getKoboStoreProxy()->setClient($this->getMockClient('[{
                 "DeletedTag": {
