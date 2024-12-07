@@ -13,6 +13,17 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
     const MODEL = 'Kobo Libra H2O';
     const APP_VERSION = '4.38.21908';
 
+    public function testGetTests(): void{
+        $client = self::getClient();
+        $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
+
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/gettests');
+        self::assertResponseIsSuccessful();
+        $response = $this->getJsonResponse();
+        $this->assertSame('Success', $response['Result']??null);
+    }
+
+
     public function testPostEvent(): void
     {
         $body = [
