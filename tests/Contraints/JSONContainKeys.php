@@ -32,13 +32,11 @@ class JSONContainKeys extends Constraint
             throw new \InvalidArgumentException('JSON is iterable');
         }
 
-        if ($this->path !== null && is_array($other)) {
-            if (!array_key_exists($this->path, $other)) {
-                throw new \InvalidArgumentException(sprintf('Path %s exists', $this->path));
-            }
-
-            $data = $other[$this->path];
+        if (!is_array($other)) {
+            throw new \InvalidArgumentException('Expected array as JSON');
         }
+
+        $data = $this->extractDataFromPath($other);
 
         foreach ($this->keys as $key) {
             if (!isset($data[$key])) {
@@ -66,5 +64,18 @@ class JSONContainKeys extends Constraint
         }
 
         return sprintf('JSON contains all expected keys: %s', implode(', ', $this->keys));
+    }
+
+    private function extractDataFromPath(array $other): array
+    {
+        if ($this->path === null) {
+            return $other;
+        }
+
+        if (!array_key_exists($this->path, $other)) {
+            throw new \InvalidArgumentException(sprintf('Path %s exists', $this->path));
+        }
+
+        return $other[$this->path];
     }
 }
