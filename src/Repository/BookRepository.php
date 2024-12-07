@@ -200,6 +200,19 @@ class BookRepository extends ServiceEntityRepository
         return array_filter($items, static fn ($key) => in_array($key, $randed, true), ARRAY_FILTER_USE_KEY);
     }
 
+    public function findByUuid(string $uuid): ?Book
+    {
+        $qb = $this->getAllBooksQueryBuilder();
+        $qb->andWhere('book.uuid = :uuid')
+            ->setParameter('uuid', $uuid);
+
+        /** @var Book|null $book */
+        $book = $qb->getQuery()
+            ->getOneOrNullResult();
+
+        return $book;
+    }
+
     public function findByAuthor(string $author): mixed
     {
         $qb = $this->getAllBooksQueryBuilder();
