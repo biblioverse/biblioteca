@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Tests;
+
 use Psr\Clock\ClockInterface;
 
 class TestClock implements ClockInterface
 {
-
     private static ?\DateTimeImmutable $now = null;
 
     public function now(): \DateTimeImmutable

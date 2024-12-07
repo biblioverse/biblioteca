@@ -10,12 +10,14 @@ class ArrayHasNestedKey extends Constraint
     {
     }
 
-    public function matches($other): bool{
-        try{
+    public function matches($other): bool
+    {
+        try {
             $this->test($other);
-        }catch (\InvalidArgumentException $e){
+        } catch (\InvalidArgumentException $e) {
             return false;
         }
+
         return true;
     }
 
@@ -26,11 +28,11 @@ class ArrayHasNestedKey extends Constraint
      */
     public function test($other): void
     {
-        $evaluated = "";
+        $evaluated = '';
         $paths = explode('.', $this->path);
-        foreach($paths as $path){
+        foreach ($paths as $path) {
             assert(is_array($other), sprintf('Path %s should contain an array', $evaluated));
-            if(!isset($other[$path])) {
+            if (!isset($other[$path])) {
                 throw new \InvalidArgumentException(sprintf('Path %s exists', $this->path));
             }
             $evaluated .= sprintf('.%s', $path);
@@ -41,6 +43,6 @@ class ArrayHasNestedKey extends Constraint
 
     public function toString(): string
     {
-        return 'has nested key ' . $this->path;
+        return 'has nested key '.$this->path;
     }
 }

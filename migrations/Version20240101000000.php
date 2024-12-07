@@ -19,7 +19,7 @@ final class Version20240101000000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // We skip this migration if the table "book" is already created
-        if($this->tableExists($schema, 'book')){
+        if ($this->tableExists($schema, 'book')) {
             return;
         }
 
@@ -39,6 +39,5 @@ final class Version20240101000000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-
     }
 }

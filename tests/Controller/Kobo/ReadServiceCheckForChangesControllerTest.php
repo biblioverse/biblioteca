@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ReadServiceCheckForChangesControllerTest extends AbstractKoboControllerTest
 {
-    public function testCheckForChangesPost() : void
+    public function testCheckForChangesPost(): void
     {
         $client = static::getClient();
 

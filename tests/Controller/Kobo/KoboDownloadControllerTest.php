@@ -30,13 +30,12 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
         self::assertResponseHasHeader('Content-Length');
 
-        $expectedDisposition = "attachment; filename=book-1-".BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
+        $expectedDisposition = 'attachment; filename=book-1-'.BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
-
     }
 
-    public function testDownloadMissingBook(): void{
-
+    public function testDownloadMissingBook(): void
+    {
         $book = $this->getService(BookRepository::class)
             ->findByUuid(BookFixture::UUID_JUNGLE_BOOK);
         self::assertNotNull($book, 'Unable to load book');
@@ -64,7 +63,6 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
 
             self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
 
-
             $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, BookFixture::ID, MetadataResponseService::KEPUB_FORMAT));
             self::assertResponseStatusCodeSame(404); // We can not download kepub as the conversion is disabled
         } finally {
@@ -91,10 +89,9 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
         self::assertResponseHasHeader('Content-Length');
 
-        $expectedDisposition = "attachment; filename=book-1-".BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
+        $expectedDisposition = 'attachment; filename=book-1-'.BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
         $expectedDisposition = str_replace('.epub', '.kepub', $expectedDisposition);
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
-
     }
 
     private function findByIdAndKobo(int $bookId, KoboDevice $koboDevice): ?Book

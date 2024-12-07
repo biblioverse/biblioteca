@@ -6,12 +6,12 @@ use App\DataFixtures\KoboFixture;
 use App\Tests\Contraints\JSONContainKeys;
 use Symfony\Component\BrowserKit\Response;
 
-class KoboInitializationControllerTest  extends AbstractKoboControllerTest
+class KoboInitializationControllerTest extends AbstractKoboControllerTest
 {
     /**
      * @throws \JsonException
      */
-    public function testInitializationWith403Proxy() : void
+    public function testInitializationWith403Proxy(): void
     {
         $client = static::getClient();
 
@@ -28,7 +28,7 @@ class KoboInitializationControllerTest  extends AbstractKoboControllerTest
     /**
      * @throws \JsonException
      */
-    public function testInitializationWithProxy() : void
+    public function testInitializationWithProxy(): void
     {
         $client = static::getClient();
 
@@ -48,7 +48,7 @@ class KoboInitializationControllerTest  extends AbstractKoboControllerTest
     /**
      * @throws \JsonException
      */
-    public function testInitialization() : void
+    public function testInitialization(): void
     {
         $client = static::getClient();
 
@@ -56,26 +56,24 @@ class KoboInitializationControllerTest  extends AbstractKoboControllerTest
 
         /** @var Response|null $response */
         $response = $client?->getResponse();
-        if($response !== null && $response->getStatusCode() === 401){
+        if ($response !== null && $response->getStatusCode() === 401) {
             self::markTestSkipped('Kobo initialized via Proxy without credentials');
         }
         self::assertResponseIsSuccessful();
         self::assertResponseHasHeader('kobo-api-token');
 
         $content = file_get_contents(__DIR__.'/KoboInitializationControllerTest.json');
-        if($content === false) {
+        if ($content === false) {
             self::fail('Unable to read test data');
         }
         /** @var array<string|int, array|mixed>|false $expected */
         $expected = json_decode($content, true);
-        if(false === $expected) {
+        if (false === $expected) {
             self::fail('Unable to decode test data');
         }
 
-        $expectedKeys = array_keys((array)($expected['Resources']??[]));
+        $expectedKeys = array_keys((array) ($expected['Resources'] ?? []));
 
         self::assertThat(self::getJsonResponse(), new JSONContainKeys($expectedKeys, 'Resources'), 'Response does not contain all expected keys');
-
-
     }
 }

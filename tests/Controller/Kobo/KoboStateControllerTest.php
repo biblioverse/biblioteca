@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class KoboStateControllerTest extends AbstractKoboControllerTest
 {
-    public function testOpen() : void
+    public function testOpen(): void
     {
         $client = static::getClient();
         $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
@@ -37,7 +37,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
      * @dataProvider readingStatesProvider
      * @param ReadingStateCriteria $criteria
      */
-    public function testPutState(int $bookId, ReadingStates $readingStates, array $criteria) : void
+    public function testPutState(int $bookId, ReadingStates $readingStates, array $criteria): void
     {
         $client = static::getClient();
         $serializer = $this->getSerializer();
@@ -47,7 +47,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
 
         $json = $serializer->serialize($readingStates, 'json');
-        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [],[],[] , $json);
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [], [], [], $json);
 
         self::assertResponseIsSuccessful();
 
@@ -75,20 +75,20 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $state = new ReadingState();
         $state->lastModified = new \DateTimeImmutable();
         $state->currentBookmark = new Bookmark();
-        $state->currentBookmark->contentSourceProgressPercent = $state->currentBookmark->progressPercent =  $percent;
+        $state->currentBookmark->contentSourceProgressPercent = $state->currentBookmark->progressPercent = $percent;
         $state->currentBookmark->location = new ReadingStateLocation();
         $state->currentBookmark->location->source = BookFixture::BOOK_PAGE_REFERENCE;
         $state->currentBookmark->lastModified = new \DateTime();
         $state->entitlementId = $bookUuid;
         $state->statusInfo = new ReadingStateStatusInfo();
-        $state->statusInfo->status = match($percent) {
+        $state->statusInfo->status = match ($percent) {
             0 => ReadingStateStatusInfo::STATUS_READY_TO_READ,
             100 => ReadingStateStatusInfo::STATUS_FINISHED,
             default => ReadingStateStatusInfo::STATUS_READING,
         };
         $state->statusInfo->lastModified = $state->lastModified;
         $state->statistics = new ReadingStateStatistics();
-        $state->statistics->remainingTimeMinutes = (int) (100 * ($percent/100));
+        $state->statistics->remainingTimeMinutes = (int) (100 * ($percent / 100));
         $state->statistics->spentReadingMinutes = 100 - $state->statistics->remainingTimeMinutes;
         $state->statistics->lastModified = $state->lastModified;
 
@@ -108,7 +108,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
                     'book' => BookFixture::ID,
                     'readPages' => 15,
                     'finished' => false,
-                ]
+                ],
             ],
             [
                 BookFixture::ID,
@@ -117,9 +117,8 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
                     'book' => BookFixture::ID,
                     'readPages' => 30,
                     'finished' => true,
-                ]
+                ],
             ],
         ];
     }
-
 }

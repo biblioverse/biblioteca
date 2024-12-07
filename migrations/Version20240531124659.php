@@ -18,7 +18,7 @@ final class Version20240531124659 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(false === $this->tableExists($schema, 'kobo')){
+        if (false === $this->tableExists($schema, 'kobo')) {
             return;
         }
         // this up() migration is auto-generated, please modify it to your needs
@@ -36,12 +36,11 @@ final class Version20240531124659 extends AbstractMigration
         $this->addSql('ALTER TABLE kobo_synced_book ADD CONSTRAINT FK_2E18877462A5CBE FOREIGN KEY (kobo_device_id) REFERENCES kobo (id)');
         $this->addSql('CREATE INDEX IDX_2E18877462A5CBE ON kobo_synced_book (kobo_device_id)');
         $this->addSql('RENAME table kobo to kobo_device');
-
     }
 
     public function down(Schema $schema): void
     {
-        if(false === $this->tableExists($schema, 'kobo_device')){
+        if (false === $this->tableExists($schema, 'kobo_device')) {
             return;
         }
         // this down() migration is auto-generated, please modify it to your needs
