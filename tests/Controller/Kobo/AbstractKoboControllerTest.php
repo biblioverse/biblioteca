@@ -107,10 +107,10 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $service;
     }
 
-    protected function getMockClient(string $returnValue): ClientInterface
+    protected function getMockClient(string $returnValue, int $code = 200): ClientInterface
     {
         $mock = new MockHandler([
-            new \GuzzleHttp\Psr7\Response(200, ['Content-Type' => 'application/json'], $returnValue),
+            new \GuzzleHttp\Psr7\Response($code, ['Content-Type' => 'application/json'], $returnValue),
         ]);
 
         $handlerStack = HandlerStack::create($mock);

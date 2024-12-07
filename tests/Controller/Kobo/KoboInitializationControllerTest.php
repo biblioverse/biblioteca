@@ -8,6 +8,42 @@ use Symfony\Component\BrowserKit\Response;
 
 class KoboInitializationControllerTest  extends AbstractKoboControllerTest
 {
+    /**
+     * @throws \JsonException
+     */
+    public function testInitializationWith403Proxy() : void
+    {
+        $client = static::getClient();
+
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient('Access Denied', 403));
+
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/initialization');
+
+        self::assertResponseIsSuccessful();
+
+        self::assertThat(self::getJsonResponse(), new JSONContainKeys(['image_url_template'], 'Resources'), 'Response does not contain all expected keys');
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testInitializationWithProxy() : void
+    {
+        $client = static::getClient();
+
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient('{
+          "Resources": {
+            "newSetting": "you rocks"
+          }}'));
+
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/initialization');
+
+        self::assertResponseIsSuccessful();
+
+        self::assertThat(self::getJsonResponse(), new JSONContainKeys(['newSetting'], 'Resources'), 'Response does not contain all expected keys');
+    }
 
     /**
      * @throws \JsonException
