@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
@@ -9,8 +9,9 @@ use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Response\MetadataResponseService;
 use App\Repository\BookRepository;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 
-class KoboDownloadControllerTest extends AbstractKoboControllerTest
+class DownloadControllerTest extends AbstractKoboControllerTest
 {
     public function testDownload(): void
     {

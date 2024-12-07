@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
 use App\DataFixtures\ShelfFixture;
 use App\Entity\Shelf;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 
-class KoboTagControllerTest extends AbstractKoboControllerTest
+class TagControllerTest extends AbstractKoboControllerTest
 {
     public function testDelete(): void
     {
