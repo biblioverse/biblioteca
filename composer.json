@@ -143,6 +143,11 @@
       "Composer\\Config::disableProcessTimeout",
       "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
     ],
+    "lint": [
+      "@rector",
+      "@phpcs",
+      "@test-phpstan"
+    ],
     "test": [
       "@test-phpcs",
       "@test-phpstan",
