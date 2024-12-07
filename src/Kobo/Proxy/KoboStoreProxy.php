@@ -97,11 +97,13 @@ class KoboStoreProxy
 
         $client = $this->getClient($request);
 
-        $psrResponse = $client->send($psrRequest, [
-            'base_uri' => $hostname,
-            'http_errors' => false,
-            'connect_timeout' => 5,
-        ] + $config
+        $psrResponse = $client->send(
+            $psrRequest,
+            [
+                'base_uri' => $hostname,
+                'http_errors' => false,
+                'connect_timeout' => 5,
+            ] + $config
         );
 
         return $this->convertResponse($psrResponse, $config['stream'] ?? true);

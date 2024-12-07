@@ -32,8 +32,8 @@ class ImageController extends AbstractKoboController
         protected ShelfRepository $shelfRepository,
         protected LoggerInterface $logger,
         protected DownloadHelper $downloadHelper,
-        protected SyncResponseFactory $syncResponseFactory)
-    {
+        protected SyncResponseFactory $syncResponseFactory,
+    ) {
     }
 
     /**
