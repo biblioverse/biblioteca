@@ -10,8 +10,8 @@ class KoboProxyLoggerFactory
 {
     public function __construct(
         protected KoboProxyConfiguration $configuration,
-        protected LoggerInterface $koboProxyLogger)
-    {
+        protected LoggerInterface $koboProxyLogger,
+    ) {
     }
 
     public function create(string $accessToken): KoboProxyLogger

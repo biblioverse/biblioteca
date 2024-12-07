@@ -43,8 +43,10 @@ class DownloadControllerTest extends AbstractKoboControllerTest
 
         $client = self::getClient();
 
-        $client?->request('GET',
-            sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, $book->getId(), MetadataResponseService::KEPUB_FORMAT));
+        $client?->request(
+            'GET',
+            sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, $book->getId(), MetadataResponseService::KEPUB_FORMAT)
+        );
         self::assertResponseStatusCodeSame(403);
     }
 
