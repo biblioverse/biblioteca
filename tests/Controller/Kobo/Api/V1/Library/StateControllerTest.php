@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1\Library;
 
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
@@ -13,12 +13,13 @@ use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatistics;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int|null, 'finished': boolean}
  */
-class KoboStateControllerTest extends AbstractKoboControllerTest
+class StateControllerTest extends AbstractKoboControllerTest
 {
     public function testOpen(): void
     {

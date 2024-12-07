@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
 use App\Tests\Contraints\JSONContainKeys;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 use Symfony\Component\BrowserKit\Response;
 
-class KoboInitializationControllerTest extends AbstractKoboControllerTest
+class InitializationControllerTest extends AbstractKoboControllerTest
 {
     /**
      * @throws \JsonException
@@ -62,7 +63,7 @@ class KoboInitializationControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertResponseHasHeader('kobo-api-token');
 
-        $content = file_get_contents(__DIR__.'/KoboInitializationControllerTest.json');
+        $content = file_get_contents(__DIR__.'/InitializationControllerTest.json');
         if ($content === false) {
             self::fail('Unable to read test data');
         }

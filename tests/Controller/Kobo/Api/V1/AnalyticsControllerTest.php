@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 
-class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
+class AnalyticsControllerTest extends AbstractKoboControllerTest
 {
     public const SERIAL_NUMBER = 'N9413679432456';
     public const DEVICE_ID = '2a92bba197b1e0574a3f7d29cb2b05b399ab0d197e6b1aa230bfb75a920b14e7c';
