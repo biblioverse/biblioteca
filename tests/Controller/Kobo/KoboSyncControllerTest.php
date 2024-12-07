@@ -216,4 +216,16 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertThat($response, new AssertHasDownloadWithFormat(MetadataResponseService::KEPUB_FORMAT), 'Response is not a valid download response');
     }
+
+    public function testSyncControllerMetadataWithProxy(): void
+    {
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+        $this->getKoboStoreProxy()->setClient($this->getMockClient('-- fake result --'));
+        $this->enableRemoteSync();
+
+        $client = static::getClient();
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$unknownUuid.'/metadata');
+
+        self::assertResponseIsSuccessful();
+    }
 }
