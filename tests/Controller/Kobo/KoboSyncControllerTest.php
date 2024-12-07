@@ -170,7 +170,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $this->getKoboDevice()->setUpstreamSync(true);
         $this->getKoboProxyConfiguration()->setEnabled(true);
         $this->getEntityManager()->flush();
-        $this->getKoboDevice(true);
 
         $this->getKoboStoreProxy()->setClient($this->getMockClient('[{
                 "DeletedTag": {

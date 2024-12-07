@@ -20,7 +20,7 @@ class KoboTagControllerTest extends AbstractKoboControllerTest
         $client?->request('DELETE', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/tags/'.$shelf->getUuid());
 
         self::assertResponseIsSuccessful();
-        self::assertFalse($this->getKoboDevice(true)->getShelves()->contains($shelf), 'Shelf should NOT be associated with Kobo');
+        self::assertFalse($this->getKoboDevice()->getShelves()->contains($shelf), 'Shelf should NOT be associated with Kobo');
 
 
 
