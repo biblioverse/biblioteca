@@ -19,8 +19,25 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
 
         $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/gettests');
         self::assertResponseIsSuccessful();
-        $response = $this->getJsonResponse();
-        $this->assertSame('Success', $response['Result']??null);
+        $response = self::getJsonResponse();
+        self::assertSame('Success', $response['Result']??null);
+    }
+    public function testPostEventWithProxy(): void{
+        $client = self::getClient();
+        $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
+
+        $this->getKoboStoreProxy()->setClient($this->getMockClient("[
+                'Result' => 'Success',
+                'AcceptedEvents' => [
+                    '1eba5308-878a-4997-a7c4-80644a79f6da',
+                    '75a68185-ac29-4255-b7e2-c9be02cf85f5',
+                ],
+                'RejectedEvents' => new \stdClass(),
+        ]"));
+        $this->enableRemoteSync();
+
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/event');
+        self::assertResponseIsSuccessful();
     }
 
 
