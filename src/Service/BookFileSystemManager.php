@@ -27,7 +27,7 @@ class BookFileSystemManager
         private readonly string $bookFolderNamingFormat,
         private readonly string $bookFileNamingFormat,
         private readonly SluggerInterface $slugger,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
         if ($this->bookFolderNamingFormat === '') {
             throw new \RuntimeException('Could not get filename format');
@@ -800,7 +800,7 @@ class BookFileSystemManager
             $originalName = $file->getClientOriginalName();
             $explode = explode('.', $originalName);
             $ext = end($explode);
-            if (!in_array("*.".$ext, self::ALLOWED_FILE_EXTENSIONS, true)) {
+            if (!in_array('*.'.$ext, self::ALLOWED_FILE_EXTENSIONS, true)) {
                 throw new \InvalidArgumentException('File type not allowed');
             }
             $file->move($destination, $file->getClientOriginalName());

@@ -99,7 +99,7 @@ class BookManager
             if (!$ebook instanceof Ebook) {
                 throw new \RuntimeException('Could not read ebook');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $ebook = null;
 
             return [
