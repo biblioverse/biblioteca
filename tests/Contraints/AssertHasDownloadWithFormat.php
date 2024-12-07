@@ -14,7 +14,7 @@ class AssertHasDownloadWithFormat extends Constraint
     {
         try {
             $this->test($other);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             return false;
         }
 

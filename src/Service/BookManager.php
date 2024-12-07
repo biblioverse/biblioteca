@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class BookManager
 {
-    public function __construct(private BookFileSystemManagerInterface $fileSystemManager, private EntityManagerInterface $entityManager, private BookRepository $bookRepository)
+    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly EntityManagerInterface $entityManager, private readonly BookRepository $bookRepository)
     {
     }
 
@@ -99,7 +99,7 @@ class BookManager
             if (!$ebook instanceof Ebook) {
                 throw new \RuntimeException('Could not read ebook');
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $ebook = null;
 
             return [

@@ -41,7 +41,7 @@ class Book
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated;
+    private ?\DateTimeInterface $updated = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imagePath = null;
@@ -320,9 +320,7 @@ class Book
      */
     public function getAuthors(): array
     {
-        return array_map(static function ($item) {
-            return ucwords(strtolower($item), self::UCWORDS_SEPARATORS);
-        }, $this->authors);
+        return array_map(static fn ($item) => ucwords(strtolower($item), self::UCWORDS_SEPARATORS), $this->authors);
     }
 
     /**

@@ -20,7 +20,7 @@ class BookFilterType extends AbstractType
 {
     public const AUTOCOMPLETE_DELIMITER = '🪓';
 
-    public function __construct(private RouterInterface $router)
+    public function __construct(private readonly RouterInterface $router)
     {
     }
 
@@ -348,9 +348,7 @@ class BookFilterType extends AbstractType
                 $direction = 'ASC';
                 if ($orderByValue === null) {
                     $params = $qb->getParameters()->toArray();
-                    $params = array_filter($params, static function ($param) {
-                        return $param->getName() === 'serie0';
-                    });
+                    $params = array_filter($params, static fn ($param) => $param->getName() === 'serie0');
                     if ($params !== []) {
                         $orderByValue = 'serieIndex';
                     } else {

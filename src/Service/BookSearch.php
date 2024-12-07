@@ -11,7 +11,7 @@ use Kiwilan\Ebook\Models\BookAuthor;
  */
 class BookSearch
 {
-    public function __construct(private SpecificCollectionFinder $autocompleteBookFinder)
+    public function __construct(private readonly SpecificCollectionFinder $autocompleteBookFinder)
     {
     }
 

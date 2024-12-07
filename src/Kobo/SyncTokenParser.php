@@ -39,7 +39,7 @@ class SyncTokenParser
         }
         try {
             return new \DateTimeImmutable('@'.$timeStamp);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return null;
         }
     }
@@ -64,9 +64,7 @@ class SyncTokenParser
             $keysToKeepLowercase = array_map('strtolower', $resolver->getDefinedOptions());
 
             $params = $request->query->all();
-            $options = array_filter($params, function (string $key) use ($keysToKeepLowercase) {
-                return in_array(strtolower($key), $keysToKeepLowercase, true);
-            }, ARRAY_FILTER_USE_KEY);
+            $options = array_filter($params, fn (string $key) => in_array(strtolower($key), $keysToKeepLowercase, true), ARRAY_FILTER_USE_KEY);
             $syncToken->filters = $resolver->resolve($options);
         } catch (\Throwable $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);

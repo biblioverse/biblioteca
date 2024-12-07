@@ -19,14 +19,11 @@ use Symfony\Bundle\SecurityBundle\Security;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    private Security $security;
-
     public function __construct(
         ManagerRegistry $registry,
-        Security $security,
+        private readonly Security $security,
     ) {
         parent::__construct($registry, Book::class);
-        $this->security = $security;
     }
 
     public function getAllBooksQueryBuilder(): QueryBuilder
@@ -351,7 +348,7 @@ class BookRepository extends ServiceEntityRepository
         $results = [];
         foreach ($intermediateResults as $result) {
             foreach ($result['item'] ?? [] as $item) {
-                $key = ucwords(strtolower($item), Book::UCWORDS_SEPARATORS);
+                $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {
                     $results[$key] = [
                         'item' => $key,

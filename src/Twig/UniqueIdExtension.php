@@ -10,7 +10,7 @@ class UniqueIdExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('unique_id', [$this, 'uniqueID']),
+            new TwigFunction('unique_id', $this->uniqueID(...)),
         ];
     }
 

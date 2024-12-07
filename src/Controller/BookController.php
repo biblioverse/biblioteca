@@ -71,7 +71,7 @@ class BookController extends AbstractController
                 if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
                     $index = '?';
                 }
-                $serie[$index] = $serie[$index] ?? [];
+                $serie[$index] ??= [];
                 $serie[$index][] = $bookInSerie;
             }
             $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));

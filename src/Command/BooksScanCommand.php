@@ -19,9 +19,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class BooksScanCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private BookManager $bookManager,
-        private BookFileSystemManagerInterface $fileSystemManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly BookManager $bookManager,
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
     ) {
         parent::__construct();
     }
