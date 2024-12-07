@@ -8,6 +8,7 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Response\MetadataResponseService;
+use App\Repository\BookRepository;
 
 class KoboDownloadControllerTest extends AbstractKoboControllerTest
 {
@@ -32,6 +33,19 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
         $expectedDisposition = "attachment; filename=book-1-".BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
 
+    }
+
+    public function testDownloadMissingBook(): void{
+
+        $book = $this->getService(BookRepository::class)
+            ->findByUuid(BookFixture::UUID_JUNGLE_BOOK);
+        self::assertNotNull($book, 'Unable to load book');
+
+        $client = self::getClient();
+
+        $client?->request('GET',
+            sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, $book->getId(), MetadataResponseService::KEPUB_FORMAT));
+        self::assertResponseStatusCodeSame(403);
     }
 
     public function testDownloadKepubFailed(): void
