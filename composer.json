@@ -133,15 +133,15 @@
     ],
     "test-phpunit": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
+      "env XDEBUG_MODE=off php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
     ],
     "test-phpunit-coverage": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=coverage ./vendor/bin/phpunit --colors=always --coverage-html=tests/coverage"
+      "env XDEBUG_MODE=coverage php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --coverage-html=tests/coverage"
     ],
     "test-phpunit-xdebug": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 ./vendor/bin/phpunit --colors=always"
+      "env XDEBUG_MODE=debug php XDEBUG_TRIGGER=1 -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
     ],
     "test": [
       "@test-phpcs",
