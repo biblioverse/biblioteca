@@ -24,8 +24,17 @@ jobs:
           typesense-version: ${{ matrix.typesense-version }}
           typesense-api-key: xyz
       - name: Curl Typesense
-        run: sleep 10 && curl http://localhost:8108/health
-
+        run: |
+          max_retries=10
+          attempt=0
+          until curl --silent --fail http://localhost:8108/health; do
+            attempt=$((attempt + 1))
+            if [ "$attempt" -ge "$max_retries" ]; then
+              echo "Typesense service did not respond after $max_retries attempts. Exiting."
+              exit 1
+            fi
+            sleep 1
+          done
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
