@@ -456,7 +456,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
         ], [], $server);
 
         // Make sure we define Kobo's device_id and model
-        $kobo =  $this->getKoboDevice(true);
+        $kobo =  $this->getKoboDevice();
         self::assertSame(self::DEVICE_ID,$kobo->getDeviceId());
         self::assertSame(self::MODEL,$kobo->getModel());
 

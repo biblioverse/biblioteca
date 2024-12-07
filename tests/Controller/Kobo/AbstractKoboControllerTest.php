@@ -31,16 +31,15 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         self::createClient();
     }
 
-    public function getKoboDevice(bool $refresh = false): KoboDevice
+    public function getKoboDevice(): KoboDevice
     {
-        static $koboDevice = null;
-        if($refresh && $koboDevice instanceof KoboDevice){
-            $this->getEntityManager()->refresh($koboDevice);
+        $repository = $this->getEntityManager()->getRepository(KoboDevice::class);
+        $kobo = $repository->findOneBy(['id' => 1]);
+        if($kobo === null) {
+            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
         }
-        if(!$koboDevice instanceof KoboDevice) {
-            $koboDevice = $this->loadKoboDevice();
-        }
-        return $koboDevice;
+
+        return $kobo;
     }
 
     protected function getBook(): Book
@@ -69,17 +68,6 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         }catch (\JsonException $exception){
             throw new \RuntimeException('Invalid JSON', 0, $exception);
         }
-    }
-
-    private function loadKoboDevice(): KoboDevice
-    {
-        $repository = $this->getEntityManager()->getRepository(KoboDevice::class);
-        $kobo = $repository->findOneBy(['id' => 1]);
-        if($kobo === null) {
-            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
-        }
-
-        return $kobo;
     }
 
     protected function getKepubifyEnabler(): KepubifyEnabler
