@@ -200,3 +200,15 @@ books:
     imageFilename: "AChristmasCarol.jpg"
     bookFilename: "fake-AChristmasCarol.epub"
     pageNumber: 50
+  - title: "The Jungle Book"
+    uuid: "6b6a0c48-d0e6-4722-8b43-d50e612dc240"
+    authors:
+      - "Rudyard Kipling"
+    publishDate: "1894-05-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "TheJungleBook.jpg"
+    bookFilename: "fake-TheJungleBook.epub"
+    pageNumber: 189
