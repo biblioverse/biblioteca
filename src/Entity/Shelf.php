@@ -58,6 +58,7 @@ class Shelf
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->koboDevices = new ArrayCollection();
         $this->uuid = $this->generateUuid();
     }
 
