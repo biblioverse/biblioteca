@@ -39,12 +39,12 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
-            'NewEntitlement' => BookFixture::NUMBER_OF_YAML_BOOKS,
+            'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
             'NewTag' => 1
         ]), 'Response is not a valid sync response');
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
-        self::assertSame(BookFixture::NUMBER_OF_YAML_BOOKS, $count, 'Number of synced book is invalid');
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'Number of synced book is invalid');
     }
 
     public function testSyncControllerWithoutForce() : void
@@ -55,12 +55,12 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
-            'NewEntitlement' => BookFixture::NUMBER_OF_YAML_BOOKS,
+            'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
             'NewTag' => 1
         ]), 'Response is not a valid sync response');
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
-        self::assertSame(BookFixture::NUMBER_OF_YAML_BOOKS, $count, 'Number of synced book is invalid');
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'Number of synced book is invalid');
     }
 
     /**
@@ -71,7 +71,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $client = static::getClient();
 
         $perPage = 7;
-        $numberOfPages = (int)ceil(BookFixture::NUMBER_OF_YAML_BOOKS / $perPage);
+        $numberOfPages = (int)ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
 
         $syncToken = new SyncToken();
         $syncToken->lastCreated = new \DateTime('now');
@@ -106,7 +106,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         }
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
-        self::assertSame(BookFixture::NUMBER_OF_YAML_BOOKS, $count, 'Number of synced book is invalid');
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'Number of synced book is invalid');
 
         // Calling one more time should have an empty result
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
@@ -181,7 +181,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
-            'NewEntitlement' => BookFixture::NUMBER_OF_YAML_BOOKS,
+            'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
             'NewTag' => 1,
             'DeletedTag' => 1
         ]), 'Response is not a valid sync response');

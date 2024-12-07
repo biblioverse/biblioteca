@@ -21,7 +21,7 @@ class ShelfFixture extends Fixture implements DependentFixtureInterface
         $shelf->setUser($this->getUser());
         $this->getBook()->addShelf($shelf);
 
-        foreach (range(0, BookFixture::NUMBER_OF_YAML_BOOKS - 1) as $index) {
+        foreach (range(0, BookFixture::NUMBER_OF_OWNED_YAML_BOOKS - 1) as $index) {
             $book = $this->getReference('book-'.$index, Book::class);
             $book->addShelf($shelf);
         }
