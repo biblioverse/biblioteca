@@ -8,7 +8,7 @@ use App\Entity\Shelf;
 
 class KoboTagControllerTest extends AbstractKoboControllerTest
 {
-    public function testDelete() : void
+    public function testDelete(): void
     {
         $client = static::getClient();
 
@@ -22,8 +22,6 @@ class KoboTagControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertFalse($this->getKoboDevice()->getShelves()->contains($shelf), 'Shelf should NOT be associated with Kobo');
 
-
-
         // Re-add the shelf to the Kobo
         $shelf->addKoboDevice($this->getKoboDevice());
         $this->getEntityManager()->flush();
@@ -33,6 +31,4 @@ class KoboTagControllerTest extends AbstractKoboControllerTest
     {
         return $this->getEntityManager()->getRepository(Shelf::class)->findOneBy(['name' => $name]);
     }
-
-
 }

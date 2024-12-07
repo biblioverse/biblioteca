@@ -15,7 +15,6 @@ use App\Tests\TestClock;
 
 class KoboSyncControllerTest extends AbstractKoboControllerTest
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,7 +30,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         parent::tearDown();
     }
 
-    public function testSyncControllerWithForce() : void
+    public function testSyncControllerWithForce(): void
     {
         $client = static::getClient();
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?force=1');
@@ -40,14 +39,14 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
             'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
-            'NewTag' => 1
+            'NewTag' => 1,
         ]), 'Response is not a valid sync response');
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'Number of synced book is invalid');
     }
 
-    public function testSyncControllerWithoutForce() : void
+    public function testSyncControllerWithoutForce(): void
     {
         $client = static::getClient();
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync');
@@ -56,7 +55,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
             'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
-            'NewTag' => 1
+            'NewTag' => 1,
         ]), 'Response is not a valid sync response');
 
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
@@ -66,28 +65,28 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     /**
      * @throws \JsonException
      */
-    public function testSyncControllerPaginated() : void
+    public function testSyncControllerPaginated(): void
     {
         $client = static::getClient();
 
         $perPage = 7;
-        $numberOfPages = (int)ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
+        $numberOfPages = (int) ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
 
         $syncToken = new SyncToken();
         $syncToken->lastCreated = new \DateTime('now');
         $syncToken->lastModified = null;
 
-        foreach(range(1, $numberOfPages) as $pageNum) {
+        foreach (range(1, $numberOfPages) as $pageNum) {
             // Build the sync-token header
             $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
 
-            $client?->request('GET', '/kobo/' .KoboFixture::ACCESS_KEY . '/v1/library/sync?per_page=' . $perPage, [], [], $headers);
+            $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage, [], [], $headers);
 
             $response = self::getJsonResponse();
             self::assertResponseIsSuccessful();
 
             // We have 20 books, with 7 book per page, we do 3 calls that have respectively 7, 7 and 6 books
-            self::assertThat($response, new JSONIsValidSyncResponse(match($pageNum){
+            self::assertThat($response, new JSONIsValidSyncResponse(match ($pageNum) {
                 1 => [
                     'NewTag' => 1,
                     'NewEntitlement' => 7,
@@ -110,18 +109,17 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
         // Calling one more time should have an empty result
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
-        $client?->request('GET', '/kobo/' . KoboFixture::ACCESS_KEY . '/v1/library/sync?per_page=' . $perPage, [], [], $headers);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage, [], [], $headers);
         self::assertResponseIsSuccessful();
-        self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([], $numberOfPages+1));
-
-
+        self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([], $numberOfPages + 1));
     }
 
     /**
      * @throws \JsonException
      * @throws \DateMalformedStringException
      */
-    public function testSyncControllerEdited() : void{
+    public function testSyncControllerEdited(): void
+    {
         $client = static::getClient();
 
         // Create an old sync token
@@ -134,14 +132,14 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
 
         // Sync all the books
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
-        $client?->request('GET', '/kobo/' . KoboFixture::ACCESS_KEY . '/v1/library/sync', [], [], $headers);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
         self::assertResponseIsSuccessful();
 
         // Edit the book detail
         $clock->setTime($clock->now()->modify('+ 1 hour'));
         $book = $this->getBook();
         $slug = $book->getSlug();
-        $book->setSlug($slug."..");
+        $book->setSlug($slug.'..');
         $this->getEntityManager()->flush();
         $book->setSlug($slug);
         $this->getEntityManager()->flush();
@@ -150,7 +148,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         $clock->setTime(null);
 
         // Make sure the book has changed.
-        $client?->request('GET', '/kobo/' . KoboFixture::ACCESS_KEY . '/v1/library/sync', [], [], $headers);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
         self::assertResponseIsSuccessful();
         self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([
             'ChangedEntitlement' => 1,
@@ -159,8 +157,7 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertResponseHeaderSame(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, 'done', 'x-kobo-sync is invalid');
     }
 
-
-    public function testSyncControllerWithRemote() : void
+    public function testSyncControllerWithRemote(): void
     {
         $client = static::getClient();
 
@@ -175,7 +172,6 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
                 }
             }]'));
 
-
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync');
 
         $response = self::getJsonResponse();
@@ -183,20 +179,20 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
         self::assertThat($response, new JSONIsValidSyncResponse([
             'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
             'NewTag' => 1,
-            'DeletedTag' => 1
+            'DeletedTag' => 1,
         ]), 'Response is not a valid sync response');
 
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();
     }
 
-    public function testSyncControllerMetadata() : void
+    public function testSyncControllerMetadata(): void
     {
         $uuid = $this->getBook()->getUuid();
         $client = static::getClient();
         $this->getKepubifyEnabler()->disable();
 
-        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$uuid."/metadata");
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$uuid.'/metadata');
 
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
@@ -208,13 +204,13 @@ class KoboSyncControllerTest extends AbstractKoboControllerTest
     /**
      * @throws \JsonException
      */
-    public function testSyncControllerMetadataWithConversion() : void
+    public function testSyncControllerMetadataWithConversion(): void
     {
         $uuid = $this->getBook()->getUuid();
         $client = static::getClient();
         self::assertTrue($this->getKepubifyEnabler()->isEnabled());
 
-        $client?->request('GET', '/kobo/'. KoboFixture::ACCESS_KEY.'/v1/library/'.$uuid."/metadata");
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$uuid.'/metadata');
 
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();

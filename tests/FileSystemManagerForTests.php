@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Tests;
 
 use App\Service\BookFileSystemManager;
@@ -13,7 +14,7 @@ class FileSystemManagerForTests extends BookFileSystemManager
         SluggerInterface $slugger,
         LoggerInterface $logger,
         protected string $publicDirectory,
-    ){
+    ) {
         parent::__construct(
             $security,
             $publicDirectory,
