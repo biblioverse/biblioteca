@@ -109,8 +109,8 @@ class DefaultController extends AbstractController
     #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]
     public function timeline(?string $type, ?string $year, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
     {
-        $redirectType = $type === null ? 'all' : $type;
-        $redirectYear = $year === null ? date('Y') : $year;
+        $redirectType = $type ?? 'all';
+        $redirectYear = $year ?? date('Y');
         if ($redirectYear !== $year || $redirectType !== $type) {
             return $this->redirectToRoute('app_timeline', ['type' => $redirectType, 'year' => $redirectYear]);
         }

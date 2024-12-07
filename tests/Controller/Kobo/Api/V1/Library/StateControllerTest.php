@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1\Library;
 
 use App\DataFixtures\BookFixture;
+use App\DataFixtures\KoboFixture;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Kobo\Request\Bookmark;
@@ -11,14 +12,16 @@ use App\Kobo\Request\ReadingStateLocation;
 use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatistics;
 use App\Kobo\Request\ReadingStateStatusInfo;
+use App\Kobo\Response\StateResponse;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int, 'finished': boolean}
+ * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int|null, 'finished': boolean}
  */
-class KoboStateControllerTest extends AbstractKoboControllerTest
+class StateControllerTest extends AbstractKoboControllerTest
 {
-    public function testOpen() : void
+    public function testOpen(): void
     {
         $client = static::getClient();
         $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
@@ -26,17 +29,30 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $book = $this->getBookById(BookFixture::ID);
         self::assertNotNull($book, 'Book '.BookFixture::ID.' not found');
 
-        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/library/'.$book->getUuid().'/state');
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$book->getUuid().'/state');
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Connection', 'keep-alive');
+    }
+
+    public function testGetStateWithProxy(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient($this->getStateResponseString($unknownUuid)));
+
+        $client = static::getClient();
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/'.$unknownUuid.'/state');
+
+        self::assertResponseStatusCodeSame(307);
     }
 
     /**
      * @dataProvider readingStatesProvider
      * @param ReadingStateCriteria $criteria
      */
-    public function testPutState(int $bookId, ReadingStates $readingStates, array $criteria) : void
+    public function testPutState(int $bookId, ReadingStates $readingStates, array $criteria): void
     {
         $client = static::getClient();
         $serializer = $this->getSerializer();
@@ -46,7 +62,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
 
         $json = $serializer->serialize($readingStates, 'json');
-        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', $this->accessKey, $book->getUuid()), [],[],[] , $json);
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [], [], [], $json);
 
         self::assertResponseIsSuccessful();
 
@@ -67,6 +83,33 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         return $service;
     }
 
+    public function testPutStateWithProxy(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+
+        $client = self::getClient();
+
+        $this->enableRemoteSync();
+        $this->getKoboStoreProxy()->setClient($this->getMockClient($this->getStateResponseString($unknownUuid)));
+
+        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testPutStateUnknownBook(): void
+    {
+        // Take a book uuid that does not exist locally
+        $unknownUuid = str_replace('0', 'b', BookFixture::UUID_JUNGLE_BOOK);
+
+        $client = self::getClient();
+
+        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
+        self::assertResponseStatusCodeSame(404);
+    }
+
     private function getReadingStates(string $bookUuid, int $percent = 50): ReadingStates
     {
         assert($percent >= 0 && $percent <= 100, 'Percent must be between 0 and 100');
@@ -74,20 +117,20 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
         $state = new ReadingState();
         $state->lastModified = new \DateTimeImmutable();
         $state->currentBookmark = new Bookmark();
-        $state->currentBookmark->contentSourceProgressPercent = $state->currentBookmark->progressPercent =  $percent;
+        $state->currentBookmark->contentSourceProgressPercent = $state->currentBookmark->progressPercent = $percent;
         $state->currentBookmark->location = new ReadingStateLocation();
         $state->currentBookmark->location->source = BookFixture::BOOK_PAGE_REFERENCE;
         $state->currentBookmark->lastModified = new \DateTime();
         $state->entitlementId = $bookUuid;
         $state->statusInfo = new ReadingStateStatusInfo();
-        $state->statusInfo->status = match($percent) {
+        $state->statusInfo->status = match ($percent) {
             0 => ReadingStateStatusInfo::STATUS_READY_TO_READ,
             100 => ReadingStateStatusInfo::STATUS_FINISHED,
             default => ReadingStateStatusInfo::STATUS_READING,
         };
         $state->statusInfo->lastModified = $state->lastModified;
         $state->statistics = new ReadingStateStatistics();
-        $state->statistics->remainingTimeMinutes = (int) (100 * ($percent/100));
+        $state->statistics->remainingTimeMinutes = (int) (100 * ($percent / 100));
         $state->statistics->spentReadingMinutes = 100 - $state->statistics->remainingTimeMinutes;
         $state->statistics->lastModified = $state->lastModified;
 
@@ -107,7 +150,7 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
                     'book' => BookFixture::ID,
                     'readPages' => 15,
                     'finished' => false,
-                ]
+                ],
             ],
             [
                 BookFixture::ID,
@@ -116,9 +159,27 @@ class KoboStateControllerTest extends AbstractKoboControllerTest
                     'book' => BookFixture::ID,
                     'readPages' => 30,
                     'finished' => true,
-                ]
+                ],
+            ],
+            [
+                BookFixture::ID,
+                $this->getReadingStates(BookFixture::UUID, 0),
+                [
+                    'book' => BookFixture::ID,
+                    'readPages' => null,
+                    'finished' => false,
+                ],
             ],
         ];
     }
 
+    private function getStateResponseString(Book|string $unknownUuid): string
+    {
+        $content = (new StateResponse($unknownUuid))->getContent();
+        if ($content === false) {
+            throw new \RuntimeException('Unable to generate a state response');
+        }
+
+        return $content;
+    }
 }

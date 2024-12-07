@@ -24,30 +24,6 @@ class ShelfRepository extends ServiceEntityRepository
         parent::__construct($registry, Shelf::class);
     }
 
-    //    /**
-    //     * @return Shelf[] Returns an array of Shelf objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Shelf
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function findByKoboAndId(KoboDevice $koboDevice, string $shelfId): ?Shelf
     {
         $qb = $this->createQueryBuilder('shelf')
@@ -125,6 +101,23 @@ class ShelfRepository extends ServiceEntityRepository
         $result = $qb->getQuery()->getOneOrNullResult();
 
         return $result;
+    }
+
+    /**
+     * @return int Number of affected rows
+     */
+    public function deleteByName(string $name): int
+    {
+        $query = $this->createQueryBuilder('shelf')
+            ->where('shelf.name = :name')
+            ->setParameter('name', $name)
+            ->delete()
+            ->getQuery();
+
+        /** @var int $nbAffectedRows */
+        $nbAffectedRows = $query->getSingleScalarResult();
+
+        return $nbAffectedRows;
     }
 
     public function flush(): void

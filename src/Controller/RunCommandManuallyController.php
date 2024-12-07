@@ -26,9 +26,7 @@ class RunCommandManuallyController extends AbstractController
     #[Route('/admin/commands/run/{name}', name: 'run_command')]
     public function run(string $name): Response
     {
-        $commands = array_filter($this->getCommands(), function (array $command) use ($name) {
-            return $command['action'] == $name;
-        });
+        $commands = array_filter($this->getCommands(), fn (array $command) => $command['action'] == $name);
         if (count($commands) < 1) {
             throw $this->createNotFoundException(sprintf('Command "%s" does not exist.', $name));
         }

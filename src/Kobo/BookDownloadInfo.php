@@ -4,7 +4,7 @@ namespace App\Kobo;
 
 class BookDownloadInfo
 {
-    public function __construct(private int $size, private string $url)
+    public function __construct(private readonly int $size, private readonly string $url)
     {
     }
 
