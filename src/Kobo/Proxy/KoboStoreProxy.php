@@ -73,11 +73,11 @@ class KoboStoreProxy
      */
     public function proxyOrRedirect(Request $request, array $options = []): Response
     {
-        $this->assertEnabled();
-
         if ($request->isMethod('GET')) {
             return new RedirectResponse((string) $this->getTransformedUrl($request), Response::HTTP_TEMPORARY_REDIRECT);
         }
+
+        $this->assertEnabled();
 
         return $this->proxy($request, $options);
     }
