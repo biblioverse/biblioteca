@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\BookFixture;
+use App\DataFixtures\KoboFixture;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
@@ -22,7 +23,7 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
 
         self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
 
-        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', $this->accessKey, BookFixture::ID, 'epub'));
+        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, BookFixture::ID, 'epub'));
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
@@ -50,7 +51,7 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
             self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
 
 
-            $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', $this->accessKey, BookFixture::ID, MetadataResponseService::KEPUB_FORMAT));
+            $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, BookFixture::ID, MetadataResponseService::KEPUB_FORMAT));
             self::assertResponseStatusCodeSame(404); // We can not download kepub as the conversion is disabled
         } finally {
             // Re-enable Kepubify conversion for other tests
@@ -70,7 +71,7 @@ class KoboDownloadControllerTest extends AbstractKoboControllerTest
 
         self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
 
-        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.'.MetadataResponseService::KEPUB_FORMAT, $this->accessKey, BookFixture::ID));
+        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.'.MetadataResponseService::KEPUB_FORMAT, KoboFixture::ACCESS_KEY, BookFixture::ID));
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');

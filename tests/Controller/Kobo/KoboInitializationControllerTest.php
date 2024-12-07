@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Kobo;
 
+use App\DataFixtures\KoboFixture;
 use App\Tests\Contraints\JSONContainKeys;
 use Symfony\Component\BrowserKit\Response;
 
@@ -15,7 +16,7 @@ class KoboInitializationControllerTest  extends AbstractKoboControllerTest
     {
         $client = static::getClient();
 
-        $client?->request('GET', '/kobo/'.$this->accessKey.'/v1/initialization');
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/initialization');
 
         /** @var Response|null $response */
         $response = $client?->getResponse();

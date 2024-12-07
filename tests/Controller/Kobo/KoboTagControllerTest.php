@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Kobo;
 
+use App\DataFixtures\KoboFixture;
 use App\DataFixtures\ShelfFixture;
 use App\Entity\Shelf;
 
@@ -16,7 +17,7 @@ class KoboTagControllerTest extends AbstractKoboControllerTest
 
         self::assertTrue($this->getKoboDevice()->getShelves()->contains($shelf), 'Shelf should be associated with Kobo');
 
-        $client?->request('DELETE', '/kobo/'.$this->accessKey.'/v1/library/tags/'.$shelf->getUuid());
+        $client?->request('DELETE', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/tags/'.$shelf->getUuid());
 
         self::assertResponseIsSuccessful();
         self::assertFalse($this->getKoboDevice(true)->getShelves()->contains($shelf), 'Shelf should NOT be associated with Kobo');

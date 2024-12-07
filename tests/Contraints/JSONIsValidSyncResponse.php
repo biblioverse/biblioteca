@@ -66,6 +66,10 @@ class JSONIsValidSyncResponse extends Constraint
             $count[$type] = ($count[$type] ?? 0) + 1;
          }
 
+        foreach(self::KNOWN_TYPES as $type){
+            (new IsIdentical($this->expectedKeysCount[$type]?? 0))->evaluate($count[$type]??0, sprintf('The number for %s doesnt matches', $type));
+        }
+
         asort($count);
         asort($this->expectedKeysCount);
 
