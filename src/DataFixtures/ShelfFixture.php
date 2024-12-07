@@ -14,6 +14,8 @@ class ShelfFixture extends Fixture implements DependentFixtureInterface
     public const SHELF_REFERENCE = 'shelf';
     public const SHELF_NAME = 'test shelf';
 
+    public const UNKNOWN_UUID = 'b6fa5325-13db-4e2e-adb3-8849bb9abd23';
+
     public function load(ObjectManager $manager): void
     {
         $shelf = new Shelf();
