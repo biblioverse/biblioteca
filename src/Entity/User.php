@@ -110,12 +110,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookmarkUser::class, orphanRemoval: true)]
     private Collection $bookmarkUsers;
 
+    /**
+     * @var Collection<int, OpdsAccess>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: OpdsAccess::class, orphanRemoval: true)]
+    private Collection $opdsAccesses;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
         $this->shelves = new ArrayCollection();
         $this->kobos = new ArrayCollection();
         $this->bookmarkUsers = new ArrayCollection();
+        $this->opdsAccesses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -484,6 +491,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBookmarkForBook(Book $book): self
     {
         $this->getBookmarkForBook($book)?->setUser(null)->setBook(null);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OpdsAccess>
+     */
+    public function getOpdsAccesses(): Collection
+    {
+        return $this->opdsAccesses;
+    }
+
+    public function addOpdsAccess(OpdsAccess $opdsAccess): static
+    {
+        if (!$this->opdsAccesses->contains($opdsAccess)) {
+            $this->opdsAccesses->add($opdsAccess);
+            $opdsAccess->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpdsAccess(OpdsAccess $opdsAccess): static
+    {
+        if ($this->opdsAccesses->removeElement($opdsAccess)) {
+            // set the owning side to null (unless already changed)
+            if ($opdsAccess->getUser() === $this) {
+                $opdsAccess->setUser(null);
+            }
+        }
 
         return $this;
     }

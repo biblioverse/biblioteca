@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}OPDS Access Tokens{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for opds_access in opds_accesses %}
+            <tr>
+                <td>
+                    <strong>{{ opds_access.token }}</strong><br>
+                    <small>OPDS Catalog: {{ url('opds_start',{'accessKey':opds_access.token}) }}</small>
+                </td>
+                <td>
+                    <a href="{{ path('app_opds_access_delete', {'id': opds_access.id}) }}" class="btn btn-sm">Remove token</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_opds_access_new') }}" class="btn btn-success">Create new</a>
+{% endblock %}
