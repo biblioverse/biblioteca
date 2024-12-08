@@ -49,7 +49,7 @@
             <td>
                 {% include themedTemplate('book/_interaction.html.twig') %}
 
-                {% if not book.verified %}
+                {% if not book.verified and is_granted('RELOCATE', book) %}
                     {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
                     <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
                 {% endif %}

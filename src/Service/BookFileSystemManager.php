@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Security\Voter\RelocationVoter;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
@@ -261,6 +262,10 @@ class BookFileSystemManager
 
     public function renameFiles(Book $book): Book
     {
+        if (!$this->security->isGranted(RelocationVoter::RELOCATE, $book)) {
+            throw new \RuntimeException('You are not allowed to relocate this book');
+        }
+
         $filesystem = new Filesystem();
 
         if ($book->getBookPath().'/' !== $this->getCalculatedFilePath($book, false)) {
