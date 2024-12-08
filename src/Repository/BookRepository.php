@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use App\Entity\KoboDevice;
+use App\Entity\User;
 use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -28,10 +29,18 @@ class BookRepository extends ServiceEntityRepository
 
     public function getAllBooksQueryBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder('book')
+        $user = $this->security->getUser();
+        $qb = $this->createQueryBuilder('book')
             ->select('book')
             ->leftJoin('book.bookInteractions', 'bookInteraction', 'WITH', 'bookInteraction.user=:user')
-            ->setParameter('user', $this->security->getUser());
+            ->setParameter('user', $user);
+
+        if ($user instanceof User) {
+            $qb->andWhere('COALESCE(book.ageCategory,1) <= COALESCE(:ageCategory,10)');
+            $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
+        }
+
+        return $qb;
     }
 
     public function getReadBooks(?string $year, string $type): QueryBuilder
@@ -216,6 +225,12 @@ class BookRepository extends ServiceEntityRepository
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
+        }
+
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $qb->andWhere('COALESCE(book.ageCategory,1) <= COALESCE(:ageCategory,10)');
+            $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
         }
 
         return $qb->getQuery()->getResult();

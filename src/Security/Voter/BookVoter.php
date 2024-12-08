@@ -3,9 +3,9 @@
 namespace App\Security\Voter;
 
 use App\Entity\Book;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class BookVoter extends Voter
 {
@@ -22,19 +22,19 @@ class BookVoter extends Voter
     {
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
+        if (!$subject instanceof Book) {
+            return false;
+        }
+
         switch ($attribute) {
             case self::EDIT:
-                if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-                    return true;
-                }
-                break;
+                return in_array('ROLE_ADMIN', $user->getRoles(), true);
             case self::VIEW:
-                return true;
+                return $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory();
         }
 
         return false;
