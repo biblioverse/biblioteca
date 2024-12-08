@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'books:relocate',
@@ -19,16 +20,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksRelocateCommand extends Command
 {
-    private BookRepository $bookRepository;
-    private EntityManagerInterface $entityManager;
-    private BookFileSystemManager $fileSystemManager;
-
-    public function __construct(BookFileSystemManager $fileSystemManager, BookRepository $bookRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private BookFileSystemManager $fileSystemManager,
+        private BookRepository $bookRepository,
+        private EntityManagerInterface $entityManager,
+        #[Autowire(param: 'ALLOW_BOOK_RELOCATION')]
+        private bool $allowBookRelocation,
+    ) {
         parent::__construct();
-        $this->bookRepository = $bookRepository;
-        $this->entityManager = $entityManager;
-        $this->fileSystemManager = $fileSystemManager;
     }
 
     protected function configure(): void
@@ -42,6 +41,12 @@ class BooksRelocateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        if (!$this->allowBookRelocation) {
+            $io->error('Book relocation is not allowed in .env');
+
+            return Command::FAILURE;
+        }
 
         $allBooks = $this->bookRepository->findAll();
 
