@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
+use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManager;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
@@ -332,6 +333,9 @@ class BookController extends AbstractController
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
     public function relocate(Request $request, Book $book, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
+            throw $this->createAccessDeniedException('Book relocation is not allowed');
+        }
         $book = $fileSystemManager->renameFiles($book);
         $entityManager->persist($book);
         $entityManager->flush();
