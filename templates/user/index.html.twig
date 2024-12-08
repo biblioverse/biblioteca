@@ -8,6 +8,7 @@
             <tr>
                 <th>Username</th>
                 <th>Roles</th>
+                <th>Max Age Category</th>
                 <th>Last Login</th>
             </tr>
         </thead>
@@ -19,6 +20,11 @@
                 </td>
                 <td>
                     <small>{{ user.roles|join(', ') }}</small>
+                </td>
+                <td>
+                    {% if user.maxAgeCategory is not null %}
+                        {{ user.maxAgeCategory }} - {{ age_categories[user.maxAgeCategory] }}
+                    {% endif %}
                 </td>
                 <td>
                     {% if user.lastLogin is not null %}

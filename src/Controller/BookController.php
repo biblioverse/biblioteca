@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
+use App\Security\Voter\BookVoter;
 use App\Service\BookFileSystemManager;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
@@ -33,6 +34,15 @@ class BookController extends AbstractController
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        if (!$this->isGranted(BookVoter::VIEW, $book)) {
+            $this->addFlash('danger', 'You are not allowed to view this book');
+
+            return $this->redirectToRoute('app_dashboard', [
                 'book' => $book->getId(),
                 'slug' => $book->getSlug(),
             ], 301);
@@ -116,6 +126,15 @@ class BookController extends AbstractController
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        if (!$this->isGranted(BookVoter::VIEW, $book)) {
+            $this->addFlash('danger', 'You are not allowed to view this book');
+
+            return $this->redirectToRoute('app_dashboard', [
                 'book' => $book->getId(),
                 'slug' => $book->getSlug(),
             ], 301);
@@ -215,6 +234,15 @@ class BookController extends AbstractController
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
     public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManager $fileSystemManager): Response
     {
+        if (!$this->isGranted(BookVoter::EDIT, $book)) {
+            $this->addFlash('danger', 'You are not allowed to edit this book');
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
         $book = $fileSystemManager->extractCover($book);
 
         $entityManager->flush();
@@ -237,6 +265,15 @@ class BookController extends AbstractController
         /** @var Book $book */
         $book = $entityManager->getRepository(Book::class)->find($id);
 
+        if (!$this->isGranted(BookVoter::EDIT, $book)) {
+            $this->addFlash('danger', 'You are not allowed to delete this book');
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
         $fileSystemManager->deleteBookFiles($book);
 
         $entityManager->remove($book);
@@ -251,6 +288,12 @@ class BookController extends AbstractController
     #[Route('/new/consume/upload', name: 'app_book_upload_consume')]
     public function upload(Request $request, BookFileSystemManager $fileSystemManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('danger', 'You are not allowed to add books');
+
+            return $this->redirectToRoute('app_dashboard');
+        }
+
         $form = $this->createFormBuilder()
             ->setMethod(Request::METHOD_POST)
             ->add('file', FileType::class, [
@@ -288,6 +331,12 @@ class BookController extends AbstractController
     #[Route('/new/consume/files', name: 'app_book_consume')]
     public function consume(Request $request, BookFileSystemManager $fileSystemManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('danger', 'You are not allowed to add books');
+
+            return $this->redirectToRoute('app_dashboard');
+        }
+
         $bookFiles = $fileSystemManager->getAllBooksFiles(true);
 
         $bookFiles = iterator_to_array($bookFiles);
