@@ -10,6 +10,7 @@ use Kiwilan\Ebook\EbookCover;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -266,30 +267,32 @@ class BookFileSystemManager
             throw new \RuntimeException('You are not allowed to relocate this book');
         }
 
-        $filesystem = new Filesystem();
+        try {
+            $filesystem = new Filesystem();
 
-        if ($book->getBookPath().'/' !== $this->getCalculatedFilePath($book, false)) {
-            $filesystem->mkdir($this->getCalculatedFilePath($book, true));
-            $filesystem->rename(
-                $this->getBooksDirectory().$book->getBookPath().$book->getBookFilename(),
-                $this->getCalculatedFilePath($book, true).$this->getCalculatedFileName($book),
-                true
-            );
+            if ($book->getBookPath().'/' !== $this->getCalculatedFilePath($book, false)) {
+                $filesystem->mkdir($this->getCalculatedFilePath($book, true));
+                $filesystem->rename(
+                    $this->getBooksDirectory().$book->getBookPath().$book->getBookFilename(),
+                    $this->getCalculatedFilePath($book, true).$this->getCalculatedFileName($book),
+                );
 
-            $book->setBookPath($this->getCalculatedFilePath($book, false));
-            $book->setBookFilename($this->getCalculatedFileName($book));
-        }
+                $book->setBookPath($this->getCalculatedFilePath($book, false));
+                $book->setBookFilename($this->getCalculatedFileName($book));
+            }
 
-        if (null !== $book->getImagePath() && $book->getImagePath().'/' !== $this->getCalculatedImagePath($book, false)) {
-            $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-            $filesystem->rename(
-                $this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename(),
-                $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book),
-                true
-            );
+            if (null !== $book->getImagePath() && $book->getImagePath().'/' !== $this->getCalculatedImagePath($book, false)) {
+                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+                $filesystem->rename(
+                    $this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename(),
+                    $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book),
+                );
 
-            $book->setImagePath($this->getCalculatedImagePath($book, false));
-            $book->setImageFilename($this->getCalculatedImageName($book));
+                $book->setImagePath($this->getCalculatedImagePath($book, false));
+                $book->setImageFilename($this->getCalculatedImageName($book));
+            }
+        } catch (\Exception $e) {
+            throw new AccessDeniedException('Relocating this book will overwite another book with the same file name.');
         }
 
         return $book;
