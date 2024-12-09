@@ -1,0 +1,24 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Biblioteca\TypesenseBundle\Client\ClientFactory:
+    arguments:
+      $uri: '%biblioteca_typesense.config.uri%'
+      $apiKey: '%biblioteca_typesense.config.key%'
+      $connectionTimeoutSeconds: '%biblioteca_typesense.config.connection_timeout_seconds%'
+
+  Biblioteca\TypesenseBundle\Client\ClientInterface:
+    factory: '@Biblioteca\TypesenseBundle\Client\ClientFactory'
+
+  Biblioteca\TypesenseBundle\PopulateService: ~
+
+  Biblioteca\TypesenseBundle\Mapper\MapperLocator:
+    arguments:
+      $mappers: !tagged typesense.mapper
+
+  Biblioteca\TypesenseBundle\Command\:
+    resource: '../../Command/'
+    tags: ['console.command']
