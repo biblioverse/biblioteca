@@ -515,11 +515,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeOpdsAccess(OpdsAccess $opdsAccess): static
     {
-        if ($this->opdsAccesses->removeElement($opdsAccess)) {
-            // set the owning side to null (unless already changed)
-            if ($opdsAccess->getUser() === $this) {
-                $opdsAccess->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->opdsAccesses->removeElement($opdsAccess) && $opdsAccess->getUser() === $this) {
+            $opdsAccess->setUser(null);
         }
 
         return $this;

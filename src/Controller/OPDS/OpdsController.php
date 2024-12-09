@@ -2,71 +2,181 @@
 
 namespace App\Controller\OPDS;
 
+use ACSEO\TypesenseBundle\Finder\SpecificCollectionFinder;
+use App\Entity\OpdsAccess;
+use App\Entity\Shelf;
+use App\Entity\User;
 use App\OPDS\Opds;
+use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
+use App\Repository\ShelfRepository;
+use App\Service\ShelfManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/opds/{accessKey}', name: 'opds_')]
 class OpdsController extends AbstractController
 {
-    public function __construct(private Opds $opds, private BookRepository $bookRepository)
+    public function __construct(private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SpecificCollectionFinder $bookFinder)
     {
+    }
+
+    private function generateOpdsUrl(string $route, array $params = []): string
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Invalid user');
+        }
+
+        $accesses = $user->getOpdsAccesses()->toArray();
+        if (count($accesses) === 0) {
+            throw $this->createAccessDeniedException('Invalid user, no opds access');
+        }
+        /** @var OpdsAccess $opdsAccess */
+        $opdsAccess = reset($accesses);
+
+        $params['accessKey'] = $params['accessKey'] ?? $opdsAccess->getToken();
+
+        return $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     #[Route('/', name: 'start')]
     public function index(Request $request): Response
     {
-        $this->opds->setCurrentAccessKey($request->get('accessKey'));
-        return $this->opds->getStartPage();
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
+
+        $feeds = [];
+        $feeds[] = $this->opds->getNavigationEntry('books:series', 'Series', $this->generateOpdsUrl('opds_group', ['type' => 'serie']));
+        $feeds[] = $this->opds->getNavigationEntry('books:authors', 'Authors', $this->generateOpdsUrl('opds_group', ['type' => 'authors']));
+        $feeds[] = $this->opds->getNavigationEntry('books:tags', 'Tags', $this->generateOpdsUrl('opds_group', ['type' => 'tags']));
+        $feeds[] = $this->opds->getNavigationEntry('books:shelves', 'Shelves', $this->generateOpdsUrl('opds_shelves', []));
+        $feeds[] = $this->opds->getNavigationEntry('books:reading-list', 'My Reading List', $this->generateOpdsUrl('opds_readinglist', []));
+
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
     #[Route('/search', name: 'search')]
     public function search(Request $request): Response
     {
-        $this->opds->setCurrentAccessKey($request->get('accessKey'));
-        return $this->opds->getSearchPage($request->get('q', $request->get('query', '')), $request->get('page', 1));
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'))->isSearch();
+        $opds->title('Search');
+
+        $books = $this->bookFinder->search(''.$request->get('q', $request->get('query', '')))->getResults();
+
+        $feeds = [];
+        foreach ($books as $result) {
+            $feeds[] = $this->opds->convertBookToOpdsEntry($result);
+        }
+
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
     #[Route('/group/{type}', name: 'group')]
     public function group(Request $request, string $type): Response
     {
-        switch ($type) {
-            case 'authors':
-                $group = $this->bookRepository->getAllAuthors();
-                break;
-            case 'tags':
-                $group = $this->bookRepository->getAllTags();
-                break;
-            case 'serie':
-                $group = $this->bookRepository->getAllSeries()->getResult();
-                break;
-            default:
-                return $this->createAccessDeniedException('Invalid group type');
+        $group = match ($type) {
+            'authors' => $this->bookRepository->getAllAuthors(),
+            'tags' => $this->bookRepository->getAllTags(),
+            'serie' => $this->bookRepository->getAllSeries()->getResult(),
+            default => throw $this->createAccessDeniedException('Invalid group type'),
+        };
+
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
+        $opds->title(ucfirst($type));
+        $feeds = [];
+        foreach ($group as $item) {
+            $feeds[] = $this->opds->getNavigationEntry('group:'.$type.':'.$item['item'], $item['item'], $this->generateOpdsUrl('opds_group_item', ['type' => $type, 'item' => $item['item']]));
         }
-        $this->opds->setCurrentAccessKey($request->get('accessKey'));
-        return $this->opds->getGroupPage($type, $group);
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
+    }
+
+    #[Route('/shelves/', name: 'shelves')]
+    public function shelves(Request $request, ShelfRepository $shelfRepository): Response
+    {
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
+        $opds->title('Shelves');
+
+        $shelves = $shelfRepository->findBy(['user' => $this->getUser()]);
+
+        $feeds = [];
+        foreach ($shelves as $item) {
+            $feeds[] = $this->opds->getNavigationEntry('shelf:'.$item->getId(), $item->getName(), $this->generateOpdsUrl('opds_shelf_item', ['item' => $item->getId()]));
+        }
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
+    }
+
+    #[Route('/shelves/{item}', name: 'shelf_item')]
+    public function shelfItem(Request $request, Shelf $item, ShelfManager $manager): Response
+    {
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
+        $opds->title('Shelf: '.$item->getName());
+
+        $books = $manager->getBooksInShelf($item);
+
+        $feeds = [];
+        foreach ($books as $book) {
+            $feeds[] = $this->opds->convertBookToOpdsEntry($book);
+        }
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
+    }
+
+    #[Route('/reading-list', name: 'readinglist')]
+    public function readinglist(Request $request, BookInteractionRepository $bookInteractionRepository): Response
+    {
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
+        $opds->title('Reading List');
+
+        $books = $bookInteractionRepository->getFavourite();
+
+        $feeds = [];
+        foreach ($books as $bookInteraction) {
+            if ($bookInteraction->getBook() === null) {
+                continue;
+            }
+            $feeds[] = $this->opds->convertBookToOpdsEntry($bookInteraction->getBook());
+        }
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
     #[Route('/group/{type}/{item}', name: 'group_item', requirements: ['item' => '.+'])]
     public function groupItem(Request $request, string $type, string $item): Response
     {
-        switch ($type) {
-            case 'authors':
-                $group = $this->bookRepository->findByAuthor($item);
-                break;
-            case 'tags':
-                $group = $this->bookRepository->findByTag($item);
-                break;
-            case 'serie':
-                $group = $this->bookRepository->findBy(['serie' => $item]);
-                break;
+        $group = match ($type) {
+            'authors' => $this->bookRepository->findByAuthor($item),
+            'tags' => $this->bookRepository->findByTag($item),
+            'serie' => $this->bookRepository->findBy(['serie' => $item]),
+            default => throw $this->createAccessDeniedException('Invalid group type'),
+        };
+
+        if (!is_array($group)) {
+            throw $this->createNotFoundException('No books found');
         }
 
-        $this->opds->setCurrentAccessKey($request->get('accessKey'));
-        return $this->opds->getGroupItemPage($type, $item, $group);
-    }
+        $opds = $this->opds->getOpdsConfig(''.$request->get('accessKey'));
 
+        $opds->title($item);
+
+        $feeds = [];
+        foreach ($group as $book) {
+            $feeds[] = $this->opds->convertBookToOpdsEntry($book);
+        }
+        $opds->feeds($feeds);
+
+        return $this->opds->convertOpdsResponse($opds->get()->getResponse());
+    }
 }

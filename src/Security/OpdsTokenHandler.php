@@ -25,7 +25,11 @@ class OpdsTokenHandler implements AccessTokenHandlerInterface
         if (null === $accessToken) {
             throw new BadCredentialsException('Invalid credentials.');
         }
+        $user = $accessToken->getUser();
+        if ($user === null) {
+            throw new BadCredentialsException('Invalid credentials.');
+        }
 
-        return new UserBadge($accessToken->getUser()->getUserIdentifier());
+        return new UserBadge($user->getUserIdentifier());
     }
 }

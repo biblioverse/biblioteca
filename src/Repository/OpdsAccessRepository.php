@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<OpdsAccess>
  */
-
 class OpdsAccessRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
