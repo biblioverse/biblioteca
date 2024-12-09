@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\User;
 use App\Kobo\SyncToken;
+use App\Service\ShelfManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -19,12 +21,9 @@ use Symfony\Bundle\SecurityBundle\Security;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    private Security $security;
-
-    public function __construct(ManagerRegistry $registry, Security $security)
+    public function __construct(ManagerRegistry $registry, private Security $security, private ShelfManager $shelfManager)
     {
         parent::__construct($registry, Book::class);
-        $this->security = $security;
     }
 
     public function getAllBooksQueryBuilder(): QueryBuilder
@@ -387,16 +386,32 @@ class BookRepository extends ServiceEntityRepository
 
     private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
     {
+        $books = [];
+        foreach ($koboDevice->getShelves() as $shelf) {
+            $shelfBooks = $this->shelfManager->getBooksInShelf($shelf);
+            foreach ($shelfBooks as $book) {
+                $books[$book->getId()] = $book;
+            }
+        }
+
+        // TODO : behind a property for kobodevice
+        $readingList = $this->_em->getRepository(BookInteraction::class)->getFavourite();
+        foreach ($readingList as $bookInteraction) {
+            $book = $bookInteraction->getBook();
+            if ($book === null) {
+                continue;
+            }
+            $books[$book->getId()] = $book;
+        }
+
         $qb = $this->createQueryBuilder('book')
-            ->select('book', 'koboSyncedBooks', 'bookInteractions')
-            ->join('book.shelves', 'shelves')
-            ->join('shelves.koboDevices', 'koboDevice')
+            ->select('book', 'bookInteractions')
             ->leftJoin('book.bookInteractions', 'bookInteractions')
-            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.koboDevice = :koboDevice')
-            ->where('koboDevice.id = :id')
-            ->andWhere('book.extension = :extension')
+            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.koboDevice = :id')
+            ->where('book.extension = :extension')
+            ->andWhere('book in (:books)')
+            ->setParameter('books', array_keys($books))
             ->setParameter('id', $koboDevice->getId())
-            ->setParameter('koboDevice', $koboDevice)
             ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
 
         if ($syncToken->lastCreated instanceof \DateTimeInterface) {
