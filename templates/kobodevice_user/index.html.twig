@@ -8,6 +8,7 @@
             <tr>
                 <th>Name</th>
                 <th>AccessKey</th>
+                <th>Owner</th>
                 <th>{{'shelves'|trans}}</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                 {% endif %}
                 </td>
                 <td><code>{{ kobo.accessKey }}</code></td>
+                <td>{{ kobo.user.username }}</td>
                 <td>
                     <ul>
                     {% for shelf in kobo.shelves %}

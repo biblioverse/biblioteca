@@ -2,47 +2,101 @@
 
 {% block body %}
 
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link {{ tab=='profile'?'active' }}"  href="{{ path('app_user_profile') }}">My Profile</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link  {{ tab=='kobo'?'active' }}" href="{{ path('app_user_profile', {'tab':'kobo'}) }}">Kobo Reader Settings</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link  {{ tab=='opds'?'active' }}" href="{{ path('app_user_profile', {'tab':'opds'}) }}">OPDS Settings</a>
+  </li>
+</ul>
+
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            {{ form_start(form) }}
+            {% if tab == 'kobo' %}
 
-            <div class="card m-2">
-                <div class="card-header">
-                    User information
+                <div class="card m-2">
+                    <div class="card-header">
+                        Kobo reader settings
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped">
+                        {% for device in user.kobos %}
+                            <tr>
+                                <td>{{ device.name }}</td>
+                                <td>{{ device.accesskey }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ path('app_kobodevice_user_edit', {'id':device.id}) }}">edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </table>
+                        <a href="{{ path('app_kobodevice_user_new') }}">Create new Kobo device</a>
+                    </div>
                 </div>
-                <div class="card-body">
-                    {{ form_row(form.plainPassword) }}
-                    {{ form_row(form.language) }}
+            {% elseif tab == 'opds' %}
+                <div class="card m-2">
+                    <div class="card-header">
+                        OPDS Access
+                    </div>
+                    <div class="card-body">
+                        {% if opds_access is not null %}
+                            <strong>{{ opds_access.token }}</strong><br>
+                            <small>OPDS Catalog: {{ url('opds_start',{'accessKey':opds_access.token}) }}</small>
+                            <br><a href="{{ path('app_opds_access_delete', {'id': opds_access.id}) }}" class="btn btn-sm btn-danger">Remove token</a>
+                        {% else %}
+                            <a href="{{ path('app_opds_access_new') }}" class="btn btn-success">Create new</a>
+                        {% endif %}
+
+                    </div>
                 </div>
-            </div>
-            <div class="card m-2">
-                <div class="card-header">
-                    Customize
+            {%else%}
+                {{ form_start(form) }}
+                <div class="card m-2">
+                    <div class="card-header">
+                        User information
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.plainPassword) }}
+                        {{ form_row(form.language) }}
+                    </div>
                 </div>
-                <div class="card-body">
-                    {{ form_row(form.displaySeries) }}
-                    {{ form_row(form.displayAuthors) }}
-                    {{ form_row(form.displayTags) }}
-                    {{ form_row(form.displayPublishers) }}
-                    {{ form_row(form.displayTimeline) }}
-                    {{ form_row(form.displayAllBooks) }}
-                    {{ form_row(form.useKoboDevices) }}
-                    {{ form_row(form.theme) }}
+                <div class="card m-2">
+                    <div class="card-header">
+                        Customize
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.displaySeries) }}
+                        {{ form_row(form.displayAuthors) }}
+                        {{ form_row(form.displayTags) }}
+                        {{ form_row(form.displayPublishers) }}
+                        {{ form_row(form.displayTimeline) }}
+                        {{ form_row(form.displayAllBooks) }}
+                        {{ form_row(form.useKoboDevices) }}
+                        {{ form_row(form.theme) }}
+                    </div>
                 </div>
-            </div>
-            <div class="card m-2">
-                <div class="card-header">
-                    ChatGPT Features
+                <div class="card m-2">
+                    <div class="card-header">
+                        ChatGPT Features
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.openAIKey) }}
+                        {{ form_row(form.bookKeywordPrompt) }}
+                        {{ form_row(form.bookSummaryPrompt) }}
+                    </div>
                 </div>
-                <div class="card-body">
-                    {{ form_row(form.openAIKey) }}
-                    {{ form_row(form.bookKeywordPrompt) }}
-                    {{ form_row(form.bookSummaryPrompt) }}
-                </div>
-            </div>
+                {{ form_rest(form) }}
+                {{ form_end(form) }}
+            {%endif%}
         </div>
-        {{ form_rest(form) }}
-        {{ form_end(form) }}
+
 
     </div>
 
@@ -53,4 +107,3 @@
 {% block title %}
     My profile
 {% endblock %}
-

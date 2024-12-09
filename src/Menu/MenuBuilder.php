@@ -82,9 +82,6 @@ final class MenuBuilder
         if ($user->isDisplayTimeline()) {
             $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
         }
-        if ($user->isUseKoboDevices()) {
-            $profile->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-        }
 
         $profile->addChild('menu.profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $profile->addChild('menu.logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
@@ -110,6 +107,7 @@ final class MenuBuilder
             $admin->addChild('menu.useradmin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.upload', ['route' => 'app_book_upload_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
+            $admin->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
 
             $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
             $admin->addChild('menu.notverified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
