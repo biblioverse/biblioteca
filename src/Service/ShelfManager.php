@@ -3,21 +3,17 @@
 namespace App\Service;
 
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
+use App\Entity\Book;
 use App\Entity\Shelf;
 use App\Form\BookFilterType;
-use App\Repository\BookRepository;
-use Kiwilan\Ebook\EbookCover;
-use Kiwilan\Ebook\Models\BookAuthor;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @phpstan-type MetadataType array{ title:string, authors: BookAuthor[], main_author: ?BookAuthor, description: ?string, publisher: ?string, publish_date: ?\DateTime, language: ?string, tags: string[], serie:?string, serie_index: ?float, cover: ?EbookCover }
- */
 class ShelfManager
 {
     use PageFilterFormTrait;
 
-    public function __construct(private BookRepository $bookRepository)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
     }
 
@@ -27,7 +23,7 @@ class ShelfManager
             return $shelf->getBooks()->toArray();
         }
 
-        $qb = $this->bookRepository->getAllBooksQueryBuilder();
+        $qb = $this->entityManager->getRepository(Book::class)->getAllBooksQueryBuilder();
 
         $request = new Request($shelf->getQueryString());
 
