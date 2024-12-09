@@ -20,8 +20,9 @@ class KoboDeviceRepository extends ServiceEntityRepository
     public function byAccessKey(string $token): ?KoboDevice
     {
         $query = $this->createQueryBuilder('koboDevice')
-            ->select('koboDevice', 'user')
+            ->select('koboDevice', 'user', 'shelves')
             ->join('koboDevice.user', 'user')
+            ->leftJoin('koboDevice.shelves', 'shelves')
             ->where('koboDevice.accessKey = :accessKey')
             ->setParameter('accessKey', $token)
             ->getQuery();

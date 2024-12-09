@@ -48,11 +48,9 @@ class KoboType extends AbstractType
         $builder->add('shelves', EntityType::class, [
             'label' => 'Sync with Shelves',
             'class' => Shelf::class,
-            'query_builder' => function (EntityRepository $er): QueryBuilder {
-                return $er->createQueryBuilder('u')
-                    ->setParameter('user', $this->security->getUser())
-                    ->andWhere('u.user = :user');
-            },
+            'query_builder' => fn (EntityRepository $er): QueryBuilder => $er->createQueryBuilder('u')
+                ->setParameter('user', $this->security->getUser())
+                ->andWhere('u.user = :user'),
             'choice_label' => 'name',
             'multiple' => true,
             'expanded' => true,

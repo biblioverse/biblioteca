@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class BookFileSystemManager
+class BookFileSystemManager implements BookFileSystemManagerInterface
 {
     public const ALLOWED_FILE_EXTENSIONS = [
         '*.epub', '*.cbr', '*.cbz', '*.pdf', '*.mobi',
@@ -53,16 +53,14 @@ class BookFileSystemManager
     {
         try {
             $finder = new Finder();
-            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(function (\SplFileInfo $a, \SplFileInfo $b): int {
-                return strcmp($a->getRealPath(), $b->getRealPath());
-            });
+            $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(fn (\SplFileInfo $a, \SplFileInfo $b): int => strcmp($a->getRealPath(), $b->getRealPath()));
             if ($onlyConsumeDirectory) {
                 $finder->in($this->getBooksDirectory().'/consume');
             } else {
                 $finder->in($this->getBooksDirectory());
             }
             $iterator = $finder->getIterator();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $iterator = new \ArrayIterator();
         }
 
@@ -291,7 +289,7 @@ class BookFileSystemManager
                 $book->setImagePath($this->getCalculatedImagePath($book, false));
                 $book->setImageFilename($this->getCalculatedImageName($book));
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new AccessDeniedException('Relocating this book will overwite another book with the same file name.');
         }
 

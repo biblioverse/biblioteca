@@ -14,7 +14,7 @@ final class RelocationVoter extends Voter
 
     public function __construct(
         #[Autowire(param: 'ALLOW_BOOK_RELOCATION')]
-        private bool $allowBookRelocation,
+        private readonly bool $allowBookRelocation,
     ) {
     }
 

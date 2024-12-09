@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V3;
 
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 use Symfony\Component\HttpFoundation\Response;
 
-class ReadServiceCheckForChangesControllerTest extends AbstractKoboControllerTest
+class ContentControllerTest extends AbstractKoboControllerTest
 {
-    public function testCheckForChangesPost() : void
+    public function testCheckForChangesPost(): void
     {
         $client = static::getClient();
 

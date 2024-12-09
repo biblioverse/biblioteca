@@ -23,12 +23,10 @@ class KoboProxyLogger
      */
     public function __invoke(callable $handler): \Closure
     {
-        return function ($request, array $options) use ($handler) {
-            return $handler($request, $options)->then(
-                $this->onSuccess($request),
-                $this->onFailure($request)
-            );
-        };
+        return fn ($request, array $options) => $handler($request, $options)->then(
+            $this->onSuccess($request),
+            $this->onFailure($request)
+        );
     }
 
     /**
@@ -59,7 +57,7 @@ class KoboProxyLogger
     {
         try {
             $requestContent = json_decode($request->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
+        } catch (\JsonException) {
             $requestContent = $request->getBody()->getContents();
         }
         $responseContent = $response?->getBody()->getContents();

@@ -4,8 +4,8 @@ namespace App\Kobo\Kepubify;
 
 class KebpubifyCachedData implements \JsonSerializable
 {
-    private string $content;
-    private int $size;
+    private readonly string $content;
+    private readonly int $size;
 
     public function __construct(string $filename)
     {

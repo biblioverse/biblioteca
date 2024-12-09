@@ -4,18 +4,20 @@ namespace App\Tests\Contraints;
 
 use PHPUnit\Framework\Constraint\Constraint;
 
-class AssertHasDownloadWithFormat  extends Constraint
+class AssertHasDownloadWithFormat extends Constraint
 {
     public function __construct(private readonly string $format)
     {
     }
 
-    public function matches($other): bool{
-        try{
+    public function matches($other): bool
+    {
+        try {
             $this->test($other);
-        }catch (\InvalidArgumentException $e){
+        } catch (\InvalidArgumentException) {
             return false;
         }
+
         return true;
     }
 
@@ -43,7 +45,6 @@ class AssertHasDownloadWithFormat  extends Constraint
             throw new \InvalidArgumentException('DownloadUrls is empty');
         }
 
-
         foreach ($downloads as $pos => $download) {
             if (!array_key_exists('Format', $download)) {
                 throw new \InvalidArgumentException('Download has no key Format');
@@ -55,11 +56,11 @@ class AssertHasDownloadWithFormat  extends Constraint
 
             foreach (['Format', 'Platform', 'Url', 'Size'] as $key) {
                 if (!array_key_exists($key, $download)) {
-                    throw new \InvalidArgumentException('Download ' . $pos . ' has ko key ' . $key);
+                    throw new \InvalidArgumentException('Download '.$pos.' has ko key '.$key);
                 }
 
-                if (trim((string)$download[$key]) === '') {
-                    throw new \InvalidArgumentException('Download ' . $pos . ' has an empty value for key ' . $key);
+                if (trim((string) $download[$key]) === '') {
+                    throw new \InvalidArgumentException('Download '.$pos.' has an empty value for key '.$key);
                 }
             }
         }

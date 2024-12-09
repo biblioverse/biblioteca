@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class SummaryPromptTest extends TestCase
 {
-
     private function getBook(): Book
     {
         $book = new Book();
@@ -17,8 +16,10 @@ class SummaryPromptTest extends TestCase
         $book->setAuthors(['J.R.R. Tolkien']);
         $book->setSerie('The Lord of the Rings');
         $book->setSerieIndex(1);
+
         return $book;
     }
+
     public function testGetPrompt(): void
     {
         $book = $this->getBook();
@@ -32,7 +33,8 @@ class SummaryPromptTest extends TestCase
         self::assertStringContainsString('in the series', $prompt);
     }
 
-    public function testUserPrompt(): void{
+    public function testUserPrompt(): void
+    {
         $book = $this->getBook();
 
         $user = new User();

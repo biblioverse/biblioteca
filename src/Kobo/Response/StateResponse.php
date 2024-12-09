@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StateResponse extends JsonResponse
 {
-    public function __construct(Book $book, bool $isSuccess = true)
+    public function __construct(Book|string $bookOrUuid, bool $isSuccess = true)
     {
         parent::__construct([
             'RequestResult' => $isSuccess ? 'Success' : 'FailedCommands',
@@ -17,7 +17,7 @@ class StateResponse extends JsonResponse
                     'CurrentBookmarkResult' => [
                         'Result' => 'Success',
                     ],
-                    'EntitlementId' => $book->getUuid(),
+                    'EntitlementId' => $bookOrUuid instanceof Book ? $bookOrUuid->getUuid() : $bookOrUuid,
                     'StatisticsResult' => [
                         'Result' => 'Success',
                     ],

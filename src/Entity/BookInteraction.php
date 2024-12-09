@@ -41,7 +41,7 @@ class BookInteraction
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['default' => '2024-01-12 00:00:00'])]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updated;
+    private ?\DateTimeImmutable $updated = null;
 
     #[ORM\Column]
     private bool $hidden = false;

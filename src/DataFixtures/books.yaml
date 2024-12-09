@@ -1,0 +1,214 @@
+books:
+  - title: "The Odyssey"
+    authors: ["Homer"]
+    uuid: "54c8fb05-cf05-4cb6-9482-bc25fa49fa80"
+    publishDate: "1999-04-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "TheOdysses.jpg"
+    bookFilename: "real-TheOdysses.epub"
+    pageNumber: 30
+  - title: "Pride and Prejudice"
+    authors: ["Jane Austen"]
+    publishDate: "1813-01-28"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "PrideAndPrejudice.jpg"
+    bookFilename: "fake-PrideAndPrejudice.epub"
+    pageNumber: 60
+  - title: "Moby Dick"
+    authors: ["Herman Melville"]
+    publishDate: "1851-10-18"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "MobyDick.jpg"
+    bookFilename: "fake-MobyDick.epub"
+    pageNumber: 70
+  - title: "Great Expectations"
+    authors: ["Charles Dickens"]
+    publishDate: "1861-08-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "GreatExpectations.jpg"
+    bookFilename: "fake-GreatExpectations.epub"
+    pageNumber: 80
+  - title: "Dracula"
+    authors: ["Bram Stoker"]
+    publishDate: "1897-05-26"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "Dracula.jpg"
+    bookFilename: "fake-Dracula.epub"
+    pageNumber: 90
+  - title: "Frankenstein"
+    authors: ["Mary Shelley"]
+    publishDate: "1818-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "Frankenstein.jpg"
+    bookFilename: "fake-Frankenstein.epub"
+    pageNumber: 75
+  - title: "The Adventures of Sherlock Holmes"
+    authors: ["Arthur Conan Doyle"]
+    publishDate: "1892-10-14"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "SherlockHolmes.jpg"
+    bookFilename: "fake-SherlockHolmes.epub"
+    pageNumber: 65
+  - title: "Jane Eyre"
+    authors: ["Charlotte Brontë"]
+    publishDate: "1847-10-16"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "JaneEyre.jpg"
+    bookFilename: "fake-JaneEyre.epub"
+    pageNumber: 85
+  - title: "Les Misérables"
+    authors: ["Victor Hugo"]
+    publishDate: "1862-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "LesMiserables.jpg"
+    bookFilename: "fake-LesMiserables.epub"
+    pageNumber: 120
+  - title: "The Count of Monte Cristo"
+    authors: ["Alexandre Dumas"]
+    publishDate: "1844-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "CountOfMonteCristo.jpg"
+    bookFilename: "fake-CountOfMonteCristo.epub"
+    pageNumber: 105
+  - title: "A Tale of Two Cities"
+    authors: ["Charles Dickens"]
+    publishDate: "1859-11-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "TaleOfTwoCities.jpg"
+    bookFilename: "fake-TaleOfTwoCities.epub"
+    pageNumber: 95
+  - title: "The Picture of Dorian Gray"
+    authors: ["Oscar Wilde"]
+    publishDate: "1890-07-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "DorianGray.jpg"
+    bookFilename: "fake-DorianGray.epub"
+    pageNumber: 68
+  - title: "The Brothers Karamazov"
+    authors: ["Fyodor Dostoevsky"]
+    publishDate: "1880-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "BrothersKaramazov.jpg"
+    bookFilename: "fake-BrothersKaramazov.epub"
+    pageNumber: 135
+  - title: "Crime and Punishment"
+    authors: ["Fyodor Dostoevsky"]
+    publishDate: "1866-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "CrimeAndPunishment.jpg"
+    bookFilename: "fake-CrimeAndPunishment.epub"
+    pageNumber: 120
+  - title: "War and Peace"
+    authors: ["Leo Tolstoy"]
+    publishDate: "1869-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "WarAndPeace.jpg"
+    bookFilename: "fake-WarAndPeace.epub"
+    pageNumber: 145
+  - title: "Anna Karenina"
+    authors: ["Leo Tolstoy"]
+    publishDate: "1877-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "AnnaKarenina.jpg"
+    bookFilename: "fake-AnnaKarenina.epub"
+    pageNumber: 130
+  - title: "The Divine Comedy"
+    authors: ["Dante Alighieri"]
+    publishDate: "1320-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "DivineComedy.jpg"
+    bookFilename: "fake-DivineComedy.epub"
+    pageNumber: 120
+  - title: "Don Quixote"
+    authors: ["Miguel de Cervantes"]
+    publishDate: "1605-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "DonQuixote.jpg"
+    bookFilename: "fake-DonQuixote.epub"
+    pageNumber: 150
+  - title: "Wuthering Heights"
+    authors: ["Emily Brontë"]
+    publishDate: "1847-01-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "WutheringHeights.jpg"
+    bookFilename: "fake-WutheringHeights.epub"
+    pageNumber: 90
+  - title: "A Christmas Carol"
+    authors: ["Charles Dickens"]
+    publishDate: "1843-12-19"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "AChristmasCarol.jpg"
+    bookFilename: "fake-AChristmasCarol.epub"
+    pageNumber: 50
+  - title: "The Jungle Book"
+    uuid: "6b6a0c48-d0e6-4722-8b43-d50e612dc240"
+    authors:
+      - "Rudyard Kipling"
+    publishDate: "1894-05-01"
+    language: "en"
+    publisher: "Public domain"
+    extension: "epub"
+    imageExtension: "jpg"
+    imageFilename: "TheJungleBook.jpg"
+    bookFilename: "fake-TheJungleBook.epub"
+    pageNumber: 189
