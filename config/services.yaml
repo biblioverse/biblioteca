@@ -82,10 +82,10 @@ services:
     app.display_mode_subscriber:
         class: App\EventSubscriber\DisplayModeSubscriber
 
+    App\Controller\OPDS\OpdsController:
+        arguments:
+           $bookFinder: '@typesense.specificfinder.books.books_autocomplete'
 
-    App\Service\BookSearch:
-       arguments:
-           $autocompleteBookFinder: '@typesense.specificfinder.books.books_autocomplete'
 
     App\Twig\Components\Search:
         arguments:

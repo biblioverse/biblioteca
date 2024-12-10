@@ -23,6 +23,13 @@ security:
           pattern: ^/kobo
           custom_authenticators:
             - App\Security\KoboAccessTokenAuthenticator
+        opds:
+          lazy: true
+          stateless: true
+          pattern: ^/opds/
+          access_token:
+            token_handler: App\Security\OpdsTokenHandler
+            token_extractors: App\Security\OpdsTokenExtractor
         main:
           lazy: true
           remember_me:

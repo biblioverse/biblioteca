@@ -64,8 +64,17 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_user_profile', [], Response::HTTP_SEE_OTHER);
         }
 
+        $opds = $user->getOpdsAccesses()->first();
+
+        if ($opds === false) {
+            $opds = null;
+        }
+
         return $this->render('user/profile.html.twig', [
             'form' => $form->createView(),
+            'opds_access' => $opds,
+            'user' => $user,
+            'tab' => $request->get('tab', 'profile'),
         ]);
     }
 

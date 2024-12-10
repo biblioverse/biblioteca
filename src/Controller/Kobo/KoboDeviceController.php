@@ -34,7 +34,7 @@ class KoboDeviceController extends AbstractController
         }
 
         return $this->render('kobodevice_user/index.html.twig', [
-            'kobos' => $koboDeviceRepository->findAllByUser($this->getUser()),
+            'kobos' => $koboDeviceRepository->findAll(),
         ]);
     }
 
@@ -59,7 +59,7 @@ class KoboDeviceController extends AbstractController
             $entityManager->persist($koboDevice);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_kobodevice_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($request->headers->get('referer') ?? '/');
         }
 
         return $this->render('kobodevice_user/new.html.twig', [
@@ -81,7 +81,7 @@ class KoboDeviceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_kobodevice_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($request->headers->get('referer') ?? '/');
         }
 
         return $this->render('kobodevice_user/edit.html.twig', [
@@ -102,7 +102,7 @@ class KoboDeviceController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_kobodevice_user_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_dashboard', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
