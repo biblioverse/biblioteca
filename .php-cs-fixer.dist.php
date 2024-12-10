@@ -26,6 +26,9 @@ $config->setRules([
     'visibility_required' => [
         'elements' => ['property', 'method', 'const'],
     ],
+    'method_argument_space' => [
+        'on_multiline' => 'ensure_fully_multiline',
+    ],
     'yoda_style' => false,
 ]);
 

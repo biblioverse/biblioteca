@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\KoboDevice;
 use App\Kobo\SyncToken;
 use App\Kobo\SyncTokenParser;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,13 +25,24 @@ class KoboSyncTokenExtractor
     public function set(Response $response, SyncToken $token): Response
     {
         $token = $this->syncTokenParser->encode($token);
-        $response->headers->set('kobo-synctoken', $token);
+        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $token);
 
         return $response;
     }
 
+    /**
+     * @return array{'HTTP_kobo-synctoken': string}
+     * @throws \JsonException
+     */
+    public function getTestHeader(SyncToken $token): array
+    {
+        $token = $this->syncTokenParser->encode($token);
+
+        return ['HTTP_'.KoboDevice::KOBO_SYNC_TOKEN_HEADER => $token];
+    }
+
     protected function extract(Request $request): ?string
     {
-        return $request->headers->get('kobo-synctoken');
+        return $request->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
     }
 }

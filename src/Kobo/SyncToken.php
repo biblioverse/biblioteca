@@ -37,9 +37,7 @@ class SyncToken
                 return null;
             }
         });
-        $resolver->setNormalizer('PrioritizeRecentReads', function (Options $options, string|bool $value) {
-            return in_array(strtolower((string) $value), ['true', '1', 'yes'], true);
-        });
+        $resolver->setNormalizer('PrioritizeRecentReads', fn (Options $options, string|bool $value) => in_array(strtolower((string) $value), ['true', '1', 'yes'], true));
 
         return $resolver;
     }

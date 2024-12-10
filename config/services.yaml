@@ -62,6 +62,7 @@ services:
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
             - [ setAnnotationReader, [ "@gedmo.mapping.driver.attribute" ] ]
+            - [ setClock, ['@Psr\Clock\ClockInterface'] ]
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -96,6 +97,8 @@ services:
             '$bookFolderNamingFormat': '%BOOK_FOLDER_NAMING_FORMAT%'
             '$bookFileNamingFormat': '%BOOK_FILE_NAMING_FORMAT%'
 
+    App\Service\BookFileSystemManagerInterface: '@App\Service\BookFileSystemManager'
+
     App\Kobo\ParamConverter\SyncTokenParamConverter:
       tags:
         - { name: request.param_converter, priority: 100 }
@@ -128,3 +131,17 @@ services:
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
+
+when@test:
+    services:
+        App\Tests\FileSystemManagerForTests:
+            autowire: true
+            bind:
+                $publicDirectory: '%kernel.project_dir%/tests/Resources'
+        App\Service\BookFileSystemManagerInterface:
+            alias: 'App\Tests\FileSystemManagerForTests'
+
+        App\Tests\TestClock:
+            public: true
+
+        Psr\Clock\ClockInterface: '@App\Tests\TestClock'

@@ -10,10 +10,11 @@ abstract class AbstractMigration extends \Doctrine\Migrations\AbstractMigration
 {
     protected function tableExists(Schema $schema, string $table): bool
     {
-        try{
+        try {
             $schema->getTable($table);
+
             return true;
-        }catch (TableDoesNotExist|SchemaException){
+        } catch (TableDoesNotExist|SchemaException) {
             return false;
         }
     }

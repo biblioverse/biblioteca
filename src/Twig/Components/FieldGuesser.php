@@ -60,7 +60,7 @@ class FieldGuesser extends AbstractController
 
     public function guessSerie(): string
     {
-        $author = implode($this->book->getAuthors());
+        $author = implode('', $this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[1];
@@ -71,7 +71,7 @@ class FieldGuesser extends AbstractController
 
     public function guessIndex(): string
     {
-        $author = implode($this->book->getAuthors());
+        $author = implode('', $this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[2];
@@ -89,7 +89,7 @@ class FieldGuesser extends AbstractController
 
     public function guessAuthor(): string
     {
-        $author = implode($this->book->getAuthors());
+        $author = implode('', $this->book->getAuthors());
         $parts = explode(' - ', $author);
         if (3 === count($parts)) {
             return $parts[0];

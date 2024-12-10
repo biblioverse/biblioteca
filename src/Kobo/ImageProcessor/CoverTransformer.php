@@ -50,7 +50,7 @@ class CoverTransformer
 
             return;
         }
-        list($originalWidth, $originalHeight) = $sizes;
+        [$originalWidth, $originalHeight] = $sizes;
 
         $aspectRatio = $originalWidth / max(1, $originalHeight);
 

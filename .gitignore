@@ -23,7 +23,8 @@ public/tmp
 !/public/covers/.gitkeep
 /public/books/consume
 !/public/books/consume/.gitkeep
-
+/tests/coverage
+!/tests/coverage/.gitkeep
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

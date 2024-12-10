@@ -2,6 +2,8 @@
 
 namespace App\Tests\Twig\Components;
 
+use App\DataFixtures\BookFixture;
+use App\DataFixtures\UserFixture;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Repository\BookRepository;
@@ -9,14 +11,13 @@ use App\Repository\UserRepository;
 use App\Suggestion\SummaryPrompt;
 use App\Suggestion\TagPrompt;
 use App\Twig\Components\ChatGPTSuggestion;
-use App\DataFixtures\BookFixture;
-use App\DataFixtures\UserFixture;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 class ChatGPTSuggestionTest extends WebTestCase
 {
     use InteractsWithLiveComponents;
+
     private function testGenericPrompt(string $field, string $expectedPrompt): void
     {
         $client = self::createClient();
@@ -25,9 +26,9 @@ class ChatGPTSuggestionTest extends WebTestCase
         $testComponent = $this->createLiveComponent(
             name: ChatGPTSuggestion::class,
             data: [
-                    'book' => $this->getBook(),
-                    "field" => $field,
-                    "prompt" => 'My Prompt',
+                'book' => $this->getBook(),
+                'field' => $field,
+                'prompt' => 'My Prompt',
             ],
             client: $client
         );
@@ -47,7 +48,6 @@ class ChatGPTSuggestionTest extends WebTestCase
 
     public function testSummaryPrompt(): void
     {
-
         // Take the default prompt and remove the {book} part and everything after it
         $bookPlaceholderPosition = strpos(SummaryPrompt::DEFAULT_KEYWORD_PROMPT, '{book}');
         self::assertNotFalse($bookPlaceholderPosition);
@@ -71,7 +71,7 @@ class ChatGPTSuggestionTest extends WebTestCase
         /** @var BookRepository $repo */
         $repo = self::getContainer()->get(BookRepository::class);
 
-        $book = $repo->findOneBy(["id" => BookFixture::ID]);
+        $book = $repo->findOneBy(['id' => BookFixture::ID]);
         assert($book instanceof Book);
 
         return $book;
