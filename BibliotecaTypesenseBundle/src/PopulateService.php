@@ -3,13 +3,15 @@
 namespace Biblioteca\TypesenseBundle;
 
 use Biblioteca\TypesenseBundle\Client\ClientInterface;
+use Biblioteca\TypesenseBundle\Mapper\FieldMappingInterface;
 use Biblioteca\TypesenseBundle\Mapper\MapperInterface;
+use Biblioteca\TypesenseBundle\Mapper\MappingInterface;
 use Typesense\Collection;
 
 class PopulateService
 {
     public function __construct(
-        private ClientInterface $client,
+        private readonly ClientInterface $client,
         private readonly string $collectionPrefix = '',
     ) {
     }
@@ -31,8 +33,8 @@ class PopulateService
 
         $payload = [
             'name' => $name,
-            'fields' => array_values($mapping->getFields()),
-            ...$mapping->getCollectionOptions(),
+            'fields' => array_map(fn (FieldMappingInterface $mapping) => $mapping->toArray(), $mapping->getFields()),
+            ...$mapping->getCollectionOptions()?->toArray() ?? [],
         ];
 
         $this->client->getCollections()->create($payload);
@@ -53,7 +55,7 @@ class PopulateService
         }
     }
 
-    private function getMappingName(Mapper\Mapping $mapping): string
+    private function getMappingName(MappingInterface $mapping): string
     {
         return $this->collectionPrefix.$mapping->getName();
     }

@@ -4,12 +4,17 @@ namespace Biblioteca\TypesenseBundle\Mapper;
 
 interface MapperInterface
 {
-    public function getMapping(): Mapping;
+    public function getMapping(): MappingInterface;
 
     /**
-     * @return \generator<array<string, mixed>>
+     * Data to index, the key is the field name
+     * @return \Generator<array<string, mixed>>
      */
-    public function getData(): \generator;
+    public function getData(): \Generator;
 
+    /**
+     * How many data to index. If null, the progression is unknown.
+     * @return int|null
+     */
     public function getDataCount(): ?int;
 }

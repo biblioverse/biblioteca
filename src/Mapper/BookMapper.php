@@ -4,8 +4,10 @@ namespace App\Mapper;
 
 use App\Entity\Book;
 use App\Repository\BookRepository;
+use Biblioteca\TypesenseBundle\Mapper\FieldMapping;
 use Biblioteca\TypesenseBundle\Mapper\MapperInterface;
 use Biblioteca\TypesenseBundle\Mapper\Mapping;
+use Biblioteca\TypesenseBundle\Type\DataTypeEnum;
 
 class BookMapper implements MapperInterface
 {
@@ -17,15 +19,52 @@ class BookMapper implements MapperInterface
     public function getMapping(): Mapping
     {
         $mapping = new Mapping('books');
-        $mapping->setField('id', ['name' => 'id', 'type' => 'primary']);
-        $mapping->setField('title', ['name' => 'title', 'type' => 'string']);
-        $mapping->setField('sortable_id', ['name' => 'sortable_id', 'type' => 'int32']);
-        $mapping->setField('serie', ['name' => 'serie', 'type' => 'string', 'optional' => true, 'facet' => true]);
-        $mapping->setField('summary', ['name' => 'summary', 'type' => 'string', 'optional' => true]);
-        $mapping->setField('serieIndex', ['name' => 'serieIndex', 'type' => 'string', 'optional' => true]);
-        $mapping->setField('extension', ['name' => 'extension', 'type' => 'string', 'facet' => true]);
-        $mapping->setField('authors', ['name' => 'authors', 'type' => 'string[]', 'facet' => true]);
-        $mapping->setField('tags', ['name' => 'tags', 'type' => 'string[]', 'facet' => true, 'optional' => true]);
+        $mapping->
+            add(
+                name: 'id',
+                type: DataTypeEnum::PRIMARY
+            )
+            ->add(
+                name: 'title',
+                type: DataTypeEnum::STRING
+            )
+            ->add(
+                name: 'sortable_id',
+                type: DataTypeEnum::INT32
+            )
+            ->add(
+                name: 'serie',
+                type: DataTypeEnum::STRING,
+                facet: true,
+                optional: true
+            )
+            ->add(
+                name: 'summary',
+                type: DataTypeEnum::STRING,
+                optional: true
+            )
+            ->add(
+                name: 'serieIndex',
+                type: DataTypeEnum::STRING,
+                optional: true
+            )
+            ->add(
+                name: 'extension',
+                type: DataTypeEnum::STRING,
+                facet: true
+            )
+            ->add(
+                name: 'authors',
+                type: DataTypeEnum::STRING_ARRAY,
+                facet: true
+            )
+            ->add(
+                name: 'tags',
+                type: DataTypeEnum::STRING_ARRAY,
+                facet: true,
+                optional: true
+            )
+        ;
 
         return $mapping;
     }

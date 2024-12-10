@@ -2,28 +2,36 @@
 
 namespace Biblioteca\TypesenseBundle\Mapper;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Biblioteca\TypesenseBundle\Type\DataTypeEnum;
 
-class Mapping
+class Mapping implements MappingInterface
 {
-    public function __construct(private string $name, private array $fields = [])
+    public function __construct(
+        private string $name,
+        /** @var array<int, FieldMappingInterface> */
+        private array $fields = [],
+        private readonly ?CollectionOptionsInterface $collectionOptions = null)
     {
     }
 
+    /**
+     * @return FieldMappingInterface[]
+     */
     public function getFields(): array
     {
         return $this->fields;
     }
 
-    public function setField(string $name, array $options): self
+    public function addField(FieldMappingInterface $field): self
     {
-        $optionResolver = new OptionsResolver();
-        $optionResolver->setRequired(['name', 'type']);
-        $optionResolver->setDefined(['facet', 'optional']);
+        $this->fields[] = $field;
 
-        $data = $optionResolver->resolve($options);
-        unset($data['optional']);
-        $this->fields[$name] = $data;
+        return $this;
+    }
+
+    public function add(string $name, DataTypeEnum $type, ?bool $facet = null, ?bool $optional = null): self
+    {
+        $this->addField(new FieldMapping(name: $name, type: $type, facet: $facet, optional: $optional));
 
         return $this;
     }
@@ -33,8 +41,8 @@ class Mapping
         return $this->name;
     }
 
-    public function getCollectionOptions(): array
+    public function getCollectionOptions(): ?CollectionOptionsInterface
     {
-        return [];
+        return $this->collectionOptions;
     }
 }
