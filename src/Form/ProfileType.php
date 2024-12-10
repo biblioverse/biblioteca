@@ -27,7 +27,6 @@ class ProfileType extends AbstractType
             ->add('displayPublishers')
             ->add('displayTimeline')
             ->add('displayAllBooks')
-            ->add('useKoboDevices')
             ->add('language', ChoiceType::class, [
                 'choices' => [
                     'English' => 'en',

@@ -21,7 +21,7 @@ use Symfony\Bundle\SecurityBundle\Security;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private Security $security, private ShelfManager $shelfManager)
+    public function __construct(ManagerRegistry $registry, private readonly Security $security, private readonly ShelfManager $shelfManager)
     {
         parent::__construct($registry, Book::class);
     }
@@ -413,14 +413,15 @@ class BookRepository extends ServiceEntityRepository
             }
         }
 
-        // TODO : behind a property for kobodevice
-        $readingList = $this->_em->getRepository(BookInteraction::class)->getFavourite();
-        foreach ($readingList as $bookInteraction) {
-            $book = $bookInteraction->getBook();
-            if ($book === null) {
-                continue;
+        if ($koboDevice->isSyncReadingList()) {
+            $readingList = $this->_em->getRepository(BookInteraction::class)->getFavourite();
+            foreach ($readingList as $bookInteraction) {
+                $book = $bookInteraction->getBook();
+                if ($book === null) {
+                    continue;
+                }
+                $books[$book->getId()] = $book;
             }
-            $books[$book->getId()] = $book;
         }
 
         $qb = $this->createQueryBuilder('book')
