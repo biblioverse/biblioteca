@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\Entity\OpdsAccess;
+use App\Entity\User;
 use App\Repository\OpdsAccessRepository;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
@@ -20,13 +22,13 @@ class OpdsTokenHandler implements AccessTokenHandlerInterface
             throw new BadCredentialsException('Invalid credentials.');
         }
 
-        $accessToken = $this->repository->findOneBy(['token' => $accessToken]);
+        $accessTokenObject = $this->repository->findOneByToken($accessToken);
 
-        if (null === $accessToken) {
+        if (!$accessTokenObject instanceof OpdsAccess) {
             throw new BadCredentialsException('Invalid credentials.');
         }
-        $user = $accessToken->getUser();
-        if ($user === null) {
+        $user = $accessTokenObject->getUser();
+        if (!$user instanceof User) {
             throw new BadCredentialsException('Invalid credentials.');
         }
 

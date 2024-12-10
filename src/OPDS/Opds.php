@@ -26,16 +26,19 @@ class Opds
     ) {
     }
 
-    public function getOpdsConfig(string $accesskey): KiwilanOpds
+    public function setAccessKey(string $accessKey): void
     {
-        $this->currentAccessKey = $accesskey;
+        $this->currentAccessKey = $accessKey;
+    }
 
+    public function getOpdsConfig(): KiwilanOpds
+    {
         return KiwilanOpds::make(new OpdsConfig(
             name: 'Biblioteca',
             author: 'Biblioteca',
             authorUrl: $this->router->generate('app_dashboard', [], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
-            startUrl: $this->router->generate('opds_start', ['accessKey' => $accesskey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
-            searchUrl: $this->router->generate('opds_search', ['accessKey' => $accesskey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL), // Search URL, will be included in top navigation
+            startUrl: $this->router->generate('opds_start', ['accessKey' => $this->currentAccessKey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
+            searchUrl: $this->router->generate('opds_search', ['accessKey' => $this->currentAccessKey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL), // Search URL, will be included in top navigation
             updated: new \DateTime(), // Last update of OPDS feed
             maxItemsPerPage: 32, // Max items per page, default is 16
         ))
