@@ -7,6 +7,7 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__.'/src')
     ->in(__DIR__.'/tests')
     ->in(__DIR__.'/migrations')
+    ->in(__DIR__.'/BibliotecaTypesenseBundle')
 ;
 
 $config = new PhpCsFixer\Config('Biblioteca');

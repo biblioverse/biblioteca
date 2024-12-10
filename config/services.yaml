@@ -125,6 +125,9 @@ services:
             $accessTokenExtractor: '@App\Security\KoboTokenExtractor'
             $accessTokenHandler: '@App\Security\KoboTokenHandler'
 
+    App\Mapper\BookMapper:
+        tags:
+            - { name: typesense.mapper }
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'

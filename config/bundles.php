@@ -22,5 +22,6 @@ return [
     Andante\PageFilterFormBundle\AndantePageFilterFormBundle::class => ['all' => true],
     Symandy\DatabaseBackupBundle\SymandyDatabaseBackupBundle::class => ['all' => true],
     ACSEO\TypesenseBundle\ACSEOTypesenseBundle::class => ['all' => true],
+    Biblioteca\TypesenseBundle\BibliotecaTypesenseBundle::class => ['all' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
 ];
