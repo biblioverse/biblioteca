@@ -77,7 +77,7 @@ class OpdsController extends AbstractController
             $feeds[] = $this->opds->convertBookToOpdsEntry($result);
         }
 
-        $opds->feeds($feeds)->paginate();
+        $opds->feeds($feeds);
 
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
@@ -98,7 +98,7 @@ class OpdsController extends AbstractController
         foreach ($group as $item) {
             $feeds[] = $this->opds->getNavigationEntry('group:'.$type.':'.$item['item'], $item['item'], $this->generateOpdsUrl('opds_group_item', ['type' => $type, 'item' => $item['item']]));
         }
-        $opds->feeds($feeds)->paginate();
+        $opds->feeds($feeds);
 
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
@@ -152,7 +152,7 @@ class OpdsController extends AbstractController
             }
             $feeds[] = $this->opds->convertBookToOpdsEntry($bookInteraction->getBook());
         }
-        $opds->feeds($feeds)->paginate();
+        $opds->feeds($feeds);
 
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
@@ -179,7 +179,7 @@ class OpdsController extends AbstractController
         foreach ($group as $book) {
             $feeds[] = $this->opds->convertBookToOpdsEntry($book);
         }
-        $opds->feeds($feeds)->paginate();
+        $opds->feeds($feeds);
 
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
