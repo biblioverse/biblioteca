@@ -73,11 +73,11 @@ class KoboStoreProxy
      */
     public function proxyOrRedirect(Request $request, array $options = []): Response
     {
-        $this->assertEnabled();
-
         if ($request->isMethod('GET')) {
             return new RedirectResponse((string) $this->getTransformedUrl($request), Response::HTTP_TEMPORARY_REDIRECT);
         }
+
+        $this->assertEnabled();
 
         return $this->proxy($request, $options);
     }
@@ -97,11 +97,13 @@ class KoboStoreProxy
 
         $client = $this->getClient($request);
 
-        $psrResponse = $client->send($psrRequest, [
-            'base_uri' => $hostname,
-            'http_errors' => false,
-            'connect_timeout' => 5,
-        ] + $config
+        $psrResponse = $client->send(
+            $psrRequest,
+            [
+                'base_uri' => $hostname,
+                'http_errors' => false,
+                'connect_timeout' => 5,
+            ] + $config
         );
 
         return $this->convertResponse($psrResponse, $config['stream'] ?? true);
@@ -119,7 +121,7 @@ class KoboStoreProxy
     {
         $host = parse_url($hostnameOrUrl, PHP_URL_HOST);
         $host = $host === false ? $hostnameOrUrl : $host;
-        $host = $host ?? $hostnameOrUrl;
+        $host ??= $hostnameOrUrl;
         $path = $this->tokenExtractor->getOriginalPath($psrRequest, $psrRequest->getUri()->getPath());
 
         return $psrRequest->getUri()->withHost($host)->withPath($path);
@@ -149,9 +151,7 @@ class KoboStoreProxy
             'http_errors' => false,
             'connect_timeout' => 5,
             'stream' => $streamAllowed,
-        ])->then(function (ResponseInterface $response) {
-            return $this->cleanupPsrResponse($response);
-        });
+        ])->then(fn (ResponseInterface $response) => $this->cleanupPsrResponse($response));
     }
 
     private function convertRequest(Request $request, string $hostname): RequestInterface

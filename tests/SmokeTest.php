@@ -18,7 +18,7 @@ class SmokeTest extends WebTestCase
             self::fail('UserRepository not found');
         }
 
-        $testUser = $userRepository->findOneBy(['username'=>'admin@example.com']);
+        $testUser = $userRepository->findOneBy(['username' => 'admin@example.com']);
 
         if (!$testUser instanceof UserInterface) {
             self::fail('User not found');
@@ -30,7 +30,6 @@ class SmokeTest extends WebTestCase
             $client->request(Request::METHOD_GET, $url);
             self::assertResponseIsSuccessful();
         }
-
     }
 
     private function getUrlList(): array

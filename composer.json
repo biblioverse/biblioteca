@@ -118,11 +118,11 @@
     ],
     "test-phpcs": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
+      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
     ],
     "phpcs": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix ./src -vv --verbose  --config=.php-cs-fixer.dist.php"
+      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix -vv --verbose  --config=.php-cs-fixer.dist.php"
     ],
     "test-rector": [
       "Composer\\Config::disableProcessTimeout",
@@ -134,11 +134,20 @@
     ],
     "test-phpunit": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always"
+      "env XDEBUG_MODE=off php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
+    ],
+    "test-phpunit-coverage": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=coverage php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --coverage-html=tests/coverage"
     ],
     "test-phpunit-xdebug": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 ./vendor/bin/phpunit --colors=always"
+      "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
+    ],
+    "lint": [
+      "@rector",
+      "@phpcs",
+      "@test-phpstan"
     ],
     "test": [
       "@test-phpcs",
@@ -150,8 +159,6 @@
       "@php bin/console doctrine:schema:update --complete --force --env=test -n",
       "@php bin/console typesense:create --env=test",
       "@php bin/console doctrine:fixtures:load --env=test --append -n",
-      "npm i",
-      "npm run build",
       "@test-phpunit"
     ]
   },

@@ -18,7 +18,7 @@ final class Version20240531125758 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(true === $this->tableExists($schema, 'kobo_device')){
+        if (true === $this->tableExists($schema, 'kobo_device')) {
             return;
         }
 
@@ -42,7 +42,6 @@ final class Version20240531125758 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE kobo_device DROP FOREIGN KEY IF EXISTS FK_2EB06A2BA76ED395 ');
         $this->addSql('ALTER TABLE shelf_kobo DROP FOREIGN KEY IF EXISTS FK_8CD6C0B162A5CBE');

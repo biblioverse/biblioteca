@@ -20,7 +20,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private FilteredBookUrlGenerator $filteredBookUrlGenerator, private RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly FilteredBookUrlGenerator $filteredBookUrlGenerator, private readonly RequestStack $requestStack)
     {
     }
 

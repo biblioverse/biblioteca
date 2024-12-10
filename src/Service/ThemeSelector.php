@@ -8,7 +8,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class ThemeSelector
 {
     public function __construct(
-        private Security $security,
+        private readonly Security $security,
     ) {
     }
 

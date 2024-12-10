@@ -8,7 +8,6 @@ use App\Entity\Shelf;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Request\TagDeleteRequest;
 use App\Repository\ShelfRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -57,12 +56,8 @@ class TagController extends AbstractKoboController
         $deleteRequest = $this->serializer->deserialize($request->getContent(false), TagDeleteRequest::class, 'json');
         $this->koboSyncLogger->debug('Tag delete request', ['request' => $deleteRequest]);
 
-        try {
-            if (!$shelf instanceof Shelf) {
-                throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $shelfId));
-            }
-        } catch (NonUniqueResultException $e) {
-            throw new BadRequestException('Invalid shelf id', 0, $e);
+        if (!$shelf instanceof Shelf) {
+            throw $this->createNotFoundException(sprintf('Shelf with uuid %s not found', $shelfId));
         }
 
         foreach ($shelf->getBooks() as $book) {
@@ -101,12 +96,7 @@ class TagController extends AbstractKoboController
             if ($this->koboStoreProxy->isEnabled()) {
                 $this->koboSyncLogger->debug('Proxying request to delete tag {id}', ['id' => $tagId]);
 
-                $proxyResponse = $this->koboStoreProxy->proxy($request);
-                if ($proxyResponse->getStatusCode() === Response::HTTP_NOT_FOUND) {
-                    return new JsonResponse(['unable to delete tag, skipped.'], Response::HTTP_OK);
-                }
-
-                return $proxyResponse;
+                return $this->koboStoreProxy->proxy($request);
             }
         }
 
