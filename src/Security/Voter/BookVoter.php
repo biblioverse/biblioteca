@@ -30,13 +30,10 @@ class BookVoter extends Voter
             return false;
         }
 
-        switch ($attribute) {
-            case self::EDIT:
-                return in_array('ROLE_ADMIN', $user->getRoles(), true);
-            case self::VIEW:
-                return $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory();
-        }
-
-        return false;
+        return match ($attribute) {
+            self::EDIT => in_array('ROLE_ADMIN', $user->getRoles(), true),
+            self::VIEW => $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory(),
+            default => false,
+        };
     }
 }

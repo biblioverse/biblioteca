@@ -10,7 +10,7 @@ use App\Service\BookProgressionService;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ReadingStateResponse
+class ReadingStateResponse implements \Stringable
 {
     public function __construct(
         protected BookProgressionService $bookProgressionService,

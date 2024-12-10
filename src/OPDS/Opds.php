@@ -26,16 +26,19 @@ class Opds
     ) {
     }
 
-    public function getOpdsConfig(string $accesskey): KiwilanOpds
+    public function setAccessKey(string $accessKey): void
     {
-        $this->currentAccessKey = $accesskey;
+        $this->currentAccessKey = $accessKey;
+    }
 
+    public function getOpdsConfig(): KiwilanOpds
+    {
         return KiwilanOpds::make(new OpdsConfig(
             name: 'Biblioteca',
             author: 'Biblioteca',
             authorUrl: $this->router->generate('app_dashboard', [], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
-            startUrl: $this->router->generate('opds_start', ['accessKey' => $accesskey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
-            searchUrl: $this->router->generate('opds_search', ['accessKey' => $accesskey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL), // Search URL, will be included in top navigation
+            startUrl: $this->router->generate('opds_start', ['accessKey' => $this->currentAccessKey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
+            searchUrl: $this->router->generate('opds_search', ['accessKey' => $this->currentAccessKey], referenceType: UrlGeneratorInterface::ABSOLUTE_URL), // Search URL, will be included in top navigation
             updated: new \DateTime(), // Last update of OPDS feed
             maxItemsPerPage: 32, // Max items per page, default is 16
         ))
@@ -71,7 +74,7 @@ class Opds
         $cover = $this->imagineCacheManager->getBrowserPath('covers/'.$book->getImagePath().$book->getImageFilename(), 'thumb');
 
         $updated = $book->getUpdated();
-        if (!$updated instanceof \DateTimeInterface) {
+        if (!$updated instanceof \DateTime) {
             $updated = new \DateTime();
         }
 
@@ -80,7 +83,7 @@ class Opds
             $book->getTitle(),
             $this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             content: $book->getSummary() ?? ' ',
-            updated: $updated->format('Y-m-d H:i:s'),
+            updated: $updated,
             download: $this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL).$this->bookFileSystemManager->getBookPublicPath($book),
             mediaThumbnail: $cover,
             categories: $book->getTags() ?? [],

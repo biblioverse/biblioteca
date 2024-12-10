@@ -14,7 +14,7 @@ final class Version20241208200901 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add opds access tokens';
     }
 
     public function up(Schema $schema): void

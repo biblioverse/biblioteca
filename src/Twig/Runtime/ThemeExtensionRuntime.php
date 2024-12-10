@@ -7,7 +7,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class ThemeExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private ThemeSelector $themeSelector)
+    public function __construct(private readonly ThemeSelector $themeSelector)
     {
     }
 

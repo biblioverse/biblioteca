@@ -14,12 +14,19 @@ class ShelfFixture extends Fixture implements DependentFixtureInterface
     public const SHELF_REFERENCE = 'shelf';
     public const SHELF_NAME = 'test shelf';
 
+    public const UNKNOWN_UUID = 'b6fa5325-13db-4e2e-adb3-8849bb9abd23';
+
     public function load(ObjectManager $manager): void
     {
         $shelf = new Shelf();
         $shelf->setName(self::SHELF_NAME);
         $shelf->setUser($this->getUser());
         $this->getBook()->addShelf($shelf);
+
+        foreach (range(0, BookFixture::NUMBER_OF_OWNED_YAML_BOOKS - 1) as $index) {
+            $book = $this->getReference('book-'.$index, Book::class);
+            $book->addShelf($shelf);
+        }
 
         $manager->persist($shelf);
         $manager->flush();

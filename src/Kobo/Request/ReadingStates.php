@@ -5,12 +5,9 @@ namespace App\Kobo\Request;
 class ReadingStates
 {
     /**
-     * @param array<int, ReadingState> $readingState
+     * @param array<int, ReadingState> $readingStates
      */
-    public function __construct(array $readingState = [])
+    public function __construct(public array $readingStates = [])
     {
-        $this->readingStates = $readingState;
     }
-    /** @var array<int, ReadingState> */
-    public array $readingStates = [];
 }

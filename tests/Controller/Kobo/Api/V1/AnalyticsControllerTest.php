@@ -1,16 +1,47 @@
 <?php
 
-namespace App\Tests\Controller\Kobo;
+namespace App\Tests\Controller\Kobo\Api\V1;
 
-
+use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
+use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
 
-class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
+class AnalyticsControllerTest extends AbstractKoboControllerTest
 {
-    const SERIAL_NUMBER = 'N9413679432456';
-    const DEVICE_ID = '2a92bba197b1e0574a3f7d29cb2b05b399ab0d197e6b1aa230bfb75a920b14e7c';
-    const MODEL = 'Kobo Libra H2O';
-    const APP_VERSION = '4.38.21908';
+    public const SERIAL_NUMBER = 'N9413679432456';
+    public const DEVICE_ID = '2a92bba197b1e0574a3f7d29cb2b05b399ab0d197e6b1aa230bfb75a920b14e7c';
+    public const MODEL = 'Kobo Libra H2O';
+    public const APP_VERSION = '4.38.21908';
+
+    public function testGetTests(): void
+    {
+        $client = self::getClient();
+        $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
+
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/gettests');
+        self::assertResponseIsSuccessful();
+        $response = self::getJsonResponse();
+        self::assertSame('Success', $response['Result'] ?? null);
+    }
+
+    public function testPostEventWithProxy(): void
+    {
+        $client = self::getClient();
+        $client?->setServerParameter('HTTP_CONNECTION', 'keep-alive');
+
+        $this->getKoboStoreProxy()->setClient($this->getMockClient("[
+                'Result' => 'Success',
+                'AcceptedEvents' => [
+                    '1eba5308-878a-4997-a7c4-80644a79f6da',
+                    '75a68185-ac29-4255-b7e2-c9be02cf85f5',
+                ],
+                'RejectedEvents' => new \stdClass(),
+        ]"));
+        $this->enableRemoteSync();
+
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/event');
+        self::assertResponseIsSuccessful();
+    }
 
     public function testPostEvent(): void
     {
@@ -23,20 +54,20 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'next-in-series' => 'false',
                         'ratings' => 'true',
                         'related' => 'false',
-                        'stats' => 'false'
+                        'stats' => 'false',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'EndOfBookView',
                     'Id' => '254661d2-3960-4669-8e16-2d062844e3e7',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:24:49Z'
+                    'Timestamp' => '2024-01-28T09:24:49Z',
                 ],
                 [
                     'Attributes' => [
                         'Origin' => 'MarkAsFinished',
                         'Screen' => '',
-                        'volumeid' => 'a22c0264-2983-4cbb-a688-27a15ea89fa7'
+                        'volumeid' => 'a22c0264-2983-4cbb-a688-27a15ea89fa7',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'MarkAsFinished',
@@ -49,7 +80,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'ContentType' => 'book',
                         'Origin' => 'AddToShelf',
                         'Screen' => '',
-                        'volumeid' => 'ddb50dfb-d801-4ff6-9800-b7ac2b5c8fb1'
+                        'volumeid' => 'ddb50dfb-d801-4ff6-9800-b7ac2b5c8fb1',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'AddToCollection',
@@ -60,14 +91,14 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                 ],
                 [
                     'Attributes' => [
-                        'ViewType' => 'MyCollections'
+                        'ViewType' => 'MyCollections',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'AccessLibrary',
                     'Id' => '8719d2bb-93ac-444b-8b93-3484cce015ea',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:36:11Z',],
+                    'Timestamp' => '2024-01-28T09:36:11Z', ],
                 [
                     'Attributes' => [
                         'tab' => 'Collections',
@@ -81,7 +112,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                 ],
                 [
                     'Attributes' => [
-                        'Action' => 'Sync'
+                        'Action' => 'Sync',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'StatusBarOption',
@@ -95,14 +126,14 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'Origin' => 'SyncMenu',
                         'Screen' => 'My Books',
                         'SecondsSinceLastSync' => '1271',
-                        'isFullSync' => 'No'
+                        'isFullSync' => 'No',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'ManualSync',
                     'Id' => 'd969c797-c1ab-4ce5-b68b-908a3d85ca1b',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:45:55Z'
+                    'Timestamp' => '2024-01-28T09:45:55Z',
                 ],
                 [
                     'Attributes' => [
@@ -120,7 +151,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'LastReadingFont' => 'default',
                         'OSVersion' => '4.1.15',
                         'SDCardStatus' => 'No',
-                        'StorageSize' => '6892'
+                        'StorageSize' => '6892',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'UserMetadataUpdate',
@@ -199,10 +230,10 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'NumberOfReflowableBooks' => 7,
                         'NumberOfShelves' => 7,
                         'NumberOfSideloadedBooks' => 0,
-                        'NumberOfSubscribedBooks' => 0
+                        'NumberOfSubscribedBooks' => 0,
                     ],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:48:59Z'
+                    'Timestamp' => '2024-01-28T09:48:59Z',
                 ],
                 [
                     'Attributes' => [
@@ -218,7 +249,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                 ],
                 [
                     'Attributes' => [
-                        'action' => 'MyBooks'
+                        'action' => 'MyBooks',
                     ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'HomeWidgetClicked',
@@ -228,35 +259,34 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                     'Timestamp' => '2024-01-28T09:49:27Z',
                 ],
                 [
-                    'Attributes' => ['ViewType' => 'MyCollections',],
+                    'Attributes' => ['ViewType' => 'MyCollections'],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'AccessLibrary',
                     'Id' => 'ec12e3c1-fcb8-493a-84a5-e493b06c6572',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:49:28Z'
+                    'Timestamp' => '2024-01-28T09:49:28Z',
                 ],
                 [
-                    'Attributes' => ['tab' => 'Books',],
+                    'Attributes' => ['tab' => 'Books'],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'LibraryTabSelected',
                     'Id' => '6f25379e-765c-4330-a318-91aaac1c9ac0',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:49:31Z'
+                    'Timestamp' => '2024-01-28T09:49:31Z',
                 ],
                 [
-                    'Attributes' =>
-                        ['BookSize' => '3.15202331542969',
-                            'ContentFormat' => 'application/x-kobo-epub+zip',
-                            'Monetization' => 'Paid'
-                        ],
+                    'Attributes' => ['BookSize' => '3.15202331542969',
+                        'ContentFormat' => 'application/x-kobo-epub+zip',
+                        'Monetization' => 'Paid',
+                    ],
                     'ClientApplicationVersion' => self::APP_VERSION,
                     'EventType' => 'download_content',
                     'Id' => '9dce2402-6d77-403d-bf68-83fa98336f89',
                     'Metrics' => [],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:49:37Z',],
+                    'Timestamp' => '2024-01-28T09:49:37Z', ],
                 [
                     'Attributes' => [
                         'AccountType' => 'Adult',
@@ -297,7 +327,7 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
                         'NumberOfSubscribedBooks' => 0,
                     ],
                     'TestGroups' => [],
-                    'Timestamp' => '2024-01-28T09:49:39Z',],
+                    'Timestamp' => '2024-01-28T09:49:39Z', ],
                 [
                     'Attributes' => [
                         'BookSize' => '3.15202331542969',
@@ -450,14 +480,14 @@ class KoboAnalyticsControllerTest extends AbstractKoboControllerTest
             'HTTP_'.KoboDevice::KOBO_DEVICE_ID_HEADER => self::DEVICE_ID,
             'HTTP_'.KoboDevice::KOBO_DEVICE_MODEL_HEADER => self::MODEL,
         ];
-        $client?->request('POST', '/kobo/'.$this->accessKey.'/v1/analytics/event', [
+        $client?->request('POST', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/analytics/event', [
             'json' => $body,
         ], [], $server);
 
         // Make sure we define Kobo's device_id and model
-        $kobo =  $this->getKoboDevice(true);
-        self::assertSame(self::DEVICE_ID,$kobo->getDeviceId());
-        self::assertSame(self::MODEL,$kobo->getModel());
+        $kobo = $this->getKoboDevice();
+        self::assertSame(self::DEVICE_ID, $kobo->getDeviceId());
+        self::assertSame(self::MODEL, $kobo->getModel());
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('Connection', 'keep-alive');

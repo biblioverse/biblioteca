@@ -19,6 +19,9 @@ class KoboDevice
     use RandomGeneratorTrait;
     public const KOBO_DEVICE_ID_HEADER = 'X-Kobo-Deviceid';
     public const KOBO_DEVICE_MODEL_HEADER = 'X-Kobo-Devicemodel';
+    public const KOBO_SYNC_TOKEN_HEADER = 'kobo-synctoken';
+    public const KOBO_SYNC_SHOULD_CONTINUE_HEADER = 'x-kobo-sync';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -26,7 +29,7 @@ class KoboDevice
 
     #[Assert\NotBlank(allowNull: false)]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'kobos')]
     #[ORM\JoinColumn(nullable: false)]

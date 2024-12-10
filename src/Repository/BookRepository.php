@@ -197,6 +197,19 @@ class BookRepository extends ServiceEntityRepository
         return array_filter($items, static fn ($key) => in_array($key, $randed, true), ARRAY_FILTER_USE_KEY);
     }
 
+    public function findByUuid(string $uuid): ?Book
+    {
+        $qb = $this->getAllBooksQueryBuilder();
+        $qb->andWhere('book.uuid = :uuid')
+            ->setParameter('uuid', $uuid);
+
+        /** @var Book|null $book */
+        $book = $qb->getQuery()
+            ->getOneOrNullResult();
+
+        return $book;
+    }
+
     public function findByAuthor(string $author): mixed
     {
         $qb = $this->getAllBooksQueryBuilder();
@@ -335,7 +348,7 @@ class BookRepository extends ServiceEntityRepository
         $results = [];
         foreach ($intermediateResults as $result) {
             foreach ($result['item'] ?? [] as $item) {
-                $key = ucwords(strtolower($item), Book::UCWORDS_SEPARATORS);
+                $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {
                     $results[$key] = [
                         'item' => $key,
@@ -370,8 +383,10 @@ class BookRepository extends ServiceEntityRepository
         $qb->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
         $qb->orderBy('book.updated', 'ASC');
+
+        $query = $qb->getQuery();
         /** @var Book[] $result */
-        $result = $qb->getQuery()->getResult();
+        $result = $query->getResult();
 
         return $result;
     }
@@ -379,9 +394,13 @@ class BookRepository extends ServiceEntityRepository
     public function getChangedBooksCount(KoboDevice $koboDevice, SyncToken $syncToken): int
     {
         $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
-        $qb->select('count(book.id) as nb');
+        $qb->select('count(distinct book.id) as nb');
+        $qb->resetDQLPart('groupBy');
 
-        return (int) $qb->getQuery()->getSingleColumnResult();
+        /** @var array{0: int} $result */
+        $result = $qb->getQuery()->getSingleColumnResult();
+
+        return $result[0];
     }
 
     private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
@@ -412,26 +431,29 @@ class BookRepository extends ServiceEntityRepository
             ->andWhere('book in (:books)')
             ->setParameter('books', array_keys($books))
             ->setParameter('id', $koboDevice->getId())
-            ->setParameter('extension', 'epub'); // Pdf is not supported by kobo sync
+            ->setParameter('extension', 'epub') // Pdf is not supported by kobo sync
+            ->groupBy('book.id');
+        $bigOr = $qb->expr()->orX();
 
         if ($syncToken->lastCreated instanceof \DateTimeInterface) {
-            $qb->andWhere('book.created > :lastCreated');
-            $qb->orWhere($qb->expr()->orX(
-                $qb->expr()->isNull('koboSyncedBooks.created is null'),
-                $qb->expr()->isNull('koboSyncedBooks.created > :lastCreated'),
-            ))
-            ->setParameter('lastCreated', $syncToken->lastCreated);
+            $bigOr->addMultiple([
+                $qb->expr()->isNull('koboSyncedBooks.created'),
+                $qb->expr()->gte('book.created', ':lastCreated'),
+            ]);
+            $qb->setParameter('lastCreated', $syncToken->lastCreated);
         }
 
         if ($syncToken->lastModified instanceof \DateTimeInterface) {
-            $qb->andWhere($qb->expr()->orX(
+            $bigOr->addMultiple([
                 'book.updated > :lastModified',
                 'book.created  > :lastModified',
                 'koboSyncedBooks.updated > :lastModified',
                 $qb->expr()->isNull('koboSyncedBooks.updated'),
-            ));
+            ]);
             $qb->setParameter('lastModified', $syncToken->lastModified);
         }
+
+        $qb->andWhere($bigOr);
 
         $qb->orderBy('book.updated');
         if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
