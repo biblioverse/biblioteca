@@ -74,7 +74,7 @@ class Opds
         $cover = $this->imagineCacheManager->getBrowserPath('covers/'.$book->getImagePath().$book->getImageFilename(), 'thumb');
 
         $updated = $book->getUpdated();
-        if (!$updated instanceof \DateTimeInterface) {
+        if (!$updated instanceof \DateTime) {
             $updated = new \DateTime();
         }
 
