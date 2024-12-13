@@ -2,26 +2,31 @@
 
 namespace App\Twig\Components;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use App\Entity\Book;
+use Biblioteca\TypesenseBundle\Query\SearchQuery;
+use Biblioteca\TypesenseBundle\Search\Results\SearchResultsHydrated;
+use Biblioteca\TypesenseBundle\Search\SearchCollectionInterface as TypesenseSearch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent(method: 'get')]
 class Search
 {
-    use DefaultActionTrait;
-
     #[LiveProp(writable: true, url: true)]
     public string $query = '';
+    /** @var array<int|string, Book> */
     public array $books = [];
+    public array $facets = [];
+    public array $highlights = [];
 
-    public function __construct(protected CollectionFinder $bookFinder)
-    {
+    /**
+     * @param TypesenseSearch<Book> $searchBooks
+     */
+    public function __construct(
+        protected TypesenseSearch $searchBooks,
+    ) {
     }
 
     #[LiveAction]
@@ -30,37 +35,31 @@ class Search
         $this->query = $value.' '.$this->query;
     }
 
-    /**
-     * @return array<Book>
-     */
-    public function getResults(): array
+    public function __invoke(): void
     {
+        $this->books = [];
+        $this->facets = [];
+        $this->highlights = [];
+
         if ('' === $this->query) {
-            return [];
+            return;
+        }
+        /** @var SearchResultsHydrated<Book> $results */
+        $results = $this->searchBooks->search(new SearchQuery(
+            q: $this->query,
+            queryBy: 'title,authors,serie,tags,summary,serieIndex',
+            facetBy: 'authors,serie,tags',
+            numTypos: 2,
+            perPage: 16,
+        ));
+
+        $this->books = [];
+        foreach ($results as $book) {
+            $this->books[$book->getId()] = $book;
         }
 
-        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags,summary,serieIndex');
+        $this->highlights = $results->getHighlight();
 
-        $complexQuery->facetBy('authors,serie,tags');
-
-        $complexQuery->perPage(16);
-        $complexQuery->numTypos(2);
-
-        $rawResults = $this->bookFinder->rawQuery($complexQuery)->getRawResults();
-        $results = $this->bookFinder->query($complexQuery)->getResults();
-        $facets = $this->bookFinder->query($complexQuery)->getFacetCounts();
-
-        foreach ($rawResults as $result) {
-            $document = $result['document'];
-            foreach ($result['highlights'] as $highlight) {
-                $document[$highlight['field']] = $highlight['snippet'] ?? '';
-            }
-            $this->books[$document['id']] = $document;
-        }
-        foreach ($results as $result) {
-            $this->books[$result->getId()]['book'] = $result;
-        }
-
-        return ['books' => $this->books, 'facets' => $facets];
+        $this->facets = $results->getFacetCounts();
     }
 }

@@ -103,14 +103,10 @@ services:
     app.display_mode_subscriber:
         class: App\EventSubscriber\DisplayModeSubscriber
 
-    App\Controller\OPDS\OpdsController:
-        arguments:
-           $bookFinder: '@typesense.specificfinder.books.books_autocomplete'
+    App\Controller\OPDS\OpdsController: ~
 
 
-    App\Twig\Components\Search:
-        arguments:
-            $bookFinder: '@typesense.finder.books'
+    App\Twig\Components\Search: ~
 
     App\Service\BookFileSystemManager:
         bind:
@@ -148,6 +144,8 @@ services:
         bind:
             $accessTokenExtractor: '@App\Security\KoboTokenExtractor'
             $accessTokenHandler: '@App\Security\KoboTokenHandler'
+
+    App\Mapper\BookMapper: ~
 
 when@dev:
     services:
