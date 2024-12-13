@@ -5,6 +5,7 @@ namespace App\Twig\Components;
 use App\Entity\Shelf;
 use App\Entity\User;
 use App\Service\Search\SearchHelper;
+use Biblioverse\TypesenseBundle\Exception\SearchException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
+use Typesense\Exceptions\RequestMalformed;
 
 #[AsLiveComponent(method: 'get')]
 class Search
@@ -27,21 +29,7 @@ class Search
     public string $query = '';
     #[LiveProp(writable: true, url: true)]
     public string $filterQuery = '';
-    public array $filterFields = [
-        'id',
-        'title',
-        'serie',
-        'summary',
-        'serieIndex',
-        'extension',
-        'authors',
-        'verified',
-        'tags',
-        'age',
-        'read',
-        'hidden',
-        'favorite',
-    ];
+    public array $filterFields;
 
     public ?string $filterQueryError = null;
     #[LiveProp(writable: true, url: true)]
@@ -64,8 +52,13 @@ class Search
 
     public array $pagination = [];
 
-    public function __construct(protected RequestStack $requestStack, protected SearchHelper $searchHelper, protected Security $security, protected EntityManagerInterface $manager)
-    {
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected SearchHelper $searchHelper,
+        protected Security $security,
+        protected EntityManagerInterface $manager,
+    ) {
+        $this->filterFields = $this->searchHelper->getBookFieldsForQuery();
     }
 
     #[PostMount]
@@ -98,7 +91,7 @@ class Search
     public function hint(): void
     {
         $this->getResults();
-        $this->searchHelper->query->maxFacetValues(50);
+        $this->searchHelper->maxFacetValues = 50;
         $this->searchHelper->execute();
         $hints = $this->hint = $this->searchHelper->getQueryHints();
         if ($hints === null) {
@@ -108,7 +101,7 @@ class Search
             $this->filterQuery = $hints['filter_by'];
             $this->query = '';
         }
-        $this->searchHelper->query->maxFacetValues(10);
+        $this->searchHelper->maxFacetValues = 10;
 
         $this->getResults();
     }
@@ -128,8 +121,13 @@ class Search
             $this->searchHelper->execute();
             $this->filterQueryError = null;
         } catch (\Throwable $e) {
-            $this->searchHelper->query->filterBy('');
             $this->filterQueryError = $e->getMessage();
+            // In case of filter-query error, remove "filterBy" and try again
+            if ($e instanceof SearchException && $e->getPrevious() instanceof RequestMalformed) {
+                $this->filterQueryError = $e->getMessage();
+                $this->searchHelper->prepareQuery($this->query, '', $this->orderQuery, page: $this->page);
+                $this->searchHelper->execute();
+            }
             $this->searchHelper->execute();
         }
 
