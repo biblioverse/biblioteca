@@ -20,6 +20,6 @@ return [
     Symfony\UX\Autocomplete\AutocompleteBundle::class => ['all' => true],
     Symfony\UX\StimulusBundle\StimulusBundle::class => ['all' => true],
     Andante\PageFilterFormBundle\AndantePageFilterFormBundle::class => ['all' => true],
-    ACSEO\TypesenseBundle\ACSEOTypesenseBundle::class => ['all' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    Biblioteca\TypesenseBundle\BibliotecaTypesenseBundle::class => ['all' => true],
 ];
