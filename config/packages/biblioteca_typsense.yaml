@@ -1,0 +1,8 @@
+biblioteca_typesense:
+  typesense:
+    uri: '%env(resolve:TYPESENSE_URL)%'
+    key: '%env(resolve:TYPESENSE_KEY)%'
+  collections:
+    books:
+      entity: 'App\Entity\Book'
+      name: 'books'
