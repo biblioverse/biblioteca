@@ -62,6 +62,9 @@ class KoboDevice
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $forceSync = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $syncReadingList = true;
+
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $upstreamSync = false;
 
@@ -210,5 +213,15 @@ class KoboDevice
     public function setUpstreamSync(bool $upstreamSync): void
     {
         $this->upstreamSync = $upstreamSync;
+    }
+
+    public function isSyncReadingList(): bool
+    {
+        return $this->syncReadingList;
+    }
+
+    public function setSyncReadingList(bool $syncReadingList): void
+    {
+        $this->syncReadingList = $syncReadingList;
     }
 }

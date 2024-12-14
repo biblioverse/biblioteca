@@ -44,6 +44,9 @@ class KoboType extends AbstractType
                 'label' => 'Sync books with the official store too',
                 'required' => false,
                 'disabled' => !$this->koboProxyConfiguration->useProxy(),
+            ])->add('syncReadingList', null, [
+                'label' => 'Sync your reading list',
+                'required' => false,
             ]);
         $builder->add('shelves', EntityType::class, [
             'label' => 'Sync with Shelves',
