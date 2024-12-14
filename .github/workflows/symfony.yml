@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        typesense-version: [ 0.23.1 ]
+        typesense-version: [ 27.1 ]
 
     steps:
       - name: Start Typesense
