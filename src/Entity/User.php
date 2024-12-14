@@ -78,6 +78,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $maxAgeCategory = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    /**
+     * @deprecated must used dotenv configuration instead
+     */
     private ?string $openAIKey = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -353,18 +356,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMaxAgeCategory(?int $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
-
-        return $this;
-    }
-
-    public function getOpenAIKey(): ?string
-    {
-        return $this->openAIKey;
-    }
-
-    public function setOpenAIKey(?string $openAIKey): static
-    {
-        $this->openAIKey = $openAIKey;
 
         return $this;
     }

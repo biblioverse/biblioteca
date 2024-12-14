@@ -18,5 +18,5 @@ abstract class AbstractBookPrompt
         return str_replace('{book}', $bookString, $prompt);
     }
 
-    abstract public function getPrompt(Book $book, User $user): string;
+    abstract public function getPrompt(Book $book, ?User $user): string;
 }

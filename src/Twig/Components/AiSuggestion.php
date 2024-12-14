@@ -2,11 +2,12 @@
 
 namespace App\Twig\Components;
 
+use App\Ai\AiCommunicatorInterface;
+use App\Ai\CommunicatorDefiner;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Suggestion\SummaryPrompt;
 use App\Suggestion\TagPrompt;
-use Orhanerday\OpenAi\OpenAi;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -15,7 +16,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent]
-final class ChatGPTSuggestion
+final class AiSuggestion
 {
     use DefaultActionTrait;
 
@@ -47,6 +48,7 @@ final class ChatGPTSuggestion
         private Security $security,
         private TagPrompt $tagPrompt,
         private SummaryPrompt $summaryPrompt,
+        private CommunicatorDefiner $aiCommunicator,
     ) {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -70,41 +72,19 @@ final class ChatGPTSuggestion
     {
         $this->suggestions = self::EMPTY_SUGGESTIONS;
 
-        if ($this->user->getOpenAIKey() === null) {
+        $communicator = $this->aiCommunicator->getCommunicator();
+
+        if (!$communicator instanceof AiCommunicatorInterface) {
             return;
         }
 
-        $open_ai = new OpenAi($this->user->getOpenAIKey());
-
-        $chat = $open_ai->chat([
-            'model' => 'gpt-3.5-turbo',
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are a helpful factual librarian that only refers to verifiable content to provide real answers about existing books.',
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $this->prompt,
-                ],
-            ],
-            'temperature' => 0,
-            'max_tokens' => 4000,
-            'frequency_penalty' => 0,
-            'presence_penalty' => 0,
-        ]);
-
-        if (!is_string($chat)) {
-            throw new \RuntimeException('Failed to decode OpenAI response');
-        }
-        $jsonResult = json_decode($chat);
-        // @phpstan-ignore-next-line
-        $apiResult = $jsonResult->choices[0]->message->content;
-
-        $this->result = match ($this->field) {
-            'tags' => $this->tagPrompt->promptResultToTags($apiResult),
-            default => [trim($apiResult)],
+        $result = match ($this->field) {
+            'summary' => $communicator->sendMessageForString($this->prompt),
+            'tags' => $communicator->sendMessageForArray($this->prompt),
+            default => throw new \InvalidArgumentException('Invalid field'),
         };
+
+        $this->result = is_array($result) ? $result : [$result];
 
         $this->suggestions[$this->field] = $this->result;
     }
