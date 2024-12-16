@@ -10,6 +10,7 @@ use App\Suggestion\TagPrompt;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,7 +24,6 @@ class BooksTagCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly TagPrompt $tagPrompt,
         private readonly CommunicatorDefiner $aiCommunicator,
     ) {
         parent::__construct();
@@ -69,14 +69,21 @@ class BooksTagCommand extends Command
             return Command::FAILURE;
         }
 
+        ProgressBar::setFormatDefinition('custom', ' 📚 %current%/%max% [%bar%] ⌛ %message%');
         $progress = $io->createProgressBar(count($books));
+        $progress->setFormat('custom');
         foreach ($books as $book) {
-            $array = $communicator->sendMessageForArray($this->tagPrompt->getPrompt($book, $user));
+            $progress->setMessage($book->getSerie().' '.$book->getTitle().' ('.implode(' and ', $book->getAuthors()).')');
+            $progress->advance();
+            $tagPrompt = new TagPrompt($book, $user);
+            $array = $communicator->interrogate($tagPrompt);
 
-            $book->setTags($array);
+            if (is_array($array)) {
+                $io->writeln('🏷️ '.implode(' 🏷️ ', $array));
+                $book->setTags($array);
+            }
 
             $this->em->flush();
-            $progress->advance();
         }
 
         $progress->finish();

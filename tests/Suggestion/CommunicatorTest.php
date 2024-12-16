@@ -4,6 +4,9 @@ namespace App\Tests\Suggestion;
 
 use App\Ai\CommunicatorDefiner;
 use App\Ai\TestCommunicator;
+use App\Entity\Book;
+use App\Suggestion\SummaryPrompt;
+use App\Suggestion\TagPrompt;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CommunicatorTest extends KernelTestCase
@@ -24,7 +27,10 @@ class CommunicatorTest extends KernelTestCase
 
         assert($communicator instanceof TestCommunicator);
 
-        self::assertStringContainsString('test summary', $communicator->sendMessageForString('The Hobbit'));
-        self::assertEquals($communicator->sendMessageForArray('The Hobbit'), ['keyword', 'keyword2']);
+        $prompt = new SummaryPrompt(new Book(), null);
+        self::assertStringContainsString('test summary', $communicator->interrogate($prompt));
+
+        $prompt = new TagPrompt(new Book(), null);
+        self::assertEquals(['keyword', 'keyword2'], $communicator->interrogate($prompt));
     }
 }

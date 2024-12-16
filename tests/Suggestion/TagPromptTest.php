@@ -16,9 +16,9 @@ class TagPromptTest extends TestCase
         $book->setSerie('The Lord of the Rings');
         $book->setSerieIndex(1);
 
-        $summaryPrompt = new TagPrompt();
+        $summaryPrompt = new TagPrompt($book, null);
 
-        $prompt = $summaryPrompt->getPrompt($book, null);
+        $prompt = $summaryPrompt->getPrompt();
         self::assertStringContainsString($book->getTitle(), $prompt);
         self::assertStringContainsString('in the series', $prompt);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Ai;
 
+use App\Suggestion\AbstractBookPrompt;
 use Orhanerday\OpenAi\OpenAi;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -23,7 +24,7 @@ class ChatGptCommunicator implements AiCommunicatorInterface
     public function initialise(string $basePrompt): void
     {
         $this->openAiConfig = [
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-3.5-turbo', // todo env
             'messages' => [
                 [
                     'role' => 'system',
@@ -48,28 +49,18 @@ class ChatGptCommunicator implements AiCommunicatorInterface
         return $config;
     }
 
-    public function sendMessageForString(string $message): string
+    public function interrogate(AbstractBookPrompt $prompt): string|array
     {
         $open_ai = new OpenAi($this->openAiApiKey);
 
-        $chat = $open_ai->chat($this->prepareConfig($message));
+        $chat = $open_ai->chat($this->prepareConfig($prompt->getPrompt()));
 
         if (!is_string($chat)) {
             throw new \RuntimeException('Failed to communicate with OpenAI');
         }
-        $d = json_decode($chat);
+        $d = json_decode($chat, false);
 
         // @phpstan-ignore-next-line
-        return $d->choices[0]->message->content;
-    }
-
-    public function sendMessageForArray(string $message): array
-    {
-        $items = explode("\n", $this->sendMessageForString($message));
-        array_walk($items, function (&$item) {
-            $item = trim($item, '- ');
-        });
-
-        return $items;
+        return $prompt->convertResult($d->choices[0]->message->content);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Ai;
 
+use App\Suggestion\BookPromptInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -24,13 +25,8 @@ class TestCommunicator implements AiCommunicatorInterface
         // Do nothing
     }
 
-    public function sendMessageForString(string $message): string
+    public function interrogate(BookPromptInterface $prompt): string
     {
         return 'This is a test summary';
-    }
-
-    public function sendMessageForArray(string $message): array
-    {
-        return ['keyword', 'keyword2'];
     }
 }

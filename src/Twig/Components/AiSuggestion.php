@@ -46,8 +46,6 @@ final class AiSuggestion
 
     public function __construct(
         private Security $security,
-        private TagPrompt $tagPrompt,
-        private SummaryPrompt $summaryPrompt,
         private CommunicatorDefiner $aiCommunicator,
     ) {
         $user = $this->security->getUser();
@@ -61,8 +59,8 @@ final class AiSuggestion
     public function postMount(): void
     {
         $this->prompt = match ($this->field) {
-            'summary' => $this->summaryPrompt->getPrompt($this->book, $this->user),
-            'tags' => $this->tagPrompt->getPrompt($this->book, $this->user),
+            'summary' => (new SummaryPrompt($this->book, $this->user))->getPrompt(),
+            'tags' => (new TagPrompt($this->book, $this->user))->getPrompt(),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
     }
@@ -78,11 +76,15 @@ final class AiSuggestion
             return;
         }
 
-        $result = match ($this->field) {
-            'summary' => $communicator->sendMessageForString($this->prompt),
-            'tags' => $communicator->sendMessageForArray($this->prompt),
+        $promptObj = match ($this->field) {
+            'summary' => new SummaryPrompt($this->book, $this->user),
+            'tags' => new TagPrompt($this->book, $this->user),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
+
+        $promptObj->setPrompt($this->prompt);
+
+        $result = $communicator->interrogate($promptObj);
 
         $this->result = is_array($result) ? $result : [$result];
 
