@@ -801,7 +801,12 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
      */
     public function uploadFilesToConsumeDirectory(array $files): void
     {
-        $destination = $this->getBooksDirectory().'/consume';
+        $destination = $this->getBooksDirectory().'consume';
+
+        if (!mkdir($destination, 0777, true) && !is_dir($destination)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $destination));
+        }
+
         foreach ($files as $file) {
             $originalName = $file->getClientOriginalName();
             $explode = explode('.', $originalName);
