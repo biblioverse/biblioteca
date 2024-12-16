@@ -3,6 +3,7 @@
 namespace App\Ai;
 
 use App\Suggestion\BookPromptInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class OllamaCommunicator implements AiCommunicatorInterface
@@ -11,12 +12,16 @@ class OllamaCommunicator implements AiCommunicatorInterface
 
     public function __construct(
         private readonly HttpClientInterface $client,
+        #[Autowire(param: 'OLLAMA_URL')]
+        private readonly ?string $url,
+        #[Autowire(param: 'OLLAMA_MODEL')]
+        private readonly ?string $model,
     ) {
     }
 
     public function isEnabled(): bool
     {
-        return true;
+        return $this->url !== null && $this->model !== null;
     }
 
     private function sendRequest(string $url, array $data = [], string $method = 'GET'): string
@@ -49,20 +54,20 @@ class OllamaCommunicator implements AiCommunicatorInterface
 
     private function getOllamaUrl(string $path): string
     {
-        return "http://10.10.10.55:11434/api/{$path}"; // todo env
+        return "{$this->url}{$path}";
     }
 
     public function initialise(string $basePrompt): void
     {
         $this->sendRequest($this->getOllamaUrl('pull'), [
-            'model' => 'llama3.2', // todo env
+            'model' => $this->model,
         ], 'POST');
     }
 
     public function interrogate(BookPromptInterface $prompt): string|array
     {
         $response = $this->sendRequest($this->getOllamaUrl('generate'), [
-            'model' => 'llama3.2', // todo env
+            'model' => $this->model,
             'prompt' => $prompt->getPrompt(),
             'system' => $this->basePrompt,
             'options' => [

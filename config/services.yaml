@@ -22,8 +22,16 @@ parameters:
     env(ALLOW_BOOK_RELOCATION): true
     OPEN_AI_API_KEY: '%env(OPEN_AI_API_KEY)%'
     env(OPEN_AI_API_KEY): null
+    OPEN_AI_MODEL: '%env(OPEN_AI_MODEL)%'
+    env(OPEN_AI_MODEL): 'gpt-3.5-turbo'
     TYPESENSE_KEY: '%env(TYPESENSE_KEY)%'
     TYPESENSE_URL: '%env(TYPESENSE_URL)%'
+
+    OLLAMA_URL: '%env(OLLAMA_URL)%'
+    env(OLLAMA_URL): null
+    OLLAMA_MODEL: '%env(OLLAMA_MODEL)%'
+    env(OLLAMA_MODEL): 'llama3.2'
+
 services:
     # default configuration for services in *this* file
     _defaults:

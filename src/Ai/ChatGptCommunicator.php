@@ -13,6 +13,8 @@ class ChatGptCommunicator implements AiCommunicatorInterface
     public function __construct(
         #[Autowire(param: 'OPEN_AI_API_KEY')]
         private readonly ?string $openAiApiKey,
+        #[Autowire(param: 'OPEN_AI_MODEL')]
+        private readonly ?string $openAiModel,
     ) {
     }
 
@@ -24,7 +26,7 @@ class ChatGptCommunicator implements AiCommunicatorInterface
     public function initialise(string $basePrompt): void
     {
         $this->openAiConfig = [
-            'model' => 'gpt-3.5-turbo', // todo env
+            'model' => $this->openAiModel,
             'messages' => [
                 [
                     'role' => 'system',

@@ -28,7 +28,10 @@ class ConfigurationController extends AbstractController
             'KOBO_READINGSERVICES_URL' => 'Url of the Kobo Reading Services. See the kbo instructions for more information',
             'TYPESENSE_KEY' => 'Typesense API key',
             'TYPESENSE_URL' => 'Typesense URL',
-            'OPEN_AI_API_KEY' => 'OpenAI API key. Required if AI_FEATURES is set to "chatgpt"',
+            'OPEN_AI_API_KEY' => 'OpenAI API key. Required if you want to enable completions with chatGpt',
+            'OPEN_AI_MODEL' => 'OpenAI model to use',
+            'OLLAMA_URL' => 'Url of the Ollama API. do not forget the trailing slash. Example: http://ollama:11434/api/',
+            'OLLAMA_MODEL' => 'Ollama model to use',
         ];
         foreach ($documentedParams as $key => $value) {
             $documentedParams[$key] = [

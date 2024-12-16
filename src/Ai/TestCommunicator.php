@@ -3,6 +3,8 @@
 namespace App\Ai;
 
 use App\Suggestion\BookPromptInterface;
+use App\Suggestion\SummaryPrompt;
+use App\Suggestion\TagPrompt;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -25,8 +27,12 @@ class TestCommunicator implements AiCommunicatorInterface
         // Do nothing
     }
 
-    public function interrogate(BookPromptInterface $prompt): string
+    public function interrogate(BookPromptInterface $prompt): string|array
     {
-        return 'This is a test summary';
+        return match ($prompt::class) {
+            SummaryPrompt::class => 'This is a test summary',
+            TagPrompt::class => ['keyword', 'keyword2'],
+            default => 'This is a mistake',
+        };
     }
 }

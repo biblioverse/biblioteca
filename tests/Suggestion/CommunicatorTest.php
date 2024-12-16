@@ -27,10 +27,23 @@ class CommunicatorTest extends KernelTestCase
 
         assert($communicator instanceof TestCommunicator);
 
-        $prompt = new SummaryPrompt(new Book(), null);
-        self::assertStringContainsString('test summary', $communicator->interrogate($prompt));
+        $book = new Book();
+        $book->setTitle('The Hobbit');
+        $book->setAuthors(['J.R.R. Tolkien']);
+        $book->setSerie('The Lord of the Rings');
+        $book->setSerieIndex(1);
+        $prompt = new SummaryPrompt($book, null);
+        $result = $communicator->interrogate($prompt);
+        if (!is_string($result)) {
+            self::fail('Expected array, got '.gettype($result));
+        }
+        self::assertStringContainsString('test summary', $result);
 
-        $prompt = new TagPrompt(new Book(), null);
-        self::assertEquals(['keyword', 'keyword2'], $communicator->interrogate($prompt));
+        $prompt = new TagPrompt($book, null);
+        $result = $communicator->interrogate($prompt);
+        if (!is_array($result)) {
+            self::fail('Expected array, got '.gettype($result));
+        }
+        self::assertEquals(['keyword', 'keyword2'], $result);
     }
 }
