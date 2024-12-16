@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        typesense-version: [ 0.23.1 ]
+        typesense-version: [ 27.1 ]
 
     steps:
       - name: Start Typesense
@@ -38,14 +38,14 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Copy .env.test.local
         run: |
           php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
           echo "KEPUBIFY_BIN=/usr/local/bin/kepubify" >> .env.test.local
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -55,7 +55,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Cache kepubify
         id: kepubify-cache-restore
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /usr/local/bin/kepubify
           key: ${{ runner.os }}-kepubify-cache
