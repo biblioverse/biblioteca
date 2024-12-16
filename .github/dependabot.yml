@@ -11,3 +11,18 @@ updates:
       interval: "weekly"
     reviewers:
       - "SergioMendolia"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "SergioMendolia"
+
+  - package-ecosystem: "github-actions"
+
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "SergioMendolia"
