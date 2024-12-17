@@ -19,7 +19,7 @@
     "core-js": "^3.23.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.4.2",
     "regenerator-runtime": "^0.13.9",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
