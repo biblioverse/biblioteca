@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ serie }}{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-3">
+            <img class="w-100"
+                 src="{{ asset('covers/'~firstUnreadBook.imagePath~firstUnreadBook.imageFilename)|imagine_filter('big') }}"
+                 alt="{{ firstUnreadBook.title }}"/>
+            <a href="{{ path('app_book', {'book':firstUnreadBook.id, 'slug':firstUnreadBook.slug}) }}">Livre</a>
+        </div>
+        <div class="col-md-9">
+            <h1>{{ serie }}</h1>
+            <h2>{% for author in authors %}
+                    <a href="{{ filter_book_url({'authors':[author]}) }}">{{ author }}</a>{% endfor %}</h2>
+        </div>
+    </div>
+    {{ dump(stats) }}
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ 'books'|trans }}</h3>
+            <div class="row">
+                {% for book in books %}
+                    <div class="col-md-1">
+                        {% include 'book/_teaser.html.twig' with {book: book} %}
+                    </div>
+                    <div class="col-md-11">
+                        <h4>{{ book.title }}</h4>
+                        <h5>{{ book.serie }} #{{ book.serieIndex }}</h5>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

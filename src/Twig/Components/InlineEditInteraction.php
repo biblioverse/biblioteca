@@ -4,8 +4,10 @@ namespace App\Twig\Components;
 
 use App\Entity\Book;
 use App\Entity\BookInteraction;
+use App\Entity\Shelf;
 use App\Entity\User;
-use App\Form\InlineInteractionType;
+use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -17,16 +19,16 @@ use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent(method: 'get')]
 class InlineEditInteraction extends AbstractController
 {
     use DefaultActionTrait;
     use ValidatableComponentTrait;
-    use ComponentWithFormTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(writable: ['finished', 'favorite'])]
+    #[LiveProp(writable: true)]
     public ?BookInteraction $interaction = null;
 
     #[LiveProp()]
@@ -36,14 +38,25 @@ class InlineEditInteraction extends AbstractController
 
     public ?string $flashMessage = null;
     public ?string $flashMessageFav = null;
+    /**
+     * @var Shelf[]
+     */
+    public array $shelves = [];
 
     public function __construct(private EntityManagerInterface $entityManager, private FormFactoryInterface $formFactory)
     {
+
     }
 
-    protected function instantiateForm(): FormInterface
+    #[PostMount]
+    public function postMount(): void
     {
-        return $this->formFactory->createNamed(uniqid('interactionform-', false), InlineInteractionType::class, $this->getInteraction(), ['method' => 'POST']);
+        $this->interaction = $this->getInteraction();
+
+        $shelfRepository = $this->entityManager->getRepository(Shelf::class);
+
+        $this->shelves = $shelfRepository->findBy(['user' => $this->user]);
+        $this->shelves = array_filter($this->shelves, static fn($item) => $item->getQueryString() === null);
     }
 
     private function getInteraction(): BookInteraction
@@ -57,7 +70,6 @@ class InlineEditInteraction extends AbstractController
                 $interaction->setUser($this->user);
                 $interaction->setBook($this->book);
                 $interaction->setReadPages(0);
-                $interaction->setFinishedDate(new \DateTime('now'));
             }
         }
 
@@ -65,61 +77,30 @@ class InlineEditInteraction extends AbstractController
     }
 
     #[LiveAction]
-    public function toggle(): void
+    public function toggleReadStatus(): void
     {
         $interaction = $this->getInteraction();
 
-        $interaction->setFinished(!$interaction->isFinished());
+        $interaction->setReadStatus(ReadStatus::toggle($interaction->getReadStatus()));
 
         $this->entityManager->persist($interaction);
         $this->entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessage = 'Good Job!';
+        $this->flashMessage = 'Read status updated';
     }
 
     #[LiveAction]
-    public function saveInteraction(): void
-    {
-        $this->submitForm();
-
-        $interaction = $this->getForm()->getData();
-
-        if (!$interaction instanceof BookInteraction) {
-            throw new \RuntimeException('Invalid data');
-        }
-
-        $this->entityManager->persist($interaction);
-        $this->entityManager->flush();
-        $this->flashMessageFav = 'Saved';
-        $this->dispatchBrowserEvent('manager:flush');
-    }
-
-    #[LiveAction]
-    public function toggleFavorite(EntityManagerInterface $entityManager): void
+    public function toggleReadingList(EntityManagerInterface $entityManager): void
     {
         $interaction = $this->getInteraction();
 
-        $interaction->setFavorite(!$interaction->isFavorite());
+        $interaction->setReadingList(ReadingList::toggle($interaction->getReadingList()));
 
         $entityManager->persist($interaction);
         $entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessageFav = 'Add to readlist';
-    }
-
-    #[LiveAction]
-    public function toggleHidden(EntityManagerInterface $entityManager): void
-    {
-        $interaction = $this->getInteraction();
-
-        $interaction->setHidden(!$interaction->isHidden());
-
-        $entityManager->persist($interaction);
-        $entityManager->flush();
-        $this->interaction = $interaction;
-
-        $this->flashMessageFav = 'Hidden';
+        $this->flashMessageFav = 'Reading list updated';
     }
 }

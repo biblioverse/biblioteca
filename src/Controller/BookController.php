@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
+use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
@@ -198,14 +199,17 @@ class BookController extends AbstractController
 
         $page = max(1, $page);
 
-        if (!$interaction->isFinished() && $interaction->getReadPages() < $page) {
+        if ($interaction->getReadStatus() !== ReadStatus::Finished && $interaction->getReadPages() < $page) {
             $interaction->setReadPages($page);
         }
         $manager->persist($interaction);
         $manager->flush();
 
-        if (!$interaction->isFinished() && $page === $book->getPageNumber()) {
-            $interaction->setFinished(true);
+        if ($interaction->getReadStatus() !== ReadStatus::Finished && $page === $book->getPageNumber()) {
+            $interaction->setReadStatus(ReadStatus::Finished);
+
+            //TODO Add next unread in serie to reading list?
+
             $interaction->setFinishedDate(new \DateTime());
             $this->addFlash('success', 'Book finished! Congratulations!');
             $manager->flush();
@@ -382,12 +386,17 @@ class BookController extends AbstractController
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
     public function relocate(Request $request, Book $book, BookFileSystemManagerInterface $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
-            throw $this->createAccessDeniedException('Book relocation is not allowed');
+        try {
+            if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
+                throw $this->createAccessDeniedException('Book relocation is not allowed');
+            }
+            $book = $fileSystemManager->renameFiles($book);
+            $entityManager->persist($book);
+            $entityManager->flush();
+            $this->addFlash('success', 'Book relocated.');
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Error during relocation: ' . $e->getMessage());
         }
-        $book = $fileSystemManager->renameFiles($book);
-        $entityManager->persist($book);
-        $entityManager->flush();
 
         return $this->redirect($request->headers->get('referer') ?? '/');
     }

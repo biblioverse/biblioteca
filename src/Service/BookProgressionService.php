@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
+use App\Enum\ReadStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Psr\Log\LoggerInterface;
@@ -43,7 +44,7 @@ class BookProgressionService
             $interaction = $book->getLastInteraction($user);
             if ($interaction instanceof BookInteraction) {
                 $interaction->setReadPages(null);
-                $interaction->setFinished(false);
+                $interaction->setReadStatus(ReadStatus::NotStarted);
             }
 
             return $this;
@@ -66,8 +67,12 @@ class BookProgressionService
             $this->em->persist($interaction);
             $book->addBookInteraction($interaction);
         }
-        $interaction->setReadPages(intval($readPages));
-        $interaction->setFinished($progress >= 1.0);
+        $interaction->setReadPages((int)$readPages);
+        if ($progress >= 1.0) {
+            $interaction->setReadStatus(ReadStatus::Finished);
+        } else {
+            $interaction->setReadStatus(ReadStatus::Started);
+        }
 
         return $this;
     }

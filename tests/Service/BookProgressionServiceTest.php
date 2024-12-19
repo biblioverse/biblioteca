@@ -7,6 +7,7 @@ use App\DataFixtures\UserFixture;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
+use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
 use App\Service\BookProgressionService;
@@ -63,7 +64,7 @@ class BookProgressionServiceTest extends KernelTestCase
         $service->setProgression($book, $this->getUser(), 1);
         $lastInteraction = $book->getLastInteraction($this->getUser());
         self::assertNotNull($lastInteraction, 'Interaction should be created');
-        self::assertTrue($lastInteraction->isFinished(), 'Book should be finished');
+        self::assertSame($lastInteraction->getReadStatus(), ReadStatus::Finished, 'Book should be finished');
         self::assertSame(30, $lastInteraction->getReadPages(), 'Book should have all page read');
     }
 
@@ -77,7 +78,7 @@ class BookProgressionServiceTest extends KernelTestCase
         $lastInteraction = $book->getLastInteraction($this->getUser());
         self::assertNotNull($lastInteraction, 'Interaction should be created');
 
-        self::assertFalse($lastInteraction->isFinished(), 'Book should not be finished');
+        self::assertSame($lastInteraction->getReadStatus(), ReadStatus::Finished, 'Book should not be finished');
         self::assertSame(15, $lastInteraction->getReadPages(), 'Book should have half page read');
     }
 
@@ -96,7 +97,7 @@ class BookProgressionServiceTest extends KernelTestCase
         $lastInteraction = $book->getLastInteraction($this->getUser());
         self::assertNotNull($lastInteraction, 'Interaction should be created');
 
-        self::assertFalse($lastInteraction->isFinished(), 'Book should not be finished');
+        self::assertNotSame($lastInteraction->getReadStatus(), ReadStatus::Finished, 'Book should not be finished');
         self::assertNull($lastInteraction->getReadPages(), 'Book should have null page read');
     }
 

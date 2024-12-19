@@ -4,9 +4,13 @@ namespace App\Form;
 
 use App\Entity\Book;
 use App\Entity\User;
+use App\Enum\AgeCategory;
+use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -205,23 +209,15 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('read', ChoiceType::class, [
-            'choices' => [
-                'filter.read.any' => '',
-                'filter.read.yes' => 'read',
-                'filter.read.no' => 'unread',
-            ],
+        $builder->add('read', EnumType::class, [
             'required' => false,
+            'class' => ReadStatus::class,
             'label' => 'filter.read',
             'mapped' => false,
-            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
-                switch ($readValue) {
-                    case 'read':
-                        $qb->andWhere('bookInteraction.finished = true');
-                        break;
-                    case 'unread':
-                        $qb->andWhere('(bookInteraction.finished = false OR bookInteraction.finished IS NULL)');
-                        break;
+            'target_callback' => function (QueryBuilder $qb, ?ReadStatus $readValue): void {
+                if ($readValue !== null) {
+                    $qb->andWhere('bookInteraction.readStatus = :readstatus');
+                    $qb->setParameter('readstatus', $readValue);
                 }
             },
         ]);
@@ -245,44 +241,32 @@ class BookFilterType extends AbstractType
             },
         ]);
 
-        $builder->add('age', ChoiceType::class, [
-            'choices' => User::AGE_CATEGORIES + ['filter.age.notset' => 'null'],
+        $builder->add('age', EnumType::class, [
+            'class' => AgeCategory::class,
             'required' => false,
             'mapped' => false,
             'expanded' => false,
             'label' => 'filter.age',
             'multiple' => false,
-            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
-                if ($readValue === null) {
-                    return;
-                }
+            'target_callback' => function (QueryBuilder $qb, ?AgeCategory $readValue): void {
 
-                if ($readValue === 'null') {
-                    $qb->andWhere('book.ageCategory is null');
-                } else {
+                if ($readValue !== null) {
                     $qb->andWhere($qb->expr()->in('book.ageCategory', ':ageCategory'));
                     $qb->setParameter('ageCategory', $readValue);
                 }
             },
         ]);
 
-        $builder->add('favorite', ChoiceType::class, [
-            'choices' => [
-                'filter.favorite.any' => '',
-                'filter.favorite.yes' => 'favorite',
-                'filter.favorite.no' => 'notfavorite',
-            ],
+        $builder->add('favorite', EnumType::class, [
+            'class' => ReadingList::class,
             'required' => false,
             'label' => 'filter.favorite',
             'mapped' => false,
-            'target_callback' => function (QueryBuilder $qb, ?string $readValue): void {
-                switch ($readValue) {
-                    case 'favorite':
-                        $qb->andWhere('bookInteraction.favorite = true');
-                        break;
-                    case 'notfavorite':
-                        $qb->andWhere('(bookInteraction.favorite = false OR bookInteraction.favorite IS NULL)');
-                        break;
+            'target_callback' => function (QueryBuilder $qb, ?ReadingList $readValue): void {
+
+                if ($readValue !== null) {
+                    $qb->andWhere('bookInteraction.readingList = :readinglist');
+                    $qb->setParameter('readinglist', $readValue);
                 }
             },
         ]);

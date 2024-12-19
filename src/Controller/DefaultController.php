@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
 use App\Form\BookFilterType;
+use App\Enum\ReadStatus;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\FilteredBookUrlGenerator;
@@ -64,7 +65,7 @@ class DefaultController extends AbstractController
             'finished' => [],
         ];
         foreach ($readList as $bookInteraction) {
-            if ($bookInteraction->isFinished()) {
+            if ($bookInteraction->getReadStatus() === ReadStatus::Finished) {
                 $statuses['finished'][] = $bookInteraction->getBook();
             } else {
                 $statuses['unread'][] = $bookInteraction->getBook();

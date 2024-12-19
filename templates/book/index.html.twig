@@ -30,7 +30,6 @@
             {% if not book.verified %}
             {{ component('UploadBookPicture',{'book':book}) }}
             {% endif %}
-            {{ component('AddBookToShelf',{'book':book, 'user':app.user}) }}
         </div>
         <div class="col-md-9">
             <table class="table w-100  mb-5">

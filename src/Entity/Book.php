@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Enum\AgeCategory;
+use App\Enum\ReadingList;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -109,8 +111,8 @@ class Book
     #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books', cascade: ['persist'])]
     private Collection $shelves;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $ageCategory = null;
+    #[ORM\Column(enumType: AgeCategory::class, nullable: true)]
+    private ?AgeCategory $ageCategory = null;
 
     /**
      * @var Collection<int, KoboSyncedBook>
@@ -504,12 +506,12 @@ class Book
         return $this;
     }
 
-    public function getAgeCategory(): ?int
+    public function getAgeCategory(): ?AgeCategory
     {
         return $this->ageCategory;
     }
 
-    public function setAgeCategory(?int $ageCategory): static
+    public function setAgeCategory(?AgeCategory $ageCategory): static
     {
         $this->ageCategory = $ageCategory;
 

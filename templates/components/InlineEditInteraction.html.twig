@@ -1,87 +1,86 @@
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+    <!-- Default dropend button -->
+    <div class="btn-group dropend">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                data-bs-auto-close="outside" aria-expanded="false">
+            Dropend
+        </button>
+        <ul class="dropdown-menu">
+            {% if interaction.readingList != enum('App\\Enum\\ReadingList').Ignored %}
+                <li>
+                    <a class="dropdown-item" href="#">
+                        {% if interaction.readingList == enum('App\\Enum\\ReadingList').NotDefined %}
+                            Add to reading list
+                        {% elseif interaction.readingList == enum('App\\Enum\\ReadingList').ToRead %}
+                            Remove from reading list
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">
+                        Ignore this book
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="dropdown-item" href="#">
+                        Un-ignore this book
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            {% if interaction.readStatus != enum('App\\Enum\\ReadStatus').Finished %}
+                {% if interaction.readStatus == enum('App\\Enum\\ReadStatus').NotStarted %}
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            Mark as started
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a class="dropdown-item" href="#">
+                        Mark as read
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a class="dropdown-item" href="#">
+                        Mark as unread
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">
+                        Mark as read again
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li>
+                <div class="btn-group dropend">
 
-    {% set finished=false %}
-    {% set modalId=unique_id('interaction-', false) %}
+                    <a class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                       data-bs-auto-close="outside" aria-expanded="false">
+                        Add to shelf
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for shelf in shelves %}
+                            <li><a class="dropdown-item" href="#">{{ shelf.name }}</a></li>
+                        {% endfor %}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">+ Create new shelf</a></li>
+                    </ul>
+                </div>
+            </li>
 
-    {% if interaction is not null %}
-        {% if interaction.finished %}
-            {% set finished=true %}
-        {% endif %}
-    {% endif %}
+        </ul>
 
-    {% set hidden=false %}
-    {% if interaction is not null %}
-        {% if interaction.hidden %}
-            {% set hidden=true %}
-        {% endif %}
-    {% endif %}
-
-    <button
-        data-action="live#action"
-        data-live-action-param="toggle"
-        class="btn btn-link btn-sm text-{{ finished?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle read status"
-    >
-        <i class="bi bi-check-square-fill"></i>
-        {% if flashMessage %}
-            <small class="text-muted alert-remove">{{ flashMessage }}</small>
-        {% endif %}
-    </button>
+    </div>
 
 
-    {% set favorite = false %}
-    {% if interaction is not null %}
-        {% if interaction.favorite %}
-            {% set favorite = true %}
-        {% endif %}
-    {% endif %}
-    <button
-        data-action="live#action"
-        data-live-action-param="toggleFavorite"
-        class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle favorite"
-    >
-        <i class="bi bi-bookmark-heart"></i>
-        {% if flashMessageFav %}
-            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
-        {% endif %}
-
-    </button>
-
-    <button
-        data-action="live#action"
-        data-live-action-param="toggleHidden"
-        class="btn btn-link btn-sm text-{{ hidden?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle hidden status"
-    >
-        <i class="bi bi-trash-fill"></i>
-        {% if flashMessageFav %}
-            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
-        {% endif %}
-
-    </button>
-
-    <button class="btn btn-link btn-sm text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#{{ modalId}}" type="button"
-            data-toggle="tooltip" data-placement="bottom" >
-        <i class="bi bi-box-arrow-up-right"></i>
-    </button>
-
-    {% component BootstrapModal with {id: modalId} %}
-        {% block modal_header %}
-            <h5>{{ book.title }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        {% endblock %}
-        {% block modal_body %}
-
-            {{ form(form,{
-                attr: {
-                    'novalidate': true,
-                    'class': '',
-                    'data-action': 'live#action',
-                    'data-live-action-param': 'prevent|saveInteraction',
-                }
-            }) }}
-        {% endblock %}
-
-    {% endcomponent %}
 </div>
