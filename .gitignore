@@ -60,3 +60,8 @@ typesense/*
 # Test database
 data/database.sqlite
 *.pcap
+.astro/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

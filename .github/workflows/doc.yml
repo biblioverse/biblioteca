@@ -1,0 +1,40 @@
+name: doc
+
+on:
+  push:
+    branches:
+      - main
+      - migrate-documentation
+
+jobs:
+  cd:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [20]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Setup node env
+        uses: actions/setup-node@v3.8.1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: cd doc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate
+        run: npm run build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/dist
