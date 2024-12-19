@@ -42,7 +42,7 @@ Clears the cache
 ## `doctrine:migrations:migrate`
 Executes all missing database migrations.
 
-## `symandy:databases:backup`
+## `app:backup-db`
 Creates a sql backup of the database in the `backups folder`.
 
 ## `typesense:create`                
