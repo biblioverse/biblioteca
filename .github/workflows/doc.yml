@@ -1,4 +1,4 @@
-name: doc
+name: documentation
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - migrate-documentation
 
 jobs:
-  cd:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -25,13 +25,12 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: cd doc
-
-      - name: Install dependencies
         run: npm ci
+        working-directory: ./doc
 
       - name: Generate
         run: npm run build
+        working-directory: ./doc
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
