@@ -11,24 +11,24 @@
                 />
             </div>
         </div>
-        {% if computed.results.books|default([])|length >0 %}
+        {% if computed.books|length >0 %}
         <div class="row mt-5">
             <div class="col-md-9 col-12">
                 <div class="row">
-                    <h5> Results</h5>
+                    <h5>Results</h5>
                     <ul class="list-group">
 
 
-                    {% for book in computed.results.books|default([]) %}
+                    {% for book in computed.books %}
                         <li class="list-group-item">
-                            {% include themedTemplate('book/_result.html.twig') with {book: book.book} %}
+                            {% include themedTemplate('book/_result.html.twig') with {book: book} %}
                         </li>
                     {% endfor %}
                     </ul>
                 </div>
             </div>
             <div class="col-md-3 col-12">
-                {% for facet in computed.results.facets|default([]) %}
+                {% for facet in computed.facets|default([]) %}
                     {% if facet.counts|length>0 %}
                         <h5 class="m-0 mb-2 fs-6">{{ facet.field_name|capitalize }}</h5>
                         <ul class="list-group mb-4">
@@ -37,9 +37,10 @@
                                 <small>
                                     {{ count.value }}
                                     <span class="badge rounded-pill bg-primary">
-                                {{ count.count }}
-                                <span class="visually-hidden">records</span></small>
-                            </span>
+                                    {{ count.count }}
+                                    <span class="visually-hidden">records</span>
+                                    </span>
+                                </small>
                             </li>
                         {% endfor %}
                             </ul>
