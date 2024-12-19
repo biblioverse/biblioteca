@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class LanguageListener
+final readonly class LanguageListener
 {
-    public function __construct(private readonly RequestStack $requestStack, private readonly Security $security)
+    public function __construct(private RequestStack $requestStack, private Security $security)
     {
     }
 
