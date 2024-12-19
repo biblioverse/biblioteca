@@ -1,0 +1,38 @@
+services:
+  biblioteca:
+    image: ghcr.io/biblioverse/biblioteca:main
+    command: ["/bin/sh", "-c" , "apache2-foreground" ]
+    ports:
+      - 8080
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+    volumes:
+      - <cover_folder>:/var/www/html/public/covers
+      - <books_folder>:/var/www/html/public/books
+      - <image_cache_folder>:/var/www/html/public/media
+      - .env:/var/www/html/.env
+  db:
+    image: mariadb:10.10
+    environment:
+      - MYSQL_ROOT_PASSWORD=db
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=db
+      - MYSQL_PASSWORD=db
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  typesense:
+    image: typesense/typesense:27.1
+    restart: on-failure
+    ports:
+      - 8983
+      - 8108
+    volumes:
+      - searchdata:/data
+    command: '--data-dir /data --api-key=xyz --enable-cors'
+
+volumes:
+    mariadb:
+    searchdata:

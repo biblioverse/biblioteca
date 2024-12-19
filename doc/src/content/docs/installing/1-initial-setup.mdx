@@ -1,0 +1,50 @@
+---
+title: Install with Docker Compose
+tableOfContents: false
+---
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+import importedCode from '../../../files/docker-compose.yml?raw';
+export const highlights = ['8080', 'xyz','=db','<cover_folder>','<books_folder>','<image_cache_folder>'];
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+    A few users have been using Biblioteca for a while now without any major issue. However, as with
+    any tool, there might be bugs or issues. If you find any, please report them and always make backups of your data
+    and files.
+</Aside>
+<Steps>
+
+1. Create a `docker-compose.yml` file for the project
+
+    <Code code={importedCode} lang="yml" title="docker-compose.yml" mark={highlights} />
+
+    - Don't forget to replace the database password and the typesense.
+    - Change the folders with the path you want to use to store the books on your machine.
+
+2. Create a `.env` file with the following content:
+
+    ```env
+    APP_SECRET=your_secret
+    DATABASE_URL=mysql://db:db@db:3306/db
+    TYPESENSE_KEY=xyz
+    ```
+3. Run the following command to start the project:
+
+    ```bash
+    docker-compose up -d
+    ```
+4. Run the followng commands to create the database and the admin user:
+
+    ```bash
+    docker compose exec biblioteca bin/console doctrine:migration:migrate --no-interaction
+    docker compose exec biblioteca bin/console app:create-admin-user [name] [password]
+    docker compose exec biblioteca bin/console typesense:create
+    ```
+5. Access the application at `http://localhost:8080`
+
+6. You can login with the name and password you set in step 4
+</Steps>
+
+

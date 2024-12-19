@@ -1,0 +1,59 @@
+---
+title: Translations
+---
+import { FileTree } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+
+Biblioteca is currently available in French and English.
+
+You can easily add new locales by following these steps:
+
+
+
+## Creating a new theme
+
+<Steps>
+1. Add your language in the UserType and the ProfileType files:
+
+    <FileTree>
+
+    - src
+       - Form
+          - **UserType.php**
+          - **ProfileType.php**
+
+    </FileTree>
+
+
+   ```php
+    ->add('language', ChoiceType::class, [
+        'choices' => [
+            'English' => 'en',
+            'French' => 'fr',
+            'name' => 'iso_code',
+        ],
+    ])
+    ```
+2. Create new files for each category in the translations folder:
+    
+
+    <FileTree>
+    - translations
+        - AutocompleteBundle.en.yaml
+        - **AutocompleteBundle.iso_code.yaml**
+        - KnpPaginatorBundle.en.yaml
+        - **KnpPaginatorBundle.iso_code.yaml**
+        - messages+intl-icu.en.yaml
+        - **messages+intl-icu.iso_code.yaml**
+        - ...
+    </FileTree>
+
+3. Open the files and translate them
+
+</Steps>
+
+<Aside type="note">
+    If you see missing translations or untranslated strings in the app, please report them so we can add them to the default translations.
+</Aside>
