@@ -20,6 +20,7 @@ parameters:
     env(KOBO_READINGSERVICES_URL): 'https://readingservices.kobo.com'
     ALLOW_BOOK_RELOCATION: '%env(bool:ALLOW_BOOK_RELOCATION)%'
     env(ALLOW_BOOK_RELOCATION): true
+    DATABASE_URL: '%env(DATABASE_URL)%'
 
 services:
     # default configuration for services in *this* file

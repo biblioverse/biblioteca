@@ -143,9 +143,6 @@
             "ref": "4ea4a4b6730f83239608d7d4c849533645c70169"
         }
     },
-    "symandy/database-backup-bundle": {
-        "version": "v0.4.0"
-    },
     "symfony/apache-pack": {
         "version": "1.0",
         "recipe": {
