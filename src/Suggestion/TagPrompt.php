@@ -19,7 +19,7 @@ class TagPrompt extends AbstractBookPrompt
         }
         $prompt .= '
 
-The output must be only valid JSON format. It must be an object with one key named "genres" containaing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
+The output must be only valid JSON format. It must be an object with one key named "genres" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
 
         $this->prompt = $this->replaceBookOccurrence($prompt);
     }
