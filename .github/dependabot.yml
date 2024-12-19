@@ -13,7 +13,7 @@ updates:
       - "SergioMendolia"
 
   - package-ecosystem: "npm"
-    directory: "/app"
+    directory: "/"
     schedule:
       interval: "weekly"
     reviewers:

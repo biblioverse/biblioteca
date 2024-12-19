@@ -382,12 +382,17 @@ class BookController extends AbstractController
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
     public function relocate(Request $request, Book $book, BookFileSystemManagerInterface $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
-            throw $this->createAccessDeniedException('Book relocation is not allowed');
+        try {
+            if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
+                throw $this->createAccessDeniedException('Book relocation is not allowed');
+            }
+            $book = $fileSystemManager->renameFiles($book);
+            $entityManager->persist($book);
+            $entityManager->flush();
+            $this->addFlash('success', 'Files relocated');
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
         }
-        $book = $fileSystemManager->renameFiles($book);
-        $entityManager->persist($book);
-        $entityManager->flush();
 
         return $this->redirect($request->headers->get('referer') ?? '/');
     }
