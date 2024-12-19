@@ -212,10 +212,18 @@
             {% endif %}
         </div>
     </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="row">
-        <div class="col-md-1 mt-3">
+        <details>
+            <summary>Delete Book</summary>
+            <div class="alert alert-danger">
+                This action is irreversible.
+            </div>
             {{ form(form) }}
-        </div>
+
+        </details>
     </div>
+    {% endif %}
 
 {% endblock %}
