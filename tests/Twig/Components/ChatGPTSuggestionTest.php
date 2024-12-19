@@ -10,7 +10,7 @@ use App\Repository\BookRepository;
 use App\Repository\UserRepository;
 use App\Suggestion\SummaryPrompt;
 use App\Suggestion\TagPrompt;
-use App\Twig\Components\ChatGPTSuggestion;
+use App\Twig\Components\AiSuggestion;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
@@ -24,7 +24,7 @@ class ChatGPTSuggestionTest extends WebTestCase
         $client->loginUser($this->getUser());
 
         $testComponent = $this->createLiveComponent(
-            name: ChatGPTSuggestion::class,
+            name: AiSuggestion::class,
             data: [
                 'book' => $this->getBook(),
                 'field' => $field,

@@ -57,4 +57,28 @@ menu.timeline: 'My Timeline'
 menu.kobodevices: 'Kobo devices'
 menu.editshelves: 'Edit shelves'
 menu.readinglist: 'Reading list'
+menu.instanceconfig: 'Instance configuration'
 filter.serie: 'Filter by serie'
+"filter.title": "Filter by title"
+"filter.authors": "By authors"
+"filter.authornot": "Exclude authors"
+"filter.tags": "By tags"
+"filter.picture": "Cover image"
+"filter.picture.any": "All"
+"filter.picture.yes": "With"
+"filter.picture.no": "Without"
+"filter.favorite": "Reading list"
+"filter.favorite.any": "All"
+"filter.favorite.yes": "Yes"
+"filter.favorite.no": "No"
+"filter.verified": "Vérified"
+"filter.verified.any": "All"
+"filter.verified.yes": "Yes"
+"filter.verified.no": "No"
+"filter.read": "Read state"
+"filter.read.any": "All"
+"filter.read.yes": "Read"
+"filter.read.no": "Unread"
+"filter.indexgte": "Index >="
+"filter.indexlte": "Index <="
+"filter.extension": "Extension"
