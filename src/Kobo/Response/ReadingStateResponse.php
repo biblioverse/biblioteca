@@ -87,6 +87,7 @@ class ReadingStateResponse implements \Stringable
         return $values; // Remove null values
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->serializer->serialize($this->createReadingState(), 'json', [DateTimeNormalizer::FORMAT_KEY => SyncResponse::DATE_FORMAT]);

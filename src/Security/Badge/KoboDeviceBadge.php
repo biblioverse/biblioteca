@@ -11,6 +11,7 @@ class KoboDeviceBadge implements BadgeInterface
     {
     }
 
+    #[\Override]
     public function isResolved(): bool
     {
         return true;

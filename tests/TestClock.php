@@ -8,6 +8,7 @@ class TestClock implements ClockInterface
 {
     private static ?\DateTimeImmutable $now = null;
 
+    #[\Override]
     public function now(): \DateTimeImmutable
     {
         return self::$now ?? new \DateTimeImmutable();

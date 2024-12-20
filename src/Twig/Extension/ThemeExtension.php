@@ -8,11 +8,13 @@ use Twig\TwigFunction;
 
 class ThemeExtension extends AbstractExtension
 {
+    #[\Override]
     public function getFilters(): array
     {
         return [];
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [

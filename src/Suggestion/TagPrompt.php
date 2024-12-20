@@ -32,6 +32,7 @@ class TagPrompt extends AbstractBookPrompt
         return array_filter($result, fn ($tag) => $tag !== '');
     }
 
+    #[\Override]
     public function getPrompt(Book $book, User $user): string
     {
         $prompt = $user->getBookKeywordPrompt() ?? self::DEFAULT_KEYWORD_PROMPT;

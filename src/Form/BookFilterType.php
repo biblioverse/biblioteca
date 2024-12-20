@@ -24,6 +24,7 @@ class BookFilterType extends AbstractType
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->setMethod(Request::METHOD_GET);
@@ -380,6 +381,7 @@ class BookFilterType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

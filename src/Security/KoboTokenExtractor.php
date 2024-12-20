@@ -11,6 +11,7 @@ class KoboTokenExtractor implements AccessTokenExtractorInterface
     /**
      * Kobos are sending the access token in the URL (/kobo/{token})
      */
+    #[\Override]
     public function extractAccessToken(Request $request): ?string
     {
         $uri = $request->getRequestUri();

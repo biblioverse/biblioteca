@@ -16,6 +16,7 @@ class KoboTokenHandler implements KoboAccessTokenHandlerInterface
     ) {
     }
 
+    #[\Override]
     public function getKoboDeviceBadgeFrom(#[\SensitiveParameter] string $token): KoboDeviceBadge
     {
         if (trim($token) === '') {

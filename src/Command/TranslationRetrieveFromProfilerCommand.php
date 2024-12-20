@@ -27,6 +27,7 @@ class TranslationRetrieveFromProfilerCommand extends Command
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -35,6 +36,7 @@ class TranslationRetrieveFromProfilerCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->profiler instanceof Profiler) {

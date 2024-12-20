@@ -34,7 +34,7 @@ final class ChatGPTSuggestion
     public array $result = [];
     public array $suggestions = [];
 
-    public const EMPTY_SUGGESTIONS = [
+    public const array EMPTY_SUGGESTIONS = [
         'image' => [],
         'title' => [],
         'authors' => [],

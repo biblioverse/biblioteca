@@ -23,6 +23,7 @@ class KebpubifyCachedData implements \JsonSerializable
         return $this->content;
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [
