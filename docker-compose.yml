@@ -1,6 +1,6 @@
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:latest
+    image: ghcr.io/biblioverse/biblioteca-docker:2.0.0
     build:
       target: prod
     command: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
@@ -38,7 +38,7 @@ services:
 
 
   db:
-    image: mariadb:10.10
+    image: mariadb:11.6
     environment:
       - MYSQL_ROOT_PASSWORD=biblioteca
       - MYSQL_DATABASE=biblioteca

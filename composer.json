@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.4",
     "ext-ctype": "*",
     "ext-exif": "*",
     "ext-gd": "*",
@@ -36,6 +36,7 @@
     "symfony/apache-pack": "^1.0",
     "symfony/asset": "^7.1",
     "symfony/console": "^6.2",
+    "symfony/doctrine-bridge": "^7.1",
     "symfony/doctrine-messenger": "^7.1",
     "symfony/dotenv": "^7.1",
     "symfony/expression-language": "^7.1",
@@ -117,11 +118,11 @@
     ],
     "test-phpcs": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
+      "env XDEBUG_MODE=off PHP_CS_FIXER_IGNORE_ENV=true ./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv  --config=.php-cs-fixer.dist.php"
     ],
     "phpcs": [
       "Composer\\Config::disableProcessTimeout",
-      "env XDEBUG_MODE=off ./vendor/bin/php-cs-fixer fix -vv --verbose  --config=.php-cs-fixer.dist.php"
+      "env XDEBUG_MODE=off PHP_CS_FIXER_IGNORE_ENV=true ./vendor/bin/php-cs-fixer fix -vv --verbose  --config=.php-cs-fixer.dist.php"
     ],
     "test-rector": [
       "Composer\\Config::disableProcessTimeout",
