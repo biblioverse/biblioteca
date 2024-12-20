@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f7afb72a14a56334f315b08e15be585",
+    "content-hash": "10a246bb24424030391fc6bbee81cab7",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -3360,67 +3360,6 @@
             "time": "2024-12-05T17:15:07+00:00"
         },
         {
-            "name": "nyholm/dsn",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Nyholm/dsn.git",
-                "reference": "9445621b426bac8c0ca161db8cd700da00a4e618"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/dsn/zipball/9445621b426bac8c0ca161db8cd700da00a4e618",
-                "reference": "9445621b426bac8c0ca161db8cd700da00a4e618",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "^5.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Nyholm\\Dsn\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tobias Nyholm",
-                    "email": "tobias.nyholm@gmail.com"
-                }
-            ],
-            "description": "Parse your DSN strings in a powerful and flexible way",
-            "homepage": "http://tnyholm.se",
-            "keywords": [
-                "database",
-                "dsn",
-                "dsn parser",
-                "parser"
-            ],
-            "support": {
-                "issues": "https://github.com/Nyholm/dsn/issues",
-                "source": "https://github.com/Nyholm/dsn/tree/2.0.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/Nyholm",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-11-18T09:23:29+00:00"
-        },
-        {
             "name": "nyholm/psr7",
             "version": "1.8.2",
             "source": {
@@ -4989,65 +4928,6 @@
                 }
             ],
             "time": "2023-12-25T11:46:58+00:00"
-        },
-        {
-            "name": "symandy/database-backup-bundle",
-            "version": "v0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Symandy/DatabaseBackupBundle.git",
-                "reference": "fa918d1b003932036b57668d80d888f0e69152c8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Symandy/DatabaseBackupBundle/zipball/fa918d1b003932036b57668d80d888f0e69152c8",
-                "reference": "fa918d1b003932036b57668d80d888f0e69152c8",
-                "shasum": ""
-            },
-            "require": {
-                "nyholm/dsn": "^2.0",
-                "php": ">=8.1",
-                "symfony/config": "^6.0",
-                "symfony/dependency-injection": "^6.0",
-                "symfony/http-kernel": "^6.0",
-                "symfony/process": "^6.0",
-                "symfony/property-access": "^6.0",
-                "symfony/serializer": "^6.0"
-            },
-            "require-dev": {
-                "doctrine/orm": "^2.11",
-                "friendsofphp/php-cs-fixer": "^3.16",
-                "phpstan/phpstan": "^1.5",
-                "phpunit/phpunit": "^9.5",
-                "symfony/console": "^6.0",
-                "symfony/dotenv": "^6.0",
-                "symfony/framework-bundle": "^6.0",
-                "symfony/phpunit-bridge": "^6.0",
-                "symfony/yaml": "^6.0",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Symandy\\DatabaseBackupBundle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Samaël Villette",
-                    "email": "villette.samael@gmail.com"
-                }
-            ],
-            "description": "A Symfony Bundle to handle databases backup",
-            "support": {
-                "issues": "https://github.com/Symandy/DatabaseBackupBundle/issues",
-                "source": "https://github.com/Symandy/DatabaseBackupBundle/tree/v0.4.0"
-            },
-            "time": "2023-04-19T14:05:17+00:00"
         },
         {
             "name": "symfony/apache-pack",
@@ -15595,6 +15475,6 @@
         "ext-imagick": "*",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

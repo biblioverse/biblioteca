@@ -31,6 +31,7 @@ parameters:
     env(OLLAMA_URL): null
     OLLAMA_MODEL: '%env(OLLAMA_MODEL)%'
     env(OLLAMA_MODEL): 'llama3.2'
+    DATABASE_URL: '%env(DATABASE_URL)%'
 
 services:
     # default configuration for services in *this* file
