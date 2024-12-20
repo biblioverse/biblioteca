@@ -24,11 +24,8 @@ class SummaryPromptTest extends TestCase
     {
         $book = $this->getBook();
 
-        $user = new User();
-        $user->setOpenAIKey('test');
-        $user->setBookSummaryPrompt(null);
-        $summaryPrompt = new SummaryPrompt();
-        $prompt = $summaryPrompt->getPrompt($book, $user);
+        $summaryPrompt = new SummaryPrompt($book, null);
+        $prompt = $summaryPrompt->getPrompt();
         self::assertStringContainsString($book->getTitle(), $prompt);
         self::assertStringContainsString('in the series', $prompt);
     }
@@ -38,11 +35,11 @@ class SummaryPromptTest extends TestCase
         $book = $this->getBook();
 
         $user = new User();
-        $user->setOpenAIKey('test');
         $user->setBookSummaryPrompt('Can you write a short summary for the following book: {book}?');
 
-        $summaryPrompt = new SummaryPrompt();
-        $prompt = $summaryPrompt->getPrompt($book, $user);
+        $summaryPrompt = new SummaryPrompt($book, $user);
+
+        $prompt = $summaryPrompt->getPrompt();
         self::assertStringContainsString('Can you write a short summary for the following book: "The Hobbit" by J.R.R. Tolkien number 1 in the series "The Lord of the Rings"?', $prompt);
     }
 }

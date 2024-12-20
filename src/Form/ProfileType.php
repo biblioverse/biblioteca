@@ -43,11 +43,6 @@ class ProfileType extends AbstractType
                 'first_options' => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
             ])
-            ->add('openAIKey', null, [
-                'label' => 'OpenAI Key',
-                'help' => 'openai.help',
-                'help_html' => true,
-            ])
             ->add('bookKeywordPrompt', null, [
                 'label' => 'Book Keyword Prompt',
                 'help_html' => true,

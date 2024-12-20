@@ -16,10 +16,21 @@ parameters:
     KOBO_IMAGE_API_URL:  '%env(KOBO_IMAGE_API_URL)%'
     env(KEPUBIFY_BIN): "/usr/bin/kepubify"
     KEPUBIFY_BIN:  '%env(KEPUBIFY_BIN)%'
-    KOBO_READINGSERVICES_URL: '%env(bool:KOBO_READINGSERVICES_URL)%'
+    KOBO_READINGSERVICES_URL: '%env(KOBO_READINGSERVICES_URL)%'
     env(KOBO_READINGSERVICES_URL): 'https://readingservices.kobo.com'
     ALLOW_BOOK_RELOCATION: '%env(bool:ALLOW_BOOK_RELOCATION)%'
     env(ALLOW_BOOK_RELOCATION): true
+    OPEN_AI_API_KEY: '%env(OPEN_AI_API_KEY)%'
+    env(OPEN_AI_API_KEY): null
+    OPEN_AI_MODEL: '%env(OPEN_AI_MODEL)%'
+    env(OPEN_AI_MODEL): 'gpt-3.5-turbo'
+    TYPESENSE_KEY: '%env(TYPESENSE_KEY)%'
+    TYPESENSE_URL: '%env(TYPESENSE_URL)%'
+
+    OLLAMA_URL: '%env(OLLAMA_URL)%'
+    env(OLLAMA_URL): null
+    OLLAMA_MODEL: '%env(OLLAMA_MODEL)%'
+    env(OLLAMA_MODEL): 'llama3.2'
     DATABASE_URL: '%env(DATABASE_URL)%'
 
 services:
@@ -36,7 +47,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
 
     gedmo.mapping.driver.attribute:
         class: Gedmo\Mapping\Driver\AttributeReader
