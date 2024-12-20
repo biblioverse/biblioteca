@@ -16,6 +16,7 @@ jobs:
     strategy:
       matrix:
         typesense-version: [ 27.1 ]
+        node: [22]
 
     steps:
       - name: Start Typesense
