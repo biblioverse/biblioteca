@@ -17,16 +17,19 @@ class TestCommunicator implements AiCommunicatorInterface
     ) {
     }
 
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->environment === 'test';
     }
 
+    #[\Override]
     public function initialise(string $basePrompt): void
     {
         // Do nothing
     }
 
+    #[\Override]
     public function interrogate(BookPromptInterface $prompt): string|array
     {
         return match ($prompt::class) {

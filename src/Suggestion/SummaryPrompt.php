@@ -22,6 +22,7 @@ class SummaryPrompt extends AbstractBookPrompt
         $this->prompt = $this->replaceBookOccurrence($prompt);
     }
 
+    #[\Override]
     public function convertResult(string $result): string
     {
         return $result;

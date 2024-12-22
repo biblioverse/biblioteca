@@ -18,11 +18,13 @@ class ChatGptCommunicator implements AiCommunicatorInterface
     ) {
     }
 
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->openAiApiKey !== null;
     }
 
+    #[\Override]
     public function initialise(string $basePrompt): void
     {
         $this->openAiConfig = [
@@ -51,6 +53,7 @@ class ChatGptCommunicator implements AiCommunicatorInterface
         return $config;
     }
 
+    #[\Override]
     public function interrogate(AbstractBookPrompt $prompt): string|array
     {
         $open_ai = new OpenAi($this->openAiApiKey);

@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CommunicatorTest extends KernelTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

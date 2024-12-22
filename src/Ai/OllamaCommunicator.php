@@ -19,6 +19,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
     ) {
     }
 
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->url !== null && $this->model !== null;
@@ -57,6 +58,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
         return "{$this->url}{$path}";
     }
 
+    #[\Override]
     public function initialise(string $basePrompt): void
     {
         $this->sendRequest($this->getOllamaUrl('pull'), [
@@ -64,6 +66,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
         ], 'POST');
     }
 
+    #[\Override]
     public function interrogate(BookPromptInterface $prompt): string|array
     {
         $response = $this->sendRequest($this->getOllamaUrl('generate'), [

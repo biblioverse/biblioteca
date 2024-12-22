@@ -23,7 +23,7 @@ return RectorConfig::configure()
         codeQuality: true
     )
     ->withSets([
-        LevelSetList::UP_TO_PHP_84,
+        LevelSetList::UP_TO_PHP_83,
         SymfonySetList::SYMFONY_64,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
