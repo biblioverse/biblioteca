@@ -12,6 +12,7 @@ class OpdsAccessFixture extends Fixture implements DependentFixtureInterface
 {
     public const ACCESS_KEY = 'test-access-key';
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $opdsAccess = new OpdsAccess();
@@ -27,6 +28,7 @@ class OpdsAccessFixture extends Fixture implements DependentFixtureInterface
         return $this->getReference(UserFixture::USER_REFERENCE, User::class);
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

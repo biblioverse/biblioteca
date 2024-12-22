@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class RelocationVoter extends Voter
 {
-    public const RELOCATE = 'RELOCATE';
+    public const string RELOCATE = 'RELOCATE';
 
     public function __construct(
         #[Autowire(param: 'ALLOW_BOOK_RELOCATION')]
@@ -18,11 +18,13 @@ final class RelocationVoter extends Voter
     ) {
     }
 
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $attribute === self::RELOCATE && $subject instanceof Book;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

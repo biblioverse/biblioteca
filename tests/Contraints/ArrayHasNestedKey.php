@@ -10,6 +10,7 @@ class ArrayHasNestedKey extends Constraint
     {
     }
 
+    #[\Override]
     public function matches($other): bool
     {
         try {
@@ -41,6 +42,7 @@ class ArrayHasNestedKey extends Constraint
         }
     }
 
+    #[\Override]
     public function toString(): string
     {
         return 'has nested key '.$this->path;

@@ -12,12 +12,14 @@ class BookVoter extends Voter
     public const EDIT = 'EDIT';
     public const VIEW = 'VIEW';
 
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW], true)
             && $subject instanceof Book;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

@@ -30,6 +30,7 @@ class SyncTokenParamConverter implements ValueResolverInterface
     /**
      * @return iterable<SyncToken>
      */
+    #[\Override]
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($this->supports($argument) === false) {

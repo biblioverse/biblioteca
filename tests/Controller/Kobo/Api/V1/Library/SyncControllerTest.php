@@ -14,12 +14,14 @@ use App\Tests\TestClock;
 
 class SyncControllerTest extends AbstractKoboControllerTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getKoboStoreProxy()->setClient(null);

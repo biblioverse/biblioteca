@@ -4,7 +4,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.2",
+    "php": ">=8.3",
     "ext-ctype": "*",
     "ext-exif": "*",
     "ext-gd": "*",
@@ -36,6 +36,7 @@
     "symfony/apache-pack": "^1.0",
     "symfony/asset": "^7.1",
     "symfony/console": "^6.2",
+    "symfony/doctrine-bridge": "^7.1",
     "symfony/doctrine-messenger": "^7.1",
     "symfony/dotenv": "^7.1",
     "symfony/expression-language": "^7.1",

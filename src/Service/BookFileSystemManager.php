@@ -36,11 +36,13 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
     }
 
+    #[\Override]
     public function getBooksDirectory(): string
     {
         return $this->publicDir.'/books/';
     }
 
+    #[\Override]
     public function getCoverDirectory(): string
     {
         return $this->publicDir.'/covers/';
@@ -49,6 +51,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     /**
      * @return \Iterator<\SplFileInfo>
      */
+    #[\Override]
     public function getAllBooksFiles(bool $onlyConsumeDirectory = false): \Iterator
     {
         try {
@@ -67,6 +70,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $iterator;
     }
 
+    #[\Override]
     public function getBookFilename(Book $book): string
     {
         $paths = [$this->getBooksDirectory(), $book->getBookPath(), $book->getBookFilename()];
@@ -74,6 +78,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $this->handlePath($paths);
     }
 
+    #[\Override]
     public function getBookPublicPath(Book $book): string
     {
         $path = $this->getBookFilename($book);
@@ -81,6 +86,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return str_replace($this->publicDir, '', $path);
     }
 
+    #[\Override]
     public function getCoverFilename(Book $book): ?string
     {
         $paths = [$this->getCoverDirectory(), $book->getImagePath(), $book->getImageFilename()];
@@ -91,6 +97,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $this->handlePath($paths);
     }
 
+    #[\Override]
     public function getBookSize(Book $book): ?int
     {
         if (!$this->fileExist($book)) {
@@ -102,6 +109,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $size === false ? null : $size;
     }
 
+    #[\Override]
     public function getCoverSize(Book $book): ?int
     {
         if (!$this->coverExist($book)) {
@@ -114,6 +122,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $size === false ? null : $size;
     }
 
+    #[\Override]
     public function fileExist(Book $book): bool
     {
         $path = $this->getBookFilename($book);
@@ -121,6 +130,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return file_exists($path);
     }
 
+    #[\Override]
     public function coverExist(Book $book): bool
     {
         $cover = $this->getCoverFilename($book);
@@ -131,6 +141,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     /**
      * @throws \Exception
      */
+    #[\Override]
     public function getBookFile(Book $book): \SplFileInfo
     {
         $finder = new Finder();
@@ -174,6 +185,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
      *
      * @throws \RuntimeException if the checksum calculation fails
      */
+    #[\Override]
     public function getFileChecksum(\SplFileInfo $file): string
     {
         $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
@@ -185,6 +197,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $checkSum[0];
     }
 
+    #[\Override]
     public function getFolderName(\SplFileInfo $file, bool $absolute = false): string
     {
         $path = $absolute ? $file->getRealPath() : str_replace($this->getBooksDirectory(), '', $file->getRealPath());
@@ -225,6 +238,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return str_replace('//', '/', $path);
     }
 
+    #[\Override]
     public function getCalculatedFilePath(Book $book, bool $realpath): string
     {
         $expectedPath = $this->calculateFilePath($book);
@@ -249,6 +263,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $this->slugger->slug($filename);
     }
 
+    #[\Override]
     public function getCalculatedFileName(Book $book): string
     {
         return $this->calculateFileName($book).'.'.$book->getExtension();
@@ -259,6 +274,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $checksum.$this->calculateFileName($book).'.'.$book->getImageExtension();
     }
 
+    #[\Override]
     public function renameFiles(Book $book): Book
     {
         if (!$this->security->isGranted(RelocationVoter::RELOCATE, $book)) {
@@ -296,6 +312,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $book;
     }
 
+    #[\Override]
     public function removeEmptySubFolders(?string $path = null): bool
     {
         if (null === $path) {
@@ -352,6 +369,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $book;
     }
 
+    #[\Override]
     public function deleteBookFiles(Book $book): void
     {
         $filesystem = new Filesystem();
@@ -364,6 +382,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
     }
 
+    #[\Override]
     public function extractCover(Book $book): Book
     {
         $filesystem = new Filesystem();
@@ -439,6 +458,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $book;
     }
 
+    #[\Override]
     public function extractFilesToRead(Book $book): array
     {
         $bookFile = $this->getBookFile($book);
@@ -799,6 +819,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     /**
      * @param array<int, UploadedFile> $files
      */
+    #[\Override]
     public function uploadFilesToConsumeDirectory(array $files): void
     {
         $destination = $this->getBooksDirectory().'consume';

@@ -16,6 +16,7 @@ class OpdsTokenHandler implements AccessTokenHandlerInterface
     ) {
     }
 
+    #[\Override]
     public function getUserBadgeFrom(?string $accessToken): UserBadge
     {
         if (null === $accessToken) {

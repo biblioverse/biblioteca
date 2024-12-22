@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ShelfKoboFixture extends Fixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $kobo = $this->getReference(KoboFixture::KOBO_REFERENCE, KoboDevice::class);
@@ -19,6 +20,7 @@ class ShelfKoboFixture extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

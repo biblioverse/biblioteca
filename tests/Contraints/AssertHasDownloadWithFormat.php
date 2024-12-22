@@ -10,6 +10,7 @@ class AssertHasDownloadWithFormat extends Constraint
     {
     }
 
+    #[\Override]
     public function matches($other): bool
     {
         try {
@@ -66,6 +67,7 @@ class AssertHasDownloadWithFormat extends Constraint
         }
     }
 
+    #[\Override]
     public function toString(): string
     {
         return sprintf('JSON contains a download key with the specified format: %s', $this->format);

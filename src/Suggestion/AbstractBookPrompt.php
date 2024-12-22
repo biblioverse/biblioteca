@@ -14,11 +14,13 @@ abstract class AbstractBookPrompt implements BookPromptInterface
         $this->initialisePrompt();
     }
 
+    #[\Override]
     public function getPrompt(): string
     {
         return $this->prompt;
     }
 
+    #[\Override]
     public function setPrompt(string $prompt): void
     {
         $this->prompt = $prompt;

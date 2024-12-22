@@ -14,12 +14,14 @@ class KoboDeviceVoter extends Voter
     public const CREATE = 'CREATE';
     public const DELETE = 'DELETE';
 
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE, self::DELETE], true)
             && $subject instanceof KoboDevice;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

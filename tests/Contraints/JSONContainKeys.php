@@ -10,6 +10,7 @@ class JSONContainKeys extends Constraint
     {
     }
 
+    #[\Override]
     public function matches($other): bool
     {
         try {
@@ -46,6 +47,7 @@ class JSONContainKeys extends Constraint
         }
     }
 
+    #[\Override]
     public function failureDescription($other): string
     {
         try {
@@ -57,6 +59,7 @@ class JSONContainKeys extends Constraint
         }
     }
 
+    #[\Override]
     public function toString(): string
     {
         if ($this->path !== null) {

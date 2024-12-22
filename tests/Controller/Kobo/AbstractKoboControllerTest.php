@@ -27,6 +27,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
         return $entityManager;
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

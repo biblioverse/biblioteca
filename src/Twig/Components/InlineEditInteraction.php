@@ -41,6 +41,7 @@ class InlineEditInteraction extends AbstractController
     {
     }
 
+    #[\Override]
     protected function instantiateForm(): FormInterface
     {
         return $this->formFactory->createNamed(uniqid('interactionform-', false), InlineInteractionType::class, $this->getInteraction(), ['method' => 'POST']);

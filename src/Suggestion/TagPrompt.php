@@ -10,6 +10,7 @@ class TagPrompt extends AbstractBookPrompt
      Translate the genres in french.
     ';
 
+    #[\Override]
     public function initialisePrompt(): void
     {
         $prompt = self::DEFAULT_KEYWORD_PROMPT;
@@ -24,6 +25,7 @@ The output must be only valid JSON format. It must be an object with one key nam
         $this->prompt = $this->replaceBookOccurrence($prompt);
     }
 
+    #[\Override]
     public function convertResult(string $result): array
     {
         try {

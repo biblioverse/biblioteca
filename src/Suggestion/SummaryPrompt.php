@@ -8,6 +8,7 @@ class SummaryPrompt extends AbstractBookPrompt
 {
     public const DEFAULT_KEYWORD_PROMPT = 'Can you write a short summary for the following book: {book}?';
 
+    #[\Override]
     public function initialisePrompt(): void
     {
         $prompt = self::DEFAULT_KEYWORD_PROMPT;
@@ -21,6 +22,7 @@ class SummaryPrompt extends AbstractBookPrompt
         $this->prompt = $this->replaceBookOccurrence($prompt);
     }
 
+    #[\Override]
     public function convertResult(string $result): string
     {
         return $result;

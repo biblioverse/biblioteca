@@ -29,11 +29,13 @@ class KoboAccessTokenAuthenticator implements AuthenticatorInterface
     ) {
     }
 
+    #[\Override]
     public function supports(Request $request): ?bool
     {
         return null === $this->accessTokenExtractor->extractAccessToken($request) ? false : null;
     }
 
+    #[\Override]
     public function authenticate(Request $request): Passport
     {
         $accessToken = $this->accessTokenExtractor->extractAccessToken($request);
@@ -51,6 +53,7 @@ class KoboAccessTokenAuthenticator implements AuthenticatorInterface
         return $passeport;
     }
 
+    #[\Override]
     public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
         $badge = $passport->hasBadge(KoboDeviceBadge::class) ? $passport->getBadge(KoboDeviceBadge::class) : null;
@@ -62,6 +65,7 @@ class KoboAccessTokenAuthenticator implements AuthenticatorInterface
         return new PostAuthenticationTokenWithKoboDevice($badge->getDevice(), $passport->getUser(), $firewallName, $passport->getUser()->getRoles());
     }
 
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($token instanceof PostAuthenticationTokenWithKoboDevice) {
@@ -71,6 +75,7 @@ class KoboAccessTokenAuthenticator implements AuthenticatorInterface
         return $this->successHandler?->onAuthenticationSuccess($request, $token);
     }
 
+    #[\Override]
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($this->failureHandler instanceof AuthenticationFailureHandlerInterface) {

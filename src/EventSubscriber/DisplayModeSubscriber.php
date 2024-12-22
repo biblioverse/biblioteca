@@ -29,6 +29,7 @@ class DisplayModeSubscriber implements EventSubscriberInterface
         return $this->displayMode;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

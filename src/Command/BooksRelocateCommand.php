@@ -30,6 +30,7 @@ class BooksRelocateCommand extends Command
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Execute the relocation. By default only a dry run is done');
@@ -38,6 +39,7 @@ class BooksRelocateCommand extends Command
     /**
      * @throws \Exception
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

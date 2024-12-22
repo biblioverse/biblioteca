@@ -10,13 +10,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class AiFeaturesVoter extends Voter
 {
-    public const USE = 'USE_AI_FEATURES';
+    public const string USE = 'USE_AI_FEATURES';
 
     public function __construct(
         private readonly CommunicatorDefiner $aiCommunicator,
     ) {
     }
 
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
@@ -24,6 +25,7 @@ final class AiFeaturesVoter extends Voter
         return $attribute === self::USE;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

@@ -29,6 +29,7 @@ class JSONIsValidSyncResponse extends Constraint
         'RemovedPublication',
     ];
 
+    #[\Override]
     public function matches($other): bool
     {
         try {
@@ -40,6 +41,7 @@ class JSONIsValidSyncResponse extends Constraint
         return true;
     }
 
+    #[\Override]
     public function toString(): string
     {
         return 'is a valid sync response';
