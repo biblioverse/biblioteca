@@ -29,7 +29,11 @@ The output must be only valid JSON format. It must be an object with one key nam
     public function convertResult(string $result): array
     {
         try {
+
             $result = trim($result, '´`');
+            if(str_starts_with($result, 'json')){
+                $result = substr($result, 4);
+            }
             $items = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
             return [];
