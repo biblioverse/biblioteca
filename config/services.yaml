@@ -92,6 +92,13 @@ services:
         arguments:
             $bookFinder: '@typesense.finder.books'
 
+    App\Controller\DefaultController:
+        arguments:
+            $bookFinder: '@typesense.finder.books'
+    App\Controller\AutocompleteGroupController:
+        arguments:
+            $bookFinder: '@typesense.finder.books'
+
     App\Service\BookFileSystemManager:
         bind:
             '$publicDir': '%kernel.project_dir%/public'

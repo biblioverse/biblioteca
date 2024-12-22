@@ -39,6 +39,10 @@ acseo_typesense:
           name: authors
           type: string[]
           facet: true
+        verified:
+          name: verified
+          type: bool
+          facet: true
         tags:
           name: tags
           type: string[]

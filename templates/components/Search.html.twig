@@ -6,47 +6,64 @@
                        class="form-control-lg w-100"
                        id="search"
                        placeholder="Search for..."
-                       data-model="query"
+                       data-model="debounce(500)|query"
                        autofocus
                 />
             </div>
-        </div>
-        {% if computed.results.books|default([])|length >0 %}
-        <div class="row mt-5">
-            <div class="col-md-9 col-12">
-                <div class="row">
-                    <h5> Results</h5>
-                    <ul class="list-group">
-
-
-                    {% for book in computed.results.books|default([]) %}
-                        <li class="list-group-item">
-                            {% include themedTemplate('book/_result.html.twig') with {book: book.book} %}
-                        </li>
+            <div class="" style="z-index: 999">
+                <div class=" bg-dark">
+                    {% for facet in facets|default([]) %}
+                        {% for count in facet.counts %}
+                            {% set value = facet.field_name ~':"'~ count.value ~'"'  %}
+                            {% if count.value =='true'%}
+                                {% set value = '#'~facet.field_name  %}
+                            {% elseif count.value =='false'%}
+                                {% set value = '#not_'~facet.field_name  %}
+                            {% endif %}
+                            {% set isIncluded = value in filters %}
+                            <button type="button" class="btn badge {{ isIncluded?'bg-success':'bg-secondary' }} btn-bare"
+                                        data-action="live#action"
+                                        data-live-action-param="addToQuery"
+                                        data-live-value-param='{{ value }}'
+                                >
+                                    <small>
+                                        {{ value }}
+                                        <span class="badge rounded-pill bg-primary">
+                                    {{ count.count }}
+                                    <span class="visually-hidden">records</span>
+                                </span>
+                                    </small>
+                                </button>
+                        {% endfor %}
                     {% endfor %}
-                    </ul>
                 </div>
             </div>
-            <div class="col-md-3 col-12">
-                {% for facet in computed.results.facets|default([]) %}
-                    {% if facet.counts|length>0 %}
-                        <h5 class="m-0 mb-2 fs-6">{{ facet.field_name|capitalize }}</h5>
-                        <ul class="list-group mb-4">
-                        {% for count in facet.counts %}
-                            <li class="list-group-item {{ count.value in query?'active' }}">
-                                <small>
-                                    {{ count.value }}
-                                    <span class="badge rounded-pill bg-primary">
-                                {{ count.count }}
-                                <span class="visually-hidden">records</span></small>
-                            </span>
-                            </li>
-                        {% endfor %}
-                            </ul>
-                    {% endif %}
+
+            <div class="my-2">
+            {% for filter in filters %}
+                <button type="button" class="btn btn-bare badge bg-primary"
+                        data-action="live#action"
+                        data-live-action-param="addToQuery"
+                        data-live-value-param="{{ filter }}"
+                >
+                    {{ filter }} <i class="bi bi-x-circle"></i>
+                </button>
+            {% endfor %}
+            </div>
+
+            <span class="badge bg-secondary">{{ found }} results</span>
+
+            couverture, liste de lecture, lus, index, extension, age, orderby
+
+        </div>
+        {% if books|length >0 %}
+            <div class="row">
+                {% for book in books %}
+                    <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
+                        {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                    </div>
                 {% endfor %}
             </div>
-        </div>
         {% endif %}
     </div>
 </div>
