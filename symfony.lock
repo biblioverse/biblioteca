@@ -1,9 +1,9 @@
 {
-    "acseo/typesense-bundle": {
-        "version": "dev-master"
-    },
     "andanteproject/page-filter-form-bundle": {
         "version": "1.0.3"
+    },
+    "biblioteca/typesense-bundle": {
+        "version": "dev-main"
     },
     "doctrine/annotations": {
         "version": "2.0",
@@ -85,7 +85,7 @@
         ]
     },
     "php-http/discovery": {
-        "version": "1.19",
+        "version": "1.20",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
