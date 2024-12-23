@@ -1,5 +1,10 @@
-FROM ghcr.io/biblioverse/biblioteca-docker:latest AS base
+FROM ghcr.io/biblioverse/biblioteca-docker:2.0.1 AS base
 WORKDIR /var/www/html
+
+USER root
+RUN mkdir -p /tmp && chown -R www-data:www-data /tmp && chmod -R 777 /tmp
+RUN mkdir -p /var/run/ && chown -R www-data:www-data /var/run && chmod -R 777 /var/run
+USER www-data
 
 FROM base AS prod
 USER root

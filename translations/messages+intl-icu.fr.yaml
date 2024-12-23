@@ -59,6 +59,7 @@ menu.timeline: 'Mon historique des lectures'
 menu.kobodevices: 'Appareils Kobo'
 menu.editshelves: 'Gérer étagères'
 menu.readinglist: 'Liste de lecture'
+menu.instanceconfig: 'Configuration du système'
 
 "filter.title": "Par titre"
 "filter.serie": "Par série"

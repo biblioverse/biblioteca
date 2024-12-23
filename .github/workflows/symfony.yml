@@ -16,6 +16,7 @@ jobs:
     strategy:
       matrix:
         typesense-version: [ 27.1 ]
+        node: [22]
 
     steps:
       - name: Start Typesense
@@ -37,7 +38,7 @@ jobs:
           done
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.3'
       - uses: actions/checkout@v4
       - name: Copy .env.test.local
         run: |

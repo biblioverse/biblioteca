@@ -1,6 +1,6 @@
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:2.0.0
+    image: ghcr.io/biblioverse/biblioteca-docker:2.0.1
     build:
       target: prod
     command: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
