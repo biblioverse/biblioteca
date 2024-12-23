@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use Andante\PageFilterFormBundle\PageFilterFormTrait;
-use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Search\QueryTokenizer;
@@ -17,7 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
-    use PageFilterFormTrait;
 
 
     public function __construct(private readonly CollectionFinder $bookFinder)
@@ -84,34 +81,11 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/all/{page}', name: 'app_allbooks', requirements: ['page' => '\d+'])]
-    public function allbooks(Request $request, BookRepository $bookRepository, FilteredBookUrlGenerator $filteredBookUrlGenerator, PaginatorInterface $paginator, int $page = 1): Response
+    #[Route('/all', name: 'app_allbooks')]
+    public function allbooks(): Response
     {
-        $qb = $bookRepository->getAllBooksQueryBuilder();
 
-        $form = $this->createAndHandleFilter(BookFilterType::class, $qb, $request);
-
-        if ($request->getQueryString() === null) {
-            $modifiedParams = $filteredBookUrlGenerator->getParametersArrayForCurrent();
-
-            return $this->redirectToRoute('app_allbooks', ['page' => 1, ...$modifiedParams]);
-        }
-
-        $pagination = $paginator->paginate(
-            $qb->getQuery(),
-            $page,
-            18
-        );
-
-        if ($page > ($pagination->getTotalItemCount() / 18) + 1) {
-            return $this->redirectToRoute('app_allbooks', ['page' => 1, ...$request->query->all()]);
-        }
-
-        return $this->render('default/index.html.twig', [
-            'pagination' => $pagination,
-            'page' => $page,
-            'form' => $form->createView(),
-        ]);
+        return $this->render('default/index.html.twig');
     }
 
     #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]

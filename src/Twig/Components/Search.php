@@ -20,6 +20,8 @@ class Search
     use DefaultActionTrait;
     use ComponentToolsTrait;
 
+    public const PER_PAGE=18;
+
     #[LiveProp(writable: true)]
     public string $query = '';
     public array $books = [];
@@ -32,6 +34,11 @@ class Search
 
     #[LiveProp(writable: true, url: true)]
     public string $fullQuery = '';
+
+    #[LiveProp(writable: true, url: true)]
+    public int $page = 1;
+
+    public array $pagination = [];
 
     public function __construct(protected CollectionFinder $bookFinder, protected QueryTokenizer $lexer, protected TypesenseTokenHandler $tokenHandler)
     {
@@ -49,7 +56,7 @@ class Search
     {
 
         if(!str_contains($this->fullQuery, $value)){
-            $this->query .= ' '.$value;
+            $this->query = $value;
         } else {
             foreach ($this->filters as $key => $filter) {
                 if(str_contains($filter, $value)) {
@@ -65,6 +72,7 @@ class Search
     {
         if(!$initial) {
             $this->fullQuery = implode(' ', $this->filters) . ' ' . $this->query;
+            $this->page = 1;
         }
 
         $tokens = $this->lexer->tokenize($this->fullQuery);
@@ -88,13 +96,27 @@ class Search
 
         $complexQuery->facetBy('authors,serie,tags, extension, verified');
 
-        $complexQuery->perPage(16);
+        $complexQuery->perPage(self::PER_PAGE);
         $complexQuery->numTypos(2);
+        $complexQuery->page($this->page);
         /** @var TypesenseResponse $result */
         $result = $this->bookFinder->query($complexQuery);
         $results = $result->getResults();
         $this->facets = $result->getFacetCounts();
         $this->found = $result->getFound();
+
+        $pages = ceil($this->found / self::PER_PAGE);
+        $this->pagination = [
+            'page' => $this->page,
+            'pages' => $pages,
+            'perPage' => self::PER_PAGE,
+            'total' => $this->found,
+            'lastPage' => $pages ?? 1,
+            'nextPage' => $this->page < $pages ? $this->page + 1 : null,
+            'previousPage' => $this->page > 1 ? $this->page - 1 : null,
+        ];
+
+
 
 
         foreach ($results as $resultItem) {

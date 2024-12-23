@@ -2,16 +2,13 @@
 
 namespace App\Service;
 
-use Andante\PageFilterFormBundle\PageFilterFormTrait;
 use App\Entity\Book;
 use App\Entity\Shelf;
-use App\Form\BookFilterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ShelfManager
 {
-    use PageFilterFormTrait;
 
     public function __construct(private EntityManagerInterface $entityManager)
     {

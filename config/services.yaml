@@ -90,9 +90,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main } # The alias is what is used to retrieve the menu
 
-    app.display_mode_subscriber:
-        class: App\EventSubscriber\DisplayModeSubscriber
-
     App\Controller\OPDS\OpdsController:
         arguments:
            $bookFinder: '@typesense.specificfinder.books.books_autocomplete'

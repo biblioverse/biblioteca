@@ -20,19 +20,13 @@ class FilteredBookUrl extends AbstractExtension
     {
         return [
             new TwigFunction('filter_book_url', $this->filteredBookUrl(...)),
-            new TwigFunction('current_page_filters', $this->currentPageParams(...)),
         ];
     }
 
     public function filteredBookUrl(array $params): string
     {
         $params = $this->filteredBookUrlGenerator->getParametersArray($params);
-
         return $this->router->generate('app_allbooks', $params);
     }
 
-    public function currentPageParams(bool $onlyModified = false): array
-    {
-        return $this->filteredBookUrlGenerator->getParametersArrayForCurrent($onlyModified);
-    }
 }
