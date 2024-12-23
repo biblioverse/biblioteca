@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
+use App\Ai\CommunicatorDefiner;
 use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\FilteredBookUrlGenerator;
+use App\Suggestion\TagPrompt;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DefaultController extends AbstractController
 {
@@ -125,6 +129,65 @@ class DefaultController extends AbstractController
         $years = $bookRepository->getReadYears();
 
         $books = $qb->getQuery()->getResult();
+
+        return $this->render('default/timeline.html.twig', [
+            'books' => $books,
+            'year' => $year,
+            'type' => $type,
+            'types' => $types,
+            'years' => $years,
+        ]);
+    }
+
+
+    #[Route('/prompter', name: 'app_prompter')]
+    public function prompter(CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository, HttpClientInterface $client): Response
+    {
+        $communicator = $communicatorDefiner->getCommunicator();
+
+        $book = $bookRepository->find(18911);
+
+        $tagPrompt = new TagPrompt($book, null);
+
+        $response = $client->request('GET', 'https://www.goodreads.com/search?utf8=%E2%9C%93&query='.urlencode($book->getAuthors()[0].' '.$book->getSerie()));
+
+
+        $crawler = new Crawler($response->getContent(), baseHref: 'https://www.goodreads.com/');
+
+
+        $prompt = 'Knowing that I  found this information about the author books: ';
+
+        $linkCrawler = $crawler->filter('a.bookTitle');
+        foreach ($linkCrawler->links() as $link) {
+            $subLink = $client->request('GET', $link->getUri());
+            $subCrawler = new Crawler($subLink->getContent(), baseHref: 'https://www.goodreads.com/');
+
+            $info = '';
+            foreach ([
+                         'div.BookPageTitleSection','div.BookPageMetadataSection__description','div.BookPageMetadataSection__genres'
+                     ] as $region){
+
+                $filtered = $subCrawler->filter($region);
+                if( $filtered->count() > 0) {
+                    $info .=' '. strip_tags($filtered->html());
+                }
+            }
+
+            $prompt .= '  
+'.$info.'  
+';
+
+        }
+
+        $prompt = $prompt.'    '.$tagPrompt->getPrompt();
+
+        $tagPrompt->setPrompt($prompt);
+
+        dump($prompt);
+
+        $result = $communicator->interrogate($tagPrompt);
+
+        dd($result);
 
         return $this->render('default/timeline.html.twig', [
             'books' => $books,
