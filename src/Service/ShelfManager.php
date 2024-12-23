@@ -2,15 +2,14 @@
 
 namespace App\Service;
 
-use App\Entity\Book;
+use ACSEO\TypesenseBundle\Finder\CollectionFinder;
 use App\Entity\Shelf;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use App\Search\QueryTokenizer;
+use App\Search\TypesenseTokenHandler;
 
 class ShelfManager
 {
-
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(protected CollectionFinder $bookFinder, private readonly QueryTokenizer $queryTokenizer, private readonly TypesenseTokenHandler $tokenHandler)
     {
     }
 
@@ -20,18 +19,19 @@ class ShelfManager
             return $shelf->getBooks()->toArray();
         }
 
-        $qb = $this->entityManager->getRepository(Book::class)->getAllBooksQueryBuilder();
+        $tokens = $this->queryTokenizer->tokenize($shelf->getQueryString());
+        $complexQuery = $this->tokenHandler->handle($tokens);
+        $complexQuery->perPage(200);
+        $complexQuery->sortBy('serieIndex:asc');
+        $complexQuery->numTypos(2);
+        $complexQuery->page(1);
 
-        $request = new Request($shelf->getQueryString());
-
-        $this->createAndHandleFilter(BookFilterType::class, $qb, $request);
-
-        $results = $qb->getQuery()->getResult();
-
-        if (!is_array($results)) {
-            return [];
+        $results = $this->bookFinder->query($complexQuery)->getResults();
+        $books = [];
+        foreach ($results as $resultItem) {
+            $books[$resultItem->getId()] = $resultItem;
         }
 
-        return $results;
+        return $books;
     }
 }

@@ -2,25 +2,15 @@
 
 namespace App\Controller;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
-use App\Search\QueryTokenizer;
-use App\Search\TypesenseTokenHandler;
 use App\Service\FilteredBookUrlGenerator;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
-
-
-    public function __construct(private readonly CollectionFinder $bookFinder)
-    {
-    }
-
     #[Route('/', name: 'app_dashboard')]
     public function index(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository): Response
     {
@@ -84,7 +74,6 @@ class DefaultController extends AbstractController
     #[Route('/all', name: 'app_allbooks')]
     public function allbooks(): Response
     {
-
         return $this->render('default/index.html.twig');
     }
 
@@ -116,33 +105,4 @@ class DefaultController extends AbstractController
             'years' => $years,
         ]);
     }
-
-
-    #[Route('/lexer', name: 'app_lexer')]
-    public function lexer(QueryTokenizer $lexer, TypesenseTokenHandler $tokenHandler): Response
-    {
-        $searches = [
-            'serie:"Jessie Hunt",authors:"Blake Pierce"',
-        ];
-
-        foreach ($searches as $search) {
-            $tokens = $lexer->tokenize($search);
-            dump($tokens);
-            $query = $tokenHandler->handle($tokens);
-            dump($query);
-
-            $query->facetBy('authors,serie,tags');
-
-            $query->perPage(16);
-            $query->numTypos(2);
-
-            $results = $this->bookFinder->query($query)->getResults();
-            $facets = $this->bookFinder->query($query)->getFacetCounts();
-            dump($results);
-        }
-
-
-        die();
-    }
-
 }

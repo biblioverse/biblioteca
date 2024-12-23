@@ -21,6 +21,15 @@
                             {% elseif count.value =='false'%}
                                 {% set value = '#not_'~facet.field_name  %}
                             {% endif %}
+                            {% set label = value %}
+                            {% if facet.field_name =='age'%}
+                                {% set categories = constant('App\\Entity\\User::AGE_CATEGORIES') %}
+                                {% for cat,key in categories %}
+                                    {% if key==count.value %}
+                                        {% set label = cat %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
                             {% set isIncluded = value in filters %}
                             <button type="button" class="btn badge {{ isIncluded?'bg-success':'bg-secondary' }} btn-bare suggestion"
                                         data-action="live#action click->search#focus"
@@ -28,11 +37,12 @@
                                         data-live-value-param='{{ value }}'
                                 >
                                     <small>
-                                        {{ value }}
-                                        <span class="badge rounded-pill bg-primary">
-                                    {{ count.count }}
-                                    <span class="visually-hidden">records</span>
-                                </span>
+                                        {{ label }}
+                                        {% if count.count is not null %}
+                                            <span class="badge rounded-pill bg-primary">
+                                                {{ count.count }} <span class="visually-hidden">records</span>
+                                            </span>
+                                        {% endif %}
                                     </small>
                                 </button>
                         {% endfor %}
@@ -56,73 +66,93 @@
             <span class="badge bg-secondary">{{ found }} results</span>
             {% endif %}
 
-            couverture, liste de lecture, lus, age, orderby
-
         </div>
 
         {% if fullQuery!='' and books|length >0 %}
 
             <div class="results mt-4">
-            {% set route='app_allbooks' %}
-            {% set params={'page':page, 'fullQuery': fullQuery} %}
-            {% set current= pagination.page %}
-            <nav aria-label="Navigate through results">
-                <ul class="pagination">
-                    {% if pagination.previousPage is not null %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">Previous</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">Previous</a>
-                        </li>
-                    {% endif %}
-                    {% if current > 1 %}
-                        <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':1})) }}">1</a></li>
-                    {% endif %}
+                <div class="row">
+                    <div class="col-md-8">
+                        {% set route='app_allbooks' %}
+                        {% set params={'page':page, 'fullQuery': fullQuery} %}
+                        {% set current= pagination.page %}
+                        <nav aria-label="Navigate through results">
+                            <ul class="pagination">
+                                {% if pagination.previousPage is not null %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">Previous</a>
+                                    </li>
+                                {% endif %}
+                                {% if current > 1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':1})) }}">1</a></li>
+                                {% endif %}
 
-                    {% if current-1 > 2 %}
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                    {% endif %}
+                                {% if current-1 > 2 %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                {% endif %}
 
-                    {% if current-1 >=2 %}
-                        <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page-1})) }}">{{ current-1 }}</a></li>
-                    {% endif %}
+                                {% if current-1 >=2 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page-1})) }}">{{ current-1 }}</a></li>
+                                {% endif %}
 
-                    <li class="page-item active"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page})) }}">{{ current }}</a></li>
+                                <li class="page-item active"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page})) }}">{{ current }}</a></li>
 
 
-                    {% if current <= pagination.lastPage-1 %}
-                        <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page+1})) }}">{{ current+1 }}</a></li>
-                    {% endif %}
+                                {% if current <= pagination.lastPage-1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page+1})) }}">{{ current+1 }}</a></li>
+                                {% endif %}
 
-                    {% if current+1 < pagination.lastPage-1 %}
-                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                    {% endif %}
+                                {% if current+1 < pagination.lastPage-1 %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                {% endif %}
 
-                    {% if current < pagination.lastPage-1 %}
-                        <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.lastPage})) }}">{{ pagination.lastPage }}</a></li>
-                    {% endif %}
+                                {% if current < pagination.lastPage-1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.lastPage})) }}">{{ pagination.lastPage }}</a></li>
+                                {% endif %}
 
-                    {% if pagination.nextPage is not null %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ path(route, params|merge({'page':pagination.nextPage})) }}">Next</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-
-            <div class="row">
-                {% for book in books %}
-                    <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
-                        {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                                {% if pagination.nextPage is not null %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.nextPage})) }}">Next</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     </div>
-                {% endfor %}
-            </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    {% for book in books %}
+                        <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
+                            {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" data-model="shelfname" placeholder="Shelf" aria-label="Add to shelf">
+
+                            <button
+                                data-action="live#action"
+                                data-live-action-param="save"
+                                class="btn btn-outline-success align-content-end"
+                            >
+                                <i class="bi bi-journal-check"></i> Save to shelf
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>

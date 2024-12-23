@@ -11,7 +11,6 @@ class ShelfController extends AbstractController
     #[Route('/shelf/{slug}', name: 'app_shelf')]
     public function index(Shelf $shelf): Response
     {
-
         return $this->render('shelf/index.html.twig', [
             'shelf' => $shelf,
             'books' => $shelf->getBooks(),

@@ -4,12 +4,14 @@ namespace App\Search;
 
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-class QueryTokenizer
+readonly class QueryTokenizer
 {
-
+    /**
+     * @param array<TokenInterface> $handlers
+     */
     public function __construct(
         #[AutowireIterator('app.search_token')]
-        private readonly iterable $handlers,
+        private iterable $handlers,
     ) {
     }
 
@@ -20,26 +22,20 @@ class QueryTokenizer
         $tokens = [];
 
         foreach ($this->handlers as $token) {
-            if( ! $token instanceof TokenInterface) {
-                throw new \InvalidArgumentException('Token must implement TokenInterface');
-            }
-            $matches=[];
+            $matches = [];
 
-            if (preg_match_all($token->getRegex(), $remainingQuery, $matches)) {
-
+            if (preg_match_all($token->getRegex(), $remainingQuery, $matches) !== false) {
                 $tokens[$token::class] = reset($matches);
 
                 foreach ($matches as $match) {
-                    $remainingQuery = str_replace($match, '', $remainingQuery );
+                    $remainingQuery = str_replace($match, '', $remainingQuery);
                 }
             }
         }
 
-        if(trim($remainingQuery) !== '') {
-            $tokens['TEXT'] =  trim($remainingQuery);
-            $tokens['TEXT'] =  trim($tokens['TEXT'],',');
+        if (trim($remainingQuery) !== '') {
+            $tokens['TEXT'] = ltrim($remainingQuery);
         }
-
 
         return $tokens;
     }

@@ -99,10 +99,7 @@ services:
         arguments:
             $bookFinder: '@typesense.finder.books'
 
-    App\Controller\DefaultController:
-        arguments:
-            $bookFinder: '@typesense.finder.books'
-    App\Controller\AutocompleteGroupController:
+    App\Service\ShelfManager:
         arguments:
             $bookFinder: '@typesense.finder.books'
 

@@ -4,7 +4,6 @@ namespace App\Menu;
 
 use App\Entity\Shelf;
 use App\Entity\User;
-use App\Service\FilteredBookUrlGenerator;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -20,7 +19,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly FilteredBookUrlGenerator $filteredBookUrlGenerator, private readonly RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly RequestStack $requestStack)
     {
     }
 
@@ -91,7 +90,7 @@ final class MenuBuilder
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
                 if ($shelf->getQueryString() !== null) {
-                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => $shelf->getQueryString(), ...$this->defaultAttr])
+                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => ['fullQuery' => $shelf->getQueryString()], ...$this->defaultAttr])
                         ->setExtra('icon', 'bookmark-fill');
                 } else {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
@@ -109,8 +108,8 @@ final class MenuBuilder
             $admin->addChild('menu.upload', ['route' => 'app_book_upload_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.instanceconfig', ['route' => 'app_configuration', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            //$params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
-            //$admin->addChild('menu.notverified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
+            // $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
+            // $admin->addChild('menu.notverified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
         }
 
         return $menu;

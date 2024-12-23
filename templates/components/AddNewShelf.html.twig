@@ -8,25 +8,13 @@
                     class="form-control"
                     autofocus
                 />
-                {% if currentFilters is null %}
                 <button
                     data-action="live#action"
-                    data-live-action-param="prevent|save"
+                    data-live-action-param="save"
                     class="btn btn-outline-success"
                 >
                     <i class="bi bi-journal-check"></i> Save
                 </button>
-                {% endif %}
-
-                {% if currentFilters is not null %}
-                <button
-                    data-action="live#action"
-                    data-live-action-param="prevent|saveFilters"
-                    class="btn btn-outline-success"
-                >
-                    <i class="bi bi-journal-check"></i> {{ 'save.current.filtering'|trans }}
-                </button>
-                {% endif %}
             </div>
         </form>
     {% else %}
@@ -38,13 +26,7 @@
             title="Click to add!"
         >
             <i class="bi bi-plus"></i>
-            {% if currentFilters is null %}
-                {{ 'new.shelf'|trans }}
-            {% endif %}
-
-            {% if currentFilters is not null %}
-                {{ 'save.current.filtering'|trans }}
-            {% endif %}
+            {{ 'new.shelf'|trans }}
         </button>
 
     {% endif %}
