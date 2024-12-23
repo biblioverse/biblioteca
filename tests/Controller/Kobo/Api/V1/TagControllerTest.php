@@ -15,8 +15,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class TagControllerTest extends AbstractKoboControllerTest
 {
-    private const SHELF_TEMPORARY = 'delete_me';
+    private const string SHELF_TEMPORARY = 'delete_me';
 
+    #[\Override]
     public function tearDown(): void
     {
         $this->getService(ShelfRepository::class)

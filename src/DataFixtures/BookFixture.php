@@ -36,6 +36,7 @@ class BookFixture extends Fixture implements DependentFixtureInterface
     public const NUMBER_OF_OWNED_YAML_BOOKS = 20;
     public const NUMBER_OF_UNOWNED_YAML_BOOKS = 1;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -46,6 +47,7 @@ class BookFixture extends Fixture implements DependentFixtureInterface
     /**
      * @throws \DateMalformedStringException
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $yamlFile = __DIR__.'/books.yaml';

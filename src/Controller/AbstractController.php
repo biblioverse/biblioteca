@@ -56,21 +56,25 @@ abstract class AbstractController extends BaseAbstractController
         return $twig->render($view, $parameters);
     }
 
+    #[\Override]
     protected function renderView(string $view, array $parameters = []): string
     {
         return $this->doRenderView($view, null, $parameters, __FUNCTION__);
     }
 
+    #[\Override]
     protected function renderBlockView(string $view, string $block, array $parameters = []): string
     {
         return $this->doRenderView($view, $block, $parameters, __FUNCTION__);
     }
 
+    #[\Override]
     protected function render(string $view, array $parameters = [], ?Response $response = null): Response
     {
         return $this->doRender($view, null, $parameters, $response, __FUNCTION__);
     }
 
+    #[\Override]
     protected function renderBlock(string $view, string $block, array $parameters = [], ?Response $response = null): Response
     {
         return $this->doRender($view, $block, $parameters, $response, __FUNCTION__);

@@ -9,11 +9,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class BookInteractionVoter extends Voter
 {
+    #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return $subject instanceof BookInteraction;
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();

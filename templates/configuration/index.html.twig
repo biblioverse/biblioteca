@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Instance Configuration{% endblock %}
+
+{% block body %}
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>.env Parameter</th>
+        <th>Description</th>
+        <th>Current Value</th>
+    </tr>
+    {%for key, param in documentedParams%}
+        <tr>
+            <td>{{key}}</td>
+            <td>{{param.description}}</td>
+            <td>{{param.value}}</td>
+        </tr>
+    {%endfor%}
+</table>
+
+
+{% endblock %}

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class GedmoTest extends KernelTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         self::bootKernel();

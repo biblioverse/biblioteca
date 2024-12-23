@@ -97,13 +97,13 @@
                                 <li>
                                     <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
                                 </li>
-                                {% if app.user.openAIKey is not null%}
+                                {% if is_granted('USE_AI_FEATURES') %}
                                 <li>
-                                    {{ component('ChatGPTSuggestion', {book: book, field:'tags'}) }}
+                                    {{ component('AiSuggestion', {book: book, field:'tags'}) }}
                                 </li>
 
                                 <li>
-                                    {{ component('ChatGPTSuggestion', {book: book, field:'summary'}) }}
+                                    {{ component('AiSuggestion', {book: book, field:'summary'}) }}
                                 </li>
                                 {% endif %}
                                 <li>
@@ -211,10 +211,18 @@
             {% endif %}
         </div>
     </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="row">
-        <div class="col-md-1 mt-3">
+        <details>
+            <summary>Delete Book</summary>
+            <div class="alert alert-danger">
+                This action is irreversible.
+            </div>
             {{ form(form) }}
-        </div>
+
+        </details>
     </div>
+    {% endif %}
 
 {% endblock %}

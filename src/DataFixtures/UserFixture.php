@@ -17,6 +17,7 @@ class UserFixture extends Fixture
     {
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = new User();

@@ -60,6 +60,7 @@ class KoboLogRequestSubscriber implements EventSubscriberInterface
         $this->koboHttpLogger->info($event->getRequest()->getMethod().' on '.$event->getRequest()->getPathInfo(), ['request' => $content, 'headers' => $event->getRequest()->headers->all()]);
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

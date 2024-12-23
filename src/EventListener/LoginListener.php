@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Event\AuthenticationSuccessEvent;
 
-final class LoginListener
+final readonly class LoginListener
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly RequestStack $requestStack, private readonly Security $security)
+    public function __construct(private EntityManagerInterface $entityManager, private RequestStack $requestStack, private Security $security)
     {
     }
 

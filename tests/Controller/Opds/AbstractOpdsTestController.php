@@ -17,6 +17,7 @@ abstract class AbstractOpdsTestController extends WebTestCase
         return $entityManager;
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

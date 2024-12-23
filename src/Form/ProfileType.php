@@ -18,6 +18,7 @@ class ProfileType extends AbstractType
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -41,11 +42,6 @@ class ProfileType extends AbstractType
                 'required' => false,
                 'first_options' => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
-            ])
-            ->add('openAIKey', null, [
-                'label' => 'OpenAI Key',
-                'help' => 'openai.help',
-                'help_html' => true,
             ])
             ->add('bookKeywordPrompt', null, [
                 'label' => 'Book Keyword Prompt',
@@ -74,6 +70,7 @@ class ProfileType extends AbstractType
         ;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

@@ -13,6 +13,7 @@ class KoboFixture extends Fixture implements DependentFixtureInterface
     public const KOBO_REFERENCE = 'kobo';
     public const ACCESS_KEY = '0000-0000-0000-0000';
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $kobo = new KoboDevice();
@@ -30,6 +31,7 @@ class KoboFixture extends Fixture implements DependentFixtureInterface
         return $this->getReference(UserFixture::USER_REFERENCE, User::class);
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

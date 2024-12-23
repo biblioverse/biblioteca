@@ -1,0 +1,38 @@
+---
+title: Updating to new versions
+---
+import { Steps } from '@astrojs/starlight/components';
+
+
+<Steps>
+
+1. Update the docker image to the latest version:
+
+    ```bash
+    docker-compose pull
+    docker-compose up -d
+    ```
+
+2. Run the following command to update the database schema:
+
+    ```bash
+    docker compose exec biblioteca bin/console doctrine:migration:migrate --no-interaction
+    ```
+
+3. If needed, update the typesense schema:
+
+    ```bash
+    docker-compose exec biblioteca bin/console typesense:create
+    docker-compose exec biblioteca bin/console typesense:import
+    ```
+
+4. Clear the cache:
+
+    ```bash
+    docker-compose exec biblioteca bin/console cache:clear
+    ```
+
+
+</Steps>
+
+

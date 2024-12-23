@@ -1,0 +1,42 @@
+---
+title: Biblioteca Book Management
+description: Welcome to the official Biblioteca Documentation page! Here you will find all the information you need to get started with and use Biblioteca.
+tableOfContents: false
+hero:
+  tagline: Welcome to the official Biblioteca Documentation page! Here you will find all the information you need to get started with and use Biblioteca.
+  actions:
+    - text: Installation Guide
+      link: installing/1-initial-setup
+      icon: right-caret
+    - text: Demo
+      link: demo
+      icon: right-caret
+
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+    <Card title="What is Biblioteca?">
+        Biblioteca is a web application created to manage your personal library. This is an alternative to Calibre and other similar
+        software.
+        #### Why another library system?
+        I created Biblioteca because I wanted to have a simple and easy-to-use library manager. I was not satisfied with the existing
+        solutions, so I decided to make my own.
+    </Card>
+    <Card title="Features" >
+    - Efficient and fast search
+    - Tagging and summarization with ChatGPT or Ollama LLMs
+    - Easy to use interface
+    - Mobile friendly
+    - E-INK friendly
+    - Synchronization with Kobo Devices
+    - OPDS support
+    - Easily Themeable
+    - Dynamic Shelves
+    - Focused on maintaing coherent metadata how you want it
+    - Easy to deploy with Docker
+    - Customizable file system structure
+</Card>
+
+</CardGrid>

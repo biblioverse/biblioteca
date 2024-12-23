@@ -51,6 +51,7 @@ class KoboParamConverter implements ValueResolverInterface
     /**
      * @return array<int, KoboDevice>
      */
+    #[\Override]
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($this->supports($request, $argument) === false) {

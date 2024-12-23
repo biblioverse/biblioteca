@@ -73,6 +73,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $maxAgeCategory = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    /**
+     * @deprecated must used dotenv configuration instead
+     */
     private ?string $openAIKey = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -143,6 +146,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see UserInterface
      * @return non-empty-string
      */
+    #[\Override]
     public function getUserIdentifier(): string
     {
         if ($this->username === null) {
@@ -158,6 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -190,6 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
+    #[\Override]
     public function getPassword(): string
     {
         return $this->password;
@@ -205,6 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    #[\Override]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
@@ -356,18 +363,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMaxAgeCategory(?int $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
-
-        return $this;
-    }
-
-    public function getOpenAIKey(): ?string
-    {
-        return $this->openAIKey;
-    }
-
-    public function setOpenAIKey(?string $openAIKey): static
-    {
-        $this->openAIKey = $openAIKey;
 
         return $this;
     }
