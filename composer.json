@@ -30,7 +30,7 @@
     "liip/imagine-bundle": "^2.10",
     "orhanerday/open-ai": "^5.1",
     "phpdocumentor/reflection-docblock": "^5.3",
-    "phpstan/phpdoc-parser": "^1.18",
+    "phpstan/phpdoc-parser": "^2.0",
     "rtheunissen/guzzle-log-middleware": "^2.0",
     "scienta/doctrine-json-functions": "^5.3",
     "symfony/apache-pack": "^1.0",
