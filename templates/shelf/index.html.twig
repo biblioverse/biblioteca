@@ -4,5 +4,12 @@
 
 {% block body %}
 
-    {% include themedTemplate('book/_pagination.html.twig') %}
+    <div class="row">
+        {% for book in books %}
+            <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}

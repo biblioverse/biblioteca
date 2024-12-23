@@ -4,7 +4,9 @@ import * as bootstrap from 'bootstrap'
 
 
 window.addEventListener('manager:flush', () => {
-    location.reload()
+    console.log('flush')
+    setTimeout(function (){location.reload()}, 500)
+
 });
 
 const toastElList = document.querySelectorAll('.toast')

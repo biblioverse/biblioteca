@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9d5a048a140129cb3605bb9722ec86a",
+    "content-hash": "33166b3a7b6a6c7cd6ff55a1448b9d73",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -70,73 +70,6 @@
                 "source": "https://github.com/SergioMendolia/TypesenseBundle/tree/master"
             },
             "time": "2024-01-05T09:38:51+00:00"
-        },
-        {
-            "name": "andanteproject/page-filter-form-bundle",
-            "version": "1.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andanteproject/page-filter-form-bundle.git",
-                "reference": "851c7ed37676cb6c0e63831d4373df8bb8d51751"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andanteproject/page-filter-form-bundle/zipball/851c7ed37676cb6c0e63831d4373df8bb8d51751",
-                "reference": "851c7ed37676cb6c0e63831d4373df8bb8d51751",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8.0",
-                "symfony/form": "^4.0 || ^5.0 || ^6.0 || ^7.0"
-            },
-            "require-dev": {
-                "ext-json": "*",
-                "friendsofphp/php-cs-fixer": "^3.58",
-                "phpstan/extension-installer": "^1.4",
-                "phpstan/phpstan": "^1.11",
-                "phpstan/phpstan-phpunit": "^1.4",
-                "phpstan/phpstan-symfony": "^1.4",
-                "phpunit/phpunit": "^9.6",
-                "roave/security-advisories": "dev-master",
-                "symfony/framework-bundle": "^4.0 | ^5.0 | ^6.0 | ^7.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Andante\\PageFilterFormBundle\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andante Project",
-                    "homepage": "https://github.com/andanteproject"
-                },
-                {
-                    "name": "Cristoforo Cervino",
-                    "homepage": "https://github.com/cristoforocervino"
-                }
-            ],
-            "description": "A Symfony Bundle to simplify the handling of page filters for lists/tables in admin panels.",
-            "keywords": [
-                "PHP7",
-                "admin-panel",
-                "filters",
-                "form",
-                "php",
-                "php74",
-                "symfony",
-                "symfony-bundle",
-                "symfony-form"
-            ],
-            "support": {
-                "issues": "https://github.com/andanteproject/page-filter-form-bundle/issues",
-                "source": "https://github.com/andanteproject/page-filter-form-bundle/tree/1.0.6"
-            },
-            "time": "2024-07-29T10:51:26+00:00"
         },
         {
             "name": "beberlei/doctrineextensions",

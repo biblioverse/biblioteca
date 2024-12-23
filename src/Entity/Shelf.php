@@ -41,8 +41,8 @@ class Shelf
     #[ORM\ManyToMany(targetEntity: KoboDevice::class, mappedBy: 'shelves')]
     private Collection $koboDevices;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $queryString = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $queryString = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -133,12 +133,12 @@ class Shelf
         $this->slug = $slug;
     }
 
-    public function getQueryString(): ?array
+    public function getQueryString(): ?string
     {
         return $this->queryString;
     }
 
-    public function setQueryString(?array $queryString): static
+    public function setQueryString(?string $queryString): static
     {
         $this->queryString = $queryString;
 

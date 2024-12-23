@@ -71,7 +71,8 @@ class InlineEditInteraction extends AbstractController
         $interaction = $this->getInteraction();
 
         $interaction->setFinished(!$interaction->isFinished());
-
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $this->entityManager->persist($interaction);
         $this->entityManager->flush();
         $this->interaction = $interaction;
@@ -91,6 +92,8 @@ class InlineEditInteraction extends AbstractController
         }
 
         $this->entityManager->persist($interaction);
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $this->entityManager->flush();
         $this->flashMessageFav = 'Saved';
         $this->dispatchBrowserEvent('manager:flush');
@@ -104,6 +107,8 @@ class InlineEditInteraction extends AbstractController
         $interaction->setFavorite(!$interaction->isFavorite());
 
         $entityManager->persist($interaction);
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $entityManager->flush();
         $this->interaction = $interaction;
 
@@ -116,7 +121,8 @@ class InlineEditInteraction extends AbstractController
         $interaction = $this->getInteraction();
 
         $interaction->setHidden(!$interaction->isHidden());
-
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $entityManager->persist($interaction);
         $entityManager->flush();
         $this->interaction = $interaction;
