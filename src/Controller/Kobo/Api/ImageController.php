@@ -46,7 +46,7 @@ class ImageController extends AbstractKoboController
     public function imageQuality(Request $request, KoboDevice $koboDevice, string $uuid, int $width, int $height, string $isGreyscale): Response
     {
         $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
+        $book = $this->bookRepository->findByUuid($uuid);
         if (!$book instanceof Book) {
             if ($this->koboStoreProxy->isEnabled()) {
                 return $this->koboStoreProxy->proxy($request);
