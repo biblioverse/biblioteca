@@ -42,7 +42,11 @@ class OllamaCommunicator implements AiCommunicatorInterface
             if ($json === '') {
                 continue;
             }
-            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            try {
+                $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                continue;
+            }
             if ($data === null || !is_array($data) || !array_key_exists('response', $data)) {
                 continue;
             }
