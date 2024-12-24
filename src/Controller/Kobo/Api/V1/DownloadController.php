@@ -9,7 +9,6 @@ use App\Kobo\DownloadHelper;
 use App\Repository\BookRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/kobo/{accessKey}/v1/download', name: 'kobo_')]
 class DownloadController extends AbstractKoboController
@@ -23,16 +22,17 @@ class DownloadController extends AbstractKoboController
     #[Route('/{id}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
     public function download(KoboDevice $koboDevice, Book $book, string $extension): Response
     {
-        $this->assertCanDownload($koboDevice, $book);
+        // $this->assertCanDownload($koboDevice, $book);
 
         return $this->downloadHelper->getResponse($book, $extension);
     }
 
-    private function assertCanDownload(KoboDevice $koboDevice, Book $book): void
-    {
-        // TODO Check permissions with is_granted and a dedicated voter ?
-        if (!$this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $koboDevice) instanceof Book) {
-            throw new AccessDeniedException('You are not allowed to download this book');
-        }
-    }
+    // private function assertCanDownload(KoboDevice $koboDevice, Book $book): void
+    // {
+    //    // TODO Check permissions with is_granted and a dedicated voter ?
+    //    if (!$this->bookRepository->findByIdAndKoboDevice($book->getId() ?? 0, $koboDevice) instanceof Book) {
+    //        // FIXME allow if in reading list
+    //        throw new AccessDeniedException('You are not allowed to download this book');
+    //    }
+    // }
 }
