@@ -8,6 +8,8 @@ use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\FilteredBookUrlGenerator;
+use App\Service\WikipediaAPICaller;
+use App\Suggestion\SummaryPrompt;
 use App\Suggestion\TagPrompt;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -141,53 +143,53 @@ class DefaultController extends AbstractController
 
 
     #[Route('/prompter', name: 'app_prompter')]
-    public function prompter(CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository, HttpClientInterface $client): Response
+    public function prompter(CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository, HttpClientInterface $client, WikipediaAPICaller $APICaller): Response
     {
-        $communicator = $communicatorDefiner->getCommunicator();
 
-        $book = $bookRepository->find(18911);
+        $book = $bookRepository->find(21673);
 
         $tagPrompt = new TagPrompt($book, null);
+        $summaryPrompt = new SummaryPrompt($book, null);
 
-        $response = $client->request('GET', 'https://www.goodreads.com/search?utf8=%E2%9C%93&query='.urlencode($book->getAuthors()[0].' '.$book->getSerie()));
+        $prompt = 'Knowing that I found this information that could be related to the book: ';
 
+        $searchresults = $APICaller->getPage('/search/page', ['q'=>$book->getAuthors()[0].' '.$book->getSerie(),'limit'=>5]);
 
-        $crawler = new Crawler($response->getContent(), baseHref: 'https://www.goodreads.com/');
+        if (count($searchresults['pages'])<=1) {
 
-
-        $prompt = 'Knowing that I  found this information about the author books: ';
-
-        $linkCrawler = $crawler->filter('a.bookTitle');
-        foreach ($linkCrawler->links() as $link) {
-            $subLink = $client->request('GET', $link->getUri());
-            $subCrawler = new Crawler($subLink->getContent(), baseHref: 'https://www.goodreads.com/');
-
-            $info = '';
-            foreach ([
-                         'div.BookPageTitleSection','div.BookPageMetadataSection__description','div.BookPageMetadataSection__genres'
-                     ] as $region){
-
-                $filtered = $subCrawler->filter($region);
-                if( $filtered->count() > 0) {
-                    $info .=' '. strip_tags($filtered->html());
-                }
-            }
-
-            $prompt .= '  
-'.$info.'  
-';
-
+            $additionalsearchresults = $APICaller->getPage('/search/page', ['q'=>$book->getAuthors()[0],'limit'=>5]);
+            $searchresults['pages'] = array_merge($searchresults['pages'],$additionalsearchresults['pages']);
         }
 
-        $prompt = $prompt.'    '.$tagPrompt->getPrompt();
+        foreach ($searchresults['pages'] as $searchresult) {
+            $page = $APICaller->getPage('/page/'.$searchresult['key'], []);
+            $prompt.='
+```
+# About '.$page['title'].' 
+'.$page['source'].' 
+```
+';
+        }
 
-        $tagPrompt->setPrompt($prompt);
+        $sprompt = $prompt.$summaryPrompt->getPrompt();
+        $tprompt=$prompt.$tagPrompt->getPrompt();
 
-        dump($prompt);
+
+        $tagPrompt->setPrompt($tprompt);
+        $summaryPrompt->setPrompt($sprompt);
+
+        $communicator = $communicatorDefiner->getCommunicator();
 
         $result = $communicator->interrogate($tagPrompt);
 
-        dd($result);
+        dump($result);
+
+        $result = $communicator->interrogate($summaryPrompt);
+
+        dump($result);
+
+        dd($prompt);
+
 
         return $this->render('default/timeline.html.twig', [
             'books' => $books,
