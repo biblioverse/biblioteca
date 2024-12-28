@@ -52,12 +52,15 @@
 
             <div class="my-2">
             {% for filter in filters %}
-                <button type="button" class="btn btn-bare badge bg-primary"
+                <button type="button" class="btn btn-bare badge {% if 'orderBy' not in filter %}bg-primary{% else %}bg-secondary{% endif %}"
                         data-action="live#action"
                         data-live-action-param="addToQuery"
                         data-live-value-param="{{ filter }}"
                 >
-                    {{ filter }} <i class="bi bi-x-circle"></i>
+                    {{ filter }}
+                    {% if 'orderBy' not in filter %}
+                    <i class="bi bi-x-circle"></i>
+                    {% endif %}
                 </button>
             {% endfor %}
             </div>
@@ -127,7 +130,20 @@
                         </nav>
                     </div>
                     <div class="col-md-4">
+                        <div class="btn-group">
+                            {% for orderField in ['serieIndex','updated'] %}
+                                {% for order in ['asc','desc'] %}
+                                    <button type="button" class="btn btn-primary "
+                                            data-action="live#action click->search#focus"
+                                            data-live-action-param="addToQuery"
+                                            data-live-value-param='orderBy:{{ orderField }}-{{ order }}'
+                                    >
+                                            {{ orderField }}-{{ order }}
 
+                                    </button>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
 

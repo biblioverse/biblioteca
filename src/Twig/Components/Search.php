@@ -61,6 +61,14 @@ class Search
     #[LiveAction]
     public function addToQuery(#[LiveArg] string $value): void
     {
+        if (str_starts_with($value, 'orderBy')) {
+            $this->fullQuery = preg_replace("/orderBy:[a-zA-Z-\"]+/", '', $this->fullQuery);
+            foreach ($this->filters as $key => $filter) {
+                if (!str_contains($this->fullQuery, $filter)) {
+                    unset($this->filters[$key]);
+                }
+            }
+        }
         if (!str_contains($this->fullQuery, $value)) {
             $this->query = $value;
         } else {
@@ -103,7 +111,6 @@ class Search
         $complexQuery->facetBy('authors,serie,tags, extension, verified, age');
 
         $complexQuery->perPage(self::PER_PAGE);
-        $complexQuery->sortBy('serieIndex:asc');
         $complexQuery->numTypos(2);
         $complexQuery->page($this->page);
         /** @var TypesenseResponse $result */

@@ -6,6 +6,8 @@ use App\Entity\User;
 
 class FieldToken implements TokenInterface
 {
+    private $filterString='';
+
     #[\Override]
     public function getRegex(): string
     {
@@ -18,7 +20,7 @@ class FieldToken implements TokenInterface
     }
 
     #[\Override]
-    public function convertToQuery(array $tokens): string
+    public function parseTokens(array $tokens): void
     {
         $filters = [];
         foreach ($tokens as $token) {
@@ -28,7 +30,11 @@ class FieldToken implements TokenInterface
 
         $filtered = [];
         foreach ($filters as $field => $values) {
+            if($field==='orderBy'){
+                continue;
+            }
             $trimmedfield = trim($field, '-');
+
             $escapedValues = implode(',', $values);
             $escapedValues = '['.$escapedValues.']';
 
@@ -44,6 +50,18 @@ class FieldToken implements TokenInterface
             }
         }
 
-        return implode(' && ', $filtered);
+        $this->filterString = implode(' && ', $filtered);
     }
+
+    public function getFilterQuery(): string
+    {
+        return $this->filterString;
+    }
+
+    public function getOrderQuery(): string
+    {
+        return '';
+    }
+
+
 }

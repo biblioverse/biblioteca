@@ -8,6 +8,9 @@ class BooleanToken implements TokenInterface
 {
     private ?User $user = null;
 
+    private $filterString='';
+    private $orderString='';
+
     #[\Override]
     public function getRegex(): string
     {
@@ -21,7 +24,7 @@ class BooleanToken implements TokenInterface
     }
 
     #[\Override]
-    public function convertToQuery(array $tokens): string
+    public function parseTokens(array $tokens): void
     {
         $criteria = [];
         foreach ($tokens as $token) {
@@ -45,6 +48,18 @@ class BooleanToken implements TokenInterface
             }
         }
 
-        return implode(' && ', $criteria);
+        $this->filterString = implode(' && ', $criteria);
     }
+
+    public function getFilterQuery(): string
+    {
+        return $this->filterString;
+    }
+
+    public function getOrderQuery(): string
+    {
+        return $this->orderString;
+    }
+
+
 }

@@ -12,5 +12,9 @@ interface TokenInterface
 
     public function setUser(User $user): void;
 
-    public function convertToQuery(array $tokens): string;
+    public function parseTokens(array $tokens): void;
+
+    public function getFilterQuery(): string;
+    public function getOrderQuery(): string;
+
 }

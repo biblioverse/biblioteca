@@ -17,6 +17,7 @@ class TypesenseTokenHandler
         $query = new TypesenseQuery($tokens['TEXT'] ?? '', 'title,serie,extension,authors,tags,summary');
 
         $filterstring = [];
+        $orderString = [];
         foreach ($tokens as $class => $token) {
             if ($class !== 'TEXT') {
                 $handler = new $class();
@@ -30,11 +31,15 @@ class TypesenseTokenHandler
                 }
                 $handler->setUser($user);
 
-                $filterstring[] = $handler->convertToQuery($token);
+                $handler->parseTokens($token);
+                $filterstring[] = $handler->getFilterQuery();
+                $orderString[] = $handler->getOrderQuery();
             }
         }
         $filterstring = array_filter($filterstring);
         $query->filterBy(implode(' && ', $filterstring));
+        $orderString = array_filter($orderString);
+        $query->sortBy(implode(',', $orderString));
 
         return $query;
     }
