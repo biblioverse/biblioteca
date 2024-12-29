@@ -2,8 +2,8 @@
 
 namespace App\Tests\Suggestion;
 
+use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
-use App\Suggestion\TagPrompt;
 use PHPUnit\Framework\TestCase;
 
 class TagPromptTest extends TestCase

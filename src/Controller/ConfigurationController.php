@@ -32,6 +32,8 @@ class ConfigurationController extends AbstractController
             'OPEN_AI_MODEL' => 'OpenAI model to use',
             'OLLAMA_URL' => 'Url of the Ollama API. do not forget the trailing slash. Example: http://ollama:11434/api/',
             'OLLAMA_MODEL' => 'Ollama model to use',
+            'AI_CONTEXT_AMAZON_ENABLED' => 'Do you want to give context from Amazon to AI completions? This will scrape the Amazon website. Use with caution.',
+            'WIKIPEDIA_API_TOKEN' => 'Wikipedia API token. Required if you want to give context from Wikipedia to AI. You will need to generate a personal api token in wikipedia.org',
         ];
         foreach ($documentedParams as $key => $value) {
             $documentedParams[$key] = [
