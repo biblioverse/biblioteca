@@ -13,40 +13,34 @@
                     />
                 </div>
                 <div data-search-target="suggestions" class="shadow position-absolute p-3 d-none bg-body border" style="z-index: 1000">
-                    {% for facet in facets|default([]) %}
-                        {% for count in facet.counts %}
-                            {% set value = facet.field_name ~':"'~ count.value ~'"'  %}
-                            {% if count.value =='true'%}
-                                {% set value = '#'~facet.field_name  %}
-                            {% elseif count.value =='false'%}
-                                {% set value = '#not_'~facet.field_name  %}
-                            {% endif %}
-                            {% set label = value %}
-                            {% if facet.field_name =='age'%}
-                                {% set categories = constant('App\\Entity\\User::AGE_CATEGORIES') %}
-                                {% for cat,key in categories %}
-                                    {% if key==count.value %}
-                                        {% set label = cat %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            {% set isIncluded = value in filters %}
-                            <button type="button" class="btn badge {{ isIncluded?'bg-success':'bg-secondary' }} btn-bare suggestion"
-                                        data-action="live#action click->search#focus"
-                                        data-live-action-param="addToQuery"
-                                        data-live-value-param='{{ value }}'
-                                >
-                                    <small>
-                                        {{ label }}
-                                        {% if count.count is not null %}
-                                            <span class="badge rounded-pill bg-primary">
-                                                {{ count.count }} <span class="visually-hidden">records</span>
-                                            </span>
+                    <div class="container">
+                        <div class="row">
+                            {% for facet in facets|default([]) %}
+                                {% if facet|length==4 %}
+                                    <div class="col">
+                                        <h5>{{ facet.field_name|capitalize }}</h5>
+                                        <ul class="list-group">
+                                            {% for count in facet.counts %}
+                                                {% include 'components/_facet.html.twig' %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="col">
+                                <h5>Status</h5>
+                                <ul class="list-group">
+                                    {% for facet in facets|default([]) %}
+                                        {% if facet|length==2 %}
+                                            {% for count in facet.counts %}
+                                                {% include 'components/_facet.html.twig' %}
+                                            {% endfor %}
                                         {% endif %}
-                                    </small>
-                                </button>
-                        {% endfor %}
-                    {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -75,7 +69,7 @@
 
             <div class="results mt-4">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col">
                         {% set route='app_allbooks' %}
                         {% set params={'page':page, 'fullQuery': fullQuery} %}
                         {% set current= pagination.page %}
@@ -129,20 +123,27 @@
                             </ul>
                         </nav>
                     </div>
-                    <div class="col-md-4">
-                        <div class="btn-group">
-                            {% for orderField in ['serieIndex','updated'] %}
-                                {% for order in ['asc','desc'] %}
-                                    <button type="button" class="btn btn-primary "
-                                            data-action="live#action click->search#focus"
-                                            data-live-action-param="addToQuery"
-                                            data-live-value-param='orderBy:{{ orderField }}-{{ order }}'
-                                    >
-                                            {{ orderField }}-{{ order }}
-
-                                    </button>
+                    <div class="col text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-arrow-down-up"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for orderField in ['serieIndex','updated'] %}
+                                    {% for order in ['asc','desc'] %}
+                                        {% set isIncluded= orderField~"-"~order in fullQuery %}
+                                        <li>
+                                        <button type="button" class="dropdown-item btn {{ isIncluded?'active':''}} "
+                                                data-action="live#action click->search#focus"
+                                                data-live-action-param="addToQuery"
+                                                data-live-value-param='orderBy:{{ orderField }}-{{ order }}'
+                                        >
+                                            <small>{{ orderField|trans }} {{ order }}</small>
+                                        </button>
+                                        </li>
+                                    {% endfor %}
                                 {% endfor %}
-                            {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>

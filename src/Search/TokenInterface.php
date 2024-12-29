@@ -15,6 +15,6 @@ interface TokenInterface
     public function parseTokens(array $tokens): void;
 
     public function getFilterQuery(): string;
-    public function getOrderQuery(): string;
 
+    public function getOrderQuery(): string;
 }

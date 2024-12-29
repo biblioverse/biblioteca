@@ -28,7 +28,7 @@ class SmokeTest extends WebTestCase
 
         foreach ($this->getUrlList() as $url) {
             $client->request(Request::METHOD_GET, $url);
-            self::assertResponseIsSuccessful();
+            self::assertResponseIsSuccessful($url);
         }
     }
 
@@ -37,7 +37,7 @@ class SmokeTest extends WebTestCase
         return [
             '/',
             '/reading-list',
-            '/all?title=&serieIndexLTE=&serieIndexGTE=&serie=&publisher=&read=&picture=&favorite=&extension=&verified=&orderBy=&submit=',
+            '/all',
             '/user/',
             '/user/1/edit',
             '/user/kobo/',

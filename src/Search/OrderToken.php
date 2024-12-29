@@ -6,7 +6,7 @@ use App\Entity\User;
 
 class OrderToken implements TokenInterface
 {
-    private string $orderString='';
+    private string $orderString = '';
 
     #[\Override]
     public function getRegex(): string
@@ -25,7 +25,7 @@ class OrderToken implements TokenInterface
         $filters = [];
         foreach ($tokens as $token) {
             [, $value] = explode(':', (string) $token);
-            $filters[] = trim(trim($value),'"');
+            $filters[] = trim(trim($value), '"');
         }
 
         foreach ($filters as $values) {
@@ -34,15 +34,15 @@ class OrderToken implements TokenInterface
         }
     }
 
+    #[\Override]
     public function getFilterQuery(): string
     {
         return '';
     }
 
+    #[\Override]
     public function getOrderQuery(): string
     {
         return $this->orderString;
     }
-
-
 }

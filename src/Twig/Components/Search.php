@@ -62,9 +62,9 @@ class Search
     public function addToQuery(#[LiveArg] string $value): void
     {
         if (str_starts_with($value, 'orderBy')) {
-            $this->fullQuery = preg_replace("/orderBy:[a-zA-Z-\"]+/", '', $this->fullQuery);
+            $this->fullQuery = preg_replace('/orderBy:[a-zA-Z-"]+/', '', $this->fullQuery) ?? '';
             foreach ($this->filters as $key => $filter) {
-                if (!str_contains($this->fullQuery, $filter)) {
+                if (!str_contains($this->fullQuery, (string) $filter)) {
                     unset($this->filters[$key]);
                 }
             }

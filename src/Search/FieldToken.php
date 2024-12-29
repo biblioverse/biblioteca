@@ -6,7 +6,7 @@ use App\Entity\User;
 
 class FieldToken implements TokenInterface
 {
-    private $filterString='';
+    private string $filterString = '';
 
     #[\Override]
     public function getRegex(): string
@@ -30,7 +30,7 @@ class FieldToken implements TokenInterface
 
         $filtered = [];
         foreach ($filters as $field => $values) {
-            if($field==='orderBy'){
+            if ($field === 'orderBy') {
                 continue;
             }
             $trimmedfield = trim($field, '-');
@@ -53,15 +53,15 @@ class FieldToken implements TokenInterface
         $this->filterString = implode(' && ', $filtered);
     }
 
+    #[\Override]
     public function getFilterQuery(): string
     {
         return $this->filterString;
     }
 
+    #[\Override]
     public function getOrderQuery(): string
     {
         return '';
     }
-
-
 }

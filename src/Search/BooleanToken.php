@@ -8,8 +8,8 @@ class BooleanToken implements TokenInterface
 {
     private ?User $user = null;
 
-    private $filterString='';
-    private $orderString='';
+    private string $filterString = '';
+    private string $orderString = '';
 
     #[\Override]
     public function getRegex(): string
@@ -51,15 +51,15 @@ class BooleanToken implements TokenInterface
         $this->filterString = implode(' && ', $criteria);
     }
 
+    #[\Override]
     public function getFilterQuery(): string
     {
         return $this->filterString;
     }
 
+    #[\Override]
     public function getOrderQuery(): string
     {
         return $this->orderString;
     }
-
-
 }
