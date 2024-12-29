@@ -2,7 +2,7 @@
 
 namespace App\Ai;
 
-use App\Suggestion\AbstractBookPrompt;
+use App\Ai\Prompt\AbstractBookPrompt;
 use Orhanerday\OpenAi\OpenAi;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 

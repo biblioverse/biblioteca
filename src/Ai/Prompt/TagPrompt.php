@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Suggestion;
+namespace App\Ai\Prompt;
 
 use App\Entity\User;
 
