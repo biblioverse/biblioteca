@@ -2,14 +2,14 @@
 
 namespace App\Tests\Twig\Components;
 
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\UserFixture;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Repository\UserRepository;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
 use App\Twig\Components\AiSuggestion;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;

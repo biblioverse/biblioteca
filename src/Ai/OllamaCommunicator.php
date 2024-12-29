@@ -2,7 +2,7 @@
 
 namespace App\Ai;
 
-use App\Suggestion\BookPromptInterface;
+use App\Ai\Prompt\BookPromptInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -44,7 +44,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
             }
             try {
                 $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
+            } catch (\JsonException) {
                 continue;
             }
             if ($data === null || !is_array($data) || !array_key_exists('response', $data)) {
@@ -78,7 +78,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
             'prompt' => $prompt->getPrompt(),
             'system' => $this->basePrompt,
             'options' => [
-                'temperature' => 0,
+                'temperature' => 0.3,
             ],
         ], 'POST');
 

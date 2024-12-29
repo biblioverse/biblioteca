@@ -2,9 +2,9 @@
 
 namespace App\Ai;
 
-use App\Suggestion\BookPromptInterface;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
+use App\Ai\Prompt\BookPromptInterface;
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 

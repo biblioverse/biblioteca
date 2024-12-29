@@ -2,9 +2,9 @@
 
 namespace App\Tests\Suggestion;
 
+use App\Ai\Prompt\SummaryPrompt;
 use App\Entity\Book;
 use App\Entity\User;
-use App\Suggestion\SummaryPrompt;
 use PHPUnit\Framework\TestCase;
 
 class SummaryPromptTest extends TestCase

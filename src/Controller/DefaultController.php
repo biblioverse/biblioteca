@@ -3,20 +3,14 @@
 namespace App\Controller;
 
 use Andante\PageFilterFormBundle\PageFilterFormTrait;
-use App\Ai\CommunicatorDefiner;
 use App\Form\BookFilterType;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\FilteredBookUrlGenerator;
-use App\Service\WikipediaAPICaller;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DefaultController extends AbstractController
 {
@@ -131,65 +125,6 @@ class DefaultController extends AbstractController
         $years = $bookRepository->getReadYears();
 
         $books = $qb->getQuery()->getResult();
-
-        return $this->render('default/timeline.html.twig', [
-            'books' => $books,
-            'year' => $year,
-            'type' => $type,
-            'types' => $types,
-            'years' => $years,
-        ]);
-    }
-
-
-    #[Route('/prompter', name: 'app_prompter')]
-    public function prompter(CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository, HttpClientInterface $client, WikipediaAPICaller $APICaller): Response
-    {
-
-        $book = $bookRepository->find(21673);
-
-        $tagPrompt = new TagPrompt($book, null);
-        $summaryPrompt = new SummaryPrompt($book, null);
-
-        $prompt = 'Knowing that I found this information that could be related to the book: ';
-
-        $searchresults = $APICaller->getPage('/search/page', ['q'=>$book->getAuthors()[0].' '.$book->getSerie(),'limit'=>5]);
-
-        if (count($searchresults['pages'])<=1) {
-
-            $additionalsearchresults = $APICaller->getPage('/search/page', ['q'=>$book->getAuthors()[0],'limit'=>5]);
-            $searchresults['pages'] = array_merge($searchresults['pages'],$additionalsearchresults['pages']);
-        }
-
-        foreach ($searchresults['pages'] as $searchresult) {
-            $page = $APICaller->getPage('/page/'.$searchresult['key'], []);
-            $prompt.='
-```
-# About '.$page['title'].' 
-'.$page['source'].' 
-```
-';
-        }
-
-        $sprompt = $prompt.$summaryPrompt->getPrompt();
-        $tprompt=$prompt.$tagPrompt->getPrompt();
-
-
-        $tagPrompt->setPrompt($tprompt);
-        $summaryPrompt->setPrompt($sprompt);
-
-        $communicator = $communicatorDefiner->getCommunicator();
-
-        $result = $communicator->interrogate($tagPrompt);
-
-        dump($result);
-
-        $result = $communicator->interrogate($summaryPrompt);
-
-        dump($result);
-
-        dd($prompt);
-
 
         return $this->render('default/timeline.html.twig', [
             'books' => $books,
