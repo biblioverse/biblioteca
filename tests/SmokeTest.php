@@ -54,6 +54,8 @@ class SmokeTest extends WebTestCase
             '/groups/tags',
             '/groups/publisher',
             '/books/1/the-odyssey',
+            '/configuration',
+            '/not-verified',
         ];
     }
 }

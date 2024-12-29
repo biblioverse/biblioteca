@@ -4,7 +4,7 @@ import * as bootstrap from 'bootstrap'
 
 
 window.addEventListener('manager:flush', () => {
-    console.log('flush')
+
     setTimeout(function (){location.reload()}, 500)
 
 });
