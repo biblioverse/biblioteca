@@ -100,3 +100,11 @@ If you want to use a user's configured prompts:
 ```
 docker compose exec biblioteca bin/console books:tag <userid>
 ```
+
+## Add context
+There are currently 2 ways to add context for better results. Both can be enabled at the same time.
+
+### From wikipedia
+Set your `WIKIPEDIA_API_TOKEN` in your .env.local file. You must register in wikimedia API for a personal API Token.
+### From Amazon
+Set `AI_CONTEXT_AMAZON_ENABLED` to 1 in your .env.local file to scrape results from Amazon. This should be used with parsimony.

@@ -33,6 +33,13 @@ parameters:
     env(OLLAMA_MODEL): 'llama3.2'
     DATABASE_URL: '%env(DATABASE_URL)%'
 
+    WIKIPEDIA_API_TOKEN: '%env(WIKIPEDIA_API_TOKEN)%'
+    env(WIKIPEDIA_API_TOKEN): null
+
+    AI_CONTEXT_AMAZON_ENABLED: '%env(bool:AI_CONTEXT_AMAZON_ENABLED)%'
+    env(AI_CONTEXT_AMAZON_ENABLED): false
+
+
 services:
     # default configuration for services in *this* file
     _defaults:
