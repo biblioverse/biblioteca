@@ -3,10 +3,10 @@
 namespace App\Tests\Suggestion;
 
 use App\Ai\CommunicatorDefiner;
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use App\Ai\TestCommunicator;
 use App\Entity\Book;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CommunicatorTest extends KernelTestCase
