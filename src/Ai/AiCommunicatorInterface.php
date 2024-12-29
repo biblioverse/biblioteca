@@ -2,7 +2,7 @@
 
 namespace App\Ai;
 
-use App\Suggestion\AbstractBookPrompt;
+use App\Ai\Prompt\AbstractBookPrompt;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.ai_communicator', ['priority' => 20])]

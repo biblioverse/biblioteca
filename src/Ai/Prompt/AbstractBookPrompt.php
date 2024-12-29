@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Suggestion;
+namespace App\Ai\Prompt;
 
 use App\Entity\Book;
 use App\Entity\User;
@@ -26,7 +26,12 @@ abstract class AbstractBookPrompt implements BookPromptInterface
         $this->prompt = $prompt;
     }
 
-    protected function replaceBookOccurrence(string $prompt): string
+    public function getBook(): Book
+    {
+        return $this->book;
+    }
+
+    public function replaceBookOccurrence(string $prompt): string
     {
         $bookString = '"'.$this->book->getTitle().'" by '.implode(' and ', $this->book->getAuthors());
 

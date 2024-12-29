@@ -4,9 +4,10 @@ namespace App\Command;
 
 use App\Ai\AiCommunicatorInterface;
 use App\Ai\CommunicatorDefiner;
+use App\Ai\Context\ContextBuilder;
+use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
 use App\Entity\User;
-use App\Suggestion\TagPrompt;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ class BooksTagCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly CommunicatorDefiner $aiCommunicator,
+        private readonly ContextBuilder $contextBuilder,
     ) {
         parent::__construct();
     }
@@ -78,6 +80,7 @@ class BooksTagCommand extends Command
             $progress->setMessage($book->getSerie().' '.$book->getTitle().' ('.implode(' and ', $book->getAuthors()).')');
             $progress->advance();
             $tagPrompt = new TagPrompt($book, $user);
+            $tagPrompt = $this->contextBuilder->getContext($tagPrompt);
             $array = $communicator->interrogate($tagPrompt);
 
             if (is_array($array)) {

@@ -4,10 +4,11 @@ namespace App\Twig\Components;
 
 use App\Ai\AiCommunicatorInterface;
 use App\Ai\CommunicatorDefiner;
+use App\Ai\Context\ContextBuilder;
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
 use App\Entity\User;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -47,6 +48,7 @@ final class AiSuggestion
     public function __construct(
         private Security $security,
         private CommunicatorDefiner $aiCommunicator,
+        private ContextBuilder $contextBuilder,
     ) {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -81,6 +83,8 @@ final class AiSuggestion
             'tags' => new TagPrompt($this->book, $this->user),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
+
+        $promptObj = $this->contextBuilder->getContext($promptObj);
 
         $promptObj->setPrompt($this->prompt);
 
