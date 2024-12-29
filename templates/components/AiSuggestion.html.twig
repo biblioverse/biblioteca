@@ -12,12 +12,16 @@
         {% endblock %}
         {% block modal_body %}
 
-            <textarea class="form-control"  data-model="prompt" data-action="live#action"
+            <textarea data-loading="hide" class="form-control"  data-model="prompt" data-action="live#action"
                 rows="5"
             >{{ prompt }}</textarea>
-            <button type="button" class="btn btn-primary"data-action="live#action"
+            <button data-loading="hide" type="button" class="btn btn-primary"data-action="live#action"
                     data-live-action-param="prevent|generate"
             >Generate</button>
+
+            <div class="mt-3 alert alert-info" data-loading="show">
+                Querying for context and building a response... please wait.
+            </div>
 
 
             {% if result %}
