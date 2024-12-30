@@ -103,6 +103,7 @@ class InlineEditBook extends AbstractController
         }
 
         $entityManager->flush();
+        sleep(1);
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 

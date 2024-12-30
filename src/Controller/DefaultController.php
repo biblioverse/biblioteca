@@ -115,28 +115,37 @@ class DefaultController extends AbstractController
         if ($request->get('action') !== null) {
             switch ($request->get('action')) {
                 case 'relocate':
-                    try {
-                        foreach ($books as $book) {
+
+                    $success=true;
+                    foreach ($books as $book) {
+                        try {
                             $book = $bookFileSystemManager->renameFiles($book);
                             $entityManager->persist($book);
+                        } catch (\Exception $e) {
+                            $success=false;
+                            $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
                         }
-                        $entityManager->flush();
-                        $this->addFlash('success', 'Files relocated');
-                    } catch (\Exception $e) {
-                        $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
                     }
-
+                    $entityManager->flush();
+                    if ($success) {
+                        $this->addFlash('success', 'Files relocated');
+                    }
                     break;
                 case 'extract':
-                    try {
-                        foreach ($books as $book) {
+                    $success=true;
+
+                    foreach ($books as $book) {
+                        try {
                             $book = $bookFileSystemManager->extractCover($book);
                             $entityManager->persist($book);
+                        } catch (\Exception $e) {
+                            $success=false;
+                            $this->addFlash('danger', $e->getMessage());
                         }
-                        $entityManager->flush();
+                    }
+                    $entityManager->flush();
+                    if ($success) {
                         $this->addFlash('success', 'Covers extracted');
-                    } catch (\Exception $e) {
-                        $this->addFlash('danger', $e->getMessage());
                     }
 
                     return $this->redirectToRoute('app_notverified');
