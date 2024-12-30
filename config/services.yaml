@@ -39,6 +39,9 @@ parameters:
     AI_CONTEXT_AMAZON_ENABLED: '%env(bool:AI_CONTEXT_AMAZON_ENABLED)%'
     env(AI_CONTEXT_AMAZON_ENABLED): false
 
+    AI_CONTEXT_FULL_EPUB: '%env(bool:AI_CONTEXT_FULL_EPUB)%'
+    env(AI_CONTEXT_FULL_EPUB): false
+
 
 services:
     # default configuration for services in *this* file

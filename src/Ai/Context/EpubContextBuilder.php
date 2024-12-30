@@ -6,17 +6,18 @@ use App\Entity\Book;
 use App\Service\BookFileSystemManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\Formats\Epub\EpubModule;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class EpubContextBuilder implements ContextBuildingInteface
 {
-    public function __construct(private readonly BookFileSystemManagerInterface $bookFileSystemManager)
+    public function __construct(private readonly BookFileSystemManagerInterface $bookFileSystemManager, #[Autowire(param: 'AI_CONTEXT_FULL_EPUB')] private readonly bool $enable)
     {
     }
 
     #[\Override]
     public function isEnabled(): bool
     {
-        return false;
+        return $this->enable;
     }
 
     #[\Override]
@@ -48,6 +49,8 @@ class EpubContextBuilder implements ContextBuildingInteface
             $prompt .= strip_tags($text ?? '');
         }
 
-        return $prompt;
+        $prompt = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", '', $prompt);
+
+        return preg_replace("/([\n]|[\r])+/", ' ', (string) $prompt) ?? '';
     }
 }
