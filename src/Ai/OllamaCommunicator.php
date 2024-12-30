@@ -65,6 +65,7 @@ class OllamaCommunicator implements AiCommunicatorInterface
     #[\Override]
     public function initialise(string $basePrompt): void
     {
+        $this->basePrompt = $basePrompt;
         $this->sendRequest($this->getOllamaUrl('pull'), [
             'model' => $this->model,
         ], 'POST');
@@ -73,14 +74,16 @@ class OllamaCommunicator implements AiCommunicatorInterface
     #[\Override]
     public function interrogate(BookPromptInterface $prompt): string|array
     {
-        $response = $this->sendRequest($this->getOllamaUrl('generate'), [
+        $params = [
             'model' => $this->model,
             'prompt' => $prompt->getPrompt(),
             'system' => $this->basePrompt,
             'options' => [
-                'temperature' => 0.3,
+                'temperature' => 0,
             ],
-        ], 'POST');
+        ];
+
+        $response = $this->sendRequest($this->getOllamaUrl('generate'), $params, 'POST');
 
         return $prompt->convertResult($response);
     }
