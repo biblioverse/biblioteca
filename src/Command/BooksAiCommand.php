@@ -124,7 +124,7 @@ class BooksAiCommand extends Command
                 }
             }
 
-            // $this->em->flush();
+            $this->em->flush();
         }
 
         $progress->finish();
