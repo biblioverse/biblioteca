@@ -1,6 +1,6 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
         {% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
-            <form>
+            <form onsubmit="return false">
                 <div class="input-group">
 
                     {% if field=='verified' %}
@@ -161,23 +161,23 @@
             {% if suggestion != attribute(book, "get"~field) %}
                 {% if field=='summary' %}
                     <code class="d-block">{{ suggestion }}</code>
-                    <a
+                    <button
                         class="btn btn-outline-secondary btn-sm p-1 suggestion"
                         data-action="live#action"
-                        data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                        data-live-action-param="prevent|usesuggestion(field={{ field }}, suggestion={{ key }})"
                         data-live-field-param="{{ field }}"
                         data-live-suggestion-param="{{ key }}"
 
-                    >Accept {{ field }}</a>
+                    >Accept {{ field }}</button>
                 {% else %}
-                <a
+                <button
                     class="btn btn-outline-secondary btn-sm p-1 suggestion"
                     data-action="live#action"
-                    data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                    data-live-action-param="prevent|usesuggestion(field={{ field }}, suggestion={{ key }})"
                     data-live-field-param="{{ field }}"
                     data-live-suggestion-param="{{ key }}"
 
-                >{{ suggestion }}</a>
+                >{{ suggestion }}</button>
                 {% endif %}
             {% endif %}
         {% endfor %}
