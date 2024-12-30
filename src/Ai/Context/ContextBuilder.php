@@ -18,11 +18,13 @@ class ContextBuilder
 
     public function getContext(AbstractBookPrompt $abstractBookPrompt): AbstractBookPrompt
     {
+        $hasContext = false;
         $prompt = "Use the following pieces of context to answer the query at the end. If you don't know the answer, don't try to make up an answer. Context:
 ---------------------
 ";
         foreach ($this->handlers as $handler) {
             if ($handler->isEnabled()) {
+                $hasContext = true;
                 $prompt .= $handler->getContextForPrompt($abstractBookPrompt->getBook());
             }
         }
@@ -31,7 +33,9 @@ class ContextBuilder
 Given the context information and not prior knowledge, answer the query.
 Query: '.$abstractBookPrompt->getPrompt();
 
-        $abstractBookPrompt->setPrompt($abstractBookPrompt->replaceBookOccurrence($prompt));
+        if ($hasContext) {
+            $abstractBookPrompt->setPrompt($abstractBookPrompt->replaceBookOccurrence($prompt));
+        }
 
         return $abstractBookPrompt;
     }
