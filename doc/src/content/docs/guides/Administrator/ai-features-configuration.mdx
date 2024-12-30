@@ -91,15 +91,22 @@ On a book page, you can click on the "generate summary"  or "generate tags" butt
 ## Run it through your whole library
 You can run the following command:
 ```
-docker compose exec biblioteca bin/console books:tag
+docker compose exec biblioteca bin/console books:ai <tags|summary|both>
 ```
 It will tag all your books that currently don't have tags.
 
 If you want to use a user's configured prompts:
 
 ```
-docker compose exec biblioteca bin/console books:tag <userid>
+docker compose exec biblioteca bin/console books:ai <tags|summary|both> <userid>
 ```
+
+If you want to use it on a specific book:
+
+```
+docker compose exec biblioteca bin/console books:ai <tags|summary|both> -b <book-id>
+```
+
 
 ## Add context
 There are currently 2 ways to add context for better results. Both can be enabled at the same time.

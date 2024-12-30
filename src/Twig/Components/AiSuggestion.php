@@ -84,9 +84,9 @@ final class AiSuggestion
             default => throw new \InvalidArgumentException('Invalid field'),
         };
 
-        $promptObj = $this->contextBuilder->getContext($promptObj);
-
         $promptObj->setPrompt($this->prompt);
+
+        $promptObj = $this->contextBuilder->getContext($promptObj);
 
         $result = $communicator->interrogate($promptObj);
 

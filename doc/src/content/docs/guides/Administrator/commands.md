@@ -26,15 +26,9 @@ Relocate all books to their calculated folder. This is necessary only if you wan
 ## `books:scan`                              
 Will scan the `public/books` folder and add all books to the database. If a book already exists, it will be updated.
 
-## `books:tag`
+## `books:ai`
 
-> First you will need to setup an openAi chatgpt key in a user's properties and run the command as this user
-
-Then you can run the command to generate tag for all books in the library:
-
-```bash
-bin/console books:tag <user_id>
-```
+Check the documentation for this in the AI chapter
 
 ## `cache:clear`
 Clears the cache
