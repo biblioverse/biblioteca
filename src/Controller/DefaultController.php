@@ -115,14 +115,13 @@ class DefaultController extends AbstractController
         if ($request->get('action') !== null) {
             switch ($request->get('action')) {
                 case 'relocate':
-
-                    $success=true;
+                    $success = true;
                     foreach ($books as $book) {
                         try {
                             $book = $bookFileSystemManager->renameFiles($book);
                             $entityManager->persist($book);
                         } catch (\Exception $e) {
-                            $success=false;
+                            $success = false;
                             $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
                         }
                     }
@@ -132,14 +131,14 @@ class DefaultController extends AbstractController
                     }
                     break;
                 case 'extract':
-                    $success=true;
+                    $success = true;
 
                     foreach ($books as $book) {
                         try {
                             $book = $bookFileSystemManager->extractCover($book);
                             $entityManager->persist($book);
                         } catch (\Exception $e) {
-                            $success=false;
+                            $success = false;
                             $this->addFlash('danger', $e->getMessage());
                         }
                     }

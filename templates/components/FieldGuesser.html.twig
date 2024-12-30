@@ -1,6 +1,6 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
     {% if this.guessAuthor!='' %}
-    <form>
+    <form onsubmit="return false">
         <button
             data-action="live#action"
             data-live-action-param="prevent|accept"
@@ -16,7 +16,7 @@
     </form>
     {% endif %}
     {% if this.guessIndex!='' and this.guessIndex!= book.serieIndex %}
-    <form>
+    <form onsubmit="return false">
         <button
             data-action="live#action"
             data-live-action-param="prevent|acceptIndex"
