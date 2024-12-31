@@ -65,10 +65,16 @@ abstract class AbstractOpdsTestController extends WebTestCase
     {
         $container = self::getContainer();
         $doctrine = $container->get('doctrine');
+
         /** @var EntityManagerInterface $entityManager */
+        /* @phpstan-ignore-next-line */
         $entityManager = $doctrine->getManager();
 
         $opdsRepo = static::getContainer()->get(OpdsAccessRepository::class);
+
+        if (!$opdsRepo instanceof OpdsAccessRepository) {
+            self::fail('OpdsAccessRepository not found');
+        }
 
         $exist = $opdsRepo->findOneBy(['token' => OpdsAccessFixture::ACCESS_KEY]);
 

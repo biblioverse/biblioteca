@@ -4,6 +4,7 @@ namespace App\Tests\Controller\Opds;
 
 use App\DataFixtures\OpdsAccessFixture;
 use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -67,6 +68,10 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
 
         if (!$testUser instanceof UserInterface) {
             self::fail('User not found');
+        }
+
+        if (!$client instanceof KernelBrowser) {
+            self::fail('Client could not start');
         }
 
         $client->loginUser($testUser);
