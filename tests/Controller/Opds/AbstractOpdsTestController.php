@@ -2,10 +2,16 @@
 
 namespace App\Tests\Controller\Opds;
 
+use App\DataFixtures\OpdsAccessFixture;
+use App\DataFixtures\UserFixture;
+use App\Entity\OpdsAccess;
+use App\Repository\OpdsAccessRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractOpdsTestController extends WebTestCase
 {
@@ -53,5 +59,43 @@ abstract class AbstractOpdsTestController extends WebTestCase
         }
 
         return $decoded;
+    }
+
+    protected function ensureFixtureExists(): void
+    {
+        $container = self::getContainer();
+        $doctrine = $container->get('doctrine');
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $opdsRepo = static::getContainer()->get(OpdsAccessRepository::class);
+
+        $exist = $opdsRepo->findOneBy(['token' => OpdsAccessFixture::ACCESS_KEY]);
+
+        if ($exist === null) {
+            $userRepository = static::getContainer()->get(UserRepository::class);
+
+            if (!$userRepository instanceof UserRepository) {
+                self::fail('UserRepository not found');
+            }
+
+            $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
+
+            if (!$testUser instanceof UserInterface) {
+                self::fail('User not found');
+            }
+
+            $all = $opdsRepo->findAll();
+            foreach ($all as $opds) {
+                $entityManager->remove($opds);
+            }
+            $entityManager->flush();
+
+            $opdsAccess = new OpdsAccess();
+            $opdsAccess->setToken(OpdsAccessFixture::ACCESS_KEY);
+            $opdsAccess->setUser($testUser);
+            $entityManager->persist($opdsAccess);
+            $entityManager->flush();
+        }
     }
 }

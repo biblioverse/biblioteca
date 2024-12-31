@@ -3,13 +3,17 @@
 namespace App\Tests\Controller\Opds;
 
 use App\DataFixtures\OpdsAccessFixture;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class OpdsAccessControllerTest extends AbstractOpdsTestController
 {
     public function testOpds(): void
     {
         $client = static::getClient();
+
+        $this->ensureFixtureExists();
         $client?->request(Request::METHOD_GET, '/opds/'.OpdsAccessFixture::ACCESS_KEY.'/');
 
         $response = static::getXmlResponse();
@@ -25,6 +29,7 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
 
     public function testOpdsAuthors(): void
     {
+        $this->ensureFixtureExists();
         $client = static::getClient();
         $client?->request(Request::METHOD_GET, '/opds/'.OpdsAccessFixture::ACCESS_KEY.'/group/authors');
 
@@ -41,9 +46,48 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
 
     public function testOpdsNoAccess(): void
     {
+        $this->ensureFixtureExists();
         $client = static::getClient();
         $client?->request(Request::METHOD_GET, '/opds/not-valid');
 
         self::assertResponseStatusCodeSame(401);
+    }
+
+    public function testAccessCreation(): void
+    {
+        $client = static::getClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        if (!$userRepository instanceof UserRepository) {
+            self::fail('UserRepository not found');
+        }
+
+        $testUser = $userRepository->findOneBy(['username' => 'admin@example.com']);
+
+        if (!$testUser instanceof UserInterface) {
+            self::fail('User not found');
+        }
+
+        $client->loginUser($testUser);
+
+        $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
+        self::assertResponseIsSuccessful();
+
+        self::assertSelectorExists('.card-body > strong', 'Check that no key is present');
+
+        $client->clickLink('Remove token');
+
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
+        $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
+        self::assertResponseIsSuccessful();
+
+        $client->clickLink('Create new');
+
+        $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
+        self::assertResponseIsSuccessful();
+
+        self::assertSelectorExists('.card-body > strong', 'Check that a key was generated');
     }
 }
