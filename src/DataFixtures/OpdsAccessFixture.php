@@ -8,6 +8,9 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * @codeCoverageIgnore
+ */
 class OpdsAccessFixture extends Fixture implements DependentFixtureInterface
 {
     public const ACCESS_KEY = 'test-access-key';

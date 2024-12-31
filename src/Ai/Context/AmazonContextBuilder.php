@@ -9,6 +9,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class AmazonContextBuilder implements ContextBuildingInteface
 {
     public function __construct(private readonly HttpClientInterface $client, private readonly CacheInterface $contextPool, private readonly SluggerInterface $slugger, #[Autowire(param: 'AI_CONTEXT_AMAZON_ENABLED')] private readonly bool $enabled)

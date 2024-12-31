@@ -6,6 +6,9 @@ use App\Ai\Prompt\BookPromptInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class OllamaCommunicator implements AiCommunicatorInterface
 {
     private string $basePrompt = '';
