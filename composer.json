@@ -39,7 +39,7 @@
     "symfony/css-selector": "^6.2",
     "symfony/doctrine-bridge": "^7.1",
     "symfony/doctrine-messenger": "^7.1",
-    "symfony/dom-crawler": "^6.2",
+    "symfony/dom-crawler": "^7.2",
     "symfony/dotenv": "^7.1",
     "symfony/expression-language": "^7.1",
     "symfony/filesystem": "^7.1",
