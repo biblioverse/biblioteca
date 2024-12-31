@@ -53,7 +53,7 @@ jobs:
         run: docker compose exec biblioteca composer test
 
       - if: ${{ github.event_name == 'pull_request' }}
-        name: Download artifact
+        name: Download previous coverage
         uses: dawidd6/action-download-artifact@v2.14.1
         continue-on-error: true
         with:
@@ -63,12 +63,13 @@ jobs:
           path: tests/base
 
       - if: ${{ github.event_name != 'pull_request' }}
+        name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: tests/base/coverage.xml
 
-      - name: Coverage Report as Comment (Clover)
+      - name: Coverage Report as Comment
         uses: lucassabreu/comment-coverage-clover@main
         if: ${{ github.event_name == 'pull_request' }}
         with:
