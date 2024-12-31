@@ -3,7 +3,7 @@ services:
     image: ghcr.io/biblioverse/biblioteca-docker:2.0.1
     build:
       target: prod
-    command: ["/bin/sh", "-c" , "crontab /var/www/html/config/crontab.txt && apache2-foreground" ]
+    command: ["/bin/sh", "-c" , "apache2-foreground" ]
     ports:
       - "48480:8080" # Web
       - "48181:8181" # NPM
@@ -31,11 +31,6 @@ services:
       - 'traefik.http.routers.biblioteca.middlewares=https_redirect'
       - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
       - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
-      - 'traefik.http.routers.npm.service=npm'
-      - 'traefik.http.routers.npm.entrypoints=https,http'
-      - 'traefik.http.routers.npm.rule=Host(`biblioteca-npm.docker.test`)'
-      - 'traefik.http.services.npm.loadbalancer.server.port=8181'
-
 
   db:
     image: mariadb:11.6
