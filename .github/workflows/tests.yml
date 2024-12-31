@@ -54,7 +54,7 @@ jobs:
 
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download previous coverage
-        uses: dawidd6/action-download-artifact@v2.14.1
+        uses: dawidd6/action-download-artifact@6
         continue-on-error: true
         with:
           workflow: .github/workflows/tests.yml # this file
@@ -67,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: tests/base/coverage.xml
+          path: coverage.xml
 
       - name: Coverage Report as Comment
         uses: lucassabreu/comment-coverage-clover@main
