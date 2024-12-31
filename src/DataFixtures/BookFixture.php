@@ -9,6 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @codeCoverageIgnore
  * @phpstan-type BookData array{
  *     title: string,
  *     uuid?: string,

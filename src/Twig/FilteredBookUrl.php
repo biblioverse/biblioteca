@@ -15,6 +15,9 @@ class FilteredBookUrl extends AbstractExtension
     {
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     #[\Override]
     public function getFunctions(): array
     {

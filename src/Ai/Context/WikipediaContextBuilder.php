@@ -8,6 +8,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class WikipediaContextBuilder implements ContextBuildingInteface
 {
     private string $language = 'en';

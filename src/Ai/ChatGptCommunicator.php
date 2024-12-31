@@ -6,6 +6,9 @@ use App\Ai\Prompt\AbstractBookPrompt;
 use Orhanerday\OpenAi\OpenAi;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ChatGptCommunicator implements AiCommunicatorInterface
 {
     private array $openAiConfig;
