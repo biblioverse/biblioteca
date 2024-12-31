@@ -30,23 +30,27 @@ class EpubContextBuilder implements ContextBuildingInteface
 
         $bookFile = $this->bookFileSystemManager->getBookFile($book);
 
-        $ebook = Ebook::read($bookFile->getPathname());
+        try {
+            $ebook = Ebook::read($bookFile->getPathname());
 
-        if (!$ebook instanceof Ebook) {
+            if (!$ebook instanceof Ebook) {
+                return '';
+            }
+
+            $epub = $ebook->getParser()?->getEpub();
+
+            if (!$epub instanceof EpubModule) {
+                return '';
+            }
+
+            $htmlArray = $epub->getHtml();
+
+            foreach ($htmlArray as $html) {
+                $text = $html->getBody();
+                $prompt .= strip_tags($text ?? '');
+            }
+        } catch (\Exception) {
             return '';
-        }
-
-        $epub = $ebook->getParser()?->getEpub();
-
-        if (!$epub instanceof EpubModule) {
-            return '';
-        }
-
-        $htmlArray = $epub->getHtml();
-
-        foreach ($htmlArray as $html) {
-            $text = $html->getBody();
-            $prompt .= strip_tags($text ?? '');
         }
 
         $prompt = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", '', $prompt);
