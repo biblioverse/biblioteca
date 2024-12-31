@@ -44,6 +44,7 @@ class SmokeTest extends WebTestCase
             '/user/kobo/1/edit',
             '/user/kobo/logs',
             '/user/profile',
+            '/user/profile?tab=opds',
             '/shelves/crud/',
             '/shelves/crud/1/edit',
             '/books/new/consume/files',
