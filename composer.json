@@ -38,7 +38,7 @@
     "symfony/css-selector": "^6.2",
     "symfony/doctrine-bridge": "^7.1",
     "symfony/doctrine-messenger": "^7.1",
-    "symfony/dom-crawler": "^6.2",
+    "symfony/dom-crawler": "^7.2",
     "symfony/dotenv": "^7.1",
     "symfony/expression-language": "^7.1",
     "symfony/filesystem": "^7.1",
@@ -60,7 +60,7 @@
     "symfony/runtime": "^7.1",
     "symfony/security-bundle": "^7.1",
     "symfony/security-http": "^7.1",
-    "symfony/serializer": "^6.2",
+    "symfony/serializer": "^7.2",
     "symfony/stimulus-bundle": "^2.11",
     "symfony/string": "^7.1",
     "symfony/translation": "^7.1",
@@ -141,6 +141,10 @@
       "Composer\\Config::disableProcessTimeout",
       "env XDEBUG_MODE=coverage php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --coverage-html=tests/coverage"
     ],
+    "test-phpunit-coverage-clover": [
+      "Composer\\Config::disableProcessTimeout",
+      "env XDEBUG_MODE=coverage php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --coverage-clover=coverage.xml"
+    ],
     "test-phpunit-xdebug": [
       "Composer\\Config::disableProcessTimeout",
       "env XDEBUG_MODE=debug XDEBUG_TRIGGER=1 php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
@@ -150,11 +154,20 @@
       "@phpcs",
       "@test-phpstan"
     ],
+    "test-init": [
+      "Composer\\Config::disableProcessTimeout",
+      "@php bin/console doctrine:database:drop --env=test -n --force",
+      "@php bin/console doctrine:database:create --env=test -n",
+      "@php bin/console doctrine:migrations:migrate --env=test -n",
+      "@php bin/console typesense:create --env=test",
+      "@php bin/console doctrine:fixtures:load --env=test --append -n"
+    ],
     "test": [
       "@test-phpcs",
       "@test-phpstan",
       "@test-rector",
-      "@test-phpunit"
+      "@test-phpunit",
+      "@test-phpunit-coverage-clover"
     ]
   },
   "conflict": {

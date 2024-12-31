@@ -49,7 +49,7 @@ class EpubContextBuilder implements ContextBuildingInteface
                 $text = $html->getBody();
                 $prompt .= strip_tags($text ?? '');
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
 

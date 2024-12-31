@@ -9,6 +9,8 @@ on: [push,pull_request]
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   biblioteca-tests:
@@ -29,7 +31,7 @@ jobs:
         uses: ndeloof/install-compose-action@v0.0.1
 
       - name: Run docker-compose up
-        run: docker compose up -d
+        run: docker compose  -f docker-compose.yml -f docker-compose.test.yml up -d --build
 
       - name: Install Composer Dependencies
         run: docker compose exec biblioteca composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -43,12 +45,43 @@ jobs:
       - name: Prepare Database
         run: |
           docker compose exec biblioteca bin/console doctrine:database:create --env=test -n
-          docker compose exec biblioteca bin/console doctrine:schema:update --complete --force --env=test -n
+          docker compose exec biblioteca bin/console doctrine:migrations:migrate --env=test -n
           docker compose exec biblioteca bin/console typesense:create --env=test
           docker compose exec biblioteca bin/console doctrine:fixtures:load --env=test --append -n
 
       - name: Execute tests
         run: docker compose exec biblioteca composer test
+
+      - if: ${{ github.event_name == 'pull_request' }}
+        name: Download previous coverage
+        uses: dawidd6/action-download-artifact@v7
+        continue-on-error: true
+        with:
+          workflow: tests.yml # this file
+          branch: main
+          name: coverage-report
+          path: tests/base
+
+      - if: ${{ github.event_name != 'pull_request' }}
+        name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+      - name: Coverage Report as Comment
+        uses: lucassabreu/comment-coverage-clover@main
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          file: coverage.xml
+          base-file: tests/base/coverage.xml
+          show-percentage-change-on-table: true
+          with-chart: false
+          with-branches: false
+          dir-prefix: '/var/www/html/'
+          table-below-coverage: 95
+          icon-decreased: ":small_red_triangle_down:"
+          icon-increased: ":green_heart:"
 
       - name: Run docker-compose down
         run: docker compose down

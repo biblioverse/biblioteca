@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "bootstrap-icons": "^1.10.5",
-    "vue-book-reader": "^1.0.7"
+    "bootstrap-icons": "^1.11.3",
+    "vue-book-reader": "^1.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -15,7 +15,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.1.0",
     "autoprefixer": "^10.4.20",
-    "bootstrap": "^5.3.1",
+    "bootstrap": "^5.3.3",
     "core-js": "^3.39.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",

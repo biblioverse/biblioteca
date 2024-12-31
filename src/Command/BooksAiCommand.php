@@ -12,9 +12,9 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -38,7 +38,8 @@ class BooksAiCommand extends Command
         $this
             ->addArgument('type', InputArgument::REQUIRED, '`summary`, `tags` or `both`')
             ->addArgument('userid', InputArgument::OPTIONAL, 'user for the prompts. Default prompts used if not provided')
-            ->addOption('book', 'b', InputArgument::OPTIONAL, 'book id to process (otherwise all books are processed)')
+            ->addOption('book', 'b', InputOption::VALUE_REQUIRED, 'book id to process (otherwise all books are processed)')
+            ->addOption('overwrite', 'o', InputOption::VALUE_NONE, 'If a value for the fields is present, overwrite it.')
         ;
     }
 
@@ -55,6 +56,7 @@ class BooksAiCommand extends Command
             return Command::FAILURE;
         }
         $bookId = $input->getOption('book');
+        $overwrite = $input->getOption('overwrite');
 
         $user = null;
         if ($userId !== null) {
@@ -97,37 +99,38 @@ class BooksAiCommand extends Command
             return Command::FAILURE;
         }
 
-        ProgressBar::setFormatDefinition('custom', ' 📚 %current%/%max% [%bar%] ⌛ %message%');
-        $progress = $io->createProgressBar(count($books));
-        $progress->setFormat('custom');
+        $total = count($books);
+        $current = 1;
         foreach ($books as $book) {
-            $progress->setMessage($book->getSerie().' '.$book->getTitle().' ('.implode(' and ', $book->getAuthors()).')');
-            $progress->advance();
+            $currentPad = str_pad((string) $current, strlen((string) $total), ' ', STR_PAD_LEFT);
 
-            if ($type === 'summary' || $type === 'both') {
+            $io->section($currentPad.'/'.$total.': '.$book->getSerie().' '.$book->getTitle().' ('.implode(' and ', $book->getAuthors()).')');
+
+            if (($type === 'summary' || $type === 'both') && (trim((string) $book->getSummary()) === '' || $overwrite === true)) {
+                $io->comment('Generating Summary');
                 $summaryPrompt = new SummaryPrompt($book, $user);
-                $summaryPrompt = $this->contextBuilder->getContext($summaryPrompt);
+                $summaryPrompt = $this->contextBuilder->getContext($summaryPrompt, $output);
                 $summary = $communicator->interrogate($summaryPrompt);
-                $io->block($summary, padding: true);
+                $io->block($summary);
                 $book->setSummary($summary);
             }
 
-            if ($type === 'tags' || $type === 'both') {
+            if (($type === 'tags' || $type === 'both') && (count($book->getTags()) === 0 || $overwrite === true)) {
+                $io->comment('Generating Tags');
                 $tagPrompt = new TagPrompt($book, $user);
-                $tagPrompt = $this->contextBuilder->getContext($tagPrompt);
+                $tagPrompt = $this->contextBuilder->getContext($tagPrompt, $output);
 
                 $array = $communicator->interrogate($tagPrompt);
 
                 if (is_array($array)) {
-                    $io->block(implode(' 🏷️ ', $array), padding: true);
+                    $io->block(implode(' 🏷️ ', $array));
                     $book->setTags($array);
                 }
             }
 
             $this->em->flush();
+            $current++;
         }
-
-        $progress->finish();
 
         return Command::SUCCESS;
     }
