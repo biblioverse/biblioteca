@@ -6,7 +6,7 @@ import * as bootstrap from 'bootstrap'
 window.addEventListener('manager:flush', () => {
 
     console.log('flush asked')
-    setTimeout(function (){location.reload()}, 1000)
+    setTimeout(function (){location.reload()}, 500)
 
 });
 

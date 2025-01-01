@@ -9,19 +9,14 @@ export default class extends Controller {
     }
 
     connect() {
-        this.suggest({})
-    }
-    focus(){
-        this.queryTarget.focus();
-        this.suggest({})
     }
 
-    suggest(event) {
-        if(this.searchTarget.contains(document.activeElement)||(event.relatedTarget && event.relatedTarget.classList.contains('suggestion'))) {
-            this.suggestionsTarget.classList.remove('d-none')
-        } else {
-            this.suggestionsTarget.classList.add('d-none')
+    redirect() {
+        const path = window.location.pathname
+        if(!path.includes('/all')) {
+            document.getElementById('js-main').innerHTML = ''
 
+            history.pushState({}, '', '/all')
         }
     }
 

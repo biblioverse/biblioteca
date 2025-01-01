@@ -3,13 +3,14 @@
 namespace App\Twig\Components;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinder;
+use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ACSEO\TypesenseBundle\Finder\TypesenseResponse;
 use App\Entity\Shelf;
 use App\Entity\User;
-use App\Search\QueryTokenizer;
-use App\Search\TypesenseTokenHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -24,20 +25,36 @@ class Search
     use DefaultActionTrait;
     use ComponentToolsTrait;
 
-    public const PER_PAGE = 18;
-
-    #[LiveProp(writable: true)]
-    public string $query = '';
-    public array $books = [];
-    public array $facets = [];
-    public array $suggestions = [];
-    public int $found = 0;
-
-    #[LiveProp(writable: true)]
-    public array $filters = [];
+    public const PER_PAGE = 16;
 
     #[LiveProp(writable: true, url: true)]
-    public string $fullQuery = '';
+    public string $query = '';
+    #[LiveProp(writable: true, url: true)]
+    public string $filterQuery = '';
+    public array $filterFields = [
+        'id',
+        'title',
+        'serie',
+        'summary',
+        'serieIndex',
+        'extension',
+        'authors',
+        'verified',
+        'tags',
+        'age',
+        'read',
+        'hidden',
+        'favorite',
+    ];
+
+    public ?string $filterQueryError = null;
+    #[LiveProp(writable: true, url: true)]
+    public string $orderQuery = 'updated:desc';
+
+    public array $books = [];
+    public array $facets = [];
+
+    public int $found = 0;
 
     #[LiveProp(writable: true, url: true)]
     public int $page = 1;
@@ -45,95 +62,72 @@ class Search
     #[LiveProp(writable: true)]
     public string $shelfname = '';
 
+    #[LiveProp(writable: true)]
+    public bool $advanced = false;
+
     public array $pagination = [];
 
-    public function __construct(protected CollectionFinder $bookFinder, protected QueryTokenizer $queryTokenizer, protected TypesenseTokenHandler $tokenHandler, protected Security $security, protected EntityManagerInterface $manager)
+    public function __construct(protected RequestStack $requestStack, protected CollectionFinder $bookFinder, protected Security $security, protected EntityManagerInterface $manager)
     {
     }
 
     #[PostMount]
     public function postMount(): void
     {
-        $tokens = $this->extractFilters(true);
-        $this->getResults($tokens);
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if (!$currentRequest instanceof Request) {
+            return;
+        }
+        if ($currentRequest->getPathInfo() === '/all') {
+            $this->getResults();
+        }
     }
 
     #[LiveAction]
-    public function addToQuery(#[LiveArg] string $value): void
+    public function addFilter(#[LiveArg] string $value): void
     {
-        if (str_starts_with($value, 'orderBy')) {
-            $this->fullQuery = preg_replace('/orderBy:[a-zA-Z-"]+/', '', $this->fullQuery) ?? '';
-            foreach ($this->filters as $key => $filter) {
-                if (!str_contains($this->fullQuery, (string) $filter)) {
-                    unset($this->filters[$key]);
-                }
+        if (!str_contains($this->filterQuery, $value)) {
+            if ($this->filterQuery !== '') {
+                $this->filterQuery .= ' && ';
             }
-        }
-        if (!str_contains($this->fullQuery, $value)) {
-            $this->query = $value;
+            $this->filterQuery .= $value;
         } else {
-            foreach ($this->filters as $key => $filter) {
-                if (str_contains((string) $filter, $value)) {
-                    unset($this->filters[$key]);
-                }
-            }
+            $this->filterQuery = str_replace($value, '', $this->filterQuery);
         }
-        $tokens = $this->extractFilters();
-        $this->getResults($tokens);
+        $this->getResults();
     }
 
-    protected function extractFilters(bool $initial = false): array
+    #[LiveAction]
+    public function replaceOrderBy(#[LiveArg] string $value): void
     {
-        if (!$initial) {
-            $this->fullQuery = implode(' ', $this->filters).' '.$this->query;
-            $this->page = 1;
-        }
-
-        $tokens = $this->queryTokenizer->tokenize($this->fullQuery);
-        foreach ($tokens as $key => $token) {
-            if ($key !== 'TEXT') {
-                foreach ($token as $value) {
-                    $this->filters[$value] = $value;
-                }
-            }
-        }
-        if (($tokens['TEXT'] ?? '') !== $this->query) {
-            $this->query = $tokens['TEXT'] ?? '';
-        }
-
-        return $tokens;
+        $this->orderQuery = $value;
+        $this->getResults();
     }
 
-    protected function getResults(array $tokens): void
+    protected function getResults(): void
     {
-        $complexQuery = $this->tokenHandler->handle($tokens);
+        $complexQuery = new TypesenseQuery($this->query, 'title,serie,extension,authors,tags,summary');
 
-        $complexQuery->facetBy('authors,serie,tags, extension, verified, age');
+        $complexQuery->sortBy($this->orderQuery);
+        $complexQuery->filterBy($this->filterQuery);
+
+        $complexQuery->facetBy('authors,serie,tags');
 
         $complexQuery->perPage(self::PER_PAGE);
         $complexQuery->numTypos(2);
         $complexQuery->page($this->page);
-        /** @var TypesenseResponse $result */
-        $result = $this->bookFinder->query($complexQuery);
+
+        try {
+            /** @var TypesenseResponse $result */
+            $result = $this->bookFinder->query($complexQuery);
+            $this->filterQueryError = null;
+        } catch (\Throwable $e) {
+            $complexQuery->filterBy('');
+            $this->filterQueryError = $e->getMessage();
+            $result = $this->bookFinder->query($complexQuery);
+        }
         $results = $result->getResults();
         $this->facets = $result->getFacetCounts();
-
-        foreach (['read', 'hidden', 'favorite'] as $item) {
-            $this->facets[] = [
-                'counts' => [[
-                    'count' => null,
-                    'value' => 'true',
-                ]],
-                'field_name' => $item,
-            ];
-            $this->facets[] = [
-                'counts' => [[
-                    'count' => null,
-                    'value' => 'true',
-                ]],
-                'field_name' => 'not_'.$item,
-            ];
-        }
 
         $this->found = $result->getFound();
 
@@ -155,9 +149,7 @@ class Search
 
     public function __invoke(): void
     {
-        $tokens = $this->extractFilters();
-
-        $this->getResults($tokens);
+        $this->getResults();
     }
 
     #[LiveAction]
@@ -170,7 +162,7 @@ class Search
             throw new \LogicException('User must be logged in');
         }
         $sf->setUser($user);
-        $sf->setQueryString($this->fullQuery);
+        $sf->setQueryString($this->query);
         $this->manager->persist($sf);
         $this->manager->flush();
         $this->dispatchBrowserEvent('manager:flush');

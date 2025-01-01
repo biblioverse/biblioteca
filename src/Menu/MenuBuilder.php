@@ -90,7 +90,7 @@ final class MenuBuilder
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
                 if ($shelf->getQueryString() !== null) {
-                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => ['fullQuery' => $shelf->getQueryString()], ...$this->defaultAttr])
+                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
                         ->setExtra('icon', 'bookmark-fill');
                 } else {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])

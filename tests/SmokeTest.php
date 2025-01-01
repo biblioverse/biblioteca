@@ -49,7 +49,6 @@ class SmokeTest extends WebTestCase
             '/shelves/crud/',
             '/shelves/crud/1/edit',
             '/shelf/test-shelf',
-            '/shelf/test-shelf/1',
             '/configuration',
             '/books/new/consume/files',
             '/books/new/consume/upload',

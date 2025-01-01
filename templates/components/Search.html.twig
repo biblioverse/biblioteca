@@ -1,77 +1,62 @@
 <div {{ attributes.defaults(stimulus_controller('search')) }}>
     <div class="row">
-        <div class="col-md-12 position-relative">
+        <div class="col-md-12">
             <div class="search"  data-search-target="search">
-                <div class="input-group">
+                <div class="input-group input-group-lg">
                     <input type="search"
-                           class="form-control-lg w-100"
+                           class="form-control form-control-lg"
                            id="search"
                            placeholder="Search for..."
                            data-model="debounce(500)|query"
                            data-search-target="query"
-                           data-action="focus->search#suggest blur->search#suggest"
+                           data-action="search#redirect"
                     />
-                </div>
-                <div data-search-target="suggestions" class="shadow position-absolute p-3 d-none bg-body border" style="z-index: 1000">
-                    <div class="container">
-                        <div class="row">
-                            {% for facet in facets|default([]) %}
-                                {% if facet|length==4 %}
-                                    <div class="col">
-                                        <h5>{{ facet.field_name|capitalize }}</h5>
-                                        <ul class="list-group">
-                                            {% for count in facet.counts %}
-                                                {% include 'components/_facet.html.twig' %}
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                            <div class="col">
-                                <h5>Status</h5>
-                                <ul class="list-group">
-                                    {% for facet in facets|default([]) %}
-                                        {% if facet|length==2 %}
-                                            {% for count in facet.counts %}
-                                                {% include 'components/_facet.html.twig' %}
-                                            {% endfor %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            </div>
+                    <div class="input-group-text">
+                        <div class="form-check form-switch">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                data-model="advanced"
+                                role="switch"
+                                id="check-advanced" {{ filterQuery !=''?'disabled' }}>
+                            <label class="form-check-label text-muted" for="check-advanced"><small>Advanced filters</small></label>
                         </div>
                     </div>
                 </div>
+                {% if advanced or filterQuery!='' %}
+                    <div class="input-group has-validation mt-3">
+                        <input type="search"
+                               class="form-control form-control-lg w-100 {{ filterQueryError is not null?'is-invalid' }} {{ filterQuery!='' and filterQueryError is null?'is-valid' }}"
+                               id="search-filters"
+                               placeholder="Advanced Typesense filters"
+                               data-model="debounce(500)|filterQuery"
+                               data-search-target="filterQuery"
+                               data-action="search#redirect"
+                        />
+                        {% if filterQueryError is not null %}
+                        <div id="search-filtersFeedback" class="invalid-tooltip">
+                            {{ filterQueryError }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="form-text text-muted">
+                        You can write a <a href="https://typesense.org/docs/27.1/api/search.html#filter-parameters" target="_blank">Typesense filter query</a>. Available fields: {{ filterFields|join(', ') }}.
+                    </div>
+                {% endif %}
+
             </div>
 
-            <div class="my-2">
-            {% for filter in filters %}
-                <button type="button" class="btn btn-bare badge {% if 'orderBy' not in filter %}bg-primary{% else %}bg-secondary{% endif %}"
-                        data-action="live#action"
-                        data-live-action-param="addToQuery"
-                        data-live-value-param="{{ filter }}"
-                >
-                    {{ filter }}
-                    {% if 'orderBy' not in filter %}
-                    <i class="bi bi-x-circle"></i>
-                    {% endif %}
-                </button>
-            {% endfor %}
-            </div>
-
-            {% if fullQuery!='' %}
-            <span class="badge bg-secondary">{{ found }} results</span>
-            {% endif %}
 
         </div>
 
-        {% if fullQuery!='' and books|length >0 %}
+        {% if books|length >0 %}
 
             <div class="results mt-4">
                 <div class="row">
                     <div class="col">
                         {% set route='app_allbooks' %}
-                        {% set params={'page':page, 'fullQuery': fullQuery} %}
+                        {% set params={'page':page, 'query': query, 'filterQuery':filterQuery, 'orderQuery':orderQuery} %}
                         {% set current= pagination.page %}
                         <nav aria-label="Navigate through results">
                             <ul class="pagination">
@@ -126,17 +111,17 @@
                     <div class="col text-end">
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-arrow-down-up"></i>
+                                <i class="bi bi-arrow-down-up"></i> Sort results
                             </button>
                             <ul class="dropdown-menu">
                                 {% for orderField in ['serieIndex','updated'] %}
                                     {% for order in ['asc','desc'] %}
-                                        {% set isIncluded= orderField~"-"~order in fullQuery %}
+                                        {% set isIncluded= orderField~":"~order in orderQuery %}
                                         <li>
                                         <button type="button" class="dropdown-item btn {{ isIncluded?'active':''}} "
                                                 data-action="live#action click->search#focus"
-                                                data-live-action-param="addToQuery"
-                                                data-live-value-param='orderBy:{{ orderField }}-{{ order }}'
+                                                data-live-action-param="replaceOrderBy"
+                                                data-live-value-param='{{ orderField }}:{{ order }}'
                                         >
                                             <small>{{ orderField|trans }} {{ order }}</small>
                                         </button>
@@ -149,11 +134,27 @@
                 </div>
 
                 <div class="row">
-                    {% for book in books %}
-                        <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
-                            {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                    <div class="col-10">
+                        <h5>{{ found }} results</h5>
+                        <div class="row">
+                        {% for book in books %}
+                            <div class="col-6 col-md-3">
+                                {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                            </div>
+                        {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
+                    <div class="col-2">
+                        {% for facet in facets|default([]) %}
+                            <h5>{{ facet.field_name|capitalize }}</h5>
+                            <ul class="list-group mb-3">
+                                {% for count in facet.counts %}
+                                    {% include 'components/_facet.html.twig' %}
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    </div>
+
                 </div>
                 <div class="row">
                     <div class="col-md-3">

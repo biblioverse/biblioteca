@@ -1,27 +1,12 @@
 
-{% set value = facet.field_name ~':"'~ count.value ~'"'  %}
-{% if count.value =='true'%}
-    {% set value = '#'~facet.field_name  %}
-{% elseif count.value =='false'%}
-    {% set value = '#not_'~facet.field_name  %}
-{% endif %}
+{% set value = facet.field_name ~':="'~ count.value ~'"'  %}
 {% set label = count.value %}
-{% if facet.field_name =='age'%}
-    {% set categories = constant('App\\Entity\\User::AGE_CATEGORIES') %}
-    {% for cat,key in categories %}
-        {% if key==count.value %}
-            {% set label = cat %}
-        {% endif %}
-    {% endfor %}
-{% endif %}
-{% if "#" in value%}
-    {% set label = value %}
-{% endif %}
-{% set isIncluded = value in filters %}
+
+{% set isIncluded = value in filterQuery %}
 <li class="list-group-item {{ isIncluded?'active':'' }} p-1">
 <button type="button" class="btn btn-bare suggestion p-0 text-start"
             data-action="live#action click->search#focus"
-            data-live-action-param="addToQuery"
+            data-live-action-param="addFilter"
             data-live-value-param='{{ value }}'
     >
         <small>

@@ -3,13 +3,12 @@
 namespace App\Service;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinder;
+use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use App\Entity\Shelf;
-use App\Search\QueryTokenizer;
-use App\Search\TypesenseTokenHandler;
 
 class ShelfManager
 {
-    public function __construct(protected CollectionFinder $bookFinder, private readonly QueryTokenizer $queryTokenizer, private readonly TypesenseTokenHandler $tokenHandler)
+    public function __construct(protected CollectionFinder $bookFinder)
     {
     }
 
@@ -19,8 +18,7 @@ class ShelfManager
             return $shelf->getBooks()->toArray();
         }
 
-        $tokens = $this->queryTokenizer->tokenize($shelf->getQueryString());
-        $complexQuery = $this->tokenHandler->handle($tokens);
+        $complexQuery = new TypesenseQuery($shelf->getQueryString(), 'title,serie,extension,authors,tags,summary');
         $complexQuery->perPage(200);
         $complexQuery->sortBy('serieIndex:asc');
         $complexQuery->numTypos(2);
