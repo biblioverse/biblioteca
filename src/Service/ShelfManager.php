@@ -14,13 +14,14 @@ class ShelfManager
 
     public function getBooksInShelf(Shelf $shelf): array
     {
-        if ($shelf->getQueryString() === null) {
+        if ($shelf->getQueryString() === null && $shelf->getQueryFilter() === null) {
             return $shelf->getBooks()->toArray();
         }
 
-        $complexQuery = new TypesenseQuery($shelf->getQueryString(), 'title,serie,extension,authors,tags,summary');
+        $complexQuery = new TypesenseQuery($shelf->getQueryString() ?? '*', 'title,serie,extension,authors,tags,summary');
         $complexQuery->perPage(200);
-        $complexQuery->sortBy('serieIndex:asc');
+        $complexQuery->filterBy($shelf->getQueryFilter() ?? '');
+        $complexQuery->sortBy($shelf->getQueryOrder() ?? '');
         $complexQuery->numTypos(2);
         $complexQuery->page(1);
 

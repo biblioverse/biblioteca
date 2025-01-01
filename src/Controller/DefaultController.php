@@ -112,8 +112,9 @@ class DefaultController extends AbstractController
     {
         $books = $bookRepository->findBy(['verified' => false], ['serieIndex' => 'asc'], 100);
 
-        if ($request->get('action') !== null) {
-            switch ($request->get('action')) {
+        $action = $request->get('action');
+        if ($action !== null) {
+            switch ($action) {
                 case 'relocate':
                     $success = true;
                     foreach ($books as $book) {
@@ -129,7 +130,8 @@ class DefaultController extends AbstractController
                     if ($success) {
                         $this->addFlash('success', 'Files relocated');
                     }
-                    break;
+
+                    return $this->redirectToRoute('app_notverified');
                 case 'extract':
                     $success = true;
 

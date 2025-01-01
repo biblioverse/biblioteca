@@ -163,8 +163,11 @@ class Search
         }
         $sf->setUser($user);
         $sf->setQueryString($this->query);
+        $sf->setQueryFilter($this->filterQuery);
+        $sf->setQueryOrder($this->orderQuery);
         $this->manager->persist($sf);
         $this->manager->flush();
+        $this->getResults();
         $this->dispatchBrowserEvent('manager:flush');
     }
 }
