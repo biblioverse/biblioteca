@@ -40,13 +40,11 @@ class ShelfCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_shelf_crud_delete', methods: ['POST'])]
-    public function delete(Request $request, Shelf $shelf, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_shelf_crud_delete')]
+    public function delete(Shelf $shelf, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$shelf->getId(), ''.$request->getPayload()->get('_token'))) {
-            $entityManager->remove($shelf);
-            $entityManager->flush();
-        }
+        $entityManager->remove($shelf);
+        $entityManager->flush();
 
         return $this->redirectToRoute('app_shelf_crud_index', [], Response::HTTP_SEE_OTHER);
     }

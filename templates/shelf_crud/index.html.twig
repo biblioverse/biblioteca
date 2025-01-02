@@ -1,24 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Shelf index{% endblock %}
+{% block title %}My shelves{% endblock %}
 
 {% block body %}
-    <table class="table">
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Parameters</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for shelf in shelves %}
             <tr>
-                <td>{{ shelf.name }}</td>
+                <td><strong>{{ shelf.name }}</strong></td>
                 <td>
-                    {% if not shelf.queryString %}
-                        <a href="{{ path('app_shelf_crud_edit', {'id': shelf.id}) }}" class="btn btn-primary">edit</a>
+                    {% if shelf.queryString is not null %}
+                    Query: <code>{{ shelf.queryString }}</code><br>
+                    Filters: <code>{{ shelf.queryFilter }}</code><br>
+                    Order: <code>{{ shelf.queryOrder }}</code>
+                    {% else %}
+                        Manual
                     {% endif %}
-                    {{ include('shelf_crud/_delete_form.html.twig') }}
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <a href="{{ path('app_shelf_crud_edit', {'id': shelf.id}) }}" class="btn btn-primary btn-sm">edit</a>
+                        <a href="{{ path('app_shelf_crud_delete', {'id': shelf.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                    </div>
                 </td>
             </tr>
         {% else %}
