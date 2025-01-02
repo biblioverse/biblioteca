@@ -170,6 +170,12 @@
                             </button>
                         </div>
                     </div>
+                    <div class="col-md-9">
+                        {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
+                    </div>
                 </div>
             </div>
         {% endif %}
