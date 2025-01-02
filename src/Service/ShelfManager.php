@@ -2,13 +2,11 @@
 
 namespace App\Service;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use App\Entity\Shelf;
 
 class ShelfManager
 {
-    public function __construct(protected CollectionFinder $bookFinder)
+    public function __construct(protected SearchHelper $searchHelper)
     {
     }
 
@@ -18,19 +16,13 @@ class ShelfManager
             return $shelf->getBooks()->toArray();
         }
 
-        $complexQuery = new TypesenseQuery($shelf->getQueryString() ?? '*', 'title,serie,extension,authors,tags,summary');
-        $complexQuery->perPage(200);
-        $complexQuery->filterBy($shelf->getQueryFilter() ?? '');
-        $complexQuery->sortBy($shelf->getQueryOrder() ?? '');
-        $complexQuery->numTypos(2);
-        $complexQuery->page(1);
+        $this->searchHelper->prepareQuery(
+            $shelf->getQueryString() ?? '*',
+            $shelf->getQueryFilter() ?? '',
+            $shelf->getQueryOrder() ?? '',
+            200
+        )->execute();
 
-        $results = $this->bookFinder->query($complexQuery)->getResults();
-        $books = [];
-        foreach ($results as $resultItem) {
-            $books[$resultItem->getId()] = $resultItem;
-        }
-
-        return $books;
+        return $this->searchHelper->getBooks();
     }
 }

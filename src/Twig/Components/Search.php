@@ -2,11 +2,9 @@
 
 namespace App\Twig\Components;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
-use ACSEO\TypesenseBundle\Finder\TypesenseResponse;
 use App\Entity\Shelf;
 use App\Entity\User;
+use App\Service\SearchHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +65,7 @@ class Search
 
     public array $pagination = [];
 
-    public function __construct(protected RequestStack $requestStack, protected CollectionFinder $bookFinder, protected Security $security, protected EntityManagerInterface $manager)
+    public function __construct(protected RequestStack $requestStack, protected SearchHelper $searchHelper, protected Security $security, protected EntityManagerInterface $manager)
     {
     }
 
@@ -106,45 +104,22 @@ class Search
 
     protected function getResults(): void
     {
-        $complexQuery = new TypesenseQuery($this->query, 'title,serie,extension,authors,tags,summary');
-
-        $complexQuery->sortBy($this->orderQuery);
-        $complexQuery->filterBy($this->filterQuery);
-
-        $complexQuery->facetBy('authors,serie,tags');
-
-        $complexQuery->perPage(self::PER_PAGE);
-        $complexQuery->numTypos(2);
-        $complexQuery->page($this->page);
+        $this->searchHelper->prepareQuery($this->query, $this->filterQuery, $this->orderQuery, page: $this->page);
 
         try {
-            /** @var TypesenseResponse $result */
-            $result = $this->bookFinder->query($complexQuery);
+            $this->searchHelper->execute();
             $this->filterQueryError = null;
         } catch (\Throwable $e) {
-            $complexQuery->filterBy('');
+            $this->searchHelper->query->filterBy('');
             $this->filterQueryError = $e->getMessage();
-            $result = $this->bookFinder->query($complexQuery);
+            $this->searchHelper->execute();
         }
-        $results = $result->getResults();
-        $this->facets = $result->getFacetCounts();
 
-        $this->found = $result->getFound();
+        $this->books = $this->searchHelper->getBooks();
+        $this->facets = $this->searchHelper->getFacets();
 
-        $pages = ceil($this->found / self::PER_PAGE);
-        $this->pagination = [
-            'page' => $this->page,
-            'pages' => $pages,
-            'perPage' => self::PER_PAGE,
-            'total' => $this->found,
-            'lastPage' => $pages,
-            'nextPage' => $this->page < $pages ? $this->page + 1 : null,
-            'previousPage' => $this->page > 1 ? $this->page - 1 : null,
-        ];
-
-        foreach ($results as $resultItem) {
-            $this->books[$resultItem->getId()]['book'] = $resultItem;
-        }
+        $this->pagination = $this->searchHelper->getPagination();
+        $this->found = $this->pagination['total'];
     }
 
     public function __invoke(): void

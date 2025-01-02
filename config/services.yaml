@@ -100,16 +100,7 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main } # The alias is what is used to retrieve the menu
 
-    App\Controller\OPDS\OpdsController:
-        arguments:
-           $bookFinder: '@typesense.specificfinder.books.books_autocomplete'
-
-
-    App\Twig\Components\Search:
-        arguments:
-            $bookFinder: '@typesense.finder.books'
-
-    App\Service\ShelfManager:
+    App\Service\SearchHelper:
         arguments:
             $bookFinder: '@typesense.finder.books'
 

@@ -76,9 +76,3 @@ acseo_typesense:
       default_sorting_field: sortable_id
       symbols_to_index: ['+', '#', '@', '_']
       token_separators: [' ', '-', "'"]
-      finders:
-        books_autocomplete:
-          finder_parameters:
-            query_by: title,serie,extension,authors,tags,summary
-            limit: 100
-            num_typos: 2

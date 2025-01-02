@@ -139,7 +139,7 @@
                         <div class="row">
                         {% for book in books %}
                             <div class="col-6 col-md-3">
-                                {% include themedTemplate('book/_teaser.html.twig') with {book: book.book} %}
+                                {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                             </div>
                         {% endfor %}
                         </div>
