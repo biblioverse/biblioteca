@@ -116,19 +116,23 @@ class DefaultController extends AbstractController
         if ($action !== null) {
             switch ($action) {
                 case 'relocate':
-                    $success = true;
-                    foreach ($books as $book) {
-                        try {
-                            $book = $bookFileSystemManager->renameFiles($book);
-                            $entityManager->persist($book);
-                        } catch (\Exception $e) {
-                            $success = false;
-                            $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
+                    if ($this->isGranted('RELOCATE')) {
+                        $success = true;
+                        foreach ($books as $book) {
+                            try {
+                                $book = $bookFileSystemManager->renameFiles($book);
+                                $entityManager->persist($book);
+                            } catch (\Exception $e) {
+                                $success = false;
+                                $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
+                            }
                         }
-                    }
-                    $entityManager->flush();
-                    if ($success) {
-                        $this->addFlash('success', 'Files relocated');
+                        $entityManager->flush();
+                        if ($success) {
+                            $this->addFlash('success', 'Files relocated');
+                        }
+                    } else {
+                        $this->addFlash('danger', 'You do not have the permission to relocate files');
                     }
 
                     return $this->redirectToRoute('app_notverified');

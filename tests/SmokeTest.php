@@ -65,6 +65,9 @@ class SmokeTest extends WebTestCase
             '/not-verified?action=validate' => ['redirect' => true],
             '/not-verified?action=relocate' => ['redirect' => true],
             '/not-verified?action=extract' => ['redirect' => true],
+            '/timeline' => ['redirect' => true],
+            '/timeline/comic' => ['redirect' => true],
+            '/timeline/book/2023' => [],
         ];
     }
 }
