@@ -2,7 +2,7 @@
 
 namespace App\Controller\OPDS;
 
-use ACSEO\TypesenseBundle\Finder\SpecificCollectionFinder;
+use App\Entity\Book;
 use App\Entity\OpdsAccess;
 use App\Entity\Shelf;
 use App\Entity\User;
@@ -11,6 +11,8 @@ use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Repository\ShelfRepository;
 use App\Service\ShelfManager;
+use Biblioteca\TypesenseBundle\Query\SearchQuery;
+use Biblioteca\TypesenseBundle\Search\SearchCollectionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,8 +23,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/opds/{accessKey}', name: 'opds_')]
 class OpdsController extends AbstractController
 {
-    public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SpecificCollectionFinder $bookFinder)
-    {
+    /**
+     * @param SearchCollectionInterface<Book> $searchBooks
+     */
+    public function __construct(
+        RequestStack $requestStack,
+        private readonly Opds $opds,
+        private readonly BookRepository $bookRepository,
+        private readonly SearchCollectionInterface $searchBooks,
+    ) {
         $current = $requestStack->getCurrentRequest();
         if (!$current instanceof Request) {
             throw new \RuntimeException('No current request');
@@ -70,7 +79,9 @@ class OpdsController extends AbstractController
         $opds = $this->opds->getOpdsConfig()->isSearch();
         $opds->title('Search');
 
-        $books = $this->bookFinder->search(''.$request->get('q', $request->get('query', '')))->getResults();
+        $q = $request->query->getString('q', $request->query->getString('query'));
+
+        $books = $this->searchBooks->search(new SearchQuery(q: $q, queryBy: 'title,serie,extension,authors,tags,summary'));
 
         $feeds = [];
         foreach ($books as $result) {
