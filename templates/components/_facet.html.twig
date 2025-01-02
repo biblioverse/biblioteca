@@ -1,5 +1,5 @@
 
-{% set value = facet.field_name ~':="'~ count.value ~'"'  %}
+{% set value = facet.field_name ~':=`'~ count.value ~'`'  %}
 {% set label = count.value %}
 
 {% set isIncluded = value in filterQuery %}

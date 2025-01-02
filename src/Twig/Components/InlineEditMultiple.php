@@ -23,7 +23,7 @@ class InlineEditMultiple extends AbstractController
     /**
      * @var Book[]
      */
-    #[LiveProp()]
+    #[LiveProp(updateFromParent: true)]
     public array $books;
 
     #[LiveProp(writable: true)]

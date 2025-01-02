@@ -12,10 +12,10 @@ class FilteredBookUrlGenerator
                 $value = [$value];
             }
             foreach ($value as $v) {
-                $fullQuery .= $key.':"'.$v.'" ';
+                $fullQuery .= $key.':=`'.$v.'` ';
             }
         }
 
-        return ['fullQuery' => $fullQuery];
+        return ['filterQuery' => $fullQuery];
     }
 }
