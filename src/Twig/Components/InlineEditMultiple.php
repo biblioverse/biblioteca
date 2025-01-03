@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -22,7 +23,7 @@ class InlineEditMultiple extends AbstractController
     /**
      * @var Book[]
      */
-    #[LiveProp()]
+    #[LiveProp(updateFromParent: true)]
     public array $books;
 
     #[LiveProp(writable: true)]
@@ -46,6 +47,7 @@ class InlineEditMultiple extends AbstractController
      * @throws \JsonException
      */
     #[LiveAction]
+    #[LiveListener('submit')]
     public function save(EntityManagerInterface $entityManager): void
     {
         foreach ($this->books as $book) {

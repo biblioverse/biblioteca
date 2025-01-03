@@ -2,65 +2,165 @@
 
 namespace App\Twig\Components;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
-use App\Entity\Book;
+use App\Entity\Shelf;
+use App\Entity\User;
+use App\Service\Search\SearchHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent(method: 'get')]
 class Search
 {
     use DefaultActionTrait;
+    use ComponentToolsTrait;
 
     #[LiveProp(writable: true, url: true)]
     public string $query = '';
-    public array $books = [];
+    #[LiveProp(writable: true, url: true)]
+    public string $filterQuery = '';
+    public array $filterFields = [
+        'id',
+        'title',
+        'serie',
+        'summary',
+        'serieIndex',
+        'extension',
+        'authors',
+        'verified',
+        'tags',
+        'age',
+        'read',
+        'hidden',
+        'favorite',
+    ];
 
-    public function __construct(protected CollectionFinder $bookFinder)
+    public ?string $filterQueryError = null;
+    #[LiveProp(writable: true, url: true)]
+    public string $orderQuery = 'updated:desc';
+
+    public array $books = [];
+    public array $facets = [];
+
+    public ?array $hint = null;
+    public int $found = 0;
+
+    #[LiveProp(writable: true, url: true)]
+    public int $page = 1;
+
+    #[LiveProp(writable: true)]
+    public string $shelfname = '';
+
+    #[LiveProp(writable: true)]
+    public bool $advanced = false;
+
+    public array $pagination = [];
+
+    public function __construct(protected RequestStack $requestStack, protected SearchHelper $searchHelper, protected Security $security, protected EntityManagerInterface $manager)
     {
+    }
+
+    #[PostMount]
+    public function postMount(): void
+    {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if (!$currentRequest instanceof Request) {
+            return;
+        }
+        if ($currentRequest->getPathInfo() === '/all') {
+            $this->getResults();
+        }
     }
 
     #[LiveAction]
-    public function addToQuery(#[LiveArg] string $value): void
+    public function addFilter(#[LiveArg] string $value): void
     {
-        $this->query = $value.' '.$this->query;
+        if (!str_contains($this->filterQuery, $value)) {
+            if ($this->filterQuery !== '') {
+                $this->filterQuery .= ' && ';
+            }
+            $this->filterQuery .= $value;
+        } else {
+            $this->filterQuery = str_replace($value, '', $this->filterQuery);
+        }
+        $this->getResults();
     }
 
-    /**
-     * @return array<Book>
-     */
-    public function getResults(): array
+    #[LiveAction]
+    public function hint(): void
     {
-        if ('' === $this->query) {
-            return [];
+        $this->getResults();
+        $this->searchHelper->query->maxFacetValues(50);
+        $this->searchHelper->execute();
+        $hints = $this->hint = $this->searchHelper->getQueryHints();
+        if ($hints === null) {
+            return;
+        }
+        if (array_key_exists('filter_by', $hints)) {
+            $this->filterQuery = $hints['filter_by'];
+            $this->query = '';
+        }
+        $this->searchHelper->query->maxFacetValues(10);
+
+        $this->getResults();
+    }
+
+    #[LiveAction]
+    public function replaceOrderBy(#[LiveArg] string $value): void
+    {
+        $this->orderQuery = $value;
+        $this->getResults();
+    }
+
+    protected function getResults(): void
+    {
+        $this->searchHelper->prepareQuery($this->query, $this->filterQuery, $this->orderQuery, page: $this->page);
+
+        try {
+            $this->searchHelper->execute();
+            $this->filterQueryError = null;
+        } catch (\Throwable $e) {
+            $this->searchHelper->query->filterBy('');
+            $this->filterQueryError = $e->getMessage();
+            $this->searchHelper->execute();
         }
 
-        $complexQuery = new TypesenseQuery($this->query, 'title,authors,serie,tags,summary,serieIndex');
+        $this->books = $this->searchHelper->getBooks();
+        $this->facets = $this->searchHelper->getFacets();
 
-        $complexQuery->facetBy('authors,serie,tags');
+        $this->pagination = $this->searchHelper->getPagination();
+        $this->found = $this->pagination['total'];
+    }
 
-        $complexQuery->perPage(16);
-        $complexQuery->numTypos(2);
+    public function __invoke(): void
+    {
+        $this->getResults();
+    }
 
-        $rawResults = $this->bookFinder->rawQuery($complexQuery)->getRawResults();
-        $results = $this->bookFinder->query($complexQuery)->getResults();
-        $facets = $this->bookFinder->query($complexQuery)->getFacetCounts();
-
-        foreach ($rawResults as $result) {
-            $document = $result['document'];
-            foreach ($result['highlights'] as $highlight) {
-                $document[$highlight['field']] = $highlight['snippet'] ?? '';
-            }
-            $this->books[$document['id']] = $document;
+    #[LiveAction]
+    public function save(): void
+    {
+        $sf = new Shelf();
+        $sf->setName($this->shelfname);
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            throw new \LogicException('User must be logged in');
         }
-        foreach ($results as $result) {
-            $this->books[$result->getId()]['book'] = $result;
-        }
-
-        return ['books' => $this->books, 'facets' => $facets];
+        $sf->setUser($user);
+        $sf->setQueryString($this->query);
+        $sf->setQueryFilter($this->filterQuery);
+        $sf->setQueryOrder($this->orderQuery);
+        $this->manager->persist($sf);
+        $this->manager->flush();
+        $this->getResults();
+        $this->dispatchBrowserEvent('manager:flush');
     }
 }

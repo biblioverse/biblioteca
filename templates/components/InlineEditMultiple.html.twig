@@ -1,6 +1,6 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
 {% if isEditing and is_granted('ROLE_ADMIN') %}
-    <form class="input-group">
+    <form class="input-group"  onsubmit="return false">
             <select
                 multiple
                 class="form-select form-select-sm"

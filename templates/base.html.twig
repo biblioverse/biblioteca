@@ -24,8 +24,6 @@
                  aria-labelledby="sidebarMenuLabel">
                 <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
 
-                    {{ component('SearchModal') }}
-
                     {{ knp_menu_render('main',{'currentClass':'active','ancestorClass':'active'}) }}
 
                 </div>
@@ -38,8 +36,13 @@
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-md-4">
+            {{ component('Search') }}
 
-            {% block body %}{% endblock %}
+
+            <div id="js-main" class="mt-3">
+                <h1 class="h3">{{ block('title') }}</h1>
+                {% block body %}{% endblock %}
+            </div>
 
         </main>
     </div>

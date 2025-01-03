@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -85,6 +86,7 @@ class InlineEditBook extends AbstractController
      * @throws \JsonException
      */
     #[LiveAction]
+    #[LiveListener('submit')]
     public function save(Request $request, EntityManagerInterface $entityManager): void
     {
         $all = $request->request->all();

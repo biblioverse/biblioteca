@@ -1,6 +1,6 @@
 <span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
         {% if (isEditing or field=='verified') and is_granted('EDIT', book)%}
-            <form>
+            <form onsubmit="return false">
                 <div class="input-group">
 
                     {% if field=='verified' %}
@@ -161,34 +161,34 @@
             {% if suggestion != attribute(book, "get"~field) %}
                 {% if field=='summary' %}
                     <code class="d-block">{{ suggestion }}</code>
-                    <a
+                    <button
                         class="btn btn-outline-secondary btn-sm p-1 suggestion"
                         data-action="live#action"
-                        data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                        data-live-action-param="prevent|usesuggestion"
                         data-live-field-param="{{ field }}"
                         data-live-suggestion-param="{{ key }}"
 
-                    >Accept {{ field }}</a>
+                    >Accept {{ field }}</button>
                 {% else %}
-                <a
+                <button
                     class="btn btn-outline-secondary btn-sm p-1 suggestion"
                     data-action="live#action"
-                    data-live-action-param="usesuggestion(field={{ field }}, suggestion={{ key }})"
+                    data-live-action-param="prevent|usesuggestion"
                     data-live-field-param="{{ field }}"
                     data-live-suggestion-param="{{ key }}"
 
-                >{{ suggestion }}</a>
+                >{{ suggestion }}</button>
                 {% endif %}
             {% endif %}
         {% endfor %}
         {% if field=='tags' and suggestions[field]|length>0 %}
-            <a
+            <button
             class="btn btn-primary btn-sm p-1 suggestion"
             data-action="live#action"
-            data-live-action-param="usesuggestion(field={{ field }}, suggestion=all)"
+            data-live-action-param="prevent|usesuggestion"
             data-live-field-param="{{ field }}"
             data-live-suggestion-param="all"
-            >Accept all</a>
+            >Accept all</button>
         {% endif %}
         </div>
     {% endif %}

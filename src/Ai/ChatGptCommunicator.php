@@ -2,7 +2,7 @@
 
 namespace App\Ai;
 
-use App\Ai\Prompt\AbstractBookPrompt;
+use App\Ai\Prompt\BookPromptInterface;
 use Orhanerday\OpenAi\OpenAi;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -57,7 +57,7 @@ class ChatGptCommunicator implements AiCommunicatorInterface
     }
 
     #[\Override]
-    public function interrogate(AbstractBookPrompt $prompt): string|array
+    public function interrogate(BookPromptInterface $prompt): string|array
     {
         $open_ai = new OpenAi($this->openAiApiKey);
 
