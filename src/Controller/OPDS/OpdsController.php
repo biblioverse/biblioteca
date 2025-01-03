@@ -9,7 +9,7 @@ use App\OPDS\Opds;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Repository\ShelfRepository;
-use App\Service\SearchHelper;
+use App\Service\Search\SearchHelper;
 use App\Service\ShelfManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

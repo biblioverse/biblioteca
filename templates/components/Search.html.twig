@@ -20,6 +20,17 @@
                                 role="switch"
                                 id="check-advanced" {{ filterQuery !=''?'disabled' }}>
                             <label class="form-check-label text-muted" for="check-advanced"><small>Advanced filters</small></label>
+                            {% if is_granted('USE_AI_FEATURES') %}
+                            <button data-action="live#action"   data-live-action-param="hint" class="btn btn-primary btn-sm"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-title="Write a search query in natual language and let AI convert it to filters."
+                                    {%  if query=='' %}disabled{% endif %}
+                            >
+                                <div class="spinner-border spinner-border-sm" data-loading="show"></div>
+                                <i class="bi bi-magic" data-loading="hide"></i>
+
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -41,12 +52,13 @@
 
                     </div>
                     <div class="form-text text-muted">
-                        You can write a <a href="https://typesense.org/docs/27.1/api/search.html#filter-parameters" target="_blank">Typesense filter query</a>. Available fields: {{ filterFields|join(', ') }}.
+                        You can write a <a href="https://typesense.org/docs/27.1/api/search.html#filter-parameters" target="_blank">Typesense filter query</a>.
+                        Use the <i class="bi bi-magic"></i> button to convert a natural language. query into filters
+                        Available fields: {{ filterFields|join(', ') }}.
                     </div>
                 {% endif %}
 
             </div>
-
 
         </div>
 

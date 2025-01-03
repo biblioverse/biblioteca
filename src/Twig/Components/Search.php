@@ -4,7 +4,7 @@ namespace App\Twig\Components;
 
 use App\Entity\Shelf;
 use App\Entity\User;
-use App\Service\SearchHelper;
+use App\Service\Search\SearchHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +22,6 @@ class Search
 {
     use DefaultActionTrait;
     use ComponentToolsTrait;
-
-    public const PER_PAGE = 16;
 
     #[LiveProp(writable: true, url: true)]
     public string $query = '';
@@ -52,6 +50,7 @@ class Search
     public array $books = [];
     public array $facets = [];
 
+    public ?array $hint = null;
     public int $found = 0;
 
     #[LiveProp(writable: true, url: true)]
@@ -92,6 +91,25 @@ class Search
         } else {
             $this->filterQuery = str_replace($value, '', $this->filterQuery);
         }
+        $this->getResults();
+    }
+
+    #[LiveAction]
+    public function hint(): void
+    {
+        $this->getResults();
+        $this->searchHelper->query->maxFacetValues(50);
+        $this->searchHelper->execute();
+        $hints = $this->hint = $this->searchHelper->getQueryHints();
+        if ($hints === null) {
+            return;
+        }
+        if (array_key_exists('filter_by', $hints)) {
+            $this->filterQuery = $hints['filter_by'];
+            $this->query = '';
+        }
+        $this->searchHelper->query->maxFacetValues(10);
+
         $this->getResults();
     }
 

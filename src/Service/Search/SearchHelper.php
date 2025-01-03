@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Search;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinder;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ACSEO\TypesenseBundle\Finder\TypesenseResponse;
+use App\Ai\AiCommunicatorInterface;
+use App\Ai\CommunicatorDefiner;
+use App\Ai\Prompt\SearchHintPrompt;
 use App\Entity\Book;
 
 class SearchHelper
@@ -12,7 +15,7 @@ class SearchHelper
     private TypesenseResponse $response;
     public TypesenseQuery $query;
 
-    public function __construct(protected CollectionFinder $bookFinder)
+    public function __construct(protected CollectionFinder $bookFinder, private readonly CommunicatorDefiner $communicatorDefiner)
     {
     }
 
@@ -25,6 +28,7 @@ class SearchHelper
         $query->numTypos(2);
         $query->page($page);
         $query->facetBy('authors,serie,tags');
+        $query->addParameter('facet_strategy', 'exhaustive');
         $this->query = $query;
 
         return $this;
@@ -73,5 +77,36 @@ class SearchHelper
             'nextPage' => $params['page'] < $pages ? $params['page'] + 1 : null,
             'previousPage' => $params['page'] > 1 ? $params['page'] - 1 : null,
         ];
+    }
+
+    public function getQueryHints(): ?array
+    {
+        $communicator = $this->communicatorDefiner->getCommunicator();
+        if (!$communicator instanceof AiCommunicatorInterface) {
+            return null;
+        }
+        $params = $this->query->getParameters();
+        if ($params['q'] === '') {
+            return null;
+        }
+
+        $facets = $this->getFacets();
+        $facets = array_column($facets, 'counts', 'field_name');
+        foreach ($facets as $key => $value) {
+            array_walk($facets[$key], function (&$value) {$value = $value['value']; });
+        }
+        $prompt = new SearchHintPrompt();
+
+        $communicator->initialise($prompt->getTypesenseNaturalLanguagePrompt($facets['serie'], $facets['authors'], $facets['tags']));
+
+        $prompt->setPrompt('### User-Supplied Query ###
+'.$params['q']);
+
+        $result = $communicator->interrogate($prompt);
+        if (!is_array($result)) {
+            return null;
+        }
+
+        return $result;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Shelf;
+use App\Service\Search\SearchHelper;
 
 class ShelfManager
 {
