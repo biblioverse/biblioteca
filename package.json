@@ -22,7 +22,7 @@
     "prettier": "^3.4.2",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.83.1",
-    "sass-loader": "^13.2.2",
+    "sass-loader": "^16.0.4",
     "tom-select": "^2.2.2",
     "vue-loader": "^17.4.2",
     "webpack": "^5.74.0",
