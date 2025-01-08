@@ -1,84 +1,248 @@
-page: Page
-search: Search
-save.current.filtering: 'Save current filtering'
-new.shelf: 'New Shelf'
-author: Author
-serie: Serie
-index: Index
-rename: Rename
-upload: Upload
-upload.cover: 'Upload cover'
-picture.for: 'Picture for'
-no.picture.for: __no.picture.for
-download: Download
-title: Title
-authors: Authors
-summary: Summary
-publisher: Publisher
-tags: Tags
-verified: Verified
-book: Book
-image: Image
-suggested.images: 'Suggested images'
-search.google.images: 'Search on Google Images'
-search.goodreads: 'Search on Goodreads'
-google.books.api: 'Suggestions from Google Books'
-openlibrary.api: 'Suggestions from OpenLibrary'
-extract.from-file: 'Extract cover from file'
-books.in.serie: 'Books in serie'
-books.same.index: 'Books with same index'
-other.books: 'Other books'
-books.same.author: 'Book with same author'
-missing.book: 'Missing Book'
-books: Books
-reading.list: 'Reading list'
-reading.list.finished: 'Finished'
-reading.list.showall: 'See all books in reading list'
-add_to_favorites: 'Add books to your reading list by clicking the bookmark icon on the book page.'
-series_in_progress: 'Series in progress'
-need_inspiration: 'Need some inspiration?'
-continue.reading: 'Continue reading'
-hello: Hello
-menu.home: 'Home'
-menu.books: 'Books'
-menu.authors: 'Authors'
-menu.series: 'Series'
-menu.tags: 'Tags'
-menu.shelves: 'Shelves'
-menu.allbooks: 'All books'
-menu.admin: 'Admin panel'
-menu.addbooks: 'Add books'
-menu.useradmin: 'Manage users'
-menu.upload: 'Upload'
-menu.notverified: 'Not verified'
-menu.profile: 'My Profile'
-menu.logout: 'Logout'
-menu.timeline: 'My Timeline'
-menu.kobodevices: 'Kobo devices'
-menu.editshelves: 'Edit shelves'
-menu.readinglist: 'Reading list'
-menu.instanceconfig: 'Instance configuration'
-filter.serie: 'Filter by serie'
-"filter.title": "Filter by title"
-"filter.authors": "By authors"
-"filter.authornot": "Exclude authors"
-"filter.tags": "By tags"
-"filter.picture": "Cover image"
-"filter.picture.any": "All"
-"filter.picture.yes": "With"
-"filter.picture.no": "Without"
-"filter.favorite": "Reading list"
-"filter.favorite.any": "All"
-"filter.favorite.yes": "Yes"
-"filter.favorite.no": "No"
-"filter.verified": "Vérified"
-"filter.verified.any": "All"
-"filter.verified.yes": "Yes"
-"filter.verified.no": "No"
-"filter.read": "Read state"
-"filter.read.any": "All"
-"filter.read.yes": "Read"
-"filter.read.no": "Unread"
-"filter.indexgte": "Index >="
-"filter.indexlte": "Index <="
-"filter.extension": "Extension"
+ai.actions: Possible actions
+ai.ai-features: Ai Features
+ai.bookprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
+ai.configuration.form.ai_search_model: "Model for search hints"
+ai.configuration.form.ai_summarization_model: "Model for summaries"
+ai.configuration.form.ai_summary_prompt: "Prompt for summaries"
+ai.configuration.form.ai_tag_model: "Model for tags"
+ai.configuration.form.ai_tag_prompt: "Prompt for tags"
+ai.configuration.form.submit: "Save"
+ai.context: Context
+ai.create-new-model: Create new AI model
+ai.edit-ai-model: Edit AI model
+ai.edit-model-configuration: Edit model configuration
+ai.edit-prompt: Edit prompt
+ai.generate: Generate
+ai.id: Id
+ai.initial-summary-prompt: Initial summary prompt
+ai.initial-tag-prompt: Initial tag prompt
+ai.model-information: Model information
+ai.model-type: Model type
+ai.model: Model
+ai.new-aimodel: New model
+ai.prompts-and-context: Prompts and context
+ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
+ai.responses-to-prompt-with-context: Responses to prompt with context
+ai.summary-prompt-with-context: Summary prompt with context
+ai.summary-prompt: Summary prompt
+ai.summaryprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
+ai.system-prompt: System prompt
+ai.tag-prompt-with-context: Tags prompt with context
+ai.tag-prompt: Tag prompt
+ai.test-book: Test book
+ai.test-model: Test model
+ai.token: Token
+ai.type: Model type
+ai.url: Model URL
+ai.usage-configuration: Usage configuration
+ai.use-amazon-context: Use amazon context
+ai.use-epub-context: Use EPUB Context
+ai.use-wikipedia-context: Use Wikipedia context
+book.actions: Actions
+book.add-to-favorites: Add to reading list
+book.age-category: Age category
+book.all-books: All books
+book.and-rename: and rename
+book.author: author
+book.authors: authors
+book.back-to: back to
+book.book-details: Book details
+book.book-path: Book path
+book.book: book
+book.books-in-consume-folder: Books in consume folder
+book.books_placed_in_public_books_consume_folder_will_be_listed_here: Books place ind the consume folder will be listed here
+book.consume-books: Consume books
+book.delete-book: Delete book
+book.download: Download
+book.extract-cover-from-file: Extract cover from file
+book.form.delete: Delete
+book.image-path: Image path
+book.index: Serie Index
+book.loading-book: Loading Book...
+book.missing: Missing book
+book.no-books-in-consume-folder: No books in consume folder
+book.no-picture-for: No picture for
+book.number-of-pages: Number of pages
+book.picture-for-book: Picture for
+book.publisher: Publisher
+book.read-state: Read state
+book.relocate: Relocate
+book.search-google-images: Search cover with Google Images
+book.serie: serie
+book.serieIndex: Serie Index
+book.size: Size
+book.summary: Summary
+book.tags: Tags
+book.this-action-is-irreversible: This action is irreversible
+book.title: Title
+book.unknown-author: Unknown author
+book.updated: Updated
+book.upload-book: Upload book
+book.upload-books-to-the-consume-folder: Upload books to the consume folder
+book.upload-cover: Upload cover
+book.upload: Upload book
+book.uuid: Unique ID
+book.verified: Verified
+books.in-serie: Books in serie
+books.other-books: Other books in serie
+books.same-author: Books by same author
+books.same-index: Books with same index
+dashboard.continue-reading: Continue reading
+dashboard.hello: Aloha
+dashboard.need-inspiration: Need some inspiration?
+dashboard.reading-list: In your reading list
+dashboard.series-in-progress: Series that you started
+error.error-happened: An error happend
+error.stack-trace: Stack trace
+generic.are-you-sure-you-want-to-delete-this-item: Are you sure you want to delete this item?
+generic.are-you-sure: Are you sure?
+generic.back-to-list: Back to list
+generic.create: Create
+generic.delete: Delete
+generic.edit: Edit
+generic.next: Next
+generic.no-records-found: No records found
+generic.no: No
+generic.page: Page
+generic.previous: Previous
+generic.results: results
+generic.save: Save
+generic.show: Show
+generic.update: Update
+generic.yes: Yes
+group.filter-placeholder: Filter...
+group.rename: Rename
+group.search: Search
+instance-configuration.current-value: Current value
+instance-configuration.description: Description
+instance-configuration.edit-configuration: Edit configuration
+instance-configuration.edit: Edit value
+instance-configuration.form.name: Name
+instance-configuration.form.value: Value
+instance-configuration.parameter: Parameter
+instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This value can be set from .env file or from this page
+instance-configuration.title: Title
+interaction.form.favorite: Reading list
+interaction.form.finished: Finished
+interaction.form.finishedDate: Finished date
+interaction.form.submit: Save
+kobo.device.access-key: Access key
+kobo.device.create-new: Create new
+kobo.device.delete: Delete
+kobo.device.edit-kobo: Edit Kobo device
+kobo.device.name: Name
+kobo.device.no-records-found: No Kobo devices
+kobo.device.owner: Owner
+kobo.device.reader-settings: Kobo device settings
+kobo.device.shelves: Shelves
+kobo.device.title: Title
+kobo.form.accessKey: Access Key
+kobo.form.deviceId: Device Id
+kobo.form.forceSync: Force next synchronisation
+kobo.form.model: Kobo device model
+kobo.form.name: Name
+kobo.form.shelves: Synchronized Shelves
+kobo.form.syncReadingList: Synchronize reading list
+kobo.form.upstreamSync: Sync with official store
+kobo.logs.channel: Log Channel
+kobo.logs.date: Date
+kobo.logs.device: Device
+kobo.logs.message: Message
+kobo.logs.show-kobo-logs: Display Kobo sync logs
+kobo.logs.title: Kobo Logs
+login.login: Log in
+menu.addbooks: Add books
+menu.admin: Administrator
+menu.aimodels: AI Models
+menu.allbooks: All books
+menu.authors: Authors
+menu.books: Library
+menu.editshelves: Edit shelves
+menu.home: Dashboard
+menu.instanceconfig: Instance configuration
+menu.kobodevices: Kobo devices
+menu.logout: Log out
+menu.notverified: Not verified
+menu.profile: Profile
+menu.readinglist: Reading list
+menu.series: Series
+menu.shelves: Shelves
+menu.tags: Tags
+menu.timeline: Your timeline
+menu.useradmin: Users administration
+notverified.all-books-have-been-verified: All books have been verified!
+notverified.all-books: Check your books' metadata
+notverified.batch-edit-all-books-in-the-list: Batch edit all books in the list
+notverified.books: Books to be verified
+notverified.extract-all-covers: Extract all covers
+notverified.mark-all-as-validated: Mark all as verified
+notverified.only-the-first-100-books-are-displayed: Only the first 100 books are displayed
+notverified.relocate-all-books: Relocate all books
+opds.access-settings: OPDS access settings
+opds.catalog: OPDS catalog
+profile.form.bookkeywordprompt: Prompt to generate tags
+profile.form.booksummaryprompt: Prompt to generate summary
+profile.form.displayallbooks: Display "All books" Link in menu
+profile.form.displayauthors: Display "Authors" link in menu
+profile.form.displaypublishers: Display "Publishers" link in menu
+profile.form.displayseries: Display "Series" link in menu
+profile.form.displaytags: Display "Tags" link in menu
+profile.form.displaytimeline: Display "Timeline" link in menu
+profile.form.first: Enter your password
+profile.form.language.english: English
+profile.form.language.french: Français
+profile.form.language: Language
+profile.form.second: Repeat your password
+profile.form.submit: Save preferences
+profile.form.theme.dark: Dark
+profile.form.theme.default: Default
+profile.form.theme: Appearance
+profile.my-profile: My profile
+profile.user-information: User information
+reading-list.add-to-favorites: Add to favorites
+reading-list.finished: Finished
+reading-list.showall: Show full reading list
+reading-list.title: Reading list
+reading-list.to-read: Books to read
+search.advanced-filters: Advanced filters
+search.records: records
+search.save-to-shelf: Save to a dynamic shelf
+search.search-for: What do you want to read?
+search.sort-results: Sort results
+search.write-a-search-query-in-natural-language-and-let-ai-convert-it-to-filters: Write a query in natural language and let AI convert it for you
+shelf.actions: Actions
+shelf.edit-shelf: Edit shelf
+shelf.filters: __shelf.filters
+shelf.max-number-of-books: Max number of books reached
+shelf.my-shelves: My shelves
+shelf.name: Name
+shelf.new: New
+shelf.no-shelves-found: No shelves found
+shelf.order: Order
+shelf.parameters: Parameters
+shelf.query: Query
+shelf.shelves: Shelves
+timeline.timeline-for: Timeline for
+timeline.title: Title
+user.agecategories.adults: Adults
+user.agecategories.everyone: Everyone
+user.agecategories.sixteenplus: 16+ Years old
+user.agecategories.tenplus: 10+ Years old
+user.agecategories.thirteenplus: 13+ Years old
+user.edit-user: Edit user
+user.form.roles.user: User
+user.form.roles.admin: Administrator
+user.form.language.english: English
+user.form.language.french: Français
+user.form.language: Language
+user.form.leave-blank-to-keep-current-password: Leave blank to keep current password
+user.form.maxagecategory: Max age category allowed
+user.form.plainpassword: Password
+user.form.roles: Roles
+user.form.username: Username
+user.last-login: Last login
+user.manage-users: Manage users
+user.max-age-category: Maximum age category allowed
+user.new-user: New user
+user.roles: Roles
+user.username: Username

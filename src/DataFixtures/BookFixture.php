@@ -9,10 +9,12 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @codeCoverageIgnore
  * @phpstan-type BookData array{
  *     title: string,
  *     uuid?: string,
  *     authors: list<string>,
+ *     tags?: list<string>,
  *     publishDate: string,
  *     language: string,
  *     publisher: string,
@@ -20,6 +22,9 @@ use Symfony\Component\Yaml\Yaml;
  *     imageExtension: string,
  *     imageFilename: string,
  *     bookFilename: string,
+ *     serie?: string,
+ *     serieIndex?: int,
+ *     ageCategory?: int,
  *     pageNumber: int
  * }
  */
@@ -76,6 +81,21 @@ class BookFixture extends Fixture implements DependentFixtureInterface
             $book->setChecksum(md5($book->getBookFilename()));
             $book->setBookPath('');
             $book->setPageNumber($bookData['pageNumber']);
+
+            if (array_key_exists('serie', $bookData)) {
+                $book->setSerie($bookData['serie']);
+            }
+            if (array_key_exists('serieIndex', $bookData)) {
+                $book->setSerieIndex($bookData['serieIndex']);
+            }
+
+            if (array_key_exists('ageCategory', $bookData)) {
+                $book->setAgeCategory($bookData['ageCategory']);
+            }
+
+            if (array_key_exists('tags', $bookData)) {
+                $book->setTags($bookData['tags']);
+            }
 
             $manager->persist($book);
 

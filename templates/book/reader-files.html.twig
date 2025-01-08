@@ -7,7 +7,7 @@
         <div class="row mt-2">
             <div class="col-12 col-sm-6">
                 <a class="btn btn-sm btn-outline-primary" aria-current="page" href="{{ path('app_book',{'book':book.id,'slug':book.slug}) }}">
-                    Back to {{ book.title }}
+                    {{ "book.back-to"|trans }} {{ book.title }}
                 </a>
             </div>
             <div class="col-12 col-sm-6 align-content-end text-end text-end">

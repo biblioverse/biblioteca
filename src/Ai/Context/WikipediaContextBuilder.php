@@ -2,8 +2,9 @@
 
 namespace App\Ai\Context;
 
+use App\Config\ConfigValue;
+use App\Entity\AiModel;
 use App\Entity\Book;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -11,9 +12,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class WikipediaContextBuilder implements ContextBuildingInteface
 {
     private string $language = 'en';
+    private readonly ?string $token;
 
-    public function __construct(private readonly HttpClientInterface $client, #[Autowire(param: 'WIKIPEDIA_API_TOKEN')] private readonly ?string $token, private readonly CacheInterface $wikipediaPool, private readonly SluggerInterface $slugger)
+    public function __construct(private readonly HttpClientInterface $client, ConfigValue $configValue, private readonly CacheInterface $wikipediaPool, private readonly SluggerInterface $slugger)
     {
+        $this->token = $configValue->resolve('WIKIPEDIA_API_TOKEN');
     }
 
     public function setLanguage(string $language): void
@@ -72,9 +75,9 @@ class WikipediaContextBuilder implements ContextBuildingInteface
     }
 
     #[\Override]
-    public function isEnabled(): bool
+    public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $this->token !== null;
+        return $this->token !== null && $aiModel->isUseWikipediaContext() === true;
     }
 
     #[\Override]

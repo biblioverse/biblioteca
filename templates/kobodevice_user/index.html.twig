@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Kobo index{% endblock %}
+{% block title %}{{ "kobo.device.title"|trans }}{% endblock %}
 
 {% block body %}
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>AccessKey</th>
-                <th>Owner</th>
-                <th>{{'shelves'|trans}}</th>
+                <th>{{ "kobo.device.name"|trans }}</th>
+                <th>{{ "kobo.device.access-key"|trans }}</th>
+                <th>{{ "kobo.device.owner"|trans }}</th>
+                <th>{{ 'kobo.device.shelves'|trans}}</th>
             </tr>
         </thead>
         <tbody>
@@ -39,17 +39,17 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="4">{{ "kobo.device.no-records-found"|trans }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <div class="btn-group align-items-end">
-        <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">Create new Kobo Device</a>
+        <a href="{{ path('app_kobodevice_user_new') }}" class="btn btn-primary">{{ "kobo.device.create-new"|trans }}</a>
 
         {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_kobodevice_user_logs') }}" class="btn btn-warning">Show Kobo sync logs</a>
+        <a href="{{ path('app_kobodevice_user_logs') }}" class="btn btn-warning">{{ "kobo.logs.show-kobo-logs"|trans }}</a>
         {% endif %}
     </div>
     {{ include('kobodevice_user/instructions.html.twig') }}

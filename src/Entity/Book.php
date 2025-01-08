@@ -587,4 +587,32 @@ class Book
 
         return $this;
     }
+
+    public function getUsers(): object
+    {
+        $return = [
+            'read' => [],
+            'favorite' => [],
+            'hidden' => [],
+        ];
+
+        foreach ($this->getBookInteractions() as $interaction) {
+            $user = $interaction->getUser();
+            if ($user === null) {
+                continue;
+            }
+            $userId = $user->getId();
+            if ($interaction->isFinished()) {
+                $return['read'][] = $userId;
+            }
+            if ($interaction->isFavorite()) {
+                $return['favorite'][] = $userId;
+            }
+            if ($interaction->isHidden()) {
+                $return['hidden'][] = $userId;
+            }
+        }
+
+        return (object) $return;
+    }
 }

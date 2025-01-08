@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "instance-configuration.edit-configuration"|trans }}{% endblock %}
+
+{% block body %}
+
+    {{ include('instance_configuration/_form.html.twig', {'button_label': 'generic.update'|trans}) }}
+
+    <a href="{{ path('app_instance_configuration_index') }}">{{ "generic.back-to-list"|trans }}</a>
+
+{% endblock %}

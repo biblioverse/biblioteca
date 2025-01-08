@@ -1,6 +1,6 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %}My Timeline{% endblock %}
+{% block title %}{{ "timeline.title"|trans }}{% endblock %}
 {% block body %}
 
     <div class="btn-group">
@@ -16,7 +16,7 @@
         {% endfor %}
     </div>
 
-    <h1 class="my-4">Timeline for {{ year }}: {{ books|length }} {{ type }}</h1>
+    <h1 class="my-4">{{ "timeline.timeline-for"|trans }} {{ year }}: {{ books|length }} {{ type }}</h1>
     <div class="row">
     {% for book in books %}
         <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">

@@ -49,13 +49,12 @@ class BookController extends AbstractController
             ], 301);
         }
 
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder(options: ['label_translation_prefix' => 'book.form.'])
             ->setAction($this->generateUrl('app_book_delete', [
                 'id' => $book->getId(),
             ]))
             ->setMethod(Request::METHOD_POST)
             ->add('delete', SubmitType::class, [
-                'label' => 'Delete',
                 'attr' => [
                     'class' => 'btn btn-danger',
                 ],
@@ -135,10 +134,7 @@ class BookController extends AbstractController
         if (!$this->isGranted(BookVoter::VIEW, $book)) {
             $this->addFlash('danger', 'You are not allowed to view this book');
 
-            return $this->redirectToRoute('app_dashboard', [
-                'book' => $book->getId(),
-                'slug' => $book->getSlug(),
-            ], 301);
+            return $this->redirectToRoute('app_dashboard', [], 301);
         }
 
         $user = $this->getUser();

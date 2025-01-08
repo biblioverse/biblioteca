@@ -20,7 +20,7 @@
          data-css="{{ block('readercss')|e('html_attr') }}"
          data-background-color="{{ isDark ? '#000' : '#fff' }}"
          data-back-url="{{ backUrl }}">
-        <a href="{{ file }}">Loading book</a>
+        <a href="{{ file }}">{{ "book.loading-book"|trans }}</a>
     </div>
 {% endblock %}
 

@@ -20,27 +20,23 @@ parameters:
     env(KOBO_READINGSERVICES_URL): 'https://readingservices.kobo.com'
     ALLOW_BOOK_RELOCATION: '%env(bool:ALLOW_BOOK_RELOCATION)%'
     env(ALLOW_BOOK_RELOCATION): true
-    OPEN_AI_API_KEY: '%env(OPEN_AI_API_KEY)%'
-    env(OPEN_AI_API_KEY): null
-    OPEN_AI_MODEL: '%env(OPEN_AI_MODEL)%'
-    env(OPEN_AI_MODEL): 'gpt-3.5-turbo'
+
     TYPESENSE_KEY: '%env(TYPESENSE_KEY)%'
     TYPESENSE_URL: '%env(TYPESENSE_URL)%'
-
-    OLLAMA_URL: '%env(OLLAMA_URL)%'
-    env(OLLAMA_URL): null
-    OLLAMA_MODEL: '%env(OLLAMA_MODEL)%'
-    env(OLLAMA_MODEL): 'llama3.2'
-    DATABASE_URL: '%env(DATABASE_URL)%'
 
     WIKIPEDIA_API_TOKEN: '%env(WIKIPEDIA_API_TOKEN)%'
     env(WIKIPEDIA_API_TOKEN): null
 
-    AI_CONTEXT_AMAZON_ENABLED: '%env(bool:AI_CONTEXT_AMAZON_ENABLED)%'
-    env(AI_CONTEXT_AMAZON_ENABLED): false
+    GENERIC_SYSTEM_PROMPT: '%env(GENERIC_SYSTEM_PROMPT)%'
+    env(GENERIC_SYSTEM_PROMPT): "As a highly skilled and experienced librarian AI model, I'm here to help you tag and summarize books as close to the original as possible. I will never make up any information. I will only use the information you provide me. I will communicate with you primarily using your preferred language."
 
-    AI_CONTEXT_FULL_EPUB: '%env(bool:AI_CONTEXT_FULL_EPUB)%'
-    env(AI_CONTEXT_FULL_EPUB): false
+    AI_SUMMARY_PROMPT: '%env(AI_SUMMARY_PROMPT)%'
+    env(AI_SUMMARY_PROMPT): "Can you make a factual summary of the book {book} in around 150 words in french"
+
+    AI_TAG_PROMPT: '%env(AI_TAG_PROMPT)%'
+    env(AI_TAG_PROMPT): "I want to tag a book. Can you cite the genres and tags for the following book: {book}?"
+
+    DATABASE_URL: '%env(DATABASE_URL)%'
 
 
 services:
@@ -100,15 +96,7 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main } # The alias is what is used to retrieve the menu
 
-    app.display_mode_subscriber:
-        class: App\EventSubscriber\DisplayModeSubscriber
-
-    App\Controller\OPDS\OpdsController:
-        arguments:
-           $bookFinder: '@typesense.specificfinder.books.books_autocomplete'
-
-
-    App\Twig\Components\Search:
+    App\Service\Search\SearchHelper:
         arguments:
             $bookFinder: '@typesense.finder.books'
 
@@ -149,6 +137,9 @@ services:
             $accessTokenExtractor: '@App\Security\KoboTokenExtractor'
             $accessTokenHandler: '@App\Security\KoboTokenHandler'
 
+    App\Form\LabelTranslationFormExtension:
+        autoconfigure: true
+
 when@dev:
     services:
         Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
@@ -166,3 +157,8 @@ when@test:
             public: true
 
         Psr\Clock\ClockInterface: '@App\Tests\TestClock'
+
+        App\Tests\Mock\AbstractApiMock:
+            decorates: 'http_client'
+            decoration_inner_name: 'App\Tests\Mock\AbstrackApiMock.http_client'
+            arguments: ['@.inner']

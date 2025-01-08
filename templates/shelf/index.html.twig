@@ -4,5 +4,19 @@
 
 {% block body %}
 
-    {% include themedTemplate('book/_pagination.html.twig') %}
+    <div class="row mt-4">
+        {% if books|length==200 %}
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    {{ 'shelf.max-number-of-books'|trans }}
+                </div>
+            </div>
+        {% endif %}
+        {% for book in books %}
+            <div class="col-md-4 col-lg-3 col-xl-2 col-sm-4 col-6">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}
