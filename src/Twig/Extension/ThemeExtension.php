@@ -6,6 +6,9 @@ use App\Twig\Runtime\ThemeExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ThemeExtension extends AbstractExtension
 {
     #[\Override]

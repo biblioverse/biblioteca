@@ -4,7 +4,6 @@ namespace App\Menu;
 
 use App\Entity\Shelf;
 use App\Entity\User;
-use App\Service\FilteredBookUrlGenerator;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -20,7 +19,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly FilteredBookUrlGenerator $filteredBookUrlGenerator, private readonly RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly RequestStack $requestStack)
     {
     }
 
@@ -77,7 +76,7 @@ final class MenuBuilder
         if ($user->isDisplayPublishers()) {
             $books->addChild('menu.publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
+        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true)->setExtra('translation_domain', false);
         $profile->addChild('menu.readinglist', ['route' => 'app_readinglist', ...$this->defaultAttr])->setExtra('icon', 'list-task');
         if ($user->isDisplayTimeline()) {
             $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
@@ -91,11 +90,11 @@ final class MenuBuilder
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
                 if ($shelf->getQueryString() !== null) {
-                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => $shelf->getQueryString(), ...$this->defaultAttr])
-                        ->setExtra('icon', 'bookmark-fill');
+                    $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => ['page' => 1, 'filterQuery' => $shelf->getQueryFilter(), 'orderQuery' => $shelf->getQueryOrder(), 'query' => $shelf->getQueryString()], ...$this->defaultAttr])
+                        ->setExtra('icon', 'bookmark-fill')->setExtra('translation_domain', false);
                 } else {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
-                        ->setExtra('icon', 'bookshelf');
+                        ->setExtra('icon', 'bookshelf')->setExtra('translation_domain', false);
                 }
             }
         }
@@ -106,11 +105,10 @@ final class MenuBuilder
 
             $admin->addChild('menu.useradmin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
-            $admin->addChild('menu.upload', ['route' => 'app_book_upload_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            $admin->addChild('menu.instanceconfig', ['route' => 'app_configuration', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            $params = $this->filteredBookUrlGenerator->getParametersArray(['verified' => 'unverified', 'orderBy' => 'serieIndex-asc']);
-            $admin->addChild('menu.notverified', ['route' => 'app_allbooks', ...$this->defaultAttr, 'routeParameters' => $params])->setExtra('icon', 'question-circle-fill');
+            $admin->addChild('menu.instanceconfig', ['route' => 'app_instance_configuration_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+            $admin->addChild('menu.aimodels', ['route' => 'app_ai_model_index', ...$this->defaultAttr])->setExtra('icon', 'magic');
+            $admin->addChild('menu.notverified', ['route' => 'app_notverified', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
         }
 
         return $menu;

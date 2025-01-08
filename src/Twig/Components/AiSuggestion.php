@@ -2,12 +2,15 @@
 
 namespace App\Twig\Components;
 
-use App\Ai\AiCommunicatorInterface;
-use App\Ai\CommunicatorDefiner;
+use App\Ai\Communicator\AiAction;
+use App\Ai\Communicator\AiCommunicatorInterface;
+use App\Ai\Communicator\CommunicatorDefiner;
+use App\Ai\Context\ContextBuilder;
+use App\Ai\Prompt\PromptFactory;
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
 use App\Entity\User;
-use App\Suggestion\SummaryPrompt;
-use App\Suggestion\TagPrompt;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -47,6 +50,8 @@ final class AiSuggestion
     public function __construct(
         private Security $security,
         private CommunicatorDefiner $aiCommunicator,
+        private ContextBuilder $contextBuilder,
+        private PromptFactory $promptFactory,
     ) {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -59,8 +64,8 @@ final class AiSuggestion
     public function postMount(): void
     {
         $this->prompt = match ($this->field) {
-            'summary' => (new SummaryPrompt($this->book, $this->user))->getPrompt(),
-            'tags' => (new TagPrompt($this->book, $this->user))->getPrompt(),
+            'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book, $this->user)->getPrompt(),
+            'tags' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book, $this->user)->getPrompt(),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
     }
@@ -70,21 +75,31 @@ final class AiSuggestion
     {
         $this->suggestions = self::EMPTY_SUGGESTIONS;
 
-        $communicator = $this->aiCommunicator->getCommunicator();
+        $field = match ($this->field) {
+            'summary' => AiAction::Summary,
+            'tags' => AiAction::Tags,
+            default => throw new \InvalidArgumentException('Invalid field'),
+        };
+
+        $communicator = $this->aiCommunicator->getCommunicator($field);
 
         if (!$communicator instanceof AiCommunicatorInterface) {
             return;
         }
 
         $promptObj = match ($this->field) {
-            'summary' => new SummaryPrompt($this->book, $this->user),
-            'tags' => new TagPrompt($this->book, $this->user),
+            'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book, $this->user),
+            'tags' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book, $this->user),
             default => throw new \InvalidArgumentException('Invalid field'),
         };
 
         $promptObj->setPrompt($this->prompt);
 
-        $result = $communicator->interrogate($promptObj);
+        $promptObj = $this->contextBuilder->getContext($communicator->getAiModel(), $promptObj);
+
+        $result = $communicator->interrogate($promptObj->getPrompt());
+
+        $result = $promptObj->convertResult($result);
 
         $this->result = is_array($result) ? $result : [$result];
 

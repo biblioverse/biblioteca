@@ -1,0 +1,21 @@
+
+{% set value = facet.field_name ~':=`'~ count.value ~'`'  %}
+{% set label = count.value %}
+
+{% set isIncluded = value in filterQuery %}
+<li class="list-group-item {{ isIncluded?'active':'' }} p-1">
+<button type="button" class="btn btn-bare suggestion p-0 text-start"
+            data-action="live#action click->search#focus"
+            data-live-action-param="addFilter"
+            data-live-value-param='{{ value }}'
+    >
+        <small>
+            {{ label }}
+            {% if count.count is not null %}
+                <span class="badge rounded-pill bg-primary">
+                    {{ count.count }} <span class="visually-hidden">{{ "search.records"|trans }}</span>
+                </span>
+            {% endif %}
+        </small>
+    </button>
+</li>

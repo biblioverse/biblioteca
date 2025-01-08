@@ -1,29 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Shelf index{% endblock %}
+{% block title %}{{ "shelf.my-shelves"|trans }}{% endblock %}
 
 {% block body %}
-    <table class="table">
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>actions</th>
+                <th>{{ "shelf.name"|trans }}</th>
+                <th>{{ "shelf.parameters"|trans }}</th>
+                <th>{{ "shelf.actions"|trans }}</th>
             </tr>
         </thead>
         <tbody>
         {% for shelf in shelves %}
             <tr>
-                <td>{{ shelf.name }}</td>
+                <td><strong>{{ shelf.name }}</strong></td>
                 <td>
-                    {% if not shelf.queryString %}
-                        <a href="{{ path('app_shelf_crud_edit', {'id': shelf.id}) }}" class="btn btn-primary">edit</a>
+                    {% if shelf.queryString is not null %}
+                        {{ "shelf.query"|trans }}: <code>{{ shelf.queryString }}</code><br>
+                        {{ "shelf.filters"|trans }}: <code>{{ shelf.queryFilter }}</code><br>
+                        {{ "shelf.order"|trans }}: <code>{{ shelf.queryOrder }}</code>
+                    {% else %}
+                        Manual
                     {% endif %}
-                    {{ include('shelf_crud/_delete_form.html.twig') }}
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <a href="{{ path('app_shelf_crud_edit', {'id': shelf.id}) }}" class="btn btn-primary btn-sm">{{ "generic.edit"|trans }}</a>
+                        <a href="{{ path('app_shelf_crud_delete', {'id': shelf.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('{{ "generic.are-you-sure"|trans }}?')">{{ "generic.delete"|trans }}</a>
+                    </div>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">no shelves found</td>
+                <td colspan="5">{{ "shelf.no-shelves-found"|trans }}</td>
             </tr>
         {% endfor %}
         </tbody>

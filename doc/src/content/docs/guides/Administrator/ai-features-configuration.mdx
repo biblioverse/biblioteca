@@ -5,69 +5,33 @@ import { Aside } from '@astrojs/starlight/components';
 
 There are 2 possible ways of configuring AI to help you tag and summarise books.
 
-## Chatgpt
+## Models
+Go to `/ai/model` to configure AI models. You can configure as many models as you want.
+Currently the app allows to have Ollama compatible and OpenAI compatible models.
 
-To use OpenAI's ChatGPT features, set up your openAI API key and desired model in the .env.local file:
 
-```
-OPEN_AI_API_KEY=XXXXXXXXX
-OLLAMA_MODEL=gpt-3.5-turbo
-```
+- Please refer to OpenAI's documentation to get your API key and model for ChatGPT.
+- Please refer to perplexity.ai documentation to get your API key and models for Perplexity
 
-Please refer to OpenAI's documentation to get your API key and model.
+On this page you can test your model and the results.
 
-If no key is set, ChatGPT will not be used in the application.
+You can enable or disable the addition of context per model. You can also configure system prompts for each model.
 
-## Ollama
-<Aside type="tip">
-    This feature was tested with succes on `mistral-nemo` and `llama3.2`. Do not hesitate to share your best experience
-    with other models!
-</Aside>
-
-To use a local instance of oLLama, set up the URL and model of your server in the .env.local file:
-
-```
-OLLAMA_URL=http://localhost:11434/api/
-OLLAMA_MODEL=mistral-nemo
-```
-
-If no url is provided, Ollama will not be used.
-
+Below the model list, you can configure which model will be used for different actions.
 
 ## Configure your prompts
 
 <Aside type="tip">
-    Share your best prompts here!
+    Share your best prompts!
 </Aside>
 
 When your favourite LLM is configured, fill in the prompts that will be used to generate the summaries and tags.
 
 The application will replace the `{book}` placeholder with the book's title, author and series.
 
-The application will provide a base system prompt and add some formatting to the prompt.
-
-Base prompt is defined in the code and is currently:
-
-```
-As a highly skilled and experienced librarian AI model, I'm here to provide you with deep insights and practical recommendations
-based on my vast experience in the field of literature and knowledge organization. Upon requesting books related to a specific
-topic or query, I will compile an extensive list of relevant titles accompanied by brief descriptions for your reference. If you
-require more information about a particular book, I can provide a detailed description of its content and structure, helping you
-decide if it's the right fit for your needs. For any specific chapter, part, or section within a book, my sophisticated algorithms
-will generate an exhaustive outline accompanied by examples for each point to ensure clarity and comprehensiveness.
-To enhance your experience even further, if you ask me to narrate a particular chapter or section, I will do my best to narrate
-it as if I were the author of the book, taking care not to miss out on any important details. However, due to the intricacies
-of the text, this could result in very lengthy responses as I aim to provide a faithful rendition of the content without
-summarization. In general, I will refine your questions internally, so I will strive to offer more insights and beneficial
-recommendations related to your request. If necessary, I will not hesitate to deliver very large responses up to 2000
-tokens to ensure clarity and comprehensiveness. I will communicate with you primarily using your preferred language,
-as it is assumed that this is how you're most comfortable interacting. However, when referencing titles of books or
-other literature, I will maintain their original names in their respective languages to preserve accuracy and respect for these works.
-```
-
 ### For tags
 
-For tag, the following will always be appended to your prompt:
+For tags, the following will always be appended to your prompt:
 ```
 The output must be only valid JSON format. It must be an object with one key named "genres" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.
 ```
@@ -85,18 +49,50 @@ be about the location of the main story (example: Switzerland), the next one are
 Can you make a factual summary of the book {book} in around 150 words in french
 ```
 
-## Run it for one book
+### For search
+The search model can be used to convert user searches in natural language to typesense filters.
+
+## How to use
+### Run it for one book
 On a book page, you can click on the "generate summary"  or "generate tags" buttons to show propositions and accept them or not.
 
-## Run it through your whole library
+### Run it through your whole library
 You can run the following command:
 ```
-docker compose exec biblioteca bin/console books:tag
+docker compose exec biblioteca bin/console books:ai <tags|summary|both>
 ```
-It will tag all your books that currently don't have tags.
+It will tag all your books that currently don't have tags with the default prompts.
 
 If you want to use a user's configured prompts:
 
 ```
-docker compose exec biblioteca bin/console books:tag <userid>
+docker compose exec biblioteca bin/console books:ai <tags|summary|both> <userid>
 ```
+
+If you want to use it on a specific book:
+```
+docker compose exec biblioteca bin/console books:ai <tags|summary|both> -b <book-id>
+```
+### Search
+Enter a natural search query, for example: `Mangas by eiichiro oda` and click on the magic wand.
+This will convert your query in filters like `authors:=Eiichiro Oda && extension:=[cbr,cbz,pdf]`
+
+You can try with things like `Thrillers in italy` or `cook vegetarian meals` and it will try to find the best query
+
+## Add context
+There are currently 3 ways to add context for better results. They be enabled at the same time.
+- Wikipedia context: requires to fill in a wikipedia personal API token in the configuration, will search for information on the book for wikipedia
+- EPUB context: if the book is an epub, it will be entirely added to the context for summarization.
+- Amazon context: the app will try to find and scrape the Amazon product page of this Books
+
+## Example workflow
+I use 2 different LLMs in my workflow
+
+- I have a local Ollama instance with the qwen2.5 model
+- I use perplexity.ai API with the `large` model.
+
+How I proceed:
+
+- Search queries are built by Qwen
+- Summaries are built by perplexity.ai, as it is the model that has the most chances to know about books out of the box.
+- Tags are built by qwen after the summary as been written, because the summary is part of the context.

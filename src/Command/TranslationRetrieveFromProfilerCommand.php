@@ -88,7 +88,7 @@ class TranslationRetrieveFromProfilerCommand extends Command
                             if (array_key_exists($message['id'], $yaml)) {
                                 continue;
                             }
-                            $line = '"'.$message['id'].'": "__'.$message['translation'].'"';
+                            $line = ''.$message['id'].': "__'.$message['translation'].'"';
                             $contents[] = $line;
                             $io->writeln($line);
                         }

@@ -1,78 +1,7 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %} {{ pagination.getTotalItemCount }} books - Page {{ page }}{% endblock %}
+{% block title %} {{ "book.all-books"|trans }} {% endblock %}
 {% block body %}
 
-    {% if current_page_filters(true)|length > 0 %}
 
-            <ul class="list-inline m-2">
-                {% for key,filter in current_page_filters(true) %}
-                    <li class="list-inline-item badge bg-secondary">{{ key }}: {{ filter|join(', ') }}</li>
-                {% endfor %}
-                <li class="list-inline-item">
-                    {{ component('AddNewShelf',{'user':app.user,'shelf':null, 'currentFilters': current_page_filters()}) }}
-                </li>
-            </ul>
-    {% endif %}
-    <details {% if pagination.getTotalItemCount==0 %}open="open"{% endif %}>
-        <summary>Filters</summary>
-        {{ form_start(form, {'action': path('app_allbooks',{'page':1})}) }}
-        <div class="row">
-            <div class="col-md-4">
-                {{ form_row(form.title) }}
-            </div>
-            <div class="col-md-4">
-                {{ form_row(form.serie) }}
-            </div>
-            <div class="col-md-4">
-                {{ form_row(form.authors) }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                {{ form_row(form.authorsNot) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.tags) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.picture) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.favorite) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.verified) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.read) }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                {{ form_row(form.serieIndexGTE) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.serieIndexLTE) }}
-            </div>
-
-            <div class="col-md-2">
-                {{ form_row(form.extension) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.publisher) }}
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.orderBy) }}
-
-            </div>
-            <div class="col-md-2">
-                {{ form_row(form.age) }}
-
-            </div>
-        </div>
-        {{ form_rest(form) }}
-        {{ form_end(form) }}
-    </details>
-    {% include themedTemplate('book/_pagination.html.twig') %}
 {% endblock %}

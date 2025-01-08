@@ -82,12 +82,32 @@ class InlineEditInteraction extends AbstractController
         $interaction = $this->getInteraction();
 
         $interaction->setReadStatus(ReadStatus::toggle($interaction->getReadStatus()));
-
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $this->entityManager->persist($interaction);
         $this->entityManager->flush();
         $this->interaction = $interaction;
 
         $this->flashMessage = 'Read status updated';
+    }
+
+    #[LiveAction]
+    public function saveInteraction(): void
+    {
+        $this->submitForm();
+
+        $interaction = $this->getForm()->getData();
+
+        if (!$interaction instanceof BookInteraction) {
+            throw new \RuntimeException('Invalid data');
+        }
+
+        $this->entityManager->persist($interaction);
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
+        $this->entityManager->flush();
+        $this->flashMessageFav = 'Saved';
+        $this->dispatchBrowserEvent('manager:flush');
     }
 
     #[LiveAction]
@@ -98,6 +118,8 @@ class InlineEditInteraction extends AbstractController
         $interaction->setReadingList(ReadingList::toggle($interaction->getReadingList()));
 
         $entityManager->persist($interaction);
+        $this->book->setUpdated(new \DateTime('now'));
+        $this->entityManager->persist($this->book);
         $entityManager->flush();
         $this->interaction = $interaction;
 

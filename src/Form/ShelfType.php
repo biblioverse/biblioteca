@@ -15,6 +15,12 @@ class ShelfType extends AbstractType
         $builder
             ->add('name')
         ;
+
+        if ($options['data'] instanceof Shelf && $options['data']->getQueryString() !== null) {
+            $builder->add('queryString');
+            $builder->add('queryFilter');
+            $builder->add('queryOrder');
+        }
     }
 
     #[\Override]
@@ -22,6 +28,7 @@ class ShelfType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Shelf::class,
+            'label_translation_prefix' => 'shelf.form.',
         ]);
     }
 }

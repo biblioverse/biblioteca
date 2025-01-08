@@ -2,23 +2,23 @@
 
 
 {% block title %}
-Consume books
+    {{ "book.consume-books"|trans }}
 {% endblock %}
 
 {% block body %}
 
-    <h1 class="mb-0">Books in consume folder</h1>
-    <div class="text-muted small mb-3">Book placed in the public/books/consume folder will be listed here</div>
+    <h1 class="mb-0">{{ "book.books-in-consume-folder"|trans }}</h1>
+    <div class="text-muted small mb-3">{{ "book.books_placed_in_public_books_consume_folder_will_be_listed_here"|trans }}</div>
     <a href="{{ path('app_book_upload_consume') }}" class="btn btn-secondary">Upload</a>
     <div class="row">
         <div class="col-12">
 
             <table class="table table-bordered table-striped table-hover">
                 <tr>
-                    <th>Book</th>
-                    <th>Size</th>
+                    <th>{{ "book.book"|trans }}</th>
+                    <th>{{ "book.size"|trans }}</th>
                     <th>
-                        Actions
+                        {{ "book.actions"|trans }}
                     </th>
                 </tr>
                 {% set previousPath='' %}
@@ -49,7 +49,7 @@ Consume books
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="3">No books in consume folder</td>
+                        <td colspan="3">{{ "book.no-books-in-consume-folder"|trans }}</td>
                     </tr>
                 {% endfor %}
             </table>

@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Book;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -21,7 +20,7 @@ final class RelocationVoter extends Voter
     #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::RELOCATE && $subject instanceof Book;
+        return $attribute === self::RELOCATE;
     }
 
     #[\Override]

@@ -7,6 +7,9 @@ use Twig\TwigFunction;
 
 class UniqueIdExtension extends AbstractExtension
 {
+    /**
+     * @codeCoverageIgnore
+     */
     #[\Override]
     public function getFunctions(): array
     {

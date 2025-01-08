@@ -1,6 +1,6 @@
 {% extends 'bare.html.twig' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{{ "login.login"|trans }}{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -17,10 +17,10 @@
                         </div>
                     {% endif %}
 
-                    <h1 class="h3 mb-3 font-weight-normal">{{ 'please.sign.in'|trans({}, 'security') }}</h1>
-                    <label for="inputEmail">{{ 'email'|trans({}, 'security') }}</label>
+                    <h1 class="h3 mb-3 font-weight-normal">{{ 'login.please-sign-in'|trans({}, 'security') }}</h1>
+                    <label for="inputEmail">{{ 'login.username'|trans({}, 'security') }}</label>
                     <input type="text" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" required autofocus>
-                    <label for="inputPassword">{{ 'password'|trans({}, 'security') }}</label>
+                    <label for="inputPassword">{{ 'login.password'|trans({}, 'security') }}</label>
                     <input type="password" name="_password" id="inputPassword" class="form-control" required>
 
                     <input type="hidden" name="_csrf_token"
@@ -29,12 +29,12 @@
 
                     <div class="checkbox mb-3">
                         <label>
-                            <input type="checkbox" name="_remember_me"> {{ 'remember.me'|trans({}, 'security') }}
+                            <input type="checkbox" name="_remember_me"> {{ 'login.remember-me'|trans({}, 'security') }}
                         </label>
                     </div>
 
 
-                    <button class="btn btn-lg btn-primary" type="submit">
+                    <button class="btn btn-lg btn-primary" id="sign-in" type="submit">
                         {{ 'sign.in'|trans({}, 'security') }}
                     </button>
                 </form>

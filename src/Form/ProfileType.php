@@ -30,8 +30,8 @@ class ProfileType extends AbstractType
             ->add('displayAllBooks')
             ->add('language', ChoiceType::class, [
                 'choices' => [
-                    'English' => 'en',
-                    'French' => 'fr',
+                    'profile.form.language.english' => 'en',
+                    'profile.form.language.french' => 'fr',
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -40,28 +40,24 @@ class ProfileType extends AbstractType
                 'invalid_message' => 'The password fields must match.',
                 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => false,
-                'first_options' => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                'first_options' => [],
+                'second_options' => [],
             ])
             ->add('bookKeywordPrompt', null, [
-                'label' => 'Book Keyword Prompt',
                 'help_html' => true,
-                'help' => 'openai.bookprompt.help',
+                'help' => 'ai.bookprompt.form-help',
             ])
             ->add('bookSummaryPrompt', null, [
-                'label' => 'Book Summary Prompt',
                 'help_html' => true,
-                'help' => 'openai.summaryprompt.help',
+                'help' => 'ai.summaryprompt.form-help',
             ])
             ->add('theme', ChoiceType::class, [
-                'label' => 'Theme',
                 'choices' => [
-                    'Default' => 'default',
-                    'Dark' => 'dark',
+                    'profile.form.theme.default' => 'default',
+                    'profile.form.theme.dark' => 'dark',
                 ],
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Save',
                 'attr' => [
                     'class' => 'btn btn-primary',
                 ],
@@ -75,6 +71,7 @@ class ProfileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'label_translation_prefix' => 'profile.form.',
         ]);
     }
 }

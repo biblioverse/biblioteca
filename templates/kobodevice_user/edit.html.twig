@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Kobo{% endblock %}
+{% block title %}{{ "kobo.device.edit-kobo"|trans }}{% endblock %}
 
 {% block body %}
-    {{ include('kobodevice_user/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('kobodevice_user/_form.html.twig', {'button_label': 'generic.update'}) }}
 
     <div class="mt-3">
         {{ include('kobodevice_user/_delete_form.html.twig') }}
