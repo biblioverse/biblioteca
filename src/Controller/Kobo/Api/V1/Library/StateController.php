@@ -42,7 +42,7 @@ class StateController extends AbstractKoboController
     #[Route('/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
     public function putState(KoboDevice $koboDevice, string $uuid, Request $request): Response|JsonResponse
     {
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
+        $book = $this->bookRepository->findByUuid($uuid);
 
         // Handle book not found
         if (!$book instanceof Book) {

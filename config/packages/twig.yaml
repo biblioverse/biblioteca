@@ -1,7 +1,6 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
-    globals:
-        displayMode: "@app.display_mode_subscriber"  #The id of your service
+
 
     form_themes: ['bootstrap_5_layout.html.twig']
 

@@ -2,7 +2,6 @@
 
 namespace App\Controller\OPDS;
 
-use ACSEO\TypesenseBundle\Finder\SpecificCollectionFinder;
 use App\Entity\OpdsAccess;
 use App\Entity\Shelf;
 use App\Entity\User;
@@ -10,6 +9,7 @@ use App\OPDS\Opds;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Repository\ShelfRepository;
+use App\Service\Search\SearchHelper;
 use App\Service\ShelfManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/opds/{accessKey}', name: 'opds_')]
 class OpdsController extends AbstractController
 {
-    public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SpecificCollectionFinder $bookFinder)
+    public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SearchHelper $searchHelper)
     {
         $current = $requestStack->getCurrentRequest();
         if (!$current instanceof Request) {
@@ -70,7 +70,8 @@ class OpdsController extends AbstractController
         $opds = $this->opds->getOpdsConfig()->isSearch();
         $opds->title('Search');
 
-        $books = $this->bookFinder->search(''.$request->get('q', $request->get('query', '')))->getResults();
+        $this->searchHelper->prepareQuery(''.$request->get('q', $request->get('query', '')), perPage: 200)->execute();
+        $books = $this->searchHelper->getBooks();
 
         $feeds = [];
         foreach ($books as $result) {

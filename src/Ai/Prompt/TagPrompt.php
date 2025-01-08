@@ -6,17 +6,13 @@ use App\Entity\User;
 
 class TagPrompt extends AbstractBookPrompt
 {
-    public const DEFAULT_KEYWORD_PROMPT = 'I want to tag a book. Can you cite the genres and tags for the following book: {book}? 
-     Translate the genres in french.
-    ';
-
     #[\Override]
     public function initialisePrompt(): void
     {
-        $prompt = self::DEFAULT_KEYWORD_PROMPT;
+        $prompt = $this->config->resolve('AI_TAG_PROMPT');
 
         if ($this->user instanceof User) {
-            $prompt = $this->user->getBookKeywordPrompt() ?? self::DEFAULT_KEYWORD_PROMPT;
+            $prompt = $this->user->getBookKeywordPrompt() ?? $prompt;
         }
         $prompt .= '
 

@@ -36,6 +36,7 @@ class InlineInteractionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => BookInteraction::class,
             'csrf_protection' => false,
+            'label_translation_prefix' => 'interaction.form.',
         ]);
     }
 }

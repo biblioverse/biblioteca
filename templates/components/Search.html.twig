@@ -1,52 +1,195 @@
-<div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+<div {{ attributes.defaults(stimulus_controller('search')) }}>
     <div class="row">
         <div class="col-md-12">
-            <div class="input-group">
-                <input type="text"
-                       class="form-control-lg w-100"
-                       id="search"
-                       placeholder="Search for..."
-                       data-model="query"
-                       autofocus
-                />
+            <div class="search"  data-search-target="search">
+                <div class="input-group input-group-lg">
+                    <input type="search"
+                           class="form-control form-control-lg"
+                           id="search"
+                           placeholder="{{ "search.search-for"|trans }}"
+                           data-model="debounce(500)|query"
+                           data-search-target="query"
+                           data-action="search#redirect"
+                    />
+                    <div class="input-group-text">
+                        <div class="form-check form-switch">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                data-model="advanced"
+                                role="switch"
+                                id="check-advanced" {{ filterQuery !=''?'disabled' }}>
+                            <label class="form-check-label text-muted" for="check-advanced"><small>{{ "search.advanced-filters"|trans }}</small></label>
+                            {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Search ) %}
+                                <button data-action="live#action"   data-live-action-param="hint" class="btn btn-primary btn-sm"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-title="{{ "search.write-a-search-query-in-natural-language-and-let-ai-convert-it-to-filters"|trans }}."
+                                    {%  if query=='' %}disabled{% endif %}
+                            >
+                                <div class="spinner-border spinner-border-sm" data-loading="show"></div>
+                                <i class="bi bi-magic" data-loading="hide"></i>
+
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if advanced or filterQuery!='' %}
+                    <div class="input-group has-validation mt-3">
+                        <input type="search"
+                               class="form-control form-control-lg w-100 {{ filterQueryError is not null?'is-invalid' }} {{ filterQuery!='' and filterQueryError is null?'is-valid' }}"
+                               id="search-filters"
+                               placeholder="{{ "search.advanced-filters"|trans }}"
+                               data-model="debounce(500)|filterQuery"
+                               data-search-target="filterQuery"
+                               data-action="search#redirect"
+                        />
+                        {% if filterQueryError is not null %}
+                        <div id="search-filtersFeedback" class="invalid-tooltip">
+                            {{ filterQueryError }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="form-text text-muted">
+                        You can write a <a href="https://typesense.org/docs/27.1/api/search.html#filter-parameters" target="_blank">Typesense filter query</a>.
+                        Use the <i class="bi bi-magic"></i> button to convert a natural language. query into filters
+                        Available fields: {{ filterFields|join(', ') }}.
+                    </div>
+                {% endif %}
+
             </div>
+
         </div>
-        {% if computed.results.books|default([])|length >0 %}
-        <div class="row mt-5">
-            <div class="col-md-9 col-12">
+
+        {% if books|length >0 or query!='' or filterQuery!=''  %}
+
+            <div class="results mt-4">
                 <div class="row">
-                    <h5> Results</h5>
-                    <ul class="list-group">
+                    <div class="col">
+                        {% set route='app_allbooks' %}
+                        {% set params={'page':page, 'query': query, 'filterQuery':filterQuery, 'orderQuery':orderQuery} %}
+                        {% set current= pagination.page %}
+                        <nav aria-label="Navigate through results">
+                            <ul class="pagination">
+                                {% if pagination.previousPage is not null %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">{{ "generic.previous"|trans }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">{{ "generic.previous"|trans }}</a>
+                                    </li>
+                                {% endif %}
+                                {% if current > 1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':1})) }}">1</a></li>
+                                {% endif %}
+
+                                {% if current-1 > 2 %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                {% endif %}
+
+                                {% if current-1 >=2 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page-1})) }}">{{ current-1 }}</a></li>
+                                {% endif %}
+
+                                <li class="page-item active"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page})) }}">{{ current }}</a></li>
 
 
-                    {% for book in computed.results.books|default([]) %}
-                        <li class="list-group-item">
-                            {% include themedTemplate('book/_result.html.twig') with {book: book.book} %}
-                        </li>
-                    {% endfor %}
-                    </ul>
+                                {% if current <= pagination.lastPage-1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.page+1})) }}">{{ current+1 }}</a></li>
+                                {% endif %}
+
+                                {% if current+1 < pagination.lastPage-1 %}
+                                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                                {% endif %}
+
+                                {% if current < pagination.lastPage-1 %}
+                                    <li class="page-item"><a class="page-link" href="{{ path(route, params|merge({'page':pagination.lastPage})) }}">{{ pagination.lastPage }}</a></li>
+                                {% endif %}
+
+                                {% if pagination.nextPage is not null %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.nextPage})) }}">{{ "generic.next"|trans }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">{{ "generic.next"|trans }}</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-arrow-down-up"></i> {{ "search.sort-results"|trans }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for orderField in ['serieIndex','updated'] %}
+                                    {% for order in ['asc','desc'] %}
+                                        {% set isIncluded= orderField~":"~order in orderQuery %}
+                                        <li>
+                                        <button type="button" class="dropdown-item btn {{ isIncluded?'active':''}} "
+                                                data-action="live#action click->search#focus"
+                                                data-live-action-param="replaceOrderBy"
+                                                data-live-value-param='{{ orderField }}:{{ order }}'
+                                        >
+                                            <small>{{ ('book.'~orderField)|trans }} {{ order }}</small>
+                                        </button>
+                                        </li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-10">
+                        <h5>{{ found }} {{ "generic.results"|trans }}</h5>
+                        <div class="row">
+                        {% for book in books %}
+                            <div class="col-6 col-md-3">
+                                {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        {% for facet in facets|default([]) %}
+                            <h5>{{ facet.field_name|capitalize }}</h5>
+                            <ul class="list-group mb-3">
+                                {% for count in facet.counts %}
+                                    {% include 'components/_facet.html.twig' %}
+                                {% endfor %}
+                            </ul>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" data-model="shelfname" placeholder="Shelf" aria-label="Add to shelf">
+
+                            <button
+                                data-action="live#action"
+                                data-live-action-param="save"
+                                class="btn btn-outline-success align-content-end"
+                            >
+                                <i class="bi bi-journal-check"></i> {{ "search.save-to-shelf"|trans }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
+                        {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 col-12">
-                {% for facet in computed.results.facets|default([]) %}
-                    {% if facet.counts|length>0 %}
-                        <h5 class="m-0 mb-2 fs-6">{{ facet.field_name|capitalize }}</h5>
-                        <ul class="list-group mb-4">
-                        {% for count in facet.counts %}
-                            <li class="list-group-item {{ count.value in query?'active' }}">
-                                <small>
-                                    {{ count.value }}
-                                    <span class="badge rounded-pill bg-primary">
-                                {{ count.count }}
-                                <span class="visually-hidden">records</span></small>
-                            </span>
-                            </li>
-                        {% endfor %}
-                            </ul>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
         {% endif %}
     </div>
 </div>

@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}
+    Test {{ ai_model }}
+{% endblock %}
+
+{% block body %}
+
+    <h2>{{ "ai.model-information"|trans }}</h2>
+    <table class="table">
+        <tr>
+            <th style="width: 20%;">{{ "ai.model-type"|trans }}</th>
+            <td>{{ ai_model.type }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.model"|trans }}</th>
+            <td>{{ ai_model.model }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.token"|trans }}</th>
+            <td>{{ ai_model.token }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.url"|trans }}</th>
+            <td>{{ ai_model.url }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.system-prompt"|trans }}</th>
+            <td>{{ ai_model.systemPrompt }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.use-epub-context"|trans }}</th>
+            <td>{{ ai_model.useEpubContext?"generic.yes"|trans :"generic.no"|trans }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.use-wikipedia-context"|trans }}</th>
+            <td>{{ ai_model.useWikipediaContext?"generic.yes"|trans :"generic.no"|trans }}</td>
+        </tr>
+        <tr>
+            <th>{{ "ai.use-amazon-context"|trans }}</th>
+            <td>{{ ai_model.useAmazonContext?"generic.yes"|trans :"generic.no"|trans }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href="{{ path('app_ai_model_edit', {'id':ai_model.id}) }}">{{ "ai.edit-model-configuration"|trans }}</a>
+            </td>
+        </tr>
+    </table>
+
+    <h2>{{ "ai.prompts-and-context"|trans }}</h2>
+    <table class="table">
+        <tr>
+            <th style="width: 20%;">{{ "ai.test-book"|trans }}</th>
+            <td>
+                {{ book.title }} ({{ book.authors|join(' and ') }})
+                <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">{{ "generic.edit"|trans }}</a>
+            </td>
+        </tr>
+        <tr>
+            <th style="width: 20%;">{{ "ai.initial-tag-prompt"|trans }}</th>
+            <td>
+                {{ initialTagPrompt.prompt|nl2br }}
+                <a href="{{ path('app_user_profile') }}">{{ "ai.edit-prompt"|trans }}</a>
+
+            </td>
+        </tr>
+        <tr>
+            <th>{{ "ai.initial-summary-prompt"|trans }}</th>
+            <td>{{ initialSummaryPrompt.prompt|nl2br }}
+                <a href="{{ path('app_user_profile') }}">{{ "ai.edit-prompt"|trans }}</a>
+
+            </td>
+        </tr>
+        {% if tagPrompt.prompt!=initialTagPrompt.prompt %}
+        <tr>
+            <th style="width: 20%;">{{ "ai.tag-prompt-with-context"|trans }}</th>
+            <td>
+                <details>
+                    <summary>{{ "generic.show"|trans }}</summary>
+                    {{ tagPrompt.prompt|nl2br }}
+                </details>
+            </td>
+        </tr>
+        {% endif %}
+        {% if tagPrompt.prompt!=initialTagPrompt.prompt %}
+
+        <tr>
+            <th style="width: 20%;">{{ "ai.summary-prompt-with-context"|trans }}</th>
+            <td>
+                <details>
+                    <summary>{{ "generic.show"|trans }}</summary>
+                    {{ summaryPrompt.prompt|nl2br }}
+                </details>
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+
+    {% if tagPromptResponse!='' or summaryPromptResponse!='' %}
+    <h2>{{ "ai.responses-to-prompt-with-context"|trans }}</h2>
+
+    <table class="table" id="results">
+        <tr>
+            <th style="width: 20%;">{{ "ai.tag-prompt"|trans }}</th>
+            <td><code id="tag-result">{{ tagPromptResponse|join(', ') }}</code></td>
+        </tr>
+        <tr>
+            <th>{{ "ai.summary-prompt"|trans }}</th>
+            <td><code id="summary-result">{{ summaryPromptResponse }}</code></td>
+        </tr>
+    </table>
+    {% endif %}
+
+    <form action="{{ path('app_ai_model_test', {'id':ai_model.id}) }}" method="post">
+        <input type="submit" value="{{ "ai.test-model"|trans }}" class="btn btn-primary" />
+    </form>
+
+{% endblock %}
+
+

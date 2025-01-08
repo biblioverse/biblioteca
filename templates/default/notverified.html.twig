@@ -1,0 +1,98 @@
+{% extends themedTemplate('base.html.twig') %}
+
+{% block title %} {{ "notverified.all-books"|trans }} {% endblock %}
+{% block body %}
+
+    {% if books|length==0 %}
+        <div class="alert alert-success">
+            {{ "notverified.all-books-have-been-verified"|trans }}
+        </div>
+    {% else %}
+    <h2>{{ "notverified.batch-edit-all-books-in-the-list"|trans }}</h2>
+    {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
+    {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
+    {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
+    {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
+    {% if books|length>0 and is_granted('RELOCATE', books|first) %}
+    <a href="{{ path('app_notverified', {'action':'relocate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.relocate-all-books"|trans }}</a>
+    {% endif %}
+    <a href="{{ path('app_notverified', {'action':'extract'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.extract-all-covers"|trans }}</a>
+    <a href="{{ path('app_notverified', {'action':'validate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.mark-all-as-validated"|trans }}</a>
+
+    <h2 class="mt-5">
+        {{ "notverified.books"|trans }}
+    </h2>
+    {% if books|length>=100 %}
+        <div class="alert alert-warning">
+            {{ "notverified.only-the-first-100-books-are-displayed"|trans }}
+        </div>
+    {% endif %}
+        <table class="table-striped table table-bordered table-hover">
+            <tr>
+                {# sorting of properties based on query components #}
+                <th style="width:90px">
+                </th>
+                <th>
+                    {{ 'book.title'|trans }}
+                </th>
+                <th style="width:90px"></th>
+            </tr>
+
+            {% for book in books %}
+                <tr>
+                    <td>
+
+                        {% if book.imageFilename is not null %}
+                            <a href="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" target="_blank">
+                                <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
+                            </a>
+                        {% else %}
+                            <img class="w-100" src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
+                        {% endif %}
+                        <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
+                            {{ "book.book-details"|trans }}
+                        </a>
+
+                        {% if book.imageFilename is null %}
+                            <a href="{{ path('app_extractCover', { 'id':book.id }) }}" >Get Cover</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div>
+                        {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
+                        </div>
+                        <div>
+                        {{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}
+                            {% for author in book.authors %}
+                                {% if author=='Unknown' %}
+                                    <span class="badge bg-warning">{{ "book.unknown-author"|trans }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div>
+                            {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
+
+                            {% if book.serie is not null %}
+                                <div class="w-25"> {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}</div>
+                            {% endif %}
+                            {{ component('FieldGuesser',{'book':book}) }}
+                        </div>
+                        <div>
+                        {{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}
+                        </div>
+                        {{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}
+                    </td>
+                    <td>
+                        {% if not book.verified and is_granted('RELOCATE', book) %}
+                            {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
+                            <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">{{ "book.relocate"|trans }}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+{% endblock %}
+
+

@@ -2,7 +2,8 @@
 
 namespace App\Ai\Context;
 
-use App\Ai\Prompt\AbstractBookPrompt;
+use App\Ai\Prompt\BookPromptInterface;
+use App\Entity\AiModel;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -18,7 +19,7 @@ class ContextBuilder
     ) {
     }
 
-    public function getContext(AbstractBookPrompt $abstractBookPrompt, ?OutputInterface $output = null): AbstractBookPrompt
+    public function getContext(AiModel $aiModel, BookPromptInterface $abstractBookPrompt, ?OutputInterface $output = null): BookPromptInterface
     {
         if (!$output instanceof OutputInterface) {
             $output = new NullOutput();
@@ -29,7 +30,7 @@ class ContextBuilder
 ---------------------
 ";
         foreach ($this->handlers as $handler) {
-            if ($handler->isEnabled()) {
+            if ($handler->isEnabled($aiModel, $abstractBookPrompt->getBook())) {
                 try {
                     $prompt .= $handler->getContextForPrompt($abstractBookPrompt->getBook());
                     $hasContext = true;
@@ -40,7 +41,7 @@ class ContextBuilder
         }
         $prompt .= '
 ---------------------
-Given the context information and not prior knowledge, answer the query.
+Given the context information, answer the query.
 Query: '.$abstractBookPrompt->getPrompt();
 
         if ($hasContext) {

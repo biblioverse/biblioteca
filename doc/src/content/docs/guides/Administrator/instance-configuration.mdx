@@ -1,0 +1,5 @@
+---
+title: Instance Configuration
+---
+
+Go to `/configuration` to configure or see the .env.local variables that can be configured.

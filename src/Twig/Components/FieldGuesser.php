@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -25,6 +26,7 @@ class FieldGuesser extends AbstractController
     public ?string $flashMessage = null;
 
     #[LiveAction]
+    #[LiveListener('submit')]
     public function accept(EntityManagerInterface $entityManager): void
     {
         $this->book->setSerie($this->guessSerie());
@@ -37,6 +39,7 @@ class FieldGuesser extends AbstractController
     }
 
     #[LiveAction]
+    #[LiveListener('submit')]
     public function acceptIndex(EntityManagerInterface $entityManager): void
     {
         $this->book->setSerieIndex((float) $this->guessIndex());
@@ -47,6 +50,7 @@ class FieldGuesser extends AbstractController
     }
 
     #[LiveAction]
+    #[LiveListener('submit')]
     public function acceptIndexAndRename(EntityManagerInterface $entityManager): void
     {
         $this->book->setSerieIndex((float) $this->guessIndex());
