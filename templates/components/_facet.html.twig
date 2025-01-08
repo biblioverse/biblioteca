@@ -13,7 +13,7 @@
             {{ label }}
             {% if count.count is not null %}
                 <span class="badge rounded-pill bg-primary">
-                    {{ count.count }} <span class="visually-hidden">records</span>
+                    {{ count.count }} <span class="visually-hidden">{{ "search.records"|trans }}</span>
                 </span>
             {% endif %}
         </small>

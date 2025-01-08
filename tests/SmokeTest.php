@@ -2,6 +2,9 @@
 
 namespace App\Tests;
 
+use App\DataFixtures\UserFixture;
+use App\Entity\Book;
+use App\Repository\BookRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,7 +12,61 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SmokeTest extends WebTestCase
 {
-    public function testSomething(): void
+    public function testBookPage(): void
+    {
+        $client = static::createClient();
+        $bookRepository = static::getContainer()->get(BookRepository::class);
+
+        if (!$bookRepository instanceof BookRepository) {
+            self::fail('Bookrepository not found');
+        }
+
+        $book = $bookRepository->findOneBy(['title' => 'Moby Dick']);
+
+        if (!$book instanceof Book) {
+            self::fail('Book not found');
+        }
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        if (!$userRepository instanceof UserRepository) {
+            self::fail('UserRepository not found');
+        }
+
+        $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
+        $childUser = $userRepository->findOneBy(['username' => UserFixture::CHILD_USERNAME]);
+
+        if (!$testUser instanceof UserInterface) {
+            self::fail('User not found');
+        }
+
+        if (!$childUser instanceof UserInterface) {
+            self::fail('User not found');
+        }
+
+        $client->loginUser($testUser);
+
+        $client->request(Request::METHOD_GET, '/books/'.$book->getId().'/'.$book->getSlug());
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', $book->getTitle());
+
+        $client->request(Request::METHOD_GET, '/books/'.$book->getId().'/aaaaaaaaaa');
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', $book->getTitle());
+
+        $client->request(Request::METHOD_GET, '/books/'.$book->getId().'/'.$book->getSlug().'/read');
+        self::assertResponseIsSuccessful();
+
+        $client->loginUser($childUser);
+
+        $client->request(Request::METHOD_GET, '/books/'.$book->getId().'/'.$book->getSlug());
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Aloha');
+    }
+
+    public function testUrls(): void
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);

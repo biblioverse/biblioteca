@@ -28,6 +28,7 @@ class ShelfType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Shelf::class,
+            'label_translation_prefix' => 'shelf.form.',
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Opds;
 
 use App\DataFixtures\OpdsAccessFixture;
+use App\DataFixtures\UserFixture;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +65,7 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
             self::fail('UserRepository not found');
         }
 
-        $testUser = $userRepository->findOneBy(['username' => 'admin@example.com']);
+        $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
 
         if (!$testUser instanceof UserInterface) {
             self::fail('User not found');
@@ -88,7 +89,7 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
         $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
         self::assertResponseIsSuccessful();
 
-        $client->clickLink('Create new');
+        $client->clickLink('Create');
 
         $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
         self::assertResponseIsSuccessful();

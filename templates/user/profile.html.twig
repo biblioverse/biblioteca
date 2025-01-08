@@ -1,5 +1,9 @@
 {% extends themedTemplate('base.html.twig') %}
 
+{% block title %}
+    {{ "profile.my-profile"|trans }}
+{% endblock %}
+
 {% block body %}
 
 <ul class="nav nav-tabs">
@@ -20,7 +24,7 @@
 
                 <div class="card m-2">
                     <div class="card-header">
-                        Kobo reader settings
+                        {{ "kobo.device.reader-settings"|trans }}
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-striped">
@@ -37,21 +41,21 @@
 
                         {% endfor %}
                         </table>
-                        <a href="{{ path('app_kobodevice_user_new') }}">Create new Kobo device</a>
+                        <a href="{{ path('app_kobodevice_user_new') }}">{{ "kobo.device.create-new"|trans }}</a>
                     </div>
                 </div>
             {% elseif tab == 'opds' %}
                 <div class="card m-2">
                     <div class="card-header">
-                        OPDS Access
+                        {{ "opds.access-settings"|trans }}
                     </div>
                     <div class="card-body">
                         {% if opds_access is not null %}
                             <strong>{{ opds_access.token }}</strong><br>
-                            <small>OPDS Catalog: {{ url('opds_start',{'accessKey':opds_access.token}) }}</small>
+                            <small>{{ 'opds.catalog'|trans }}: {{ url('opds_start',{'accessKey':opds_access.token}) }}</small>
                             <br><a href="{{ path('app_opds_access_delete', {'id': opds_access.id}) }}" class="btn btn-sm btn-danger">Remove token</a>
                         {% else %}
-                            <a href="{{ path('app_opds_access_new') }}" class="btn btn-success">Create new</a>
+                            <a href="{{ path('app_opds_access_new') }}" class="btn btn-success">{{ "generic.create"|trans }}</a>
                         {% endif %}
 
                     </div>
@@ -60,7 +64,7 @@
                 {{ form_start(form) }}
                 <div class="card m-2">
                     <div class="card-header">
-                        User information
+                        {{ 'profile.user-information'|trans }}
                     </div>
                     <div class="card-body">
                         {{ form_row(form.plainPassword) }}
@@ -83,7 +87,7 @@
                 </div>
                 <div class="card m-2">
                     <div class="card-header">
-                        ChatGPT Features
+                        {{ 'ai.ai-features'|trans }}
                     </div>
                     <div class="card-body">
                         {{ form_row(form.bookKeywordPrompt) }}
@@ -100,8 +104,4 @@
 
 
 
-{% endblock %}
-
-{% block title %}
-    My profile
 {% endblock %}

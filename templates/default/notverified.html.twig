@@ -1,30 +1,30 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %} All books {% endblock %}
+{% block title %} {{ "notverified.all-books"|trans }} {% endblock %}
 {% block body %}
 
     {% if books|length==0 %}
         <div class="alert alert-success">
-            All books have been verified
+            {{ "notverified.all-books-have-been-verified"|trans }}
         </div>
     {% else %}
-    <h2>Batch edit all books in the list</h2>
+    <h2>{{ "notverified.batch-edit-all-books-in-the-list"|trans }}</h2>
     {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
     {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
     {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
     {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
     {% if books|length>0 and is_granted('RELOCATE', books|first) %}
-    <a href="{{ path('app_notverified', {'action':'relocate'}) }}" class="btn btn-sm btn-outline-danger">Relocate all books</a>
+    <a href="{{ path('app_notverified', {'action':'relocate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.relocate-all-books"|trans }}</a>
     {% endif %}
-    <a href="{{ path('app_notverified', {'action':'extract'}) }}" class="btn btn-sm btn-outline-danger">Extract all covers</a>
-    <a href="{{ path('app_notverified', {'action':'validate'}) }}" class="btn btn-sm btn-outline-danger">Mark all as validated</a>
+    <a href="{{ path('app_notverified', {'action':'extract'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.extract-all-covers"|trans }}</a>
+    <a href="{{ path('app_notverified', {'action':'validate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.mark-all-as-validated"|trans }}</a>
 
     <h2 class="mt-5">
-        Books
+        {{ "notverified.books"|trans }}
     </h2>
     {% if books|length>=100 %}
         <div class="alert alert-warning">
-            Only the first 100 books are displayed.
+            {{ "notverified.only-the-first-100-books-are-displayed"|trans }}
         </div>
     {% endif %}
         <table class="table-striped table table-bordered table-hover">
@@ -33,7 +33,7 @@
                 <th style="width:90px">
                 </th>
                 <th>
-                    {{ 'title'|trans }}
+                    {{ 'book.title'|trans }}
                 </th>
                 <th style="width:90px"></th>
             </tr>
@@ -50,7 +50,7 @@
                             <img class="w-100" src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
                         {% endif %}
                         <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
-                        Book details
+                            {{ "book.book-details"|trans }}
                         </a>
 
                         {% if book.imageFilename is null %}
@@ -65,7 +65,7 @@
                         {{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}
                             {% for author in book.authors %}
                                 {% if author=='Unknown' %}
-                                    <span class="badge bg-warning">{{ author }} author</span>
+                                    <span class="badge bg-warning">{{ "book.unknown-author"|trans }}</span>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -85,7 +85,7 @@
                     <td>
                         {% if not book.verified and is_granted('RELOCATE', book) %}
                             {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
-                            <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
+                            <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">{{ "book.relocate"|trans }}</a>
                         {% endif %}
                     </td>
                 </tr>

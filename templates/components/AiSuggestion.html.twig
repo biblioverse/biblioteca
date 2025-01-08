@@ -2,7 +2,7 @@
 
     <button class="btn btn-link btn-sm text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#{{ field }}" type="button"
             data-toggle="tooltip" data-placement="bottom" >
-        Generate {{ field }}
+        {{ "ai.generate"|trans }} {{ field }}
     </button>
 
     {% component BootstrapModal with {id: field} %}
@@ -17,10 +17,10 @@
             >{{ prompt }}</textarea>
             <button data-loading="hide" type="button" class="btn btn-primary"data-action="live#action"
                     data-live-action-param="prevent|generate"
-            >Generate</button>
+            >{{ "ai.generate"|trans }}</button>
 
             <div class="mt-3 alert alert-info" data-loading="show">
-                Querying for context and building a response... please wait.
+                {{ "ai.querying-for-context-and-building-a-response-please-wait"|trans }}
             </div>
 
 

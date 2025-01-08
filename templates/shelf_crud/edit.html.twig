@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Shelf{% endblock %}
+{% block title %}{{ "shelf.edit-shelf"|trans }}{% endblock %}
 
 {% block body %}
-    {{ include('shelf_crud/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('shelf_crud/_form.html.twig', {'button_label': 'generic.update'}) }}
 {% endblock %}

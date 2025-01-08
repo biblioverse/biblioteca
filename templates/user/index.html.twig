@@ -1,15 +1,15 @@
 {% extends themedTemplate('base.html.twig') %}
 
-{% block title %}Manage users{% endblock %}
+{% block title %}{{ "user.manage-users"|trans }}{% endblock %}
 
 {% block body %}
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Roles</th>
-                <th>Max Age Category</th>
-                <th>Last Login</th>
+                <th>{{ 'user.username'|trans }}</th>
+                <th>{{ 'user.roles'|trans }}</th>
+                <th>{{ "user.max-age-category"|trans }}</th>
+                <th>{{ "user.last-login"|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -36,5 +36,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_user_new') }}" class="btn btn-primary">Create new</a>
+    <a href="{{ path('app_user_new') }}" class="btn btn-primary">{{ "generic.create"|trans }}</a>
 {% endblock %}

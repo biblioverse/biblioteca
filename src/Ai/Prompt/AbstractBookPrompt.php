@@ -2,6 +2,7 @@
 
 namespace App\Ai\Prompt;
 
+use App\Config\ConfigValue;
 use App\Entity\Book;
 use App\Entity\User;
 
@@ -9,9 +10,8 @@ abstract class AbstractBookPrompt implements BookPromptInterface
 {
     protected string $prompt;
 
-    public function __construct(protected Book $book, protected ?User $user)
+    public function __construct(protected Book $book, protected ?User $user, protected ConfigValue $config)
     {
-        $this->initialisePrompt();
     }
 
     #[\Override]
@@ -26,11 +26,13 @@ abstract class AbstractBookPrompt implements BookPromptInterface
         $this->prompt = $prompt;
     }
 
+    #[\Override]
     public function getBook(): Book
     {
         return $this->book;
     }
 
+    #[\Override]
     public function replaceBookOccurrence(string $prompt): string
     {
         $title = $this->book->getTitle();

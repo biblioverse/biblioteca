@@ -9,4 +9,4 @@ preferences.
 
 You can also change your theme.
 
-If you are an administrator, you can also configure your [chatGpt settings](../../administrator/openai-configuration)
+If you are an administrator, you can also configure your [AI settings](../../administrator/ai-features-configuration)

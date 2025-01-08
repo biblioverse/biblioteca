@@ -2,22 +2,22 @@
 
 namespace App\Ai\Context;
 
+use App\Entity\AiModel;
 use App\Entity\Book;
 use App\Service\BookFileSystemManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\Formats\Epub\EpubModule;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class EpubContextBuilder implements ContextBuildingInteface
 {
-    public function __construct(private readonly BookFileSystemManagerInterface $bookFileSystemManager, #[Autowire(param: 'AI_CONTEXT_FULL_EPUB')] private readonly bool $enable)
+    public function __construct(private readonly BookFileSystemManagerInterface $bookFileSystemManager)
     {
     }
 
     #[\Override]
-    public function isEnabled(): bool
+    public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $this->enable;
+        return $aiModel->isUseEpubContext() === true;
     }
 
     #[\Override]

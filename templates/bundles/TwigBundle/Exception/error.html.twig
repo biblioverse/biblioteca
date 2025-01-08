@@ -3,9 +3,12 @@
 
 {% block title %}{{ status_text }}{% endblock %}
 {% block body %}
-    <h1>{{ status_code }} {{ status_text }}</h1>
-
-    <h2>{{exception.message}}</h2>
-    <pre>{{ exception.traceAsString }}</pre>
+    <h1>{{ "error.error-happened"|trans }}</h1>
+    <h2>{{ status_code }} {{ status_text }}</h2>
+    <h3>{{exception.message}}</h3>
+    <details>
+        <summary>{{ "error.stack-trace"|trans }}</summary>
+        {{ exception.traceAsString }}
+    </details>
 
 {% endblock %}

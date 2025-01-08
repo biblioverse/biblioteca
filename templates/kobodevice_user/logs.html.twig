@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Kobo Proxy Logs{% endblock %}
+{% block title %}{{ "kobo.logs.title"|trans }}{% endblock %}
 
 {% block body %}
     <table class="table table-bordered table-striped table-hover table-responsive">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Device</th>
-                <th>channel</th>
-                <th>Message</th>
+                <th>{{ "kobo.logs.date"|trans }}</th>
+                <th>{{ "kobo.logs.device"|trans }}</th>
+                <th>{{ "kobo.logs.channel"|trans }}</th>
+                <th>{{ "kobo.logs.message"|trans }}</th>
             </tr>
         </thead>
         <tbody>

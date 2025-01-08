@@ -76,7 +76,7 @@ final class MenuBuilder
         if ($user->isDisplayPublishers()) {
             $books->addChild('menu.publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true);
+        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true)->setExtra('translation_domain', false);
         $profile->addChild('menu.readinglist', ['route' => 'app_readinglist', ...$this->defaultAttr])->setExtra('icon', 'list-task');
         if ($user->isDisplayTimeline()) {
             $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
@@ -91,10 +91,10 @@ final class MenuBuilder
                 /** @var Shelf $shelf */
                 if ($shelf->getQueryString() !== null) {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => ['page' => 1, 'filterQuery' => $shelf->getQueryFilter(), 'orderQuery' => $shelf->getQueryOrder(), 'query' => $shelf->getQueryString()], ...$this->defaultAttr])
-                        ->setExtra('icon', 'bookmark-fill');
+                        ->setExtra('icon', 'bookmark-fill')->setExtra('translation_domain', false);
                 } else {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_shelf', 'routeParameters' => ['slug' => $shelf->getSlug()], ...$this->defaultAttr])
-                        ->setExtra('icon', 'bookshelf');
+                        ->setExtra('icon', 'bookshelf')->setExtra('translation_domain', false);
                 }
             }
         }
@@ -106,7 +106,8 @@ final class MenuBuilder
             $admin->addChild('menu.useradmin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            $admin->addChild('menu.instanceconfig', ['route' => 'app_configuration', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+            $admin->addChild('menu.instanceconfig', ['route' => 'app_instance_configuration_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+            $admin->addChild('menu.aimodels', ['route' => 'app_ai_model_index', ...$this->defaultAttr])->setExtra('icon', 'magic');
             $admin->addChild('menu.notverified', ['route' => 'app_notverified', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
         }
 
