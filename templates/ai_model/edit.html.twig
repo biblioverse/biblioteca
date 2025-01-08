@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "ai.edit-ai-model"|trans }}{% endblock %}
+
+{% block body %}
+    <h1>Edit AiModel</h1>
+
+    {{ include('ai_model/_form.html.twig', {'button_label': 'generic.update'}) }}
+
+    <a href="{{ path('app_ai_model_index') }}">{{ "generic.back-to-list"|trans }}</a>
+
+{% endblock %}

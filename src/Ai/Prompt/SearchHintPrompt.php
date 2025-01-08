@@ -2,6 +2,8 @@
 
 namespace App\Ai\Prompt;
 
+use App\Entity\Book;
+
 class SearchHintPrompt implements BookPromptInterface
 {
     private string $prompt;
@@ -21,6 +23,12 @@ class SearchHintPrompt implements BookPromptInterface
     #[\Override]
     public function initialisePrompt(): void
     {
+    }
+
+    #[\Override]
+    public function getBook(): Book
+    {
+        return new Book();
     }
 
     #[\Override]
@@ -118,5 +126,11 @@ Provide the valid JSON with the correct filter format, only include fields with 
 ';
 
         return str_replace(['{series}', '{authors}', '{tags}'], [implode(',', $series), implode(',', $authors), implode(',', $tags)], $baseprompt);
+    }
+
+    #[\Override]
+    public function replaceBookOccurrence(string $prompt): string
+    {
+        return $prompt;
     }
 }

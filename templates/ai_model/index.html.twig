@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ai Models{% endblock %}
+
+{% block body %}
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>{{ "ai.id"|trans }}</th>
+                <th>{{ "ai.type"|trans }}</th>
+                <th>{{ "ai.url"|trans }}</th>
+                <th>{{ "ai.model"|trans }}</th>
+                <th>{{ "ai.context"|trans }}</th>
+                <th>{{ "ai.actions"|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ai_model in ai_models %}
+            <tr>
+                <td>{{ ai_model.id }}</td>
+                <td>{{ ai_model.type }}</td>
+                <td>{{ ai_model.url }}</td>
+                <td>{{ ai_model.model }}</td>
+                <td>
+                    {{ ai_model.useAmazonContext?'Amazon' }}
+                    {{ ai_model.useWikipediaContext?'Wikipedia' }}
+                    {{ ai_model.useEpubContext?'Epub' }}
+                </td>
+                <td>
+                    <div class="btn-group">
+                    <a class="btn btn-primary" href="{{ path('app_ai_model_test', {'id': ai_model.id}) }}">Test</a>
+                    <a class="btn btn-primary" href="{{ path('app_ai_model_edit', {'id': ai_model.id}) }}">{{ "generic.edit"|trans }}</a>
+                    <a class="btn btn-danger" onclick="return confirm('Are you sure?')" href="{{ path('app_ai_model_delete', {'id': ai_model.id}) }}">{{ "generic.delete"|trans }}</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">{{ "generic.no-records-found"|trans }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_ai_model_new') }}" class="btn btn-primary">{{ "ai.create-new-model"|trans }}</a>
+
+    <h2 class="mt-3">{{ "ai.usage-configuration"|trans }}</h2>
+
+    {{ form(form) }}
+
+
+
+{% endblock %}

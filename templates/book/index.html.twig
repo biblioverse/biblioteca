@@ -10,7 +10,7 @@
                     <a class="nav-link active" aria-current="page" href="#">Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'download'|trans }} {{ book.extension }}</a>
+                    <a class="nav-link" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}</a>
                 </li>
                 <li class="nav-item d-none d-sm-block">
                     <a class="nav-link" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}"><i class="bi bi-file-earmark-arrow-up"></i>
@@ -21,9 +21,9 @@
         </div>
         <div class="col-md-3 col-xs-6 col-sm-6">
             {% if book.imageFilename is not null %}
-                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'picture.for'|trans }} {{ book.title }}">
+                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'book.picture-for-book'|trans }} {{ book.title }}">
             {% else %}
-                <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'no.picture.for'|trans }} {{ book.title }}">
+                <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'book.no-picture-for'|trans }} {{ book.title }}">
             {% endif %}
             {{ include('book/_interaction.html.twig') }}
 
@@ -35,13 +35,13 @@
         <div class="col-md-9">
             <table class="table w-100  mb-5">
                 <tr>
-                    <th style="width:15%;">{{ 'title'|trans }}</th>
+                    <th style="width:15%;">{{ 'book.title'|trans }}</th>
                     <td>
                         {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'Read state'|trans }}</th>
+                    <th>{{ 'book.read-state'|trans }}</th>
                     <td>
                         {% if interaction is not null and interaction.finished %}
                             Finished
@@ -57,16 +57,16 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'authors'|trans }}</th>
+                    <th>{{ 'book.authors'|trans }}</th>
                     <td>{{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'summary'|trans }}</th><td>
+                    <th>{{ 'book.summary'|trans }}</th><td>
                         {{ component('InlineEditBook', {'book':book, 'field':'summary'}) }}
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'serie'|trans }}</th><td>
+                    <th>{{ 'book.serie'|trans }}</th><td>
                         <div>
                             {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
                         </div>
@@ -79,15 +79,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher'}) }}</td>
+                    <th>{{ 'book.publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher'}) }}</td>
                 </tr>
 
                 <tr>
-                    <th>{{ 'Age'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}</td>
+                    <th>{{ 'book.age-category'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}</td>
                 </tr>
 
                 <tr>
-                    <th>{{ 'tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
+                    <th>{{ 'book.tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
                 </tr>
                 {% if not book.verified %}
 
@@ -96,19 +96,20 @@
                         <td>
                             <ul class="small m-0">
                                 <li>
-                                    <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'search.google.images'|trans }}</a>
+                                    <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'book.search-google-images'|trans }}</a>
                                 </li>
-                                {% if is_granted('USE_AI_FEATURES') %}
+                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Tags ) %}
                                 <li>
                                     {{ component('AiSuggestion', {book: book, field:'tags'}) }}
                                 </li>
-
+                                {% endif %}
+                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Summary ) %}
                                 <li>
                                     {{ component('AiSuggestion', {book: book, field:'summary'}) }}
                                 </li>
                                 {% endif %}
                                 <li>
-                                    <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'extract.from-file'|trans }}</a>
+                                    <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'book.extract-cover-from-file'|trans }}</a>
                                 </li>
                             </ul>
                         </td>
@@ -117,8 +118,8 @@
                         <th>Paths</th>
                         <td>
                             <ul class="small m-0">
-                                <li>{{ 'book'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
-                                <li>{{ 'image'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
+                                <li>{{ 'book.book-path'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
+                                <li>{{ 'book.image-path'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
                                 {% if not book.verified and needsRelocation %}
                                     <li class="text-danger">Calculated path: <br><code>{{ calculatedPath }}</code>
                                         {% if is_granted('RELOCATE', book) %}
@@ -134,19 +135,19 @@
 
                 {% if app.debug %}
                 <tr>
-                    <th>{{ 'Number of pages'|trans }}</th>
+                    <th>{{ 'book.number-of-pages'|trans }}</th>
                     <td>
                         {{ component('InlineEditBook', {'book':book, 'field':'pageNumber'}) }}
                     </td>
                 </tr>
                 <tr>
-                    <th>{{ 'UUID'|trans }}</th>
+                    <th>{{ 'book.uuid'|trans }}</th>
                     <td>{{ book.uuid }}</td>
                 </tr>
                 {% endif %}
 
                 <tr>
-                    <th>{{ 'verified'|trans }}</th>
+                    <th>{{ 'book.verified'|trans }}</th>
                     <td>{{ component('InlineEditBook', {'book':book, 'field':'verified'}) }}</td>
                 </tr>
 
@@ -156,14 +157,14 @@
 
             {% if serie|length > 0 %}
                 {% if serieMax>=1 %}
-                    <h5>{{ 'books.in.serie'|trans }}</h5>
+                    <h5>{{ 'books.in-serie'|trans }}</h5>
                     <div class="row">
                         {% for index in 1..serieMax %}
                             <div class="col-4 col-md-2">
                                 {% if (serie[index] is not defined or serie[index]|length>1) %}
                                     <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
                                     {% if (serie[index] is not defined) %}Missing book{% endif %}
-                                    {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same.index'|trans }}{% endif %}
+                                    {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same-index'|trans }}{% endif %}
                                     </span>
                                 {% endif %}
                                 {% if serie[index] is defined %}
@@ -178,7 +179,7 @@
                     </div>
                 {% endif %}
                 {% if serie['?'] is defined %}
-                    <h5>{{ 'other.books'|trans }}</h5>
+                    <h5>{{ 'books.other-books'|trans }}</h5>
                     <div class="row">
                         {% for indexBook in serie['?'] %}
                             <div class="col-4 col-md-2">
@@ -189,7 +190,7 @@
                 {% endif %}
             {% endif %}
             {% if sameAuthor is not empty %}
-                <h5>{{ 'books.same.author'|trans }}</h5>
+                <h5>{{ 'books.same-author'|trans }}</h5>
                 <div class="row">
                     {% for indexBook in sameAuthor %}
                         <div class="col-4 col-md-2">
@@ -216,9 +217,9 @@
     {% if is_granted('ROLE_ADMIN') %}
     <div class="row">
         <details>
-            <summary>Delete Book</summary>
+            <summary>{{ "book.delete-book"|trans }}</summary>
             <div class="alert alert-danger">
-                This action is irreversible.
+                {{ "book.this-action-is-irreversible"|trans }}
             </div>
             {{ form(form) }}
 

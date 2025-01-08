@@ -16,6 +16,9 @@ class UserFixture extends Fixture
     public const USER_USERNAME = 'admin@example.com';
     public const USER_PASSWORD = 'admin@example.com';
 
+    public const CHILD_USERNAME = 'child@example.com';
+    public const CHILD_PASSWORD = 'child@example.com';
+
     public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
     {
     }
@@ -26,6 +29,7 @@ class UserFixture extends Fixture
         $user = new User();
         $user->setUsername(self::USER_USERNAME);
         $user->setBirthday(new \DateTimeImmutable('1990-01-01'));
+        $user->setLanguage('en');
         $user->setPassword($this->passwordHasher->hashPassword($user, self::USER_PASSWORD));
         $user->setRoles(['ROLE_ADMIN']);
 
@@ -33,5 +37,16 @@ class UserFixture extends Fixture
         $manager->flush();
 
         $this->addReference(self::USER_REFERENCE, $user);
+
+        $user = new User();
+        $user->setUsername(self::CHILD_USERNAME);
+        $user->setBirthday(new \DateTimeImmutable('1990-01-01'));
+        $user->setLanguage('en');
+        $user->setMaxAgeCategory(1);
+        $user->setPassword($this->passwordHasher->hashPassword($user, self::CHILD_PASSWORD));
+        $user->setRoles(['ROLE_USER']);
+
+        $manager->persist($user);
+        $manager->flush();
     }
 }

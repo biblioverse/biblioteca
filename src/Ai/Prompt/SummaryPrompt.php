@@ -6,15 +6,13 @@ use App\Entity\User;
 
 class SummaryPrompt extends AbstractBookPrompt
 {
-    public const DEFAULT_KEYWORD_PROMPT = 'Can you write a short summary for the following book: {book}?';
-
     #[\Override]
     public function initialisePrompt(): void
     {
-        $prompt = self::DEFAULT_KEYWORD_PROMPT;
+        $prompt = $this->config->resolve('AI_SUMMARY_PROMPT');
 
         if ($this->user instanceof User) {
-            $prompt = $this->user->getBookSummaryPrompt() ?? self::DEFAULT_KEYWORD_PROMPT;
+            $prompt = $this->user->getBookSummaryPrompt() ?? $prompt;
         }
 
         $prompt .= ' Remember to keep it short and concise. Do not add any comment or opinion, only the summary must be returned.';

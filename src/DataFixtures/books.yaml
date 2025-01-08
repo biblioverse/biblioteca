@@ -22,6 +22,7 @@ books:
     pageNumber: 60
   - title: "Moby Dick"
     authors: ["Herman Melville"]
+    tags: ["book"]
     publishDate: "1851-10-18"
     language: "en"
     publisher: "Public domain"
@@ -29,9 +30,13 @@ books:
     imageExtension: "jpg"
     imageFilename: "MobyDick.jpg"
     bookFilename: "fake-MobyDick.epub"
+    serie: 'test'
+    serieIndex: 1
+    ageCategory: 5
     pageNumber: 70
   - title: "Great Expectations"
     authors: ["Charles Dickens"]
+    tags: [ "book" ]
     publishDate: "1861-08-01"
     language: "en"
     publisher: "Public domain"
@@ -39,9 +44,12 @@ books:
     imageExtension: "jpg"
     imageFilename: "GreatExpectations.jpg"
     bookFilename: "fake-GreatExpectations.epub"
+    serie: 'test'
+    serieIndex: 2
     pageNumber: 80
   - title: "Dracula"
     authors: ["Bram Stoker"]
+    tags: [ "book", "vampire" ]
     publishDate: "1897-05-26"
     language: "en"
     publisher: "Public domain"
@@ -49,9 +57,12 @@ books:
     imageExtension: "jpg"
     imageFilename: "Dracula.jpg"
     bookFilename: "fake-Dracula.epub"
+    serie: 'test'
+    serieIndex: 0
     pageNumber: 90
   - title: "Frankenstein"
     authors: ["Mary Shelley"]
+    tags: [ "monster" ]
     publishDate: "1818-01-01"
     language: "en"
     publisher: "Public domain"

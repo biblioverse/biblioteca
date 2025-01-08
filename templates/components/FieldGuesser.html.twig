@@ -6,9 +6,9 @@
             data-live-action-param="prevent|accept"
             class="btn btn-sm btn-outline-success"
         >
-            {{ 'author'|trans }}: {{ this.guessAuthor }} //
-            {{ 'serie'|trans }}:{{ this.guessSerie }} //
-            {{ 'index'|trans }}: {{ this.guessIndex }}
+            {{ 'book.author'|trans }}: {{ this.guessAuthor }} //
+            {{ 'book.serie'|trans }}:{{ this.guessSerie }} //
+            {{ 'book.index'|trans }}: {{ this.guessIndex }}
 
 
             <i class="bi bi-check"></i>
@@ -22,7 +22,7 @@
             data-live-action-param="prevent|acceptIndex"
             class="btn btn-sm btn-outline-success"
         >
-            {{ 'index'|trans }}: {{ this.guessIndex }}
+            {{ 'book.index'|trans }}: {{ this.guessIndex }}
             <i class="bi bi-check"></i>
         </button>
         <button
@@ -30,7 +30,7 @@
             data-live-action-param="prevent|acceptIndexAndRename"
             class="btn btn-sm btn-outline-success"
         >
-            {{ 'index'|trans }}: {{ this.guessIndex }} and rename
+            {{ 'book.index'|trans }}: {{ this.guessIndex }} {{ "book.and-rename"|trans }}
             <i class="bi bi-check"></i>
         </button>
     </form>

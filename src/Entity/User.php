@@ -16,11 +16,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const AGE_CATEGORIES = [
-        'E (Everyone)' => '1',
-        'E10+ (10 and more)' => '2',
-        'T (13 and more)' => '3',
-        'M (17 and more)' => '4',
-        'A (Adults only)' => '5',
+        'user.agecategories.everyone' => '1',
+        'user.agecategories.tenplus' => '2',
+        'user.agecategories.thirteenplus' => '3',
+        'user.agecategories.sixteenplus' => '4',
+        'user.agecategories.adults' => '5',
     ];
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -2,9 +2,11 @@
 
 namespace App\Command;
 
-use App\Ai\AiCommunicatorInterface;
-use App\Ai\CommunicatorDefiner;
+use App\Ai\Communicator\AiAction;
+use App\Ai\Communicator\AiCommunicatorInterface;
+use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\Context\ContextBuilder;
+use App\Ai\Prompt\PromptFactory;
 use App\Ai\Prompt\SummaryPrompt;
 use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
@@ -28,6 +30,7 @@ class BooksAiCommand extends Command
         private readonly EntityManagerInterface $em,
         private readonly CommunicatorDefiner $aiCommunicator,
         private readonly ContextBuilder $contextBuilder,
+        private readonly PromptFactory $promptFactory,
     ) {
         parent::__construct();
     }
@@ -68,15 +71,17 @@ class BooksAiCommand extends Command
             }
         }
 
-        $communicator = $this->aiCommunicator->getCommunicator();
+        $tagCommunicator = $this->aiCommunicator->getCommunicator(AiAction::Tags);
+        $summaryCommunicator = $this->aiCommunicator->getCommunicator(AiAction::Summary);
 
-        if (!$communicator instanceof AiCommunicatorInterface) {
+        if (!$tagCommunicator instanceof AiCommunicatorInterface || !$summaryCommunicator instanceof AiCommunicatorInterface) {
             $io->error('AI communicator not available');
 
             return Command::FAILURE;
         }
 
-        $io->title('AI data with '.$communicator::class);
+        $io->title('Summary data with '.$summaryCommunicator::class);
+        $io->title('Tag data with '.$tagCommunicator::class);
 
         if ($bookId === null) {
             $io->note('Processing all books without tags or summary');
@@ -108,19 +113,22 @@ class BooksAiCommand extends Command
 
             if (($type === 'summary' || $type === 'both') && (trim((string) $book->getSummary()) === '' || $overwrite === true)) {
                 $io->comment('Generating Summary');
-                $summaryPrompt = new SummaryPrompt($book, $user);
-                $summaryPrompt = $this->contextBuilder->getContext($summaryPrompt, $output);
-                $summary = $communicator->interrogate($summaryPrompt);
+                $summaryPrompt = $this->promptFactory->getPrompt(SummaryPrompt::class, $book, $user);
+                $summaryPrompt = $this->contextBuilder->getContext($summaryCommunicator->getAiModel(), $summaryPrompt, $output);
+                $summary = $summaryCommunicator->interrogate($summaryPrompt->getPrompt());
+                $summary = $summaryPrompt->convertResult($summary);
                 $io->block($summary);
                 $book->setSummary($summary);
             }
 
             if (($type === 'tags' || $type === 'both') && (count($book->getTags()) === 0 || $overwrite === true)) {
                 $io->comment('Generating Tags');
-                $tagPrompt = new TagPrompt($book, $user);
-                $tagPrompt = $this->contextBuilder->getContext($tagPrompt, $output);
+                $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book, $user);
+                $tagPrompt = $this->contextBuilder->getContext($tagCommunicator->getAiModel(), $tagPrompt, $output);
 
-                $array = $communicator->interrogate($tagPrompt);
+                $array = $tagCommunicator->interrogate($tagPrompt->getPrompt());
+
+                $array = $tagPrompt->convertResult($array);
 
                 if (is_array($array)) {
                     $io->block(implode(' 🏷️ ', $array));

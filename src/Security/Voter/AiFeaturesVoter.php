@@ -2,8 +2,9 @@
 
 namespace App\Security\Voter;
 
-use App\Ai\AiCommunicatorInterface;
-use App\Ai\CommunicatorDefiner;
+use App\Ai\Communicator\AiAction;
+use App\Ai\Communicator\AiCommunicatorInterface;
+use App\Ai\Communicator\CommunicatorDefiner;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -22,7 +23,7 @@ final class AiFeaturesVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return $attribute === self::USE;
+        return $attribute === self::USE && $subject instanceof AiAction;
     }
 
     #[\Override]
@@ -34,10 +35,10 @@ final class AiFeaturesVoter extends Voter
             return false;
         }
 
-        if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (!$subject instanceof AiAction) {
             return false;
         }
 
-        return $this->aiCommunicator->getCommunicator() instanceof AiCommunicatorInterface;
+        return $this->aiCommunicator->getCommunicator($subject) instanceof AiCommunicatorInterface;
     }
 }

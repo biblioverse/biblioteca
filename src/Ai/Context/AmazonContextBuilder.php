@@ -2,20 +2,20 @@
 
 namespace App\Ai\Context;
 
+use App\Entity\AiModel;
 use App\Entity\Book;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * @codeCoverageIgnore
- */
 class AmazonContextBuilder implements ContextBuildingInteface
 {
-    public function __construct(private readonly HttpClientInterface $client, private readonly CacheInterface $contextPool, private readonly SluggerInterface $slugger, #[Autowire(param: 'AI_CONTEXT_AMAZON_ENABLED')] private readonly bool $enabled)
-    {
+    public function __construct(
+        private readonly HttpClientInterface $client,
+        private readonly CacheInterface $contextPool,
+        private readonly SluggerInterface $slugger,
+    ) {
     }
 
     private function getHeaders(): array
@@ -85,9 +85,9 @@ class AmazonContextBuilder implements ContextBuildingInteface
     }
 
     #[\Override]
-    public function isEnabled(): bool
+    public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $this->enabled;
+        return $aiModel->isUseAmazonContext() === true;
     }
 
     #[\Override]

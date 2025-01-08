@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "ai.new-aimodel"|trans }}{% endblock %}
+
+{% block body %}
+    {{ include('ai_model/_form.html.twig') }}
+
+    <a href="{{ path('app_ai_model_index') }}">{{ "generic.back-to-list"|trans }}</a>
+{% endblock %}

@@ -28,29 +28,23 @@ class KoboType extends AbstractType
             ->add('name')
             ->add('accessKey')
             ->add('deviceId', null, [
-                'label' => 'Device ID',
                 'disabled' => true,
                 'required' => false,
             ])
             ->add('model', null, [
-                'label' => 'Model',
                 'disabled' => true,
                 'required' => false,
             ])
             ->add('forceSync', null, [
-                'label' => 'Force Sync',
                 'required' => false,
             ])
             ->add('upstreamSync', null, [
-                'label' => 'Sync books with the official store too',
                 'required' => false,
                 'disabled' => !$this->koboProxyConfiguration->useProxy(),
             ])->add('syncReadingList', null, [
-                'label' => 'Sync your reading list',
                 'required' => false,
             ]);
         $builder->add('shelves', EntityType::class, [
-            'label' => 'Sync with Shelves',
             'class' => Shelf::class,
             'query_builder' => fn (EntityRepository $er): QueryBuilder => $er->createQueryBuilder('u')
                 ->setParameter('user', $this->security->getUser())
@@ -67,6 +61,7 @@ class KoboType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => KoboDevice::class,
+            'label_translation_prefix' => 'kobo.form.',
         ]);
     }
 }

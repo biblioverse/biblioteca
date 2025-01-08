@@ -24,3 +24,7 @@ logged.in.as: 'You are logged in as'
 logout: Logout
 remember.me: 'Remember me'
 sign.in: 'Sign in'
+login.please-sign-in: Please sign in
+login.username: Username
+login.password: Password
+login.remember-me: Remember me

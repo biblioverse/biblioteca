@@ -24,6 +24,6 @@ class LoginTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/');
         self::assertResponseIsSuccessful();
 
-        self::assertSelectorTextContains('h1', 'Hello '.UserFixture::USER_USERNAME.'!');
+        self::assertSelectorTextContains('h1', 'Aloha '.UserFixture::USER_USERNAME.'!');
     }
 }

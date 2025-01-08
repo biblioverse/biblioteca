@@ -7,5 +7,6 @@ Explain your PR here
 - [ ] Tests are passing
 - [ ] New tests have been written
 - [ ] Documentation has been updated
+- [ ] Translations have been updated
 - [ ] Breaking changes have been avoided or documented
 

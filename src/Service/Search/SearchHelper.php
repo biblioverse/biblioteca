@@ -5,8 +5,9 @@ namespace App\Service\Search;
 use ACSEO\TypesenseBundle\Finder\CollectionFinder;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ACSEO\TypesenseBundle\Finder\TypesenseResponse;
-use App\Ai\AiCommunicatorInterface;
-use App\Ai\CommunicatorDefiner;
+use App\Ai\Communicator\AiAction;
+use App\Ai\Communicator\AiCommunicatorInterface;
+use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\Prompt\SearchHintPrompt;
 use App\Entity\Book;
 
@@ -81,7 +82,7 @@ class SearchHelper
 
     public function getQueryHints(): ?array
     {
-        $communicator = $this->communicatorDefiner->getCommunicator();
+        $communicator = $this->communicatorDefiner->getCommunicator(AiAction::Search);
         if (!$communicator instanceof AiCommunicatorInterface) {
             return null;
         }
@@ -97,16 +98,14 @@ class SearchHelper
         }
         $prompt = new SearchHintPrompt();
 
-        $communicator->initialise($prompt->getTypesenseNaturalLanguagePrompt($facets['serie'], $facets['authors'], $facets['tags']));
+        $communicator->getAiModel()->setSystemPrompt($prompt->getTypesenseNaturalLanguagePrompt($facets['serie'], $facets['authors'], $facets['tags']));
+
+        $communicator->initialise($communicator->getAiModel());
 
         $prompt->setPrompt('### User-Supplied Query ###
 '.$params['q']);
+        $result = $communicator->interrogate($prompt->getPrompt());
 
-        $result = $communicator->interrogate($prompt);
-        if (!is_array($result)) {
-            return null;
-        }
-
-        return $result;
+        return $prompt->convertResult($result);
     }
 }

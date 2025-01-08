@@ -18,23 +18,25 @@ class UserType extends AbstractType
             ->add('username')
             ->add('roles', ChoiceType::class, [
                 'choices' => [
-                    'User' => 'ROLE_USER',
-                    'Admin' => 'ROLE_ADMIN',
+                    'user.form.roles.user' => 'ROLE_USER',
+                    'user.form.roles.admin' => 'ROLE_ADMIN',
                 ],
                 'multiple' => true,
                 'expanded' => true,
+                'label' => 'user.form.roles',
+                'translation_domain' => false,
             ])
             ->add('maxAgeCategory', ChoiceType::class, ['choices' => User::AGE_CATEGORIES, 'required' => false])
             ->add('language', ChoiceType::class, [
                 'choices' => [
-                    'English' => 'en',
-                    'French' => 'fr',
+                    'user.form.language.english' => 'en',
+                    'user.form.language.french' => 'fr',
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
                 'required' => false,
-                'help' => 'Leave blank to keep the current password',
+                'help' => 'user.form.leave-blank-to-keep-current-password',
             ])
         ;
     }
@@ -44,6 +46,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'label_translation_prefix' => 'user.form.',
         ]);
     }
 }

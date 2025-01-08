@@ -6,7 +6,7 @@
                     <input type="search"
                            class="form-control form-control-lg"
                            id="search"
-                           placeholder="Search for..."
+                           placeholder="{{ "search.search-for"|trans }}"
                            data-model="debounce(500)|query"
                            data-search-target="query"
                            data-action="search#redirect"
@@ -19,11 +19,11 @@
                                 data-model="advanced"
                                 role="switch"
                                 id="check-advanced" {{ filterQuery !=''?'disabled' }}>
-                            <label class="form-check-label text-muted" for="check-advanced"><small>Advanced filters</small></label>
-                            {% if is_granted('USE_AI_FEATURES') %}
-                            <button data-action="live#action"   data-live-action-param="hint" class="btn btn-primary btn-sm"
+                            <label class="form-check-label text-muted" for="check-advanced"><small>{{ "search.advanced-filters"|trans }}</small></label>
+                            {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Search ) %}
+                                <button data-action="live#action"   data-live-action-param="hint" class="btn btn-primary btn-sm"
                                     data-bs-toggle="tooltip"
-                                    data-bs-title="Write a search query in natual language and let AI convert it to filters."
+                                    data-bs-title="{{ "search.write-a-search-query-in-natural-language-and-let-ai-convert-it-to-filters"|trans }}."
                                     {%  if query=='' %}disabled{% endif %}
                             >
                                 <div class="spinner-border spinner-border-sm" data-loading="show"></div>
@@ -39,7 +39,7 @@
                         <input type="search"
                                class="form-control form-control-lg w-100 {{ filterQueryError is not null?'is-invalid' }} {{ filterQuery!='' and filterQueryError is null?'is-valid' }}"
                                id="search-filters"
-                               placeholder="Advanced Typesense filters"
+                               placeholder="{{ "search.advanced-filters"|trans }}"
                                data-model="debounce(500)|filterQuery"
                                data-search-target="filterQuery"
                                data-action="search#redirect"
@@ -74,11 +74,11 @@
                             <ul class="pagination">
                                 {% if pagination.previousPage is not null %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">Previous</a>
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">{{ "generic.previous"|trans }}</a>
                                     </li>
                                 {% else %}
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#">Previous</a>
+                                        <a class="page-link" href="#">{{ "generic.previous"|trans }}</a>
                                     </li>
                                 {% endif %}
                                 {% if current > 1 %}
@@ -110,11 +110,11 @@
 
                                 {% if pagination.nextPage is not null %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.nextPage})) }}">Next</a>
+                                        <a class="page-link" href="{{ path(route, params|merge({'page':pagination.nextPage})) }}">{{ "generic.next"|trans }}</a>
                                     </li>
                                 {% else %}
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#">Next</a>
+                                        <a class="page-link" href="#">{{ "generic.next"|trans }}</a>
                                     </li>
                                 {% endif %}
                             </ul>
@@ -123,7 +123,7 @@
                     <div class="col text-end">
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-arrow-down-up"></i> Sort results
+                                <i class="bi bi-arrow-down-up"></i> {{ "search.sort-results"|trans }}
                             </button>
                             <ul class="dropdown-menu">
                                 {% for orderField in ['serieIndex','updated'] %}
@@ -135,7 +135,7 @@
                                                 data-live-action-param="replaceOrderBy"
                                                 data-live-value-param='{{ orderField }}:{{ order }}'
                                         >
-                                            <small>{{ orderField|trans }} {{ order }}</small>
+                                            <small>{{ ('book.'~orderField)|trans }} {{ order }}</small>
                                         </button>
                                         </li>
                                     {% endfor %}
@@ -147,7 +147,7 @@
 
                 <div class="row">
                     <div class="col-10">
-                        <h5>{{ found }} results</h5>
+                        <h5>{{ found }} {{ "generic.results"|trans }}</h5>
                         <div class="row">
                         {% for book in books %}
                             <div class="col-6 col-md-3">
@@ -178,7 +178,7 @@
                                 data-live-action-param="save"
                                 class="btn btn-outline-success align-content-end"
                             >
-                                <i class="bi bi-journal-check"></i> Save to shelf
+                                <i class="bi bi-journal-check"></i> {{ "search.save-to-shelf"|trans }}
                             </button>
                         </div>
                     </div>
