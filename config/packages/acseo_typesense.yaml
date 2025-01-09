@@ -55,8 +55,8 @@ acseo_typesense:
           name: age
           type: string
           facet: true
-          optional: true
-          entity_attribute: ageCategory
+          optional: false
+          entity_attribute: ageCategoryLabel
         user.read:
           name: read
           optional: true

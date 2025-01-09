@@ -9,4 +9,17 @@ enum ReadStatus: string
     case Started = 'rs-started';
     case Finished = 'rs-finished';
 
+    public function label(): string
+    {
+        return self::getLabel($this);
+    }
+
+    public static function getLabel(self $value): string
+    {
+        return match ($value) {
+            self::NotStarted=>'enum.readstatus.not-started',
+            self::Started=>'enum.readstatus.started',
+            self::Finished=>'enum.readstatus.finished',
+        };
+    }
 }

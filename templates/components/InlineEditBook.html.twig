@@ -64,13 +64,12 @@
                         <select
                             class="form-select"
                             id="book_{{ book.id }}_{{ field }}"
-                            data-model="norender|book.{{ field }}"
+                            data-model="{{ field }}"
                         >
-
-                            {% for value,ageCat in constant('App\\Entity\\User::AGE_CATEGORIES') %}
-                                <option value="{{ ageCat }}" {{ value==book.ageCategory??'selected' }}>{{ value }}</option>
+                            <option value="" {{ ageCategory is null?'selected' }}>{{ "enum.agecategories.notset"|trans }}</option>
+                            {% for age in enum('App\\Enum\\AgeCategory').cases %}
+                                <option value="{{ age.value }}" {{ (ageCategory is not null and age.value==ageCategory.value)?'selected' }}>{{ age.label|trans }}</option>
                             {% endfor %}
-                            <option value="">Not set</option>
                         </select>
                     {% elseif field=='pageNumber' %}
                         <input
@@ -126,14 +125,14 @@
             </a>
                 {% endfor %}
             {% elseif field=='serie' and book.serie is not null %}
-                <a href="{{ filter_book_url({'serie':[book.serie], 'orderBy':'serieIndex-asc'}) }}" class="text-decoration-none p-1">
+                <a href="{{ filter_book_url({'serie':[book.serie]}) }}" class="text-decoration-none p-1">
                      <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
                 </a>
             {% elseif field=='ageCategory' %}
-                {% for key, value in constant('App\\Entity\\User::AGE_CATEGORIES')|filter((v,k)=>v==book.ageCategory) %}
-                    {{ key }}
+                {% for value in enum('App\\Enum\\AgeCategory').cases|filter((v,k)=>v==book.ageCategory) %}
+                    {{ value.label|trans }}
                 {% else %}
-                    -
+                    {{ "enum.agecategories.notset"|trans }}
                 {% endfor %}
             {% else %}
                 {{ attribute(book, "get"~field) }}

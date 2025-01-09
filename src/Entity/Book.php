@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\AgeCategory;
 use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -518,6 +519,11 @@ class Book
         return $this;
     }
 
+    public function getAgeCategoryLabel(): ?string
+    {
+        return $this->ageCategory?->label()??'enum.agecategories.notset';
+    }
+
     public function getUuid(): string
     {
         if ($this->uuid === null) {
@@ -604,13 +610,13 @@ class Book
                 continue;
             }
             $userId = $user->getId();
-            if ($interaction->isFinished()) {
+            if ($interaction->getReadStatus()===ReadStatus::Finished) {
                 $return['read'][] = $userId;
             }
-            if ($interaction->isFavorite()) {
+            if ($interaction->getReadingList()===ReadingList::ToRead) {
                 $return['favorite'][] = $userId;
             }
-            if ($interaction->isHidden()) {
+            if ($interaction->getReadingList()===ReadingList::Ignored) {
                 $return['hidden'][] = $userId;
             }
         }

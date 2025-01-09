@@ -29,31 +29,22 @@ class FilteredBookUrl extends AbstractExtension
     public function filteredBookUrl(array $params): string
     {
         $params = $this->filteredBookUrlGenerator->getParametersArray($params);
-        $defaultParams = $this->filteredBookUrlGenerator::FIELDS_DEFAULT_VALUE;
-
-        $modif = array_udiff_uassoc($params, $defaultParams, static function ($a, $b) {
-            if ($a === $b) {
-                return 0;
+        
+        $key = '';
+        $value='';
+        if (array_key_exists('filterQuery', $params)) {
+            if (preg_match('/^(serie|authors):=`(.+)`[ ]+$/', $params['filterQuery'], $matches)) {
+                $key = $matches[1];
+                $value = $matches[2];
             }
-            return 1;
-        }, static function ($a, $b) {
-            if ($a === $b) {
-                return 0;
-            }
-            return 1;
-        });
-        unset($modif['submit'], $modif['orderBy']);
-
-        if (count($modif) === 1) {
-            $key = array_key_first($modif);
-            $route = match ($key) {
-                'authors' => 'app_author_detail',
-                'serie' => 'app_serie_detail',
-                default => 'app_allbooks',
-            };
-            if ($route !== 'app_allbooks') {
-                return $this->router->generate($route, ['name' => $modif[$key]]);
-            }
+        }
+        $route = match ($key) {
+            'authors' => 'app_author_detail',
+            'serie' => 'app_serie_detail',
+            default => 'app_allbooks',
+        };
+        if ($route !== 'app_allbooks') {
+            return $this->router->generate($route, ['name' => $value]);
         }
 
         return $this->router->generate('app_allbooks', $params);

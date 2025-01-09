@@ -28,7 +28,7 @@ class SearchHelper
         $query->sortBy($sortBy ?? '');
         $query->numTypos(2);
         $query->page($page);
-        $query->facetBy('authors,serie,tags');
+        $query->facetBy('authors,serie,tags,age');
         $query->addParameter('facet_strategy', 'exhaustive');
         $this->query = $query;
 

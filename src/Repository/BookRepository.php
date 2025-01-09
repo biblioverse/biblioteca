@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\User;
+use App\Enum\ReadingList;
 use App\Enum\ReadStatus;
 use App\Kobo\SyncToken;
 use App\Service\ShelfManager;
@@ -304,27 +305,27 @@ class BookRepository extends ServiceEntityRepository
 
     public function getAllSeries(): Query
     {
-        return $this->createQueryBuilder('serie')
+        $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->where('serie.serie IS NOT NULL')
-            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
-            ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('serie.serie')->getQuery();
+            ->where('serie.serie IS NOT NULL');
+        $qb = $this->joinInteractions($qb, 'serie');
+
+        return $qb->addGroupBy('serie.serie')->getQuery();
     }
 
     public function getIncompleteSeries(): Query
     {
-        return $this->createQueryBuilder('serie')
+        $qb= $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
-            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
-            ->where('serie.serie IS NOT NULL')
-            ->setParameter('user', $this->security->getUser())
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished');
+        $qb = $this->joinInteractions($qb, 'serie');
+
+        return $qb->where('serie.serie IS NOT NULL')
             ->addGroupBy('serie.serie')
             ->having('count(serie.id) != max(serie.serieIndex)')
             ->getQuery();
@@ -332,29 +333,38 @@ class BookRepository extends ServiceEntityRepository
 
     public function getStartedSeries(): Query
     {
-        return $this->createQueryBuilder('serie')
+        $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
-            ->where('serie.serie IS NOT NULL')
-            ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('serie.serie')
-            ->having('COUNT(bookInteraction.finished)>0 AND COUNT(bookInteraction.finished)<MAX(serie.serieIndex)')
+            ->where('serie.serie IS NOT NULL');
+        $qb = $this->joinInteractions($qb,'serie');
+
+        return $qb->addGroupBy('serie.serie')
+            ->having('COUNT(bookInteraction.readStatus)>0 AND COUNT(bookInteraction.readStatus)<MAX(serie.serieIndex)')
             ->getQuery();
     }
 
     public function getAllPublishers(): Query
     {
-        return $this->createQueryBuilder('publisher')
+        $qb = $this->createQueryBuilder('publisher')
             ->select('publisher.publisher as item')
             ->addSelect('COUNT(publisher.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->where('publisher.publisher IS NOT NULL')
-            ->leftJoin('publisher.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
-            ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('publisher.publisher')->getQuery();
+            ->where('publisher.publisher IS NOT NULL');
+        $qb = $this->joinInteractions($qb, 'publisher');
+
+            return $qb->addGroupBy('publisher.publisher')->getQuery();
+    }
+
+    private function joinInteractions(QueryBuilder $qb, string $alias='book'): QueryBuilder
+    {
+        return $qb->leftJoin($alias.'.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.readStatus = :status_finished or 
+        bookInteraction.readingList=:list_ignored) and bookInteraction.user= :user')
+            ->setParameter('status_finished', ReadStatus::Finished)
+            ->setParameter('list_ignored', ReadingList::Ignored)
+            ->setParameter('user', $this->security->getUser());
     }
 
     /**
@@ -365,13 +375,12 @@ class BookRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('author')
             ->select('author.authors as item')
             ->addSelect('COUNT(author.id) as bookCount')
-            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->leftJoin('author.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user=:user')
-            ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('author.authors')
-            ->getQuery();
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished');
+        $qb = $this->joinInteractions($qb, 'author');
 
-        return $this->convertResults($qb->getResult());
+        $qb->addGroupBy('author.authors');
+
+        return $this->convertResults($qb->getQuery()->getResult());
     }
 
     /**
@@ -382,13 +391,12 @@ class BookRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('tag')
             ->select('tag.tags as item')
             ->addSelect('COUNT(tag.id) as bookCount')
-            ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->leftJoin('tag.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user=:user')
-            ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('tag.tags')
-            ->getQuery();
+            ->addSelect('COUNT(bookInteraction.finished) as booksFinished');
+        $qb = $this->joinInteractions($qb, 'tag');
 
-        return $this->convertResults($qb->getResult());
+        $qb->addGroupBy('tag.tags');
+
+        return $this->convertResults($qb->getQuery()->getResult());
     }
 
     /**

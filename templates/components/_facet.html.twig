@@ -10,7 +10,11 @@
             data-live-value-param='{{ value }}'
     >
         <small>
-            {{ label }}
+            {% if "enum." in label %}
+                {{ label|trans }}
+            {% else %}
+                {{ label }}
+            {% endif %}
             {% if count.count is not null %}
                 <span class="badge rounded-pill bg-primary">
                     {{ count.count }} <span class="visually-hidden">{{ "search.records"|trans }}</span>

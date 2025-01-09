@@ -3,6 +3,8 @@
 namespace App\Twig\Components;
 
 use App\Entity\Book;
+use App\Entity\Shelf;
+use App\Enum\AgeCategory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +16,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent(method: 'get')]
 class InlineEditBook extends AbstractController
@@ -24,6 +27,9 @@ class InlineEditBook extends AbstractController
 
     #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'pageNumber'])]
     public Book $book;
+
+    #[LiveProp(writable: true)]
+    public ?AgeCategory $ageCategory=null;
 
     #[LiveProp()]
     public bool $isEditing = false;
@@ -40,6 +46,16 @@ class InlineEditBook extends AbstractController
     public string $field;
 
     public ?string $flashMessage = null;
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
+    #[PostMount]
+    public function postMount(): void
+    {
+        $this->ageCategory = $this->book->getAgeCategory();
+    }
 
     #[LiveAction]
     public function activateEditing(): void
@@ -102,6 +118,14 @@ class InlineEditBook extends AbstractController
         }
         if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('book.serieIndex', $data['updated']) && '' === $data['updated']['book.serieIndex']) {
             $this->book->setSerieIndex(null);
+        }
+
+        if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('ageCategory', $data['updated'])) {
+            if($data['updated']['ageCategory'] !== '') {
+                $this->book->setAgeCategory(AgeCategory::tryFrom($data['updated']['ageCategory']));
+            }else{
+                $this->book->setAgeCategory(null);
+            }
         }
 
         $entityManager->flush();

@@ -92,6 +92,12 @@ dashboard.hello: Aloha
 dashboard.need-inspiration: Need some inspiration?
 dashboard.reading-list: In your reading list
 dashboard.series-in-progress: Series that you started
+enum.agecategories.notset: Not defined
+enum.agecategories.adults: Adults
+enum.agecategories.everyone: Everyone
+enum.agecategories.sixteenplus: 16+ Years old
+enum.agecategories.tenplus: 10+ Years old
+enum.agecategories.thirteenplus: 13+ Years old
 error.error-happened: An error happend
 error.stack-trace: Stack trace
 generic.are-you-sure-you-want-to-delete-this-item: Are you sure you want to delete this item?
@@ -224,20 +230,15 @@ shelf.query: Query
 shelf.shelves: Shelves
 timeline.timeline-for: Timeline for
 timeline.title: Title
-user.agecategories.adults: Adults
-user.agecategories.everyone: Everyone
-user.agecategories.sixteenplus: 16+ Years old
-user.agecategories.tenplus: 10+ Years old
-user.agecategories.thirteenplus: 13+ Years old
 user.edit-user: Edit user
-user.form.roles.user: User
-user.form.roles.admin: Administrator
 user.form.language.english: English
 user.form.language.french: Français
 user.form.language: Language
 user.form.leave-blank-to-keep-current-password: Leave blank to keep current password
 user.form.maxagecategory: Max age category allowed
 user.form.plainpassword: Password
+user.form.roles.admin: Administrator
+user.form.roles.user: User
 user.form.roles: Roles
 user.form.username: Username
 user.last-login: Last login
