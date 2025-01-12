@@ -398,7 +398,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                 if (!$cover instanceof EbookCover || $cover->getPath() === null) {
                     break;
                 }
-                $coverContent = $cover->getContent();
+                $coverContent = $cover->getContents();
 
                 $coverFileName = explode('/', $cover->getPath());
                 $coverFileName = end($coverFileName);
