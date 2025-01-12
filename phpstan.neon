@@ -7,11 +7,4 @@ parameters:
     ignoreErrors:
         - '#(.*)no value type specified in iterable type array#'
   #      - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
-
-
-includes:
-    - vendor/phpstan/phpstan-doctrine/extension.neon
-    - vendor/phpstan/phpstan-symfony/extension.neon
-    - vendor/phpstan/phpstan-symfony/rules.neon
-    - vendor/phpstan/phpstan-strict-rules/rules.neon
-
+    errorFormat: symplify
