@@ -67,7 +67,6 @@ abstract class AbstractOpdsTestController extends WebTestCase
         $doctrine = $container->get('doctrine');
 
         /** @var EntityManagerInterface $entityManager */
-        /* @phpstan-ignore-next-line */
         $entityManager = $doctrine->getManager();
 
         $opdsRepo = static::getContainer()->get(OpdsAccessRepository::class);

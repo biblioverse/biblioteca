@@ -125,6 +125,15 @@ class SmokeTest extends WebTestCase
             '/timeline' => ['redirect' => true],
             '/timeline/comic' => ['redirect' => true],
             '/timeline/book/2023' => [],
+            '/autocomplete/group/serie' => [],
+            '/autocomplete/group/authors' => [],
+            '/autocomplete/group/tags' => [],
+            '/autocomplete/group/publisher' => [],
+            '/autocomplete/group/ageCategory' => [],
+            '/autocomplete/group/serie?query=a' => [],
+            '/autocomplete/group/authors?query=a' => [],
+            '/autocomplete/group/tags?query=a' => [],
+            '/autocomplete/group/publisher?query=a' => [],
         ];
     }
 }

@@ -16,7 +16,6 @@ class DynamicShelfTest extends WebTestCase
         $doctrine = $container->get('doctrine');
 
         /** @var EntityManagerInterface $entityManager */
-        /* @phpstan-ignore-next-line */
         $entityManager = $doctrine->getManager();
 
         $userRepository = static::getContainer()->get(UserRepository::class);
