@@ -7,7 +7,7 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@hotwired/stimulus": "^3.0",
-    "@rushstack/eslint-patch": "^1.8.0",
+    "@rushstack/eslint-patch": "^1.10.5",
     "@symfony/stimulus-bridge": "^3.2",
     "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
     "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
