@@ -1,0 +1,40 @@
+---
+title: Install with Helm
+tableOfContents: false
+---
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+import importedCode from '../../../files/helm-values.yml?raw';
+export const highlights = ['8080', 'xyz','=db','<cover_folder>','<books_folder>','<image_cache_folder>'];
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+    A few users have been using Biblioteca for a while now without any major issue. However, as with
+    any tool, there might be bugs or issues. If you find any, please report them and always make backups of your data
+    and files.
+</Aside>
+<Steps>
+
+1. Create a `values.yml` file file to hold the configuration of the application
+
+    <Code code={importedCode} lang="yml" title="values.yml" mark={highlights} />
+
+    Check the [Helm Chart](https://github.com/biblioverse/helm/blob/main/charts/biblioteca/README.md) for more information on the configuration options.
+
+    We recommend you set at least the `appSecret` values and decide if you want to persist any data.
+
+2. Run the following command to install the Helm Chart
+
+    ```bash
+    helm repo add biblioverse https://biblioverse.github.io/helm/
+    helm install biblioteca biblioverse/biblioteca -f values.yml
+    ```
+3. Once installed the Helm chart will output the instructions to finalize the app's installation and the creation of your first admin user.
+
+4. Access the application at the URL given to you by the `helm install` command.
+
+5. You can login with the name and password you set in step 3.
+</Steps>
+
+

@@ -1,0 +1,6 @@
+biblioteca:
+  appSecret:
+    appSecret: zafmqUbgaMQbx4wCFbZSpwsQ34Dw7wUd
+
+persistence:
+  enabled: true
