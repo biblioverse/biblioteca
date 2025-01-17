@@ -16,6 +16,7 @@
     "@vue/eslint-config-prettier": "^10.1.0",
     "autoprefixer": "^10.4.20",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "core-js": "^3.39.0",
     "eslint": "^9.17",
     "eslint-plugin-vue": "^9.32.0",

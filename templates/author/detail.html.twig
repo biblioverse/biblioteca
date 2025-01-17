@@ -17,9 +17,10 @@
             <div class="row">
                 {% for serie, book in firstBooks %}
                     <div class="col-md-2">
-                        <h4>{{ serie }}</h4>
 
-                        {% include 'book/_teaser.html.twig' with {book: book} %}
+
+                        {% include 'book/_teaser.html.twig' with {book: book, withDetail:false} %}
+                        <h4>{{ serie }}</h4>
                     </div>
                 {% endfor %}
             </div>

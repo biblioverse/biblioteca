@@ -29,7 +29,7 @@ class BookInteractionRepository extends ServiceEntityRepository
         $results = $this->createQueryBuilder('b')
             ->andWhere('b.readPages >0')
             ->andWhere('b.readStatus = :read_status')
-            ->andWhere('b.readingList != :read_status')
+            ->andWhere('b.readingList != :reading_list')
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
             ->setParameter('read_status', ReadStatus::Started)
