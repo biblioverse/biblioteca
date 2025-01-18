@@ -54,9 +54,9 @@
         class="btn btn-link btn-sm text-{{ hidden?'success':'secondary' }} text-decoration-none"
         title="Click to toggle hidden status"
     >
-        <i class="bi bi-trash-fill"></i>
-        {% if flashMessageFav %}
-            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
+        <i class="bi bi-eye{{ hidden?'':'-slash' }}-fill"></i>
+        {% if flashMessageHidden %}
+            <small class="text-muted alert-remove">{{ flashMessageHidden }}</small>
         {% endif %}
 
     </button>

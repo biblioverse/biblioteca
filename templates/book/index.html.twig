@@ -4,21 +4,6 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-md-12">
-            <ul class="nav nav-tabs mb-2">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Details</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}"><i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}</a>
-                </li>
-                <li class="nav-item d-none d-sm-block">
-                    <a class="nav-link" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}"><i class="bi bi-file-earmark-arrow-up"></i>
-                        Read in browser
-                    </a>
-                </li>
-            </ul>
-        </div>
         <div class="col-md-3 col-xs-6 col-sm-6">
             {% if book.imageFilename is not null %}
                 <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'book.picture-for-book'|trans }} {{ book.title }}">
@@ -27,9 +12,17 @@
             {% endif %}
             {{ include('book/_interaction.html.twig') }}
 
-            {% if not book.verified %}
-            {{ component('UploadBookPicture',{'book':book}) }}
-            {% endif %}
+            <div class="d-grid gap-2">
+                <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
+                    <i class="bi bi-book"></i>
+                    Read in browser
+                </a>
+
+                <a class="btn btn-block btn-secondary" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">
+                    <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
+                </a>
+            </div>
+
             {{ component('AddBookToShelf',{'book':book, 'user':app.user}) }}
         </div>
         <div class="col-md-9">
@@ -110,6 +103,9 @@
                                 {% endif %}
                                 <li>
                                     <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'book.extract-cover-from-file'|trans }}</a>
+                                </li>
+                                <li>
+                                    {{ component('UploadBookPicture',{'book':book}) }}
                                 </li>
                             </ul>
                         </td>
