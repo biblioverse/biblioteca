@@ -159,6 +159,9 @@ class BookManager
                 } catch (BookExtractionException $e) {
                     $book = $this->createBookWithoutMetadata($file);
                     $io->error($e->getMessage());
+                    if ($e->getPrevious() instanceof \Exception) {
+                        $io->error('Caused by '.$e->getPrevious()->getMessage());
+                    }
                 }
 
                 $this->entityManager->persist($book);
@@ -166,9 +169,6 @@ class BookManager
             } catch (\Exception $e) {
                 $io->error('died during process of '.$file->getRealPath());
                 $io->error($e->getMessage());
-                if ($e->getPrevious() instanceof \Exception) {
-                    $io->error('Caused by '.$e->getPrevious()->getMessage());
-                }
                 throw $e;
             }
             $book = null;
