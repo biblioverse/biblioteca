@@ -92,16 +92,15 @@ class BookManager
     {
         try {
             if (!Ebook::isValid($file->getRealPath())) {
-                throw new \RuntimeException('Invalid eBook: "' . $file->getRealPath() . '"');
+                throw new \RuntimeException('Invalid eBook: "'.$file->getRealPath().'"');
             }
 
             $ebook = Ebook::read($file->getRealPath());
             if (!$ebook instanceof Ebook) {
-                throw new \RuntimeException('Could not read eBook: "' . $file->getRealPath() . '"');
+                throw new \RuntimeException('Could not read eBook: "'.$file->getRealPath().'"');
             }
         } catch (\Throwable $e) {
-
-            $io->error('Could not read eBook' . $file->getRealPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
+            $io->error('Could not read eBook'.$file->getRealPath()."\n".$e->getMessage()."\n".$e->getTraceAsString());
 
             $ebook = null;
 

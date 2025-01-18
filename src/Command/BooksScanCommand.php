@@ -47,7 +47,7 @@ class BooksScanCommand extends Command
             }
             $io->writeln('Consuming '.$path);
             $info = new \SplFileInfo($path);
-            $book = $this->bookManager->consumeBook($info);
+            $book = $this->bookManager->consumeBook($info, $io);
             $this->entityManager->persist($book);
             $this->entityManager->flush();
             $this->fileSystemManager->renameFiles($book);
