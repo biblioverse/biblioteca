@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Exception\BookExtractionException;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Kiwilan\Ebook\Ebook;
@@ -27,11 +28,11 @@ class BookManager
     /**
      * @throws \Exception
      */
-    public function createBook(\SplFileInfo $file, SymfonyStyle $io): Book
+    public function createBook(\SplFileInfo $file): Book
     {
         $book = new Book();
 
-        $extractedMetadata = $this->extractEbookMetadata($file, $io);
+        $extractedMetadata = $this->extractEbookMetadata($file);
         if ('' === $extractedMetadata['title'] || '.pdf' === $extractedMetadata['title']) {
             $extractedMetadata['title'] = $file->getBasename();
         }
@@ -83,40 +84,36 @@ class BookManager
         return $book;
     }
 
+    public function createBookWithoutMetadata(\SplFileInfo $file): Book
+    {
+        $book = new Book();
+
+        $book->setTitle($file->getBasename());
+        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
+        $book->addAuthor('unknown');
+
+        $book->setExtension($file->getExtension());
+
+        $book->setBookPath('');
+        $book->setBookFilename('');
+
+        return $this->updateBookLocation($book, $file);
+    }
+
     /**
      * @return MetadataType
      *
      * @throws \Exception
      */
-    public function extractEbookMetadata(\SplFileInfo $file, SymfonyStyle $io): array
+    public function extractEbookMetadata(\SplFileInfo $file): array
     {
-        try {
-            if (!Ebook::isValid($file->getRealPath())) {
-                throw new \RuntimeException('Invalid eBook: "'.$file->getRealPath().'"');
-            }
+        if (!Ebook::isValid($file->getRealPath())) {
+            throw new BookExtractionException('Invalid eBook', $file->getRealPath());
+        }
 
-            $ebook = Ebook::read($file->getRealPath());
-            if (!$ebook instanceof Ebook) {
-                throw new \RuntimeException('Could not read eBook: "'.$file->getRealPath().'"');
-            }
-        } catch (\Throwable $e) {
-            $io->error('Could not read eBook'.$file->getRealPath()."\n".$e->getMessage()."\n".$e->getTraceAsString());
-
-            $ebook = null;
-
-            return [
-                'title' => $file->getFilename(),
-                'authors' => [new BookAuthor('unknown')], // BookAuthor[] (`name`: string, `role`: string)
-                'main_author' => new BookAuthor('unknown'), // ?BookAuthor => First BookAuthor (`name`: string, `role`: string)
-                'description' => null, // ?string
-                'publisher' => null, // ?string
-                'publish_date' => null, // ?DateTime
-                'language' => null, // ?string
-                'tags' => [], // string[] => `subject` in EPUB, `keywords` in PDF, `genres` in CBA
-                'serie' => null, // ?string => `calibre:series` in EPUB, `series` in CBA
-                'serie_index' => null, // ?int => `calibre:series_index` in EPUB, `number` in CBA
-                'cover' => null, //  ?EbookCover => cover of book
-            ];
+        $ebook = Ebook::read($file->getRealPath());
+        if (!$ebook instanceof Ebook) {
+            throw new BookExtractionException('Could not read eBook', $file->getRealPath());
         }
 
         return [
@@ -151,7 +148,14 @@ class BookManager
         foreach ($files as $file) {
             $progressBar->advance();
             try {
-                $book = $this->consumeBook($file, $io);
+                $book = null;
+                try {
+                    $book = $this->consumeBook($file);
+                } catch (BookExtractionException $e) {
+                    $book = $this->createBookWithoutMetadata($file);
+                    $io->error($e->getMessage());
+                }
+
                 $progressBar->setMessage($file->getFilename());
 
                 $this->entityManager->persist($book);
@@ -167,7 +171,7 @@ class BookManager
         $progressBar->finish();
     }
 
-    public function consumeBook(\SplFileInfo $file, SymfonyStyle $io): Book
+    public function consumeBook(\SplFileInfo $file): Book
     {
         $book = $this->bookRepository->findOneBy(
             [
@@ -183,6 +187,6 @@ class BookManager
         $checksum = $this->fileSystemManager->getFileChecksum($file);
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
-        return null === $book ? $this->createBook($file, $io) : $this->updateBookLocation($book, $file);
+        return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
     }
 }
