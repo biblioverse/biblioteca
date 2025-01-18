@@ -27,11 +27,11 @@ class BookManager
     /**
      * @throws \Exception
      */
-    public function createBook(\SplFileInfo $file): Book
+    public function createBook(\SplFileInfo $file, SymfonyStyle $io): Book
     {
         $book = new Book();
 
-        $extractedMetadata = $this->extractEbookMetadata($file);
+        $extractedMetadata = $this->extractEbookMetadata($file, $io);
         if ('' === $extractedMetadata['title'] || '.pdf' === $extractedMetadata['title']) {
             $extractedMetadata['title'] = $file->getBasename();
         }
@@ -88,18 +88,21 @@ class BookManager
      *
      * @throws \Exception
      */
-    public function extractEbookMetadata(\SplFileInfo $file): array
+    public function extractEbookMetadata(\SplFileInfo $file, SymfonyStyle $io): array
     {
         try {
             if (!Ebook::isValid($file->getRealPath())) {
-                throw new \RuntimeException('Could not read ebook'.$file->getRealPath());
+                throw new \RuntimeException('Invalid eBook: "' . $file->getRealPath() . '"');
             }
 
             $ebook = Ebook::read($file->getRealPath());
             if (!$ebook instanceof Ebook) {
-                throw new \RuntimeException('Could not read ebook');
+                throw new \RuntimeException('Could not read eBook: "' . $file->getRealPath() . '"');
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+
+            $io->error('Could not read eBook' . $file->getRealPath() . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
+
             $ebook = null;
 
             return [
@@ -149,7 +152,7 @@ class BookManager
         foreach ($files as $file) {
             $progressBar->advance();
             try {
-                $book = $this->consumeBook($file);
+                $book = $this->consumeBook($file, $io);
                 $progressBar->setMessage($file->getFilename());
 
                 $this->entityManager->persist($book);
@@ -165,7 +168,7 @@ class BookManager
         $progressBar->finish();
     }
 
-    public function consumeBook(\SplFileInfo $file): Book
+    public function consumeBook(\SplFileInfo $file, SymfonyStyle $io): Book
     {
         $book = $this->bookRepository->findOneBy(
             [
@@ -181,6 +184,6 @@ class BookManager
         $checksum = $this->fileSystemManager->getFileChecksum($file);
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
-        return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
+        return null === $book ? $this->createBook($file, $io) : $this->updateBookLocation($book, $file);
     }
 }
