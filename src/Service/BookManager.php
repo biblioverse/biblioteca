@@ -116,7 +116,7 @@ class BookManager
             if (!$ebook instanceof Ebook) {
                 throw new BookExtractionException('Could not read eBook', $file->getRealPath());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new BookExtractionException('Ebook Library threw an exception', $file->getRealPath(), $e);
         }
 
