@@ -107,13 +107,17 @@ class BookManager
      */
     public function extractEbookMetadata(\SplFileInfo $file): array
     {
-        if (!Ebook::isValid($file->getRealPath())) {
-            throw new BookExtractionException('Invalid eBook', $file->getRealPath());
-        }
+        try {
+            if (!Ebook::isValid($file->getRealPath())) {
+                throw new BookExtractionException('Invalid eBook', $file->getRealPath());
+            }
 
-        $ebook = Ebook::read($file->getRealPath());
-        if (!$ebook instanceof Ebook) {
-            throw new BookExtractionException('Could not read eBook', $file->getRealPath());
+            $ebook = Ebook::read($file->getRealPath());
+            if (!$ebook instanceof Ebook) {
+                throw new BookExtractionException('Could not read eBook', $file->getRealPath());
+            }
+        } catch (\Exception $e) {
+            throw new BookExtractionException('Ebook Library threw an exception', $file->getRealPath(), $e);
         }
 
         return [
@@ -148,6 +152,7 @@ class BookManager
         foreach ($files as $file) {
             $progressBar->advance();
             try {
+                $progressBar->setMessage($file->getFilename());
                 $book = null;
                 try {
                     $book = $this->consumeBook($file);
@@ -156,13 +161,14 @@ class BookManager
                     $io->error($e->getMessage());
                 }
 
-                $progressBar->setMessage($file->getFilename());
-
                 $this->entityManager->persist($book);
                 $this->entityManager->flush();
             } catch (\Exception $e) {
                 $io->error('died during process of '.$file->getRealPath());
                 $io->error($e->getMessage());
+                if ($e->getPrevious() instanceof \Exception) {
+                    $io->error('Caused by '.$e->getPrevious()->getMessage());
+                }
                 throw $e;
             }
             $book = null;
