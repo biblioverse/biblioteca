@@ -102,7 +102,10 @@ class BookController extends AbstractController
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
-            'shelves' => $shelfRepository->findBy(['user' => $this->getUser()]),
+            'shelves' => array_filter(
+                $shelfRepository->findBy(['user' => $this->getUser()]),
+                fn ($shelf) => !$shelf->isDynamic()
+            ),
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,
