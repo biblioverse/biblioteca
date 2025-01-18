@@ -1,5 +1,5 @@
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
-    {% if book.shelves is not empty %}
+    {% if shelves is not empty %}
         <h6 class="mt-4">{{ "shelf.shelves"|trans }}</h6>
         <div class="btn-group-vertical w-100">
             {% for shelf in shelves %}

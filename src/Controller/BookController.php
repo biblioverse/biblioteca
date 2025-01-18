@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Repository\BookRepository;
+use App\Repository\ShelfRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
@@ -31,7 +32,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -101,6 +102,7 @@ class BookController extends AbstractController
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
+            'shelves' => $shelfRepository->findBy(['user' => $this->getUser()]),
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,
