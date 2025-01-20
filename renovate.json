@@ -8,5 +8,14 @@
   ],
   "major": {
     "dependencyDashboardApproval": true
-  }
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["composer"],
+      "rangeStrategy": "bump"
+    }
+  ]
 }
