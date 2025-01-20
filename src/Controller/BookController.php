@@ -50,6 +50,9 @@ class BookController extends AbstractController
             ], 301);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $form = $this->createFormBuilder(options: ['label_translation_prefix' => 'book.form.'])
             ->setAction($this->generateUrl('app_book_delete', [
                 'id' => $book->getId(),
@@ -97,15 +100,12 @@ class BookController extends AbstractController
 
         $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
             'book' => $book,
-            'user' => $this->getUser(),
+            'user' => $user,
         ]);
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
-            'shelves' => array_filter(
-                $shelfRepository->findBy(['user' => $this->getUser()]),
-                fn ($shelf) => !$shelf->isDynamic()
-            ),
+            'shelves' => $shelfRepository->findManualShelvesForUser($user),
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,
