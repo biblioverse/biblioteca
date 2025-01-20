@@ -5,7 +5,6 @@ framework:
     secret: '%env(APP_SECRET)%'
     trusted_proxies: '%env(TRUSTED_PROXIES)%'
     #csrf_protection: true
-    ide: 'phpstorm://open?file=%%f&line=%%l&/var/www/html/>/Users/sergiomendolia/IdeaProjects/biblioteca/'
     http_method_override: false
     handle_all_throwables: true
     http_cache: true
