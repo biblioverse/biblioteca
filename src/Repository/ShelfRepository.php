@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
+use App\Entity\User;
 use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -39,6 +40,21 @@ class ShelfRepository extends ServiceEntityRepository
         $result = $qb->getQuery()->getOneOrNullResult();
 
         return $result;
+    }
+
+    /**
+     * @return Shelf[]
+     */
+    public function findManualShelvesForUser(User $user): array
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->where('shelf.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('shelf.queryFilter is null')
+            ->andWhere('shelf.queryString is null');
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findByKoboAndName(KoboDevice $koboDevice, string $name): ?Shelf
