@@ -44,7 +44,7 @@ book.age-category: Age category
 book.all-books: All books
 book.and-rename: and rename
 book.author: author
-book.authors: authors
+book.authors: Authors
 book.back-to: back to
 book.book-details: Book details
 book.book-path: Book path
@@ -68,7 +68,7 @@ book.publisher: Publisher
 book.read-state: Read state
 book.relocate: Relocate
 book.search-google-images: Search cover with Google Images
-book.serie: serie
+book.serie: Serie
 book.serieIndex: Serie Index
 book.size: Size
 book.summary: Summary
