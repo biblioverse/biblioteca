@@ -1,7 +1,4 @@
 {# @var book App\Entity\Book #}
-{% if withDetail is not defined %}
-{% set withDetail = true %}
-{% endif %}
 {% set read = false %}
 {% for interaction in book.bookInteractions|default([]) %}
     {% if interaction.user.id == app.user.id and interaction.finished %}
@@ -25,7 +22,7 @@
 {% else %}
     {% set icon='bi-file-binary-fill' %}
 {% endif %}
-<div class=" m-1 {{ withDetail?'mb-4' }}">
+<div class=" m-1 mb-4">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
     <div class="book {{ read?'border border-success border-5':'' }}" style="{{ read?'opacity:0.6;' }}{{ hidden?'opacity:0.3;' }}">
         <div class="book__cover">
@@ -34,26 +31,23 @@
             {% else %}
                 <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
             {% endif %}
+            <div class="book__detail">
+                {% if read %}
+                    <i class="bi bi-check-square-fill"></i> Finished !
+                {% endif %}
+                <i class="bi {{ icon }}"></i> {{ book.title }} -
+                {% for author in book.authors %}
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                {% endfor %}
 
+                {% if book.serie %}
+                    <i class="bi bi-list-ol"></i>
+                    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
+
+                {% endif %}
+            </div>
         </div>
         <div class="book__page"></div>
     </div>
     </a>
-    {% if withDetail %}
-        <small>
-            {{ book.title }}
-            {% for author in book.authors %}
-                <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none">
-                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                </a>
-            {% endfor %}
-
-            {% if book.serie %}
-                <a href="{{ filter_book_url({'serie': book.serie}) }}" class="text-decoration-none">
-                    <i class="bi bi-list-ol"></i>&nbsp
-                    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
-                </a>
-            {% endif %}
-        </small>
-    {% endif %}
 </div>
