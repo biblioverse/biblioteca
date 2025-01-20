@@ -36,6 +36,7 @@ class InlineEditInteraction extends AbstractController
 
     public ?string $flashMessage = null;
     public ?string $flashMessageFav = null;
+    public ?string $flashMessageHidden = null;
 
     public function __construct(private EntityManagerInterface $entityManager, private FormFactoryInterface $formFactory)
     {
@@ -127,6 +128,6 @@ class InlineEditInteraction extends AbstractController
         $entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessageFav = 'Hidden';
+        $this->flashMessageHidden = 'Hidden';
     }
 }

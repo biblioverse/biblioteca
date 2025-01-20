@@ -137,6 +137,11 @@ class Shelf
         $this->slug = $slug;
     }
 
+    public function isDynamic(): bool
+    {
+        return $this->queryString !== null;
+    }
+
     public function getQueryString(): ?string
     {
         return $this->queryString;

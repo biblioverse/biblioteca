@@ -1,31 +1,33 @@
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
-    <h6 class="mt-4">{{ "shelf.shelves"|trans }}</h6>
-    <div class="btn-group-vertical w-100">
-        {% for shelf in shelves %}
+    {% if shelves is not empty %}
+        <h6 class="mt-4">{{ "shelf.shelves"|trans }}</h6>
+        <div class="btn-group-vertical w-100">
+            {% for shelf in shelves %}
 
-                {% if shelf in book.shelves %}
-                    <button
-                        data-action="live#action"
-                        data-live-action-param="remove(shelfId={{ shelf.id }})"
-                        data-live-shelf-param="{{ shelf.id }}"
-                        class="btn btn-success btn-sm w-100"
-                        title="{{shelf.name}}"
-                    >
-                        {{ shelf.name }}
-                    </button>
-                {% else %}
-                    <button
+                    {% if shelf in book.shelves %}
+                        <button
                             data-action="live#action"
-                            data-live-action-param="add(shelfId={{ shelf.id }})"
+                            data-live-action-param="remove(shelfId={{ shelf.id }})"
                             data-live-shelf-param="{{ shelf.id }}"
-                            class="btn btn-outline-primary btn-sm w-100"
+                            class="btn btn-success btn-sm w-100"
                             title="{{shelf.name}}"
-                    >
-                        {{ shelf.name }}
-                    </button>
-                {% endif %}
-        {% endfor %}
-    </div>
+                        >
+                            {{ shelf.name }}
+                        </button>
+                    {% else %}
+                        <button
+                                data-action="live#action"
+                                data-live-action-param="add(shelfId={{ shelf.id }})"
+                                data-live-shelf-param="{{ shelf.id }}"
+                                class="btn btn-outline-primary btn-sm w-100"
+                                title="{{shelf.name}}"
+                        >
+                            {{ shelf.name }}
+                        </button>
+                    {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if flashMessage %}
         <div class="alert-remove">
             <i class="bi bi-check"></i> {{ flashMessage }}
