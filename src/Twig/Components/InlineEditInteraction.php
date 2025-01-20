@@ -38,10 +38,7 @@ class InlineEditInteraction extends AbstractController
 
     public ?string $flashMessage = null;
     public ?string $flashMessageFav = null;
-    /**
-     * @var Shelf[]
-     */
-    public array $shelves = [];
+    public ?string $flashMessageHidden = null;
 
     public function __construct(private EntityManagerInterface $entityManager, private FormFactoryInterface $formFactory)
     {

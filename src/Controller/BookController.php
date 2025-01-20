@@ -7,6 +7,7 @@ use App\Entity\BookInteraction;
 use App\Entity\User;
 use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
+use App\Repository\ShelfRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
@@ -32,7 +33,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -49,6 +50,9 @@ class BookController extends AbstractController
                 'slug' => $book->getSlug(),
             ], 301);
         }
+
+        /** @var User $user */
+        $user = $this->getUser();
 
         $form = $this->createFormBuilder(options: ['label_translation_prefix' => 'book.form.'])
             ->setAction($this->generateUrl('app_book_delete', [
@@ -97,11 +101,12 @@ class BookController extends AbstractController
 
         $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
             'book' => $book,
-            'user' => $this->getUser(),
+            'user' => $user,
         ]);
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
+            'shelves' => $shelfRepository->findManualShelvesForUser($user),
             'serie' => $serie,
             'serieMax' => $serieMax,
             'sameAuthor' => $sameAuthorBooks,

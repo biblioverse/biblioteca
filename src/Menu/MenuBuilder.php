@@ -89,7 +89,7 @@ final class MenuBuilder
         if ($user->getShelves()->count() > 0) {
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
-                if ($shelf->getQueryString() !== null) {
+                if ($shelf->isDynamic()) {
                     $shelves->addChild($shelf->getSlug(), ['label' => $shelf->getName(), 'route' => 'app_allbooks', 'routeParameters' => ['page' => 1, 'filterQuery' => $shelf->getQueryFilter(), 'orderQuery' => $shelf->getQueryOrder(), 'query' => $shelf->getQueryString()], ...$this->defaultAttr])
                         ->setExtra('icon', 'bookmark-fill')->setExtra('translation_domain', false);
                 } else {
