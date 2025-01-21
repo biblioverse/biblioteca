@@ -21,7 +21,7 @@
     "gedmo/doctrine-extensions": "^3.11",
     "gemorroj/archive7z": "^5.6",
     "guzzlehttp/guzzle": "^7.8",
-    "jms/serializer": "^3.30",
+    "jms/serializer": "^3.32.2",
     "kiwilan/php-ebook": "^3.0",
     "kiwilan/php-opds": "^2.1",
     "knplabs/knp-menu-bundle": "^3.2",
