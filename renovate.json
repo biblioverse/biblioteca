@@ -17,8 +17,10 @@
       "rangeStrategy": "bump"
     },
     {
+      "description": "Group minor dependencies only for npm, composer has too many updates to perform at the moment",
       "groupName": "all non-major dependencies - {{manager}}",
       "groupSlug": "all-minor-patch-{{manager}}",
+      "matchManagers": ["npm"],
       "matchPackageNames": [
         "*"
       ],
