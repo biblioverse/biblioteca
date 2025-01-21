@@ -188,7 +188,7 @@
   ],
   "require-dev": {
     "doctrine/doctrine-fixtures-bundle": "^4.0",
-    "friendsofphp/php-cs-fixer": "^3.25",
+    "friendsofphp/php-cs-fixer": "^3.68.1",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^1.10",
     "phpstan/phpstan-deprecation-rules": "^1.2",
