@@ -1,4 +1,4 @@
-FROM ghcr.io/biblioverse/biblioteca-docker:2.0.1 AS base
+FROM ghcr.io/biblioverse/biblioteca-docker:2.0.2 AS base
 WORKDIR /var/www/html
 
 USER root
