@@ -28,6 +28,7 @@ class ReadingStateDeserializeTest extends KernelTestCase
         /** @var ReadingStates|mixed $result */
         $result = $serializer->deserialize($json, ReadingStates::class, 'json');
         self::assertInstanceOf(ReadingStates::class, $result, 'Result is not a ReadingStates');
+        // @phpstan-ignore-next-line
         self::assertIsArray($result->readingStates, 'readingStates is not an array');
         self::assertNotEmpty($result->readingStates, 'readingStates is empty');
         self::assertInstanceOf(Bookmark::class, $result->readingStates[0]->currentBookmark, 'currentBookmark is not a Bookmark');

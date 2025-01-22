@@ -100,7 +100,7 @@ class BackupDbCommand extends Command
 
         $filesCount = $finder->count();
 
-        /** @var array<int, \SplFileInfo> $files */
+        /** @var array<string, \Symfony\Component\Finder\SplFileInfo> $files */
         $files = iterator_to_array($finder);
 
         $maxFiles = 5;

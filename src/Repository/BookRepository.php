@@ -135,7 +135,9 @@ class BookRepository extends ServiceEntityRepository
             ->groupBy('book.extension')
             ->distinct(true);
 
+        /** @var array{extension:string,nb:int}[] */
         $results = $qb->getQuery()->getResult();
+        // @phpstan-ignore-next-line
         if (!is_array($results)) {
             return [];
         }
@@ -171,6 +173,7 @@ class BookRepository extends ServiceEntityRepository
             }
             $qb->andWhere($orModule);
 
+            /** @var Book[] $results */
             $results = $qb->getQuery()->getResult();
         } catch (\Exception $e) {
             if ($e->getMessage() === "Operation 'JSON_CONTAINS' is not supported by platform.") {
@@ -179,6 +182,7 @@ class BookRepository extends ServiceEntityRepository
             throw $e;
         }
 
+        // @phpstan-ignore-next-line
         if (!is_array($results)) {
             return [];
         }
@@ -343,11 +347,13 @@ class BookRepository extends ServiceEntityRepository
      */
     private function convertResults(mixed $intermediateResults): array
     {
+        // @phpstan-ignore-next-line
         if (!is_array($intermediateResults)) {
             return [];
         }
         $results = [];
         foreach ($intermediateResults as $result) {
+            // TODO:: check in what condition this can be an array, as the logic looks like what the query already does
             foreach ($result['item'] ?? [] as $item) {
                 $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {

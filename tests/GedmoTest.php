@@ -29,6 +29,7 @@ class GedmoTest extends KernelTestCase
         $entityManager->persist($book);
         $entityManager->flush();
 
+        // @phpstan-ignore-next-line
         self::assertNotNull($book->getCreated(), 'The created date should be set by Doctrine Extensions');
         self::assertNotNull($book->getUpdated(), 'The updated date should be set by Doctrine Extensions');
 

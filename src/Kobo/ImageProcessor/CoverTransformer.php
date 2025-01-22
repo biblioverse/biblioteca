@@ -29,6 +29,10 @@ class CoverTransformer
             && false === str_ends_with($coverPath, self::WEBP));
     }
 
+    /**
+     * @param int<1, max> $maxWidth
+     * @param int<1, max> $maxHeight
+     */
     public function streamFile(string $coverPath, int $maxWidth, int $maxHeight, string $extensionWithDot, bool $grayscale = false): void
     {
         // Make sure the extension starts with a dot

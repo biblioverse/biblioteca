@@ -92,9 +92,11 @@ class BooksAiCommand extends Command
             if ($type === 'summary' || $type === 'both') {
                 $qb->orWhere('book.summary is null');
             }
+            /** @var Book[] $books */
             $books = $qb->getQuery()->getResult();
         } else {
             $io->note('Processing book '.$bookId);
+            /** @var Book[] $books */
             $books = $this->em->getRepository(Book::class)->findBy(['id' => $bookId]);
         }
 

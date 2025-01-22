@@ -59,6 +59,7 @@ class StateControllerTest extends AbstractKoboControllerTest
 
         $book = $this->getBookById($bookId);
         self::assertNotNull($book, 'Book '.$bookId.' not found');
+        // @phpstan-ignore-next-line
         self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
 
         $json = $serializer->serialize($readingStates, 'json');
