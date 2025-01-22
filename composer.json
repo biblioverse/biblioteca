@@ -25,7 +25,7 @@
     "kiwilan/php-ebook": "^3.0",
     "kiwilan/php-opds": "^2.1",
     "knplabs/knp-menu-bundle": "^3.2",
-    "knplabs/knp-paginator-bundle": "^6.2",
+    "knplabs/knp-paginator-bundle": "^6.6.1",
     "liip/imagine-bundle": "^2.10",
     "nikic/php-parser": "^5.4",
     "phpdocumentor/reflection-docblock": "^5.3",
