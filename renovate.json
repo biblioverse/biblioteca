@@ -14,7 +14,7 @@
   "packageRules": [
     {
       "matchManagers": ["composer"],
-      "rangeStrategy": "bump"
+      "rangeStrategy": "update-lockfile"
     },
     {
       "description": "Group minor dependencies only for npm, composer has too many updates to perform at the moment",
