@@ -107,8 +107,8 @@ class DownloadHelper
             }
         }
 
-        $fileToStream = $message?->destination ?? $bookPath;
-        $fileSize = $message?->size ?? filesize($fileToStream);
+        $fileToStream = $message->destination ?? $bookPath;
+        $fileSize = $message->size ?? filesize($fileToStream);
 
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
             ->deleteFileAfterSend($message?->destination !== null);

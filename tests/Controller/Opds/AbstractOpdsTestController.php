@@ -32,9 +32,7 @@ abstract class AbstractOpdsTestController extends WebTestCase
 
     protected static function getXmlResponse(): array
     {
-        if (!self::getClient() instanceof AbstractBrowser) {
-            static::fail('A client must be initialized to make assertions');
-        }
+        self::assertInstanceOf(AbstractBrowser::class, self::getClient());
 
         /** @var Response $response */
         $response = self::getClient()->getResponse();
@@ -71,24 +69,18 @@ abstract class AbstractOpdsTestController extends WebTestCase
 
         $opdsRepo = static::getContainer()->get(OpdsAccessRepository::class);
 
-        if (!$opdsRepo instanceof OpdsAccessRepository) {
-            self::fail('OpdsAccessRepository not found');
-        }
+        self::assertInstanceOf(OpdsAccessRepository::class, $opdsRepo);
 
         $exist = $opdsRepo->findOneBy(['token' => OpdsAccessFixture::ACCESS_KEY]);
 
         if ($exist === null) {
             $userRepository = static::getContainer()->get(UserRepository::class);
 
-            if (!$userRepository instanceof UserRepository) {
-                self::fail('UserRepository not found');
-            }
+            self::assertInstanceOf(UserRepository::class, $userRepository);
 
             $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
 
-            if (!$testUser instanceof UserInterface) {
-                self::fail('User not found');
-            }
+            self::assertInstanceOf(UserInterface::class, $testUser);
 
             $all = $opdsRepo->findAll();
             foreach ($all as $opds) {

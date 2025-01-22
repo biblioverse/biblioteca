@@ -8,6 +8,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class TranslationExtractionTest extends KernelTestCase
 {
     private TranslatorInterface $translator;
+    /** @var array<string> */
     private array $locales = ['en', 'fr'];
 
     #[\Override]
@@ -15,9 +16,7 @@ class TranslationExtractionTest extends KernelTestCase
     {
         self::bootKernel();
         $translator = static::getContainer()->get('translator');
-        if (!$translator instanceof TranslatorInterface) {
-            throw new \RuntimeException('The translator service must be an instance of TranslatorInterface');
-        }
+        self::assertInstanceOf(TranslatorInterface::class, $translator);
         $this->translator = $translator;
     }
 

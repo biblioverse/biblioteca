@@ -338,6 +338,7 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param GroupType[] $intermediateResults
      * @return GroupType[]
      */
     private function convertResults(mixed $intermediateResults): array

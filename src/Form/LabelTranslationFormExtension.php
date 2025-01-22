@@ -62,6 +62,7 @@ class LabelTranslationFormExtension extends AbstractTypeExtension
             return;
         }
 
+        /** @var string */
         $prefix = $options['label_translation_prefix'];
         if (!$form->isRoot()) {
             $prefix = $form->getRoot()->getConfig()->getOption('label_translation_prefix');

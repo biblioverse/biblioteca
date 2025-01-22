@@ -53,9 +53,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
 
     protected static function getJsonResponse(): array
     {
-        if (!self::getClient() instanceof AbstractBrowser) {
-            static::fail('A client must be initialized to make assertions');
-        }
+        self::assertInstanceOf(AbstractBrowser::class, self::getClient());
 
         /** @var Response $response */
         $response = self::getClient()->getResponse();
@@ -76,7 +74,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     protected function getKepubifyEnabler(): KepubifyEnabler
     {
         $service = self::getContainer()->get(KepubifyEnabler::class);
-        assert($service instanceof KepubifyEnabler);
+        self::assertInstanceOf(KepubifyEnabler::class, $service);
 
         return $service;
     }
@@ -84,7 +82,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     protected function getKoboStoreProxy(): KoboStoreProxy
     {
         $service = self::getContainer()->get(KoboStoreProxy::class);
-        assert($service instanceof KoboStoreProxy);
+        self::assertInstanceOf(KoboStoreProxy::class, $service);
 
         return $service;
     }
@@ -92,7 +90,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     protected function getKoboProxyConfiguration(): KoboProxyConfiguration
     {
         $service = self::getContainer()->get(KoboProxyConfiguration::class);
-        assert($service instanceof KoboProxyConfiguration);
+        self::assertInstanceOf(KoboProxyConfiguration::class, $service);
 
         return $service;
     }
@@ -105,10 +103,7 @@ abstract class AbstractKoboControllerTest extends WebTestCase
     protected function getService(string $name): mixed
     {
         $service = self::getContainer()->get($name);
-        if (!$service instanceof $name) {
-            throw new \RuntimeException(sprintf('Service %s not found', $name));
-        }
-        assert($service instanceof $name);
+        self::assertInstanceOf($name, $service);
 
         return $service;
     }

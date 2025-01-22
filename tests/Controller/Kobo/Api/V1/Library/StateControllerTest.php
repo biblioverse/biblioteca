@@ -78,7 +78,7 @@ class StateControllerTest extends AbstractKoboControllerTest
     private function getSerializer(): SerializerInterface
     {
         $service = self::getContainer()->get('serializer');
-        assert($service instanceof SerializerInterface);
+        self::assertInstanceOf(SerializerInterface::class, $service);
 
         return $service;
     }

@@ -33,15 +33,11 @@ class SearchComponentTest extends KernelTestCase
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            throw new \RuntimeException('User repository is not an instance of UserRepository');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $user = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
 
-        if (!$user instanceof User) {
-            throw new \RuntimeException('User not found');
-        }
+        self::assertInstanceOf(User::class, $user);
 
         $testComponent->actingAs($user);
 
