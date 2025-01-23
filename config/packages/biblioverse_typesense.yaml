@@ -1,0 +1,88 @@
+biblioverse_typesense:
+  typesense:
+    uri: '%env(resolve:TYPESENSE_URL)%'
+    key: '%env(resolve:TYPESENSE_KEY)%'
+  collections:
+    books:
+      name: 'books'
+      entity: 'App\Entity\Book'
+      mapping:
+        fields:
+          id:
+            name: id
+            type: string
+          title:
+            name: title
+            type: string
+          sortable_id:
+            entity_attribute: id             # Entity attribute name forced
+            name: sortable_id                # Typesense field name
+            type: int32
+          serie:
+            name: serie
+            type: string
+            optional: true
+            facet: true
+          summary:
+            name: summary
+            type: string
+            optional: true
+          serieIndex:
+            name: serieIndex
+            type: float
+            optional: true
+          extension:
+            name: extension
+            type: string
+            facet: true
+          authors:
+            name: authors
+            type: string[]
+            facet: true
+          verified:
+            name: verified
+            type: bool
+            facet: true
+          tags:
+            name: tags
+            type: string[]
+            facet: true
+            optional: true
+          updated:
+            name: updated
+            type: int64
+          age:
+            name: age
+            type: string
+            facet: true
+            optional: true
+            entity_attribute: ageCategory
+          user.read:
+            name: read
+            optional: true
+            type: int32[]
+            entity_attribute: users.read
+          user.hidden:
+            name: hidden
+            optional: true
+            type: int32[]
+            entity_attribute: users.hidden
+          user.favorite:
+            name: favorite
+            optional: true
+            type: int32[]
+            entity_attribute: users.favorite
+
+        default_sorting_field: sortable_id
+        symbols_to_index: ['+', '#', '@', '_']
+        token_separators: [' ', '-', "'"]
+#      finders:
+#        books_autocomplete:
+#          finder_parameters:
+#            query_by: title,serie,extension,authors,tags,summary
+#            limit: 100
+#            num_typos: 2
+
+when@test:
+  biblioverse_typesense:
+    auto_update: false

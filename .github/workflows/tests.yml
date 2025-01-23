@@ -46,8 +46,8 @@ jobs:
         run: |
           docker compose exec biblioteca bin/console doctrine:database:create --env=test -n
           docker compose exec biblioteca bin/console doctrine:migrations:migrate --env=test -n
-          docker compose exec biblioteca bin/console typesense:create --env=test
           docker compose exec biblioteca bin/console doctrine:fixtures:load --env=test --append -n
+          docker compose exec biblioteca bin/console biblioverse:typesense:populate --env=test
 
       - name: Execute tests
         run: docker compose exec biblioteca composer test
