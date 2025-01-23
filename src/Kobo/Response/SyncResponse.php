@@ -62,7 +62,7 @@ class SyncResponse
 
         $list = array_merge($list, $this->remoteItems);
 
-        array_filter($list);
+        array_filter($list, fn ($item) => $item !== []);
 
         $response = new JsonResponse();
         $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));

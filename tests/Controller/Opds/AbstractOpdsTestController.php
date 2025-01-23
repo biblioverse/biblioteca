@@ -88,9 +88,8 @@ abstract class AbstractOpdsTestController extends WebTestCase
             }
             $entityManager->flush();
 
-            $opdsAccess = new OpdsAccess();
+            $opdsAccess = new OpdsAccess($testUser);
             $opdsAccess->setToken(OpdsAccessFixture::ACCESS_KEY);
-            $opdsAccess->setUser($testUser);
             $entityManager->persist($opdsAccess);
             $entityManager->flush();
         }

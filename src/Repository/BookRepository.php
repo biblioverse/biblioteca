@@ -215,7 +215,10 @@ class BookRepository extends ServiceEntityRepository
         return $book;
     }
 
-    public function findByAuthor(string $author): mixed
+    /**
+     * @return Book[]
+     */
+    public function findByAuthor(string $author): array
     {
         $qb = $this->getAllBooksQueryBuilder();
 
@@ -229,7 +232,10 @@ class BookRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByTag(string $tag, ?int $limit = null): mixed
+    /**
+     * @return Book[]
+     */
+    public function findByTag(string $tag, ?int $limit = null): array
     {
         $qb = $this->getAllBooksQueryBuilder();
 

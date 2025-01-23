@@ -17,7 +17,7 @@ class EpubContextBuilder implements ContextBuildingInteface
     #[\Override]
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $aiModel->isUseEpubContext() === true;
+        return $aiModel->isUseEpubContext();
     }
 
     #[\Override]

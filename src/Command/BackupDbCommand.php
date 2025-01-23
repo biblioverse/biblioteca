@@ -12,6 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -100,7 +101,7 @@ class BackupDbCommand extends Command
 
         $filesCount = $finder->count();
 
-        /** @var array<string, \Symfony\Component\Finder\SplFileInfo> $files */
+        /** @var array<string, SplFileInfo> $files */
         $files = iterator_to_array($finder);
 
         $maxFiles = 5;

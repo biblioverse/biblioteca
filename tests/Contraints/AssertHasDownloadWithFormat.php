@@ -72,8 +72,7 @@ class AssertHasDownloadWithFormat extends Constraint
                     throw new \InvalidArgumentException('Download '.$pos.' has ko key '.$key);
                 }
 
-                // @phpstan-ignore-next-line
-                if (trim((string) $download[$key]) === '') {
+                if (trim($download[$key]) === '') {
                     throw new \InvalidArgumentException('Download '.$pos.' has an empty value for key '.$key);
                 }
             }

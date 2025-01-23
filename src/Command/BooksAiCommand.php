@@ -58,7 +58,10 @@ class BooksAiCommand extends Command
 
             return Command::FAILURE;
         }
+        /** @var string|null $bookId */
         $bookId = $input->getOption('book');
+        $bookId = $bookId === '' || $bookId === null ? null : (int) $bookId;
+
         $overwrite = $input->getOption('overwrite');
 
         $user = null;
@@ -100,7 +103,7 @@ class BooksAiCommand extends Command
             $books = $this->em->getRepository(Book::class)->findBy(['id' => $bookId]);
         }
 
-        if (!is_array($books)) {
+        if ($books === []) {
             $io->error('Failed to get books');
 
             return Command::FAILURE;
@@ -120,10 +123,12 @@ class BooksAiCommand extends Command
                 $summary = $summaryCommunicator->interrogate($summaryPrompt->getPrompt());
                 $summary = $summaryPrompt->convertResult($summary);
                 $io->block($summary);
-                $book->setSummary($summary);
+                if (is_string($summary)) {
+                    $book->setSummary($summary);
+                }
             }
 
-            if (($type === 'tags' || $type === 'both') && (count($book->getTags()) === 0 || $overwrite === true)) {
+            if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $overwrite === true)) {
                 $io->comment('Generating Tags');
                 $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book, $user);
                 $tagPrompt = $this->contextBuilder->getContext($tagCommunicator->getAiModel(), $tagPrompt, $output);

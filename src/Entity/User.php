@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[Assert\NotBlank()]
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true, nullable: true, options: ['default' => null])]
     private ?string $username = null;
 
     /**
@@ -103,8 +103,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastLogin = null;
 
-    #[ORM\Column(length: 2)]
-    private ?string $language = 'en';
+    #[ORM\Column(length: 2, nullable: false, options: ['default' => 'en'])]
+    private string $language = 'en';
 
     #[ORM\Column]
     private bool $useKoboDevices = true;

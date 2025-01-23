@@ -87,7 +87,7 @@ class AmazonContextBuilder implements ContextBuildingInteface
     #[\Override]
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $aiModel->isUseAmazonContext() === true;
+        return $aiModel->isUseAmazonContext();
     }
 
     #[\Override]
