@@ -17,6 +17,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 /**
  * @extends ServiceEntityRepository<Book>
  *
+ * @phpstan-type UnconvertedGroupType array{ item:array, bookCount:int, booksFinished:int }
  * @phpstan-type GroupType array{ item:string, bookCount:int, booksFinished:int }
  */
 class BookRepository extends ServiceEntityRepository
@@ -342,19 +343,15 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param GroupType[] $intermediateResults
+     * When we group by tags, for authors and tags, we get an array of arrays, so we need to convert it to an array of strings
+     * @param UnconvertedGroupType[] $intermediateResults
      * @return GroupType[]
      */
     private function convertResults(mixed $intermediateResults): array
     {
-        // @phpstan-ignore-next-line
-        if (!is_array($intermediateResults)) {
-            return [];
-        }
         $results = [];
         foreach ($intermediateResults as $result) {
-            // TODO:: check in what condition this can be an array, as the logic looks like what the query already does
-            foreach ($result['item'] ?? [] as $item) {
+            foreach ($result['item'] as $item) {
                 $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {
                     $results[$key] = [
