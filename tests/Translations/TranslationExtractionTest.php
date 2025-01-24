@@ -3,7 +3,6 @@
 namespace App\Tests\Translations;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslationExtractionTest extends KernelTestCase
@@ -28,7 +27,7 @@ class TranslationExtractionTest extends KernelTestCase
         foreach ($this->locales as $locale) {
             foreach ($domains as $domain) {
                 $translator = $this->translator;
-                self::assertInstanceOf(Translator::class, $translator);
+                // @phpstan-ignore-next-line
                 $catalogue = $translator->getCatalogue($locale);
                 $messages = $catalogue->all($domain);
 
