@@ -34,7 +34,4 @@
             <parameter name="dns-mock-namespaces" value="App" />
         </bootstrap>
     </extensions>
-
-    <extensions>
-    </extensions>
 </phpunit>
