@@ -54,7 +54,7 @@ jobs:
 
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download previous coverage
-        uses: dawidd6/action-download-artifact@v7
+        uses: dawidd6/action-download-artifact@v8
         continue-on-error: true
         with:
           workflow: tests.yml # this file
