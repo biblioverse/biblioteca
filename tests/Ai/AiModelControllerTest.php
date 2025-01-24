@@ -1,6 +1,6 @@
 <?php
 
-namespace Ai;
+namespace App\Tests\Ai;
 
 use App\Ai\Communicator\OllamaCommunicator;
 use App\Ai\Communicator\OpenAiCommunicator;
