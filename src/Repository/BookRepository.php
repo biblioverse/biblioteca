@@ -138,10 +138,6 @@ class BookRepository extends ServiceEntityRepository
 
         /** @var array{extension:string,nb:int}[] */
         $results = $qb->getQuery()->getResult();
-        // @phpstan-ignore-next-line
-        if (!is_array($results)) {
-            return [];
-        }
 
         $types = [];
         if ($group) {
@@ -181,11 +177,6 @@ class BookRepository extends ServiceEntityRepository
                 return [];
             }
             throw $e;
-        }
-
-        // @phpstan-ignore-next-line
-        if (!is_array($results)) {
-            return [];
         }
 
         $items = array_filter($results, static fn ($result) => $result->getId() !== $book->getId() && ($result->getSerie() === null || $book->getSerie() !== $result->getSerie()));
