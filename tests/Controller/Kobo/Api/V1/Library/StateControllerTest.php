@@ -103,7 +103,7 @@ class StateControllerTest extends AbstractKoboControllerTest
 
         $client = self::getClient();
 
-        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $json = $this->getSerializer()->serialize(self::getReadingStates($unknownUuid, 100), 'json');
         $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
         self::assertResponseStatusCodeSame(404);
     }
