@@ -4,73 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d822715f6aa857266dd985023a4b29b",
+    "content-hash": "8b605b4380a5e5c8c57f9c8cc0409bd6",
     "packages": [
-        {
-            "name": "acseo/typesense-bundle",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SergioMendolia/TypesenseBundle.git",
-                "reference": "1cf53598d4218dab53fd2d3f7e291ce9a250ae6e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SergioMendolia/TypesenseBundle/zipball/1cf53598d4218dab53fd2d3f7e291ce9a250ae6e",
-                "reference": "1cf53598d4218dab53fd2d3f7e291ce9a250ae6e",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/orm": "~2.8,>=2.8.0",
-                "monolog/monolog": "^2.3|^3.0",
-                "php": "^7.4||^8.0",
-                "php-http/curl-client": "^2.2",
-                "symfony/console": "^4.3.4|^5|^6.0",
-                "symfony/framework-bundle": "^4.3|^5|^6.0",
-                "symfony/http-client": "^5.4|^6.2",
-                "symfony/property-access": "^3.4|^4.3|^5|^6.0",
-                "typesense/typesense-php": "^4.1.0"
-            },
-            "require-dev": {
-                "dg/bypass-finals": "^1.4",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5",
-                "symfony/phpunit-bridge": "^5.0|^6.0",
-                "symfony/yaml": "^3.4 || ^4.4 || ^5.4 || ^6.0"
-            },
-            "default-branch": true,
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "ACSEO\\TypesenseBundle\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "ACSEO\\TypesenseBundle\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "typesenseServer": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "docker run -i -p 8108:8108 -v/tmp/typesense-server-data-1c/:/data typesense/typesense:0.23.0 --data-dir /data --api-key=123 --listen-port 8108 --enable-cors"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Potier",
-                    "email": "nicolas.potier@acseo.fr"
-                }
-            ],
-            "description": "This bundle provides integration with Typesense in Symfony",
-            "support": {
-                "source": "https://github.com/SergioMendolia/TypesenseBundle/tree/master"
-            },
-            "time": "2024-01-05T09:38:51+00:00"
-        },
         {
             "name": "beberlei/doctrineextensions",
             "version": "v1.5.0",
@@ -181,6 +116,122 @@
                 "source": "https://github.com/Behat/Transliterator/tree/v1.5.0"
             },
             "time": "2022-03-30T09:27:43+00:00"
+        },
+        {
+            "name": "biblioverse/typesense-bundle",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/biblioverse/TypesenseBundle.git",
+                "reference": "04e350cf1e1f109eeea0260ef251ec868a17b02f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/04e350cf1e1f109eeea0260ef251ec868a17b02f",
+                "reference": "04e350cf1e1f109eeea0260ef251ec868a17b02f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "php-http/discovery": "^1.20",
+                "psr/http-client": "^1.0",
+                "psr/http-client-implementation": "*",
+                "psr/log": "^3.0",
+                "symfony/framework-bundle": "^6.4|^7.0",
+                "symfony/http-client": "^6.4|^7.2",
+                "symfony/http-kernel": "^6.4|^7.2",
+                "symfony/property-access": "^6.4|^7.2",
+                "typesense/typesense-php": "^4.9"
+            },
+            "conflict": {
+                "php-http/httplug": "<1.5"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^2.0",
+                "doctrine/doctrine-fixtures-bundle": "^4.0",
+                "doctrine/orm": "^3.3",
+                "friendsofphp/php-cs-fixer": "dev-master",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-symfony": "^2.0",
+                "phpunit/phpunit": "^10.0|^11.5",
+                "rector/rector": "^2.0",
+                "symfony/console": "^6.4|^7.2",
+                "symfony/dotenv": "^6.4|^7.2",
+                "symfony/phpunit-bridge": "^7.0",
+                "symfony/runtime": "^6.4|^7.2",
+                "symfony/yaml": "^6.4|^7.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Biblioverse\\TypesenseBundle\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Biblioverse\\TypesenseBundle\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "auto-scripts": {
+                    "cache:clear": "symfony-cmd"
+                },
+                "phpstan": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "./vendor/bin/phpstan analyse --memory-limit=-1"
+                ],
+                "test-phpcs": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv"
+                ],
+                "phpcs": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "./vendor/bin/php-cs-fixer fi --verbose -vv"
+                ],
+                "test-rector": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "./vendor/bin/rector --dry-run"
+                ],
+                "rector": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "./vendor/bin/rector"
+                ],
+                "init-db": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "php bin/console doctrine:database:drop --force  --env=test",
+                    "php bin/console doctrine:schema:update --force --env=test",
+                    "php bin/console doctrine:fixtures:load -n --env=test"
+                ],
+                "phpunit": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
+                ],
+                "phpunit-coverage": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "env XDEBUG_MODE=coverage php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --coverage-html=tests/coverage"
+                ],
+                "phpunit-xdebug": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "env XDEBUG_MODE=debug,coverage XDEBUG_TRIGGER=1 php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always"
+                ],
+                "lint": [
+                    "@rector",
+                    "@phpcs",
+                    "@phpstan"
+                ],
+                "test": [
+                    "@test-phpcs",
+                    "@phpstan",
+                    "@test-rector",
+                    "@phpunit"
+                ]
+            },
+            "description": "This bundle provides integration with Typesense in Symfony",
+            "support": {
+                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.1",
+                "issues": "https://github.com/biblioverse/TypesenseBundle/issues"
+            },
+            "time": "2025-01-21T21:45:40+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -3555,71 +3606,6 @@
                 "source": "https://github.com/php-http/client-common/tree/2.7.2"
             },
             "time": "2024-09-24T06:21:48+00:00"
-        },
-        {
-            "name": "php-http/curl-client",
-            "version": "2.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-http/curl-client.git",
-                "reference": "f3eb48d266341afec0229a7a37a03521d3646b81"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-http/curl-client/zipball/f3eb48d266341afec0229a7a37a03521d3646b81",
-                "reference": "f3eb48d266341afec0229a7a37a03521d3646b81",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": "^7.4 || ^8.0",
-                "php-http/discovery": "^1.6",
-                "php-http/httplug": "^2.0",
-                "php-http/message": "^1.2",
-                "psr/http-client": "^1.0",
-                "psr/http-factory-implementation": "^1.0",
-                "symfony/options-resolver": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
-            },
-            "provide": {
-                "php-http/async-client-implementation": "1.0",
-                "php-http/client-implementation": "1.0",
-                "psr/http-client-implementation": "1.0"
-            },
-            "require-dev": {
-                "guzzlehttp/psr7": "^2.0",
-                "laminas/laminas-diactoros": "^2.0 || ^3.0",
-                "php-http/client-integration-tests": "^3.0",
-                "php-http/message-factory": "^1.1",
-                "phpunit/phpunit": "^7.5 || ^9.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Http\\Client\\Curl\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Михаил Красильников",
-                    "email": "m.krasilnikov@yandex.ru"
-                }
-            ],
-            "description": "PSR-18 and HTTPlug Async client with cURL",
-            "homepage": "http://php-http.org",
-            "keywords": [
-                "curl",
-                "http",
-                "psr-18"
-            ],
-            "support": {
-                "issues": "https://github.com/php-http/curl-client/issues",
-                "source": "https://github.com/php-http/curl-client/tree/2.3.3"
-            },
-            "time": "2024-10-31T07:36:58+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -13284,12 +13270,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "fb6b00411f2c212631318ab412b2208632e507ba"
+                "reference": "fa05b1cdeb1d38692aea5d34bed226b682403a6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fb6b00411f2c212631318ab412b2208632e507ba",
-                "reference": "fb6b00411f2c212631318ab412b2208632e507ba",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fa05b1cdeb1d38692aea5d34bed226b682403a6d",
+                "reference": "fa05b1cdeb1d38692aea5d34bed226b682403a6d",
                 "shasum": ""
             },
             "conflict": {
@@ -13762,7 +13748,7 @@
                 "phpfastcache/phpfastcache": "<6.1.5|>=7,<7.1.2|>=8,<8.0.7",
                 "phpmailer/phpmailer": "<6.5",
                 "phpmussel/phpmussel": ">=1,<1.6",
-                "phpmyadmin/phpmyadmin": "<5.2.1",
+                "phpmyadmin/phpmyadmin": "<5.2.2",
                 "phpmyfaq/phpmyfaq": "<3.2.5|==3.2.5|>=3.2.10,<=4.0.1",
                 "phpoffice/common": "<0.2.9",
                 "phpoffice/phpexcel": "<1.8.1",
@@ -13796,6 +13782,7 @@
                 "prestashop/gamification": "<2.3.2",
                 "prestashop/prestashop": "<8.1.6",
                 "prestashop/productcomments": "<5.0.2",
+                "prestashop/ps_contactinfo": "<=3.3.2",
                 "prestashop/ps_emailsubscription": "<2.6.1",
                 "prestashop/ps_facetedsearch": "<3.4.1",
                 "prestashop/ps_linklist": "<3.1",
@@ -14145,7 +14132,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-01-21T22:04:49+00:00"
+            "time": "2025-01-23T18:06:21+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -15686,7 +15673,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "acseo/typesense-bundle": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
