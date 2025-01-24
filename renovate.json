@@ -3,7 +3,8 @@
   "extends": [
     "config:recommended",
     "schedule:weekends",
-    ":dependencyDashboard"
+    ":dependencyDashboard",
+    ":automergeMinor"
   ],
   "major": {
     "dependencyDashboardApproval": true
@@ -15,19 +16,6 @@
     {
       "matchManagers": ["composer"],
       "rangeStrategy": "update-lockfile"
-    },
-    {
-      "description": "Group minor dependencies only for npm, composer has too many updates to perform at the moment",
-      "groupName": "all non-major dependencies - {{manager}}",
-      "groupSlug": "all-minor-patch-{{manager}}",
-      "matchManagers": ["npm"],
-      "matchPackageNames": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ]
     }
   ]
 }
