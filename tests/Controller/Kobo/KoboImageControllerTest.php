@@ -8,7 +8,7 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 
-class KoboImageControllerTest extends AbstractKoboControllerTest
+class KoboImageControllerTest extends KoboControllerTestCase
 {
     public function testDownload(): void
     {

@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractKoboControllerTest extends WebTestCase
+abstract class KoboControllerTestCase extends WebTestCase
 {
     protected function getEntityManager(): EntityManagerInterface
     {

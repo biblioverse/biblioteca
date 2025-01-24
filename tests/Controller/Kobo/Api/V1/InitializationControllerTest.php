@@ -4,10 +4,10 @@ namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
 use App\Tests\Contraints\JSONContainKeys;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use Symfony\Component\BrowserKit\Response;
 
-class InitializationControllerTest extends AbstractKoboControllerTest
+class InitializationControllerTest extends KoboControllerTestCase
 {
     /**
      * @throws \JsonException

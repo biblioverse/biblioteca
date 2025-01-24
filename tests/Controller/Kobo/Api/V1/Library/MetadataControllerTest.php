@@ -7,9 +7,9 @@ use App\DataFixtures\KoboFixture;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\Response\MetadataResponseService;
 use App\Tests\Contraints\AssertHasDownloadWithFormat;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 
-class MetadataControllerTest extends AbstractKoboControllerTest
+class MetadataControllerTest extends KoboControllerTestCase
 {
     public function testSyncControllerMetadata(): void
     {
