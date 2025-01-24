@@ -11,7 +11,7 @@ class JSONContainKeys extends Constraint
     }
 
     #[\Override]
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         try {
             $this->test($other);
@@ -48,7 +48,7 @@ class JSONContainKeys extends Constraint
     }
 
     #[\Override]
-    public function failureDescription($other): string
+    public function failureDescription(mixed $other): string
     {
         try {
             $this->test($other);

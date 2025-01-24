@@ -38,7 +38,7 @@ class JSONIsValidSyncResponse extends Constraint
     ];
 
     #[\Override]
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         try {
             // @phpstan-ignore-next-line

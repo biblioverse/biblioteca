@@ -11,7 +11,7 @@ class ArrayHasNestedKey extends Constraint
     }
 
     #[\Override]
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         try {
             $this->test($other);
