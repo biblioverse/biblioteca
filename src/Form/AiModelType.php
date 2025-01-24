@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AiModelType extends AbstractType
 {
-    private array $taggedServices;
+    private array $taggedServices = [];
 
     /**
      * @param AiCommunicatorInterface[] $services

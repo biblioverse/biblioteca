@@ -11,8 +11,8 @@
     "ext-iconv": "*",
     "ext-imagick": "*",
     "ext-zip": "*",
-    "acseo/typesense-bundle": "dev-master",
     "beberlei/doctrineextensions": "^1.3",
+    "biblioverse/typesense-bundle": "^0.0.1",
     "devdot/monolog-parser": "^1.6",
     "doctrine/annotations": "^2.0.2",
     "doctrine/doctrine-bundle": "^2.13.2",
@@ -160,8 +160,8 @@
       "@php bin/console doctrine:database:drop --env=test -n --force",
       "@php bin/console doctrine:database:create --env=test -n",
       "@php bin/console doctrine:migrations:migrate --env=test -n",
-      "@php bin/console typesense:create --env=test",
-      "@php bin/console doctrine:fixtures:load --env=test --append -n"
+      "@php bin/console doctrine:fixtures:load --env=test --append -n",
+      "@php bin/console biblioverse:typesense:populate --env=test"
     ],
     "test": [
       "@test-phpcs",
@@ -183,7 +183,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/SergioMendolia/TypesenseBundle"
+      "url": "https://github.com/biblioverse/TypesenseBundle"
     }
   ],
   "require-dev": {

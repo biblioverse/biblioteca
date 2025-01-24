@@ -2,42 +2,70 @@
 
 namespace App\Service\Search;
 
-use ACSEO\TypesenseBundle\Finder\CollectionFinder;
-use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
-use ACSEO\TypesenseBundle\Finder\TypesenseResponse;
 use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\Prompt\SearchHintPrompt;
 use App\Entity\Book;
+use Biblioverse\TypesenseBundle\Mapper\Fields\FieldMappingInterface;
+use Biblioverse\TypesenseBundle\Mapper\MappingGeneratorInterface;
+use Biblioverse\TypesenseBundle\Query\SearchQuery;
+use Biblioverse\TypesenseBundle\Search\Results\SearchResultsHydrated;
+use Biblioverse\TypesenseBundle\Search\SearchCollectionInterface;
 
 class SearchHelper
 {
-    private TypesenseResponse $response;
-    public TypesenseQuery $query;
+    /** @var ?SearchResultsHydrated<Book> */
+    public ?SearchResultsHydrated $response = null;
+    public ?SearchQuery $query = null;
+    public int $maxFacetValues = 10;
 
-    public function __construct(protected CollectionFinder $bookFinder, private readonly CommunicatorDefiner $communicatorDefiner)
-    {
+    /**
+     * @param SearchCollectionInterface<Book> $searchBooks
+     */
+    public function __construct(
+        protected SearchCollectionInterface $searchBooks,
+        protected MappingGeneratorInterface $mappingGeneratorBooks,
+        private readonly CommunicatorDefiner $communicatorDefiner,
+    ) {
     }
 
-    public function prepareQuery(string $queryBy, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchHelper
+    /**
+     * Return the fields available for filtering
+     * @return string[]
+     */
+    public function getBookFieldsForQuery(): array
     {
-        $query = new TypesenseQuery($queryBy, 'title,serie,extension,authors,tags,summary');
-        $query->perPage($perPage);
-        $query->filterBy($filterBy ?? '');
-        $query->sortBy($sortBy ?? '');
-        $query->numTypos(2);
-        $query->page($page);
-        $query->facetBy('authors,serie,tags');
-        $query->addParameter('facet_strategy', 'exhaustive');
-        $this->query = $query;
+        $fields = $this->mappingGeneratorBooks->getMapping()->getFields();
+        $fieldsName = array_map(fn (FieldMappingInterface $fieldMapping) => $fieldMapping->getName(), $fields);
+
+        return array_filter($fieldsName, fn (string $field) => !in_array($field, ['id', 'created_at', 'updated_at', 'sortable_id'], true));
+    }
+
+    public function prepareQuery(string $q, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchHelper
+    {
+        $this->query = new SearchQuery(
+            q: $q,
+            queryBy: 'title,serie,extension,authors,tags,summary',
+            filterBy: $filterBy,
+            sortBy: $sortBy,
+            maxFacetValues: $this->maxFacetValues,
+            numTypos: 2,
+            page: $page,
+            perPage: $perPage,
+            facetBy: 'authors,serie,tags',
+            facetStrategy: 'exhaustive',
+        );
 
         return $this;
     }
 
     public function execute(): SearchHelper
     {
-        $this->response = $this->bookFinder->query($this->query);
+        if (!$this->query instanceof SearchQuery) {
+            return $this;
+        }
+        $this->response = $this->searchBooks->search($this->query);
 
         return $this;
     }
@@ -47,47 +75,57 @@ class SearchHelper
      */
     public function getBooks(): array
     {
-        $results = $this->response->getResults();
-
-        $books = [];
-        foreach ($results as $resultItem) {
-            $books[$resultItem->getId()] = $resultItem;
+        if (null == $this->response) {
+            return [];
         }
 
-        return $books;
+        return $this->response->getResults();
     }
 
     public function getFacets(): array
     {
+        if (!$this->response instanceof SearchResultsHydrated) {
+            return [];
+        }
+
         return $this->response->getFacetCounts();
     }
 
     public function getPagination(): array
     {
-        $found = $this->response->getFound();
-        $params = $this->query->getParameters();
+        if (!$this->response instanceof SearchResultsHydrated) {
+            return [
+                'page' => 1,
+                'total' => 0,
+                'lastPage' => 1,
+                'nextPage' => null,
+                'previousPage' => null,
+            ];
+        }
 
-        $pages = ceil($found / $params['per_page']);
+        $perPage = $this->response->getPerPage() ?? 1;
+        $totalPages = $this->response->getTotalPage();
 
         return [
-            'page' => $params['page'],
-            'pages' => $pages,
-            'perPage' => $params['per_page'],
-            'total' => $found,
-            'lastPage' => $pages,
-            'nextPage' => $params['page'] < $pages ? $params['page'] + 1 : null,
-            'previousPage' => $params['page'] > 1 ? $params['page'] - 1 : null,
+            'page' => $this->response->getPage(),
+            'pages' => $this->response->getTotalPage(),
+            'perPage' => $perPage,
+            'total' => $this->response->getFound(),
+            'lastPage' => $totalPages,
+            'nextPage' => $this->response->getPage() < $totalPages ? ($this->response->getPage() ?? 1) + 1 : null,
+            'previousPage' => $this->response->getPage() > 1 ? $this->response->getPage() - 1 : null,
         ];
     }
 
     public function getQueryHints(): ?array
     {
         $communicator = $this->communicatorDefiner->getCommunicator(AiAction::Search);
-        if (!$communicator instanceof AiCommunicatorInterface) {
+        if (!$communicator instanceof AiCommunicatorInterface || !$this->query instanceof SearchQuery) {
             return null;
         }
-        $params = $this->query->getParameters();
-        if ($params['q'] === '') {
+
+        $q = $this->query->getQ();
+        if ($q === '') {
             return null;
         }
 
@@ -103,7 +141,7 @@ class SearchHelper
         $communicator->initialise($communicator->getAiModel());
 
         $prompt->setPrompt('### User-Supplied Query ###
-'.$params['q']);
+'.$q);
         $result = $communicator->interrogate($prompt->getPrompt());
 
         return $prompt->convertResult($result);
