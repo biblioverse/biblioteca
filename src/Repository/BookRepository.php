@@ -17,7 +17,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 /**
  * @extends ServiceEntityRepository<Book>
  *
- * @phpstan-type UnconvertedGroupType array{ item:array, bookCount:int, booksFinished:int }
+ * @phpstan-type UnconvertedGroupType array{ item:string|array, bookCount:int, booksFinished:int }
  * @phpstan-type GroupType array{ item:string, bookCount:int, booksFinished:int }
  */
 class BookRepository extends ServiceEntityRepository
@@ -348,6 +348,14 @@ class BookRepository extends ServiceEntityRepository
     {
         $results = [];
         foreach ($intermediateResults as $result) {
+            if (!is_array($result['item'])) {
+                $results[$result['item']] = [
+                    'item' => $result['item'],
+                    'bookCount' => $result['bookCount'],
+                    'booksFinished' => $result['booksFinished'],
+                ];
+                continue;
+            }
             foreach ($result['item'] as $item) {
                 $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {
