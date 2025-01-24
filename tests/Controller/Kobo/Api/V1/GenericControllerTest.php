@@ -4,9 +4,9 @@ namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
 use App\Tests\Contraints\JSONContainKeys;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 
-class GenericControllerTest extends AbstractKoboControllerTest
+class GenericControllerTest extends KoboControllerTestCase
 {
     public function testRedirect(): void
     {

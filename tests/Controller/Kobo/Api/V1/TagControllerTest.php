@@ -9,11 +9,11 @@ use App\Entity\Shelf;
 use App\Kobo\Request\TagDeleteRequest;
 use App\Kobo\Request\TagDeleteRequestItem;
 use App\Repository\ShelfRepository;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class TagControllerTest extends AbstractKoboControllerTest
+class TagControllerTest extends KoboControllerTestCase
 {
     private const string SHELF_TEMPORARY = 'delete_me';
 

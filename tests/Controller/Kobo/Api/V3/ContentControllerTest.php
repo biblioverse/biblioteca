@@ -2,10 +2,10 @@
 
 namespace App\Tests\Controller\Kobo\Api\V3;
 
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContentControllerTest extends AbstractKoboControllerTest
+class ContentControllerTest extends KoboControllerTestCase
 {
     public function testCheckForChangesPost(): void
     {
