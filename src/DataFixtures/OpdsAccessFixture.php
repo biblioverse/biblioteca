@@ -18,9 +18,8 @@ class OpdsAccessFixture extends Fixture implements DependentFixtureInterface
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $opdsAccess = new OpdsAccess();
+        $opdsAccess = new OpdsAccess($this->getUser());
         $opdsAccess->setToken(self::ACCESS_KEY);
-        $opdsAccess->setUser($this->getUser());
 
         $manager->persist($opdsAccess);
         $manager->flush();

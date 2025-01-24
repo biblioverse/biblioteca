@@ -38,6 +38,6 @@ The output must be only valid JSON format. It must be an object with one key nam
             return [$result];
         }
 
-        return array_filter($items['genres']);
+        return array_filter($items['genres'], fn ($item) => $item !== null);
     }
 }

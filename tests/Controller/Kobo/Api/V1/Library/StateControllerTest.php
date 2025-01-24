@@ -59,8 +59,6 @@ class StateControllerTest extends AbstractKoboControllerTest
 
         $book = $this->getBookById($bookId);
         self::assertNotNull($book, 'Book '.$bookId.' not found');
-        self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
-
         $json = $serializer->serialize($readingStates, 'json');
         $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [], [], [], $json);
 
@@ -78,7 +76,7 @@ class StateControllerTest extends AbstractKoboControllerTest
     private function getSerializer(): SerializerInterface
     {
         $service = self::getContainer()->get('serializer');
-        assert($service instanceof SerializerInterface);
+        self::assertInstanceOf(SerializerInterface::class, $service);
 
         return $service;
     }

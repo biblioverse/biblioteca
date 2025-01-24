@@ -21,16 +21,20 @@ class LabelTranslationFormExtension extends AbstractTypeExtension
     {
     }
 
+    /**
+     * @param array<string,mixed> $options
+     */
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $translationPrefix = $options['label_translation_prefix'] ?? self::DEFAULT_TRANSLATION_PREFIX;
+        $translationPrefix = $options['label_translation_prefix'];
+        if (!is_string($translationPrefix)) {
+            $translationPrefix = '';
+        }
+
         $label = $builder->getOption('label');
 
         if (!is_string($label)) {
-            return;
-        }
-        if (!is_string($translationPrefix)) {
             return;
         }
 
@@ -42,11 +46,10 @@ class LabelTranslationFormExtension extends AbstractTypeExtension
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
-        if (!$resolver->hasDefault('label_translation_prefix')) {
-            $resolver->setDefaults([
-                'label_translation_prefix' => self::DEFAULT_TRANSLATION_PREFIX,
-            ]);
-        }
+        $resolver->setDefaults([
+            'label_translation_prefix' => self::DEFAULT_TRANSLATION_PREFIX,
+        ]);
+        $resolver->setAllowedTypes('label_translation_prefix', 'string');
     }
 
     #[\Override]
@@ -55,6 +58,9 @@ class LabelTranslationFormExtension extends AbstractTypeExtension
         return [FormType::class, ButtonType::class, SubmitType::class];
     }
 
+    /**
+     * @param array{'label_translation_prefix': string, 'translation_domain': string|false}|array<string, mixed> $options
+     */
     #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
@@ -65,6 +71,9 @@ class LabelTranslationFormExtension extends AbstractTypeExtension
         $prefix = $options['label_translation_prefix'];
         if (!$form->isRoot()) {
             $prefix = $form->getRoot()->getConfig()->getOption('label_translation_prefix');
+        }
+        if (!is_string($prefix)) {
+            $prefix = '';
         }
 
         $view->vars['label'] = new TranslatableMessage($prefix.strtolower($form->getName()));

@@ -75,7 +75,7 @@ class SearchHelper
      */
     public function getBooks(): array
     {
-        if (null == $this->response) {
+        if (!$this->response instanceof SearchResultsHydrated) {
             return [];
         }
 

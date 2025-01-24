@@ -28,9 +28,7 @@ class CreateUserCommandTest extends KernelTestCase
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            throw new \RuntimeException('User repository is not an instance of UserRepository');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $user = $userRepository->findOneBy(['username' => 'test']);
 

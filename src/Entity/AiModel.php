@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AiModelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: AiModelRepository::class)]
 class AiModel implements \Stringable
@@ -14,29 +15,32 @@ class AiModel implements \Stringable
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[NotBlank]
     private ?string $type = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[NotBlank]
     private ?string $model = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $token = null;
 
-    #[ORM\Column(length: 255)]
+    #[NotBlank]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $systemPrompt = null;
 
-    #[ORM\Column]
-    private ?bool $useEpubContext = null;
+    #[ORM\Column(nullable: false, options: ['default' => '0'])]
+    private bool $useEpubContext = false;
 
-    #[ORM\Column]
-    private ?bool $useWikipediaContext = null;
+    #[ORM\Column(nullable: false, options: ['default' => '0'])]
+    private bool $useWikipediaContext = false;
 
-    #[ORM\Column]
-    private ?bool $useAmazonContext = null;
+    #[ORM\Column(nullable: false, options: ['default' => '0'])]
+    private bool $useAmazonContext = false;
 
     #[\Override]
     public function __toString(): string
@@ -114,7 +118,7 @@ class AiModel implements \Stringable
         return $this;
     }
 
-    public function isUseEpubContext(): ?bool
+    public function isUseEpubContext(): bool
     {
         return $this->useEpubContext;
     }
@@ -126,7 +130,7 @@ class AiModel implements \Stringable
         return $this;
     }
 
-    public function isUseWikipediaContext(): ?bool
+    public function isUseWikipediaContext(): bool
     {
         return $this->useWikipediaContext;
     }
@@ -138,7 +142,7 @@ class AiModel implements \Stringable
         return $this;
     }
 
-    public function isUseAmazonContext(): ?bool
+    public function isUseAmazonContext(): bool
     {
         return $this->useAmazonContext;
     }

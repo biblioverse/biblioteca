@@ -61,19 +61,13 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            self::fail('UserRepository not found');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
 
-        if (!$testUser instanceof UserInterface) {
-            self::fail('User not found');
-        }
+        self::assertInstanceOf(UserInterface::class, $testUser);
 
-        if (!$client instanceof KernelBrowser) {
-            self::fail('Client could not start');
-        }
+        self::assertInstanceOf(KernelBrowser::class, $client);
 
         $client->loginUser($testUser);
 

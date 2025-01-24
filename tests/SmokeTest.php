@@ -17,32 +17,21 @@ class SmokeTest extends WebTestCase
         $client = static::createClient();
         $bookRepository = static::getContainer()->get(BookRepository::class);
 
-        if (!$bookRepository instanceof BookRepository) {
-            self::fail('Bookrepository not found');
-        }
+        self::assertInstanceOf(BookRepository::class, $bookRepository);
 
         $book = $bookRepository->findOneBy(['title' => 'Moby Dick']);
 
-        if (!$book instanceof Book) {
-            self::fail('Book not found');
-        }
+        self::assertInstanceOf(Book::class, $book);
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            self::fail('UserRepository not found');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
         $childUser = $userRepository->findOneBy(['username' => UserFixture::CHILD_USERNAME]);
 
-        if (!$testUser instanceof UserInterface) {
-            self::fail('User not found');
-        }
-
-        if (!$childUser instanceof UserInterface) {
-            self::fail('User not found');
-        }
+        self::assertInstanceOf(UserInterface::class, $testUser);
+        self::assertInstanceOf(UserInterface::class, $childUser);
 
         $client->loginUser($testUser);
 
@@ -71,15 +60,11 @@ class SmokeTest extends WebTestCase
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            self::fail('UserRepository not found');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $testUser = $userRepository->findOneBy(['username' => 'admin@example.com']);
 
-        if (!$testUser instanceof UserInterface) {
-            self::fail('User not found');
-        }
+        self::assertInstanceOf(UserInterface::class, $testUser);
 
         $client->loginUser($testUser);
 

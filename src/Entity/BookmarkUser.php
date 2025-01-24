@@ -6,6 +6,7 @@ use App\Repository\BookmarkUserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: BookmarkUserRepository::class)]
 class BookmarkUser
@@ -35,9 +36,11 @@ class BookmarkUser
     private ?\DateTimeInterface $updated = null;
 
     public function __construct(#[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: true)]
+        #[NotBlank]
         private ?Book $book, #[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: true)]
+        #[NotBlank]
         private ?User $user)
     {
     }

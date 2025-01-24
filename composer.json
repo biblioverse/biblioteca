@@ -157,7 +157,7 @@
     ],
     "test-init": [
       "Composer\\Config::disableProcessTimeout",
-      "@php bin/console doctrine:database:drop --env=test -n --force",
+      "@php bin/console doctrine:database:drop --env=test -n --force||true",
       "@php bin/console doctrine:database:create --env=test -n",
       "@php bin/console doctrine:migrations:migrate --env=test -n",
       "@php bin/console doctrine:fixtures:load --env=test --append -n",
@@ -190,13 +190,13 @@
     "doctrine/doctrine-fixtures-bundle": "^4.0",
     "friendsofphp/php-cs-fixer": "^3.25",
     "phpstan/extension-installer": "^1.4",
-    "phpstan/phpstan": "^1.10",
-    "phpstan/phpstan-deprecation-rules": "^1.2",
-    "phpstan/phpstan-doctrine": "^1.5",
-    "phpstan/phpstan-strict-rules": "^1.0",
-    "phpstan/phpstan-symfony": "^1.2",
+    "phpstan/phpstan": "^2.0",
+    "phpstan/phpstan-deprecation-rules": "^2.0",
+    "phpstan/phpstan-doctrine": "^2.0",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "phpstan/phpstan-symfony": "^2.0",
     "phpunit/phpunit": "^9.5",
-    "rector/rector": "^1.1",
+    "rector/rector": "^2.0",
     "roave/security-advisories": "dev-latest",
     "staabm/phpstan-todo-by": "^0.2.0",
     "symfony/browser-kit": "^7.1",
@@ -205,6 +205,6 @@
     "symfony/phpunit-bridge": "^7.0",
     "symfony/stopwatch": "^6.2",
     "symfony/web-profiler-bundle": "^7.1",
-    "symplify/phpstan-extensions": "^11.4"
+    "symplify/phpstan-extensions": "^12.0"
   }
 }
