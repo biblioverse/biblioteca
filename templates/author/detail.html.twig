@@ -53,7 +53,7 @@
                         {% for author in book.authors %}
                         <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
                             <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                        </a>
+                        </a><br />
                         {% endfor %}
                     </div>
                 {% endfor %}
