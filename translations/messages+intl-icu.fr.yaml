@@ -38,6 +38,27 @@ ai.usage-configuration: Configuration
 ai.use-amazon-context: Utiliser le contexte Amazon
 ai.use-epub-context: Utiliser le contexte
 ai.use-wikipedia-context: Utiliser le contexte Wikipedia
+author.books: >-
+    {books_count, plural,
+        =0    {0 books}
+        =1    {
+          {series, plural,
+            =0    {1 livre dont 0 séries}
+            =1    {1 livre dont 1 série}
+            other {1 livre dont # séries}
+          }
+        }
+        other {
+          {series, plural,
+            =0    {{books} livres dont 0 séries}
+            =1    {{books} livres dont 1 série}
+            other {{books} livres dont # séries}
+          }
+        }
+    }
+author.tags: Tags
+author.standalone-books: Livres en dehors des séries
+author.in-series: Séries
 book.actions: Actions
 book.add-to-favorites: Ajouter à la listre de lecture
 book.age-category: Catégorie d'âge
@@ -83,10 +104,30 @@ book.upload-cover: Téléverser la couverture
 book.upload: Télévérser le livre
 book.uuid: Unique ID
 book.verified: Verifié
+book.read-in-browser: Lire dans le navigateur
 books.in-serie: Livres dans la serie
 books.other-books: Hors-série
 books.same-author: Livres avec le même auteur
 books.same-index: Livres avec le même index
+books.reading.progress: "{read} / {total}"
+books.stat.progress: >-
+    {count, plural,
+        =0    {0 livres en cours}
+        =1    {1 livre en cours}
+        other {# livres en cours}
+    }
+books.stat.read: >-
+    {count, plural,
+        =0    {0 livre lu}
+        =1    {1 livre lu}
+        other {# livres lus}
+    }
+books.stat.hidden: >-
+    {count, plural,
+        =0    {0 livres cachés}
+        =1    {1 livre caché}
+        other {# livres cachés}
+    }
 dashboard.continue-reading: Continuer à lire
 dashboard.hello: Aloha
 dashboard.need-inspiration: Besoin d'inspiration?
@@ -124,8 +165,11 @@ instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This
 instance-configuration.title: Titre
 interaction.form.favorite: Liste de lecture
 interaction.form.finished: Fini
-interaction.form.finishedDate: Date de lecture
+interaction.form.finisheddate: Date de lecture
 interaction.form.submit: Sauvegarder
+interaction.status.finished: Terminé
+interaction.status.not-started: Pas commencé
+interaction.status.progress: "{read} / {total}"
 kobo.device.access-key: Clé d'accès
 kobo.device.create-new: Créer nouveau
 kobo.device.delete: Supprimer
@@ -165,6 +209,7 @@ menu.logout: Déconnexion
 menu.notverified: Non vérifiés
 menu.profile: Profil
 menu.readinglist: Liste de lecture
+menu.publishers: Editions
 menu.series: Séries
 menu.shelves: Etagères
 menu.tags: Catégories
@@ -246,3 +291,23 @@ user.max-age-category: Catégorie d'âge maximale
 user.new-user: Nouvel utilisateur(ice)
 user.roles: Roles
 user.username: Nom d'utilisateur(ice)
+InlineEditInteraction.title: Actions
+InlineEditInteraction.favorites.add: Ajouter aux favoris
+InlineEditInteraction.favorites.remove: Retirer des favoris
+InlineEditInteraction.finished.add: Marquer comme lu
+InlineEditInteraction.finished.remove: Marquer comme non lu
+InlineEditInteraction.hidden.add: Cacher le livre
+InlineEditInteraction.hidden.remove: Montrer le livre
+InlineEditInteraction.edit: Editer l'interaction
+InlineEditInteraction.shelf.add: Ajouter a l'étagère
+InlineEditInteraction.shelf.new: Create une étagère
+InlineEditInteraction.flash.read: Bon travail!
+InlineEditInteraction.flash.unread: Marquer comme non lu
+InlineEditInteraction.flash.saveInteraction: Sauvegardé
+InlineEditInteraction.flash.saveShelf: Etagère sauvegardée
+InlineEditInteraction.flash.favorite: Ajouter a la liste de lecture
+InlineEditInteraction.flash.unfavorite: Retirer de la liste de lecture
+InlineEditInteraction.flash.hide: Caché
+InlineEditInteraction.flash.unhide: Visible
+InlineEditInteraction.flash.shelf: Ajouté a l'étagère
+InlineEditInteraction.flash.unshelf: Retiré de l'étagère

@@ -13,6 +13,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @extends ServiceEntityRepository<Book>
@@ -170,6 +171,9 @@ class BookRepository extends ServiceEntityRepository
             }
             $qb->andWhere($orModule);
 
+            $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+            $qb->addSelect('bookInteractions');
+
             /** @var Book[] $results */
             $results = $qb->getQuery()->getResult();
         } catch (\Exception $e) {
@@ -247,7 +251,69 @@ class BookRepository extends ServiceEntityRepository
             $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
         }
 
+        $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+        $qb->addSelect('bookInteractions');
+
         return $qb->getQuery()->getResult();
+    }
+
+    /***
+     * @param string $serie
+     * @return Book[]
+     */
+    public function findBySerie(string $serie): array
+    {
+        $qb = $this->getAllBooksQueryBuilder();
+
+        $qb->andWhere('book.serie=:serie');
+        $qb->setParameter('serie', $serie);
+
+        $qb->orderBy('book.serieIndex', 'ASC');
+
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $qb->andWhere('COALESCE(book.ageCategory,1) <= COALESCE(:ageCategory,10)');
+            $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
+        }
+
+        $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+        $qb->addSelect('bookInteractions');
+        $qb->leftJoin('book.shelves', 'shelves');
+        $qb->addSelect('shelves');
+
+        $result = $qb->getQuery()->getResult();
+        if (!is_array($result)) {
+            return [];
+        }
+
+        return $result;
+    }
+
+    public function getFirstUnreadBook(string $serie): Book
+    {
+        // Transform to old style interaction
+        $books = $this->findBySerie($serie);
+        if ($books === []) {
+            throw new NotFoundHttpException('No books found for this serie');
+        }
+        $firstUnreadBook = null;
+        foreach ($books as $book) {
+            $user = $this->security->getUser();
+            if (!$user instanceof User) {
+                throw new \RuntimeException('Invalid user');
+            }
+            $li = $book->getLastInteraction($user);
+            if ($li === null || !$li->isFinished()) {
+                $firstUnreadBook = $book;
+                break;
+            }
+        }
+
+        if ($firstUnreadBook === null) {
+            $firstUnreadBook = $books[0];
+        }
+
+        return $firstUnreadBook;
     }
 
     public function getAllSeries(): Query

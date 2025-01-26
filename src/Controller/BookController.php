@@ -68,7 +68,7 @@ class BookController extends AbstractController
         $serie = [];
         $serieMax = 0;
         if ($book->getSerie() !== null) {
-            $booksInSerie = $bookRepository->findBy(['serie' => $book->getSerie()], ['serieIndex' => 'ASC']);
+            $booksInSerie = $bookRepository->findBySerie($book->getSerie());
             foreach ($booksInSerie as $bookInSerie) {
                 $index = $bookInSerie->getSerieIndex();
                 if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
@@ -98,10 +98,7 @@ class BookController extends AbstractController
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
-        $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
-            'book' => $book,
-            'user' => $user,
-        ]);
+        $interaction = $book->getLastInteraction($user);
 
         return $this->render('book/index.html.twig', [
             'book' => $book,

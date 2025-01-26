@@ -5,25 +5,24 @@
 {% block body %}
     <div class="row">
         <div class="col-md-3 col-xs-6 col-sm-6">
-            {% if book.imageFilename is not null %}
-                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'book.picture-for-book'|trans }} {{ book.title }}">
-            {% else %}
-                <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'book.no-picture-for'|trans }} {{ book.title }}">
-            {% endif %}
-            {{ include('book/_interaction.html.twig') }}
-
             <div class="d-grid gap-2">
+                {% if book.imageFilename is not null %}
+                    <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'book.picture-for-book'|trans }} {{ book.title }}">
+                {% else %}
+                    <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'book.no-picture-for'|trans }} {{ book.title }}">
+                {% endif %}
+
+                {{ include('book/_interaction.html.twig') }}
+
                 <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
                     <i class="bi bi-book"></i>
-                    Read in browser
+                    {{ 'book.read-in-browser'|trans }}
                 </a>
 
                 <a class="btn btn-block btn-secondary" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">
                     <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
                 </a>
             </div>
-
-            {{ component('AddBookToShelf',{'book':book, 'user':app.user, 'shelves': shelves}) }}
         </div>
         <div class="col-md-9">
             <table class="table w-100  mb-5">
@@ -37,13 +36,14 @@
                     <th>{{ 'book.read-state'|trans }}</th>
                     <td>
                         {% if interaction is not null and interaction.finished %}
-                            Finished
+                            {{ 'interaction.status.finished'|trans }}
                         {% elseif interaction is null or interaction.readPages is null or interaction.readPages==1 or book.pageNumber==0 or book.pageNumber is null %}
-                        Not started
+                        {{ 'interaction.status.not-started'|trans }}
                         {% else %}
                             <div class="progress">
                                 <div class="progress-bar" style="width: {{ (interaction.readPages/book.pageNumber) *100 }}%">
-                                    {{ interaction.readPages }}/{{ book.pageNumber }}
+
+                                    {{ 'interaction.status.progress'|trans({"%read%": interaction.readPages, "%total%": book.pageNumber }) }}
                                 </div>
                             </div>
                         {% endif %}
@@ -154,15 +154,9 @@
             {% if serie|length > 0 %}
                 {% if serieMax>=1 %}
                     <h5>{{ 'books.in-serie'|trans }}</h5>
-                    <div class="row">
+                    <div class="bookGrid">
                         {% for index in 1..serieMax %}
-                            <div class="col-4 col-md-2">
-                                {% if (serie[index] is not defined or serie[index]|length>1) %}
-                                    <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
-                                    {% if (serie[index] is not defined) %}Missing book{% endif %}
-                                    {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same-index'|trans }}{% endif %}
-                                    </span>
-                                {% endif %}
+                            <div class="bookGrid__item">
                                 {% if serie[index] is defined %}
                                     {% for indexBook in serie[index] %}
                                             {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
@@ -170,15 +164,20 @@
                                 {% else %}
                                         {% include themedTemplate('book/_empty.html.twig') with {serie:book.serie, index:index} %}
                                 {% endif %}
+                                {% if (serie[index] is defined and serie[index]|length>1) %}
+                                    <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
+                                    {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same-index'|trans }}{% endif %}
+                                    </span>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
                 {% endif %}
                 {% if serie['?'] is defined %}
                     <h5>{{ 'books.other-books'|trans }}</h5>
-                    <div class="row">
+                    <div class="bookGrid">
                         {% for indexBook in serie['?'] %}
-                            <div class="col-4 col-md-2">
+                            <div class="bookGrid__item">
                                 {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                             </div>
                         {% endfor %}
@@ -187,9 +186,9 @@
             {% endif %}
             {% if sameAuthor is not empty %}
                 <h5>{{ 'books.same-author'|trans }}</h5>
-                <div class="row">
+                <div class="bookGrid">
                     {% for indexBook in sameAuthor %}
-                        <div class="col-4 col-md-2">
+                        <div class="bookGrid__item">
                             {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}
@@ -198,9 +197,9 @@
             {% if sameTags is not empty %}
                 {% for tag,bookTags in sameTags %}
                 <h5>{{ tag }}</h5>
-                <div class="row">
+                <div class="bookGrid">
                     {% for indexBook in bookTags %}
-                        <div class="col-4 col-md-2">
+                        <div class="bookGrid__item">
                             {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}

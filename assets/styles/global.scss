@@ -102,6 +102,15 @@ body.bg-darker{
       height: 100%;
       border-radius: 5px 5px 5px 5px;
     }
+
+    &--read {
+      position: absolute;
+      bottom: 0.1em;
+      right: 0.25em;
+      font-size: 1.5em;
+      color: #333;
+    }
+
     &:hover {
       >.book__detail {
         opacity: 1;
@@ -159,4 +168,92 @@ body.bg-darker{
   &:hover{
     max-height: 100%;
   }
+}
+
+.bookGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-areas: 
+            "cover . ."
+            "cover title ."
+            "cover progress ."
+            "cover stats .";
+  grid-template-columns: 300px auto 2rem;
+  grid-template-rows: auto auto auto 6em;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+  margin-bottom: 2rem;
+}
+
+.hero__image {
+  grid-area: cover;
+  padding: 3rem;
+}
+
+.hero__title {
+  grid-area: title;
+}
+
+.hero__background {
+  background: rgba(var(--bs-body-color-rgb), 0.03);
+  grid-row: 1 / 4;
+  grid-column: 1 / -1;
+}
+
+.hero__progress {
+  grid-area: progress;
+  position: relative;
+}
+
+.heroProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.heroProgress__bar {
+  background: var(--bs-secondary-bg);
+  height: 4px;
+}
+.heroProgress__bar__progress {
+  background: #333;
+  height: 4px;
+}
+
+.hero__stats {
+  grid-area: stats;
+  display: flex;
+  gap: 1.5rem;
+
+  align-items: center;
+}
+
+.hero__stats i {
+  font-size: 1.25em;
+}
+
+.booksWithDetails {
+  display: grid;
+  grid-template-columns: auto minmax(30%, 300px);
+  grid-template-areas: "content info";
+  gap: 1rem;
+  padding-inline: 2rem;
+}
+
+.booksWithDetails__content {
+  grid-area: content;
+  padding-top: 2rem;
+}
+
+.booksWithDetails__info {
+  grid-area: info;
+}
+
+.infoBlock {
+  background: rgba(var(--bs-body-color-rgb), 0.03);
+  padding: 2rem;
 }
