@@ -1,17 +1,25 @@
 {# @var book App\Entity\Book #}
-{% set read = false %}
-{% for interaction in book.bookInteractions|default([]) %}
-    {% if interaction.user.id == app.user.id and interaction.finished %}
-        {% set read = true %}
+{# @var interaction App\Entity\BookInteraction #}
+{% if withDetail is not defined %}
+{% set withDetail = true %}
+{% endif %}
+
+{% set interaction = null %}
+{% for currentInteraction in book.bookInteractions|default([]) %}
+    {% if currentInteraction.user.id == app.user.id %}
+        {% set interaction = currentInteraction %}
     {% endif %}
 {% endfor %}
 
+{% set read = false %}
+{% if interaction is not null and interaction.finished %}
+    {% set read = true %}
+{% endif %}
+
 {% set hidden = false %}
-{% for interaction in book.bookInteractions|default([]) %}
-    {% if interaction.user.id == app.user.id and interaction.hidden %}
-        {% set hidden = true %}
-    {% endif %}
-{% endfor %}
+{% if interaction is not null and interaction.hidden %}
+    {% set hidden = true %}
+{% endif %}
 
 {% if book.extension in ['epub','mobi'] %}
     {% set icon='bi-file-text-fill' %}
@@ -22,32 +30,25 @@
 {% else %}
     {% set icon='bi-file-binary-fill' %}
 {% endif %}
-<div class=" m-1 mb-4">
+<div class=" m-1 {{ withDetail?'mb-4' }}">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
-    <div class="book {{ read?'border border-success border-5':'' }}" style="{{ read?'opacity:0.6;' }}{{ hidden?'opacity:0.3;' }}">
-        <div class="book__cover">
-            {% if book.imageFilename is not null %}
-                <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}"  alt="{{ book.title }}"/>
-            {% else %}
-                <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
-            {% endif %}
-            <div class="book__detail">
-                {% if read %}
-                    <i class="bi bi-check-square-fill"></i> Finished !
-                {% endif %}
-                <i class="bi {{ icon }}"></i> {{ book.title }} -
-                {% for author in book.authors %}
-                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                {% endfor %}
-
-                {% if book.serie %}
-                    <i class="bi bi-list-ol"></i>
-                    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
-
-                {% endif %}
-            </div>
-        </div>
-        <div class="book__page"></div>
-    </div>
+        {% include 'book/_cover.html.twig' with {book: book, interaction: interaction} %}
     </a>
+    {% if withDetail %}
+        <small>
+            <strong>{{ book.title }}</strong><br />
+            {% if book.serie %}
+                <a href="{{ filter_book_url({'serie': book.serie}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-list-ol"></i>&nbsp;
+                    {{ book.serie }} {% if book.serieIndex >=1 %}({{ book.serieIndex }}){% endif %}
+                </a><br />
+            {% endif %}
+
+            {% for author in book.authors %}
+                <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                </a><br />
+            {% endfor %}
+        </small>
+    {% endif %}
 </div>

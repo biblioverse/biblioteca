@@ -1,0 +1,25 @@
+{# @var book App\Entity\Book #}
+{# @var interaction App\Entity\BookInteraction #}
+{% set read = false %}
+{% if interaction is not null and interaction.finished %}
+    {% set read = true %}
+{% endif %}
+
+{% set hidden = false %}
+{% if interaction is not null and interaction.hidden %}
+    {% set hidden = true %}
+{% endif %}
+
+<div class="book" style="{{ read?'opacity:0.6;' }}{{ hidden?'opacity:0.3;' }}">
+    <div class="book__cover">
+        {% if read %}
+            <i class="bi bi-check-circle-fill book__cover--read" style=""></i>
+        {% endif %}
+        {% if book.imageFilename is not null %}
+            <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" alt="{{ book.title }}"/>
+        {% else %}
+            <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" alt="{{ book.title }}" />
+        {% endif %}
+    </div>
+    <div class="book__page"></div>
+</div>

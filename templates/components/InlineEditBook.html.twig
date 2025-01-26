@@ -137,7 +137,7 @@
             </a>
                 {% endfor %}
             {% elseif field=='serie' and book.serie is not null %}
-                <a href="{{ filter_book_url({'serie':[book.serie], 'orderBy':'serieIndex-asc'}) }}" class="text-decoration-none p-1">
+                <a href="{{ filter_book_url({'serie':[book.serie]}) }}" class="text-decoration-none p-1">
                      <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
                 </a>
             {% elseif field=='ageCategory' %}
