@@ -53,7 +53,7 @@ class SearchHelper
             numTypos: 2,
             page: $page,
             perPage: $perPage,
-            facetBy: 'authors,serie,tags',
+            facetBy: 'authors,serie,tags,age',
             facetStrategy: 'exhaustive',
         );
 

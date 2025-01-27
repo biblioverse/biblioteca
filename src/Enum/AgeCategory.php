@@ -17,15 +17,16 @@ enum AgeCategory: int
 
     public static function getLabel(?self $value): string
     {
-        if (null === $value) {
+        if (!$value instanceof AgeCategory) {
             return 'enum.agecategories.notset';
         }
+
         return match ($value) {
-            self::Adult=>'enum.agecategories.adults',
-            self::Everyone=>'enum.agecategories.everyone',
-            self::SixteenPlus=>'enum.agecategories.sixteenplus',
-            self::TenPlus=>'enum.agecategories.tenplus',
-            self::ThirteenPlus=>'enum.agecategories.thirteenplus',
+            self::Adult => 'enum.agecategories.adults',
+            self::Everyone => 'enum.agecategories.everyone',
+            self::SixteenPlus => 'enum.agecategories.sixteenplus',
+            self::TenPlus => 'enum.agecategories.tenplus',
+            self::ThirteenPlus => 'enum.agecategories.thirteenplus',
         };
     }
 }

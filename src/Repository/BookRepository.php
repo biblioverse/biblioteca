@@ -266,7 +266,6 @@ class BookRepository extends ServiceEntityRepository
 
         $qb->orderBy('book.serieIndex', 'ASC');
 
-
         $user = $this->security->getUser();
         if ($user instanceof User) {
             $qb->andWhere('COALESCE(book.ageCategory,1) <= COALESCE(:ageCategory,10)');
@@ -277,6 +276,7 @@ class BookRepository extends ServiceEntityRepository
         if (!is_array($result)) {
             return [];
         }
+
         return $result;
     }
 
@@ -320,7 +320,7 @@ class BookRepository extends ServiceEntityRepository
 
     public function getIncompleteSeries(): Query
     {
-        $qb= $this->createQueryBuilder('serie')
+        $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
@@ -341,7 +341,7 @@ class BookRepository extends ServiceEntityRepository
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
             ->where('serie.serie IS NOT NULL');
-        $qb = $this->joinInteractions($qb,'serie');
+        $qb = $this->joinInteractions($qb, 'serie');
 
         return $qb->addGroupBy('serie.serie')
             ->having('COUNT(bookInteraction.readStatus)>0 AND COUNT(bookInteraction.readStatus)<MAX(serie.serieIndex)')
@@ -357,10 +357,10 @@ class BookRepository extends ServiceEntityRepository
             ->where('publisher.publisher IS NOT NULL');
         $qb = $this->joinInteractions($qb, 'publisher');
 
-            return $qb->addGroupBy('publisher.publisher')->getQuery();
+        return $qb->addGroupBy('publisher.publisher')->getQuery();
     }
 
-    private function joinInteractions(QueryBuilder $qb, string $alias='book'): QueryBuilder
+    private function joinInteractions(QueryBuilder $qb, string $alias = 'book'): QueryBuilder
     {
         return $qb->leftJoin($alias.'.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.readStatus = :status_finished or 
         bookInteraction.readingList=:list_ignored) and bookInteraction.user= :user')

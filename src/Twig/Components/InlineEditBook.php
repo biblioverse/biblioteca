@@ -3,7 +3,6 @@
 namespace App\Twig\Components;
 
 use App\Entity\Book;
-use App\Entity\Shelf;
 use App\Enum\AgeCategory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,7 +28,7 @@ class InlineEditBook extends AbstractController
     public Book $book;
 
     #[LiveProp(writable: true)]
-    public ?AgeCategory $ageCategory=null;
+    public ?AgeCategory $ageCategory = null;
 
     #[LiveProp()]
     public bool $isEditing = false;
@@ -121,9 +120,9 @@ class InlineEditBook extends AbstractController
         }
 
         if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('ageCategory', $data['updated'])) {
-            if($data['updated']['ageCategory'] !== '') {
+            if ($data['updated']['ageCategory'] !== '') {
                 $this->book->setAgeCategory(AgeCategory::tryFrom($data['updated']['ageCategory']));
-            }else{
+            } else {
                 $this->book->setAgeCategory(null);
             }
         }

@@ -11,12 +11,10 @@ use App\Enum\ReadStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
@@ -27,6 +25,10 @@ class InlineEditInteraction extends AbstractController
     use DefaultActionTrait;
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
+    /**
+     * @var list<Shelf>|Shelf[]
+     */
+    public $shelves;
 
     #[LiveProp(writable: true)]
     public ?BookInteraction $interaction = null;
@@ -42,7 +44,6 @@ class InlineEditInteraction extends AbstractController
 
     public function __construct(private EntityManagerInterface $entityManager, private FormFactoryInterface $formFactory)
     {
-
     }
 
     #[PostMount]
@@ -53,7 +54,7 @@ class InlineEditInteraction extends AbstractController
         $shelfRepository = $this->entityManager->getRepository(Shelf::class);
 
         $this->shelves = $shelfRepository->findBy(['user' => $this->user]);
-        $this->shelves = array_filter($this->shelves, static fn($item) => $item->getQueryString() === null);
+        $this->shelves = array_filter($this->shelves, static fn ($item) => $item->getQueryString() === null);
     }
 
     private function getInteraction(): BookInteraction

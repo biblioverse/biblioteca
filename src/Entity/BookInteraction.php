@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Enum\ReadStatus;
 use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use App\Repository\BookInteractionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,7 +33,6 @@ class BookInteraction
 
     #[ORM\Column(nullable: true)]
     private ?int $readPages = null;
-
 
     /**
      * @deprecated Use RedingList enum instead

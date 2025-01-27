@@ -4,7 +4,6 @@ namespace App\Enum;
 
 enum ReadStatus: string
 {
-
     case NotStarted = 'rs-not-started';
     case Started = 'rs-started';
     case Finished = 'rs-finished';
@@ -17,9 +16,9 @@ enum ReadStatus: string
     public static function getLabel(self $value): string
     {
         return match ($value) {
-            self::NotStarted=>'enum.readstatus.not-started',
-            self::Started=>'enum.readstatus.started',
-            self::Finished=>'enum.readstatus.finished',
+            self::NotStarted => 'enum.readstatus.not-started',
+            self::Started => 'enum.readstatus.started',
+            self::Finished => 'enum.readstatus.finished',
         };
     }
 }

@@ -67,7 +67,7 @@ class BookProgressionService
             $this->em->persist($interaction);
             $book->addBookInteraction($interaction);
         }
-        $interaction->setReadPages((int)$readPages);
+        $interaction->setReadPages((int) $readPages);
         if ($progress >= 1.0) {
             $interaction->setReadStatus(ReadStatus::Finished);
         } else {

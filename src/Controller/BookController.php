@@ -212,7 +212,7 @@ class BookController extends AbstractController
         if ($interaction->getReadStatus() !== ReadStatus::Finished && $page === $book->getPageNumber()) {
             $interaction->setReadStatus(ReadStatus::Finished);
 
-            //TODO Add next unread in serie to reading list?
+            // TODO Add next unread in serie to reading list?
 
             $interaction->setFinishedDate(new \DateTime());
             $this->addFlash('success', 'Book finished! Congratulations!');
@@ -399,7 +399,7 @@ class BookController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Book relocated.');
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Error during relocation: ' . $e->getMessage());
+            $this->addFlash('danger', 'Error during relocation: '.$e->getMessage());
         }
 
         return $this->redirect($request->headers->get('referer') ?? '/');

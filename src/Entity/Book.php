@@ -521,7 +521,7 @@ class Book
 
     public function getAgeCategoryLabel(): ?string
     {
-        return $this->ageCategory?->label()??'enum.agecategories.notset';
+        return $this->ageCategory?->label() ?? 'enum.agecategories.notset';
     }
 
     public function getUuid(): string
@@ -610,13 +610,13 @@ class Book
                 continue;
             }
             $userId = $user->getId();
-            if ($interaction->getReadStatus()===ReadStatus::Finished) {
+            if ($interaction->getReadStatus() === ReadStatus::Finished) {
                 $return['read'][] = $userId;
             }
-            if ($interaction->getReadingList()===ReadingList::ToRead) {
+            if ($interaction->getReadingList() === ReadingList::ToRead) {
                 $return['favorite'][] = $userId;
             }
-            if ($interaction->getReadingList()===ReadingList::Ignored) {
+            if ($interaction->getReadingList() === ReadingList::Ignored) {
                 $return['hidden'][] = $userId;
             }
         }

@@ -56,7 +56,7 @@ class BookInteractionRepository extends ServiceEntityRepository
         $qb->setParameter('to_read', ReadingList::ToRead);
         if ($hideFinished) {
             $qb->andWhere('b.readingList != :finished');
-            $qb->setParameter('finished',ReadStatus::Finished);
+            $qb->setParameter('finished', ReadStatus::Finished);
         }
 
         $qb->andWhere('b.readingList != :hidden')
