@@ -22,8 +22,7 @@ import { Steps } from '@astrojs/starlight/components';
 3. If needed, update the typesense schema:
 
     ```bash
-    docker-compose exec biblioteca bin/console typesense:create
-    docker-compose exec biblioteca bin/console typesense:import
+    docker-compose exec biblioteca bin/console biblioverse:typesense:populate
     ```
 
 4. Clear the cache:

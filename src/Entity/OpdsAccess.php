@@ -13,12 +13,14 @@ class OpdsAccess
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $token = null;
 
-    #[ORM\ManyToOne(inversedBy: 'opdsAccesses')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    public function __construct(#[ORM\ManyToOne(inversedBy: 'opdsAccesses')]
+        #[ORM\JoinColumn(nullable: true)]
+        private ?User $user)
+    {
+    }
 
     public function getId(): ?int
     {
@@ -30,7 +32,7 @@ class OpdsAccess
         return $this->token;
     }
 
-    public function setToken(string $token): static
+    public function setToken(?string $token): static
     {
         $this->token = $token;
 

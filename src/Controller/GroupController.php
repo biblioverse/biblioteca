@@ -48,9 +48,9 @@ class GroupController extends AbstractController
         }
 
         if ($search !== '') {
-            $group = array_filter($group, static fn ($item) => str_contains(strtolower((string) $item['item']), strtolower($search)));
+            $group = array_filter($group, static fn (mixed $item) => is_array($item) && array_key_exists('item', $item) && is_string($item['item']) && str_contains(strtolower($item['item']), strtolower($search)));
         } else {
-            $group = array_filter($group, static fn ($item) => str_starts_with(strtolower((string) $item['item']), $letter));
+            $group = array_filter($group, static fn (mixed $item) => is_array($item) && array_key_exists('item', $item) && is_string($item['item']) && str_starts_with(strtolower($item['item']), $letter));
         }
 
         return $this->render('group/index.html.twig', [

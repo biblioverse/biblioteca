@@ -1,6 +1,6 @@
 <?php
 
-namespace Ai;
+namespace App\Tests\Ai;
 
 use App\Ai\Communicator\OllamaCommunicator;
 use App\Ai\Communicator\OpenAiCommunicator;
@@ -23,15 +23,11 @@ class AiModelControllerTest extends WebTestCase
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            self::fail('UserRepository not found');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $testUser = $userRepository->findOneBy(['username' => UserFixture::USER_USERNAME]);
 
-        if (!$testUser instanceof UserInterface) {
-            self::fail('User not found');
-        }
+        self::assertInstanceOf(UserInterface::class, $testUser);
 
         $client->loginUser($testUser);
 

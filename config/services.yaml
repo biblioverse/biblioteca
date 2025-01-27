@@ -96,9 +96,7 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: createMainMenu, alias: main } # The alias is what is used to retrieve the menu
 
-    App\Service\Search\SearchHelper:
-        arguments:
-            $bookFinder: '@typesense.finder.books'
+    App\Service\Search\SearchHelper: ~
 
     App\Service\BookFileSystemManager:
         bind:
@@ -158,7 +156,15 @@ when@test:
 
         Psr\Clock\ClockInterface: '@App\Tests\TestClock'
 
-        App\Tests\Mock\AbstractApiMock:
-            decorates: 'http_client'
-            decoration_inner_name: 'App\Tests\Mock\AbstrackApiMock.http_client'
-            arguments: ['@.inner']
+        App\Tests\Mock\AbstractApiMock: ~
+
+        App\Ai\Communicator\OllamaCommunicator:
+            autoconfigure: true
+            arguments:
+                $client: '@App\Tests\Mock\AbstractApiMock'
+
+        App\Ai\Communicator\OpenAiCommunicator:
+            autoconfigure: true
+            arguments:
+                $client: '@App\Tests\Mock\AbstractApiMock'
+

@@ -39,8 +39,5 @@ Executes all missing database migrations.
 ## `app:backup-db`
 Creates a sql backup of the database in the `backups folder`.
 
-## `typesense:create`                
-Will re-create the search engine index.
-
-## `typesense:import`                      
-Will re-import all books from the database to the search engine.
+## `biblioverse:typesense:populate`
+Will re-create the search engine index and re-import all books from the database to the search engine.

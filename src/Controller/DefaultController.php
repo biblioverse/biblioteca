@@ -34,7 +34,8 @@ class DefaultController extends AbstractController
 
         $inspiration = [];
         foreach ($keys as $key) {
-            $randomBooks = $bookRepository->findByTag($tags[$key]['item'], 6);
+            $randomBooks = [];
+
             $inspiration[] = [
                 ...$tags[$key],
                 'books' => $randomBooks,

@@ -5,14 +5,22 @@ namespace App\Tests\Contraints;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsIdentical;
 
+/**
+ * @phpstan-type ExpectedKeysCount array{NewEntitlement?: int, NewTag?: int, ChangedTag?: int, DeletedTag?: int, ChangedReadingState?: int, RemovedPublication?: int, ChangedEntitlement?: int}
+ * @phpstan-type MatchContent array{NewEntitlement: mixed, NewTag: mixed, ChangedTag: mixed, DeletedTag: mixed, ChangedReadingState: mixed, RemovedPublication: mixed, ChangedEntitlement: mixed}
+ */
 class JSONIsValidSyncResponse extends Constraint
 {
+    /**
+     * @param ExpectedKeysCount $expectedKeysCount
+     */
     public function __construct(protected array $expectedKeysCount, protected int $pageNum = 1)
     {
         foreach ($this->expectedKeysCount as $key => $count) {
             if (false === in_array($key, self::KNOWN_TYPES, true)) {
                 throw new \InvalidArgumentException(sprintf('The type %s is not valid', $key));
             }
+            // @phpstan-ignore-next-line
             if (false === is_int($count)) {
                 throw new \InvalidArgumentException(sprintf('The type %s has an invalid count', $key));
             }
@@ -30,9 +38,10 @@ class JSONIsValidSyncResponse extends Constraint
     ];
 
     #[\Override]
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         try {
+            // @phpstan-ignore-next-line
             $this->test($other);
         } catch (\InvalidArgumentException) {
             return false;
@@ -47,8 +56,12 @@ class JSONIsValidSyncResponse extends Constraint
         return 'is a valid sync response';
     }
 
+    /**
+     * @param MatchContent[] $other
+     */
     private function test(mixed $other): void
     {
+        // @phpstan-ignore-next-line
         if (false === is_array($other)) {
             throw new \InvalidArgumentException('JSON is an array');
         }

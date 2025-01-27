@@ -77,7 +77,7 @@ class WikipediaContextBuilder implements ContextBuildingInteface
     #[\Override]
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
     {
-        return $this->token !== null && $aiModel->isUseWikipediaContext() === true;
+        return $this->token !== null && $aiModel->isUseWikipediaContext();
     }
 
     #[\Override]

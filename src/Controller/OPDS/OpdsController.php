@@ -69,8 +69,11 @@ class OpdsController extends AbstractController
     {
         $opds = $this->opds->getOpdsConfig()->isSearch();
         $opds->title('Search');
-
-        $this->searchHelper->prepareQuery(''.$request->get('q', $request->get('query', '')), perPage: 200)->execute();
+        $q = $request->query->getString('q', $request->request->getString('q', $request->attributes->getString('q')));
+        if ($q === '') {
+            $q = $request->query->getString('query', $request->request->getString('query', $request->attributes->getString('query')));
+        }
+        $this->searchHelper->prepareQuery($q, perPage: 200)->execute();
         $books = $this->searchHelper->getBooks();
 
         $feeds = [];
@@ -167,10 +170,6 @@ class OpdsController extends AbstractController
             'series' => $this->bookRepository->findBy(['serie' => $item]),
             default => throw $this->createAccessDeniedException('Invalid group type'),
         };
-
-        if (!is_array($group)) {
-            throw $this->createNotFoundException('No books found');
-        }
 
         $opds = $this->opds->getOpdsConfig();
 

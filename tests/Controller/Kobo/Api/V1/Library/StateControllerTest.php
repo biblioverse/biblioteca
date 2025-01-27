@@ -13,13 +13,13 @@ use App\Kobo\Request\ReadingStates;
 use App\Kobo\Request\ReadingStateStatistics;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @phpstan-type ReadingStateCriteria array{'book':int, 'readPages': int|null, 'finished': boolean}
  */
-class StateControllerTest extends AbstractKoboControllerTest
+class StateControllerTest extends KoboControllerTestCase
 {
     public function testOpen(): void
     {
@@ -59,8 +59,6 @@ class StateControllerTest extends AbstractKoboControllerTest
 
         $book = $this->getBookById($bookId);
         self::assertNotNull($book, 'Book '.$bookId.' not found');
-        self::assertNotNull($book->getUuid(), 'Book '.$bookId.' has no UUID');
-
         $json = $serializer->serialize($readingStates, 'json');
         $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $book->getUuid()), [], [], [], $json);
 
@@ -78,7 +76,7 @@ class StateControllerTest extends AbstractKoboControllerTest
     private function getSerializer(): SerializerInterface
     {
         $service = self::getContainer()->get('serializer');
-        assert($service instanceof SerializerInterface);
+        self::assertInstanceOf(SerializerInterface::class, $service);
 
         return $service;
     }
@@ -93,7 +91,7 @@ class StateControllerTest extends AbstractKoboControllerTest
         $this->enableRemoteSync();
         $this->getKoboStoreProxy()->setClient($this->getMockClient($this->getStateResponseString($unknownUuid)));
 
-        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $json = $this->getSerializer()->serialize(self::getReadingStates($unknownUuid, 100), 'json');
         $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
         self::assertResponseIsSuccessful();
     }
@@ -105,12 +103,12 @@ class StateControllerTest extends AbstractKoboControllerTest
 
         $client = self::getClient();
 
-        $json = $this->getSerializer()->serialize($this->getReadingStates($unknownUuid, 100), 'json');
+        $json = $this->getSerializer()->serialize(self::getReadingStates($unknownUuid, 100), 'json');
         $client?->request('PUT', sprintf('/kobo/%s/v1/library/%s/state', KoboFixture::ACCESS_KEY, $unknownUuid), [], [], [], $json);
         self::assertResponseStatusCodeSame(404);
     }
 
-    private function getReadingStates(string $bookUuid, int $percent = 50): ReadingStates
+    private static function getReadingStates(string $bookUuid, int $percent = 50): ReadingStates
     {
         assert($percent >= 0 && $percent <= 100, 'Percent must be between 0 and 100');
 
@@ -140,12 +138,12 @@ class StateControllerTest extends AbstractKoboControllerTest
     /**
      * @return array<array{0: int, 1: ReadingStates, 2: ReadingStateCriteria}>
      */
-    public function readingStatesProvider(): array
+    public static function readingStatesProvider(): array
     {
         return [
             [
                 BookFixture::ID,
-                $this->getReadingStates(BookFixture::UUID, 50),
+                self::getReadingStates(BookFixture::UUID, 50),
                 [
                     'book' => BookFixture::ID,
                     'readPages' => 15,
@@ -154,7 +152,7 @@ class StateControllerTest extends AbstractKoboControllerTest
             ],
             [
                 BookFixture::ID,
-                $this->getReadingStates(BookFixture::UUID, 100),
+                self::getReadingStates(BookFixture::UUID, 100),
                 [
                     'book' => BookFixture::ID,
                     'readPages' => 30,
@@ -163,7 +161,7 @@ class StateControllerTest extends AbstractKoboControllerTest
             ],
             [
                 BookFixture::ID,
-                $this->getReadingStates(BookFixture::UUID, 0),
+                self::getReadingStates(BookFixture::UUID, 0),
                 [
                     'book' => BookFixture::ID,
                     'readPages' => null,

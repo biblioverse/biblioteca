@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @extends ServiceEntityRepository<Book>
  *
+ * @phpstan-type UnconvertedGroupType array{ item:null|string|array, bookCount:int, booksFinished:int }
  * @phpstan-type GroupType array{ item:string, bookCount:int, booksFinished:int }
  */
 class BookRepository extends ServiceEntityRepository
@@ -138,10 +139,8 @@ class BookRepository extends ServiceEntityRepository
             ->groupBy('book.extension')
             ->distinct(true);
 
+        /** @var array{extension:string,nb:int}[] */
         $results = $qb->getQuery()->getResult();
-        if (!is_array($results)) {
-            return [];
-        }
 
         $types = [];
         if ($group) {
@@ -174,16 +173,13 @@ class BookRepository extends ServiceEntityRepository
             }
             $qb->andWhere($orModule);
 
+            /** @var Book[] $results */
             $results = $qb->getQuery()->getResult();
         } catch (\Exception $e) {
             if ($e->getMessage() === "Operation 'JSON_CONTAINS' is not supported by platform.") {
                 return [];
             }
             throw $e;
-        }
-
-        if (!is_array($results)) {
-            return [];
         }
 
         $items = array_filter($results, static fn ($result) => $result->getId() !== $book->getId() && ($result->getSerie() === null || $book->getSerie() !== $result->getSerie()));
@@ -213,7 +209,10 @@ class BookRepository extends ServiceEntityRepository
         return $book;
     }
 
-    public function findByAuthor(string $author): mixed
+    /**
+     * @return Book[]
+     */
+    public function findByAuthor(string $author): array
     {
         $qb = $this->getAllBooksQueryBuilder();
 
@@ -227,7 +226,10 @@ class BookRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByTag(string $tag, ?int $limit = null): mixed
+    /**
+     * @return Book[]
+     */
+    public function findByTag(string $tag, ?int $limit = null): array
     {
         $qb = $this->getAllBooksQueryBuilder();
 
@@ -400,16 +402,26 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
+     * When we group by tags, for authors and tags, we get an array of arrays, so we need to convert it to an array of strings
+     * @param UnconvertedGroupType[] $intermediateResults
      * @return GroupType[]
      */
     private function convertResults(mixed $intermediateResults): array
     {
-        if (!is_array($intermediateResults)) {
-            return [];
-        }
         $results = [];
         foreach ($intermediateResults as $result) {
-            foreach ($result['item'] ?? [] as $item) {
+            if (!is_array($result['item'])) {
+                if ($result['item'] === null) {
+                    continue;
+                }
+                $results[$result['item']] = [
+                    'item' => $result['item'],
+                    'bookCount' => $result['bookCount'],
+                    'booksFinished' => $result['booksFinished'],
+                ];
+                continue;
+            }
+            foreach ($result['item'] as $item) {
                 $key = ucwords(strtolower((string) $item), Book::UCWORDS_SEPARATORS);
                 if (!array_key_exists($key, $results)) {
                     $results[$key] = [

@@ -16,20 +16,25 @@ class KoboSyncedBook
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Book $book = null;
 
     #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?KoboDevice $koboDevice = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeInterface $created = null;
+    private \DateTimeInterface $created;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeInterface $updated = null;
+
+    public function __construct()
+    {
+        $this->created = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

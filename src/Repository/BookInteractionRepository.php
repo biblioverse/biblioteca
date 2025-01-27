@@ -66,6 +66,7 @@ class BookInteractionRepository extends ServiceEntityRepository
             ->orderBy('b.created', 'ASC')
             ->setMaxResults($max);
 
+        /** @var int|BookInteraction[] $results */
         $results = $qb->getQuery()->getResult();
         if (!is_array($results)) {
             return [];

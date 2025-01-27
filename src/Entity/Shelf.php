@@ -50,7 +50,7 @@ class Shelf
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeInterface $created = null;
+    private \DateTimeInterface $created;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
@@ -64,6 +64,7 @@ class Shelf
         $this->books = new ArrayCollection();
         $this->koboDevices = new ArrayCollection();
         $this->uuid = $this->generateUuid();
+        $this->created = new \DateTimeImmutable();
     }
 
     public function getId(): int
@@ -207,7 +208,7 @@ class Shelf
         return $this->created;
     }
 
-    public function setCreated(?\DateTimeInterface $created): void
+    public function setCreated(\DateTimeInterface $created): void
     {
         $this->created = $created;
     }

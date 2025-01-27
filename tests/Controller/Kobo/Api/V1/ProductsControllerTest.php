@@ -4,9 +4,9 @@ namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 
-class ProductsControllerTest extends AbstractKoboControllerTest
+class ProductsControllerTest extends KoboControllerTestCase
 {
     public function testNextRead(): void
     {

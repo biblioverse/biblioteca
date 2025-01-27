@@ -439,7 +439,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                     break;
                 }
 
-                $im->setImageColorspace(255); // prevent image colors from inverting
+                $im->setImageColorspace(\Imagick::COLORSPACE_RGB); // prevent image colors from inverting
                 $im->setImageFormat('jpeg');
                 $im->thumbnailImage(300, 460); // width and height
                 $book->setImageExtension('jpg');
@@ -799,7 +799,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         for ($i = 0; $i < $num_page; $i++) {
             $im = new \Imagick($bookFile->getRealPath().'['.$i.']'); // 0-first page, 1-second page
 
-            $im->setImageColorspace(255); // prevent image colors from inverting
+            $im->setImageColorspace(\Imagick::COLORSPACE_RGB); // prevent image colors from inverting
             $im->setImageFormat('jpeg');
             $im->thumbnailImage(1000, 1000, true);
 

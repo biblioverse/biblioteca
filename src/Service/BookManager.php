@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Exception\BookExtractionException;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Kiwilan\Ebook\Ebook;
@@ -83,6 +84,22 @@ class BookManager
         return $book;
     }
 
+    public function createBookWithoutMetadata(\SplFileInfo $file): Book
+    {
+        $book = new Book();
+
+        $book->setTitle($file->getBasename());
+        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
+        $book->addAuthor('unknown');
+
+        $book->setExtension($file->getExtension());
+
+        $book->setBookPath('');
+        $book->setBookFilename('');
+
+        return $this->updateBookLocation($book, $file);
+    }
+
     /**
      * @return MetadataType
      *
@@ -92,29 +109,15 @@ class BookManager
     {
         try {
             if (!Ebook::isValid($file->getRealPath())) {
-                throw new \RuntimeException('Could not read ebook'.$file->getRealPath());
+                throw new BookExtractionException('Invalid eBook', $file->getRealPath());
             }
 
             $ebook = Ebook::read($file->getRealPath());
             if (!$ebook instanceof Ebook) {
-                throw new \RuntimeException('Could not read ebook');
+                throw new BookExtractionException('Could not read eBook', $file->getRealPath());
             }
-        } catch (\Throwable) {
-            $ebook = null;
-
-            return [
-                'title' => $file->getFilename(),
-                'authors' => [new BookAuthor('unknown')], // BookAuthor[] (`name`: string, `role`: string)
-                'main_author' => new BookAuthor('unknown'), // ?BookAuthor => First BookAuthor (`name`: string, `role`: string)
-                'description' => null, // ?string
-                'publisher' => null, // ?string
-                'publish_date' => null, // ?DateTime
-                'language' => null, // ?string
-                'tags' => [], // string[] => `subject` in EPUB, `keywords` in PDF, `genres` in CBA
-                'serie' => null, // ?string => `calibre:series` in EPUB, `series` in CBA
-                'serie_index' => null, // ?int => `calibre:series_index` in EPUB, `number` in CBA
-                'cover' => null, //  ?EbookCover => cover of book
-            ];
+        } catch (\Throwable $e) {
+            throw new BookExtractionException('Ebook Library threw an exception', $file->getRealPath(), $e);
         }
 
         return [
@@ -149,8 +152,17 @@ class BookManager
         foreach ($files as $file) {
             $progressBar->advance();
             try {
-                $book = $this->consumeBook($file);
                 $progressBar->setMessage($file->getFilename());
+                $book = null;
+                try {
+                    $book = $this->consumeBook($file);
+                } catch (BookExtractionException $e) {
+                    $book = $this->createBookWithoutMetadata($file);
+                    $io->error($e->getMessage());
+                    if ($e->getPrevious() instanceof \Exception) {
+                        $io->error('Caused by '.$e->getPrevious()->getMessage());
+                    }
+                }
 
                 $this->entityManager->persist($book);
                 $this->entityManager->flush();

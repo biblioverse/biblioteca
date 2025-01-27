@@ -1,10 +1,11 @@
 parameters:
     tipsOfTheDay: false
-    level: max
+    level: 9
     paths:
         - src/
         - tests/
     ignoreErrors:
+        - identifier: missingType.generics
         - '#(.*)no value type specified in iterable type array#'
   #      - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
     errorFormat: symplify

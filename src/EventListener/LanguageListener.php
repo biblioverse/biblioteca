@@ -28,6 +28,11 @@ final readonly class LanguageListener
             return;
         }
 
-        $request->setLocale(''.$this->requestStack->getSession()->get('_locale'));
+        $locale = $this->requestStack->getSession()->get('_locale');
+        if (!is_string($locale)) {
+            return;
+        }
+
+        $request->setLocale($locale);
     }
 }

@@ -8,9 +8,9 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Response\MetadataResponseService;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 
-class DownloadControllerTest extends AbstractKoboControllerTest
+class DownloadControllerTest extends KoboControllerTestCase
 {
     public function testDownload(): void
     {

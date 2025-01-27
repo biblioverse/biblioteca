@@ -15,14 +15,15 @@ final class OpdsAccessController extends AbstractController
     #[Route('/new', name: 'app_opds_access_new', methods: ['GET', 'POST'])]
     public function new(EntityManagerInterface $entityManager): Response
     {
-        $opdsAccess = new OpdsAccess();
-
-        $opdsAccess->setToken(bin2hex(random_bytes(16)));
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw $this->createAccessDeniedException();
         }
-        $opdsAccess->setUser($user);
+
+        $opdsAccess = new OpdsAccess($user);
+
+        $opdsAccess->setToken(bin2hex(random_bytes(16)));
+
         $entityManager->persist($opdsAccess);
         $entityManager->flush();
 

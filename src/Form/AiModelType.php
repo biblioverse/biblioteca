@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AiModelType extends AbstractType
 {
-    private array $taggedServices;
+    private array $taggedServices = [];
 
     /**
      * @param AiCommunicatorInterface[] $services
@@ -31,8 +31,8 @@ class AiModelType extends AbstractType
             ->add('type', ChoiceType::class, [
                 'choices' => array_combine($this->taggedServices, $this->taggedServices),
             ])
-            ->add('url')
-            ->add('model')
+            ->add('url', null, ['required' => true])
+            ->add('model', null, ['required' => true])
             ->add('token', null, ['required' => false])
             ->add('useAmazonContext', null, ['required' => false])
             ->add('useEpubContext', null, ['required' => false])

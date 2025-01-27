@@ -18,11 +18,11 @@ class BookInteraction
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookInteractions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookInteractions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Book $book = null;
 
     /**

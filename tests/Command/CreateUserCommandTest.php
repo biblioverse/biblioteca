@@ -6,12 +6,14 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class CreateUserCommandTest extends KernelTestCase
 {
     public function testExecute(): void
     {
         self::bootKernel();
+        self::assertInstanceOf(KernelInterface::class, self::$kernel);
         $application = new Application(self::$kernel);
 
         $command = $application->find('app:create-admin-user');
@@ -28,9 +30,7 @@ class CreateUserCommandTest extends KernelTestCase
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        if (!$userRepository instanceof UserRepository) {
-            throw new \RuntimeException('User repository is not an instance of UserRepository');
-        }
+        self::assertInstanceOf(UserRepository::class, $userRepository);
 
         $user = $userRepository->findOneBy(['username' => 'test']);
 

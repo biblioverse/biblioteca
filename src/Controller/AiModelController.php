@@ -46,7 +46,7 @@ final class AiModelController extends AbstractController
                 return $this->redirectToRoute('app_ai_model_index');
             }
             foreach ($data as $key => $value) {
-                $configValue->update((string) $key, (string) $value);
+                $configValue->update((string) $key, is_scalar($value) ? ((string) $value) : '');
             }
             $this->addFlash('success', 'Configuration updated successfully');
         }

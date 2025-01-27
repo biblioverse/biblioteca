@@ -65,6 +65,10 @@ class CoverTransformer
             $newHeight = (int) ($newWidth / max($aspectRatio, 1));
         }
 
+        if ($maxWidth < 1 || $maxHeight < 1) {
+            throw new \InvalidArgumentException('maxWidth and maxHeight must be greater than 0');
+        }
+
         // Create a blank image with a black background
         $image = imagecreatetruecolor($maxWidth, $maxHeight);
         if ($image === false) {

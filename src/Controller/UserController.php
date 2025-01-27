@@ -44,10 +44,11 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('plainPassword')->getData();
-            if ($plainPassword !== null && trim($plainPassword.'') !== '') {
-                if (!is_string($plainPassword)) {
-                    throw new \RuntimeException('Password must be a string');
-                }
+            if ($plainPassword !== null && !is_string($plainPassword)) {
+                throw new \RuntimeException('Password must be a string');
+            }
+
+            if ($plainPassword !== null && trim($plainPassword) !== '') {
                 $user->setPassword($this->passwordHasher->hashPassword(
                     $user,
                     $plainPassword

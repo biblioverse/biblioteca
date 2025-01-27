@@ -9,10 +9,10 @@ use App\Entity\KoboSyncedBook;
 use App\Kobo\SyncToken;
 use App\Service\KoboSyncTokenExtractor;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
-use App\Tests\Controller\Kobo\AbstractKoboControllerTest;
+use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use App\Tests\TestClock;
 
-class SyncControllerTest extends AbstractKoboControllerTest
+class SyncControllerTest extends KoboControllerTestCase
 {
     #[\Override]
     protected function setUp(): void

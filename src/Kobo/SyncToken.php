@@ -33,7 +33,7 @@ class SyncToken
 
         $resolver->setNormalizer('DownloadUrlFilter', function (Options $options, string|array|null $value) {
             $result = is_array($value) ? $value : explode(',', (string) $value);
-            if (count($result) == 0) {
+            if ($result === []) {
                 return null;
             }
         });
