@@ -22,16 +22,16 @@ class KoboFixture extends Fixture implements DependentFixtureInterface
         $kobo = new KoboDevice();
         $kobo->setAccessKey(self::ACCESS_KEY);
         $kobo->setName('test kobo');
-        $kobo->setUser($this->getUser());
+        $kobo->setUser($this->getUser(UserFixture::CHILD_USER_REFERENCE));
 
         $manager->persist($kobo);
         $manager->flush();
         $this->addReference(self::KOBO_REFERENCE, $kobo);
     }
 
-    protected function getUser(): User
+    protected function getUser(string $reference = UserFixture::USER_REFERENCE): User
     {
-        return $this->getReference(UserFixture::USER_REFERENCE, User::class);
+        return $this->getReference($reference, User::class);
     }
 
     #[\Override]
