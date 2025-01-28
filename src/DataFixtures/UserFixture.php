@@ -13,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserFixture extends Fixture
 {
     public const USER_REFERENCE = 'user';
+    public const CHILD_USER_REFERENCE = 'user.child';
     public const USER_USERNAME = 'admin@example.com';
     public const USER_PASSWORD = 'admin@example.com';
 
@@ -48,5 +49,7 @@ class UserFixture extends Fixture
 
         $manager->persist($user);
         $manager->flush();
+
+        $this->addReference(self::CHILD_USER_REFERENCE, $user);
     }
 }
