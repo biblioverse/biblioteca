@@ -14,6 +14,7 @@ use App\Kobo\Request\ReadingStateStatistics;
 use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\StateResponse;
 use App\Tests\Controller\Kobo\KoboControllerTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class StateControllerTest extends KoboControllerTestCase
@@ -46,9 +47,9 @@ class StateControllerTest extends KoboControllerTestCase
     }
 
     /**
-     * @dataProvider readingStatesProvider
      * @param ReadingStateCriteria $criteria
      */
+    #[DataProvider('readingStatesProvider')]
     public function testPutState(int $bookId, ReadingStates $readingStates, array $criteria): void
     {
         $client = static::getClient();
