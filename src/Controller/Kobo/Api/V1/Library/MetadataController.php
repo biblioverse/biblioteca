@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}/v1/library', name: 'kobo_')]
+#[Route('/kobo/{accessKey:koboDevice}/v1/library', name: 'kobo_')]
 class MetadataController extends AbstractKoboController
 {
     public function __construct(
@@ -21,7 +21,7 @@ class MetadataController extends AbstractKoboController
     ) {
     }
 
-    #[Route('/{uuid}/metadata', name: 'api_endpoint_v1_library_metadata')]
+    #[Route('/{uuid:book}/metadata', name: 'api_endpoint_v1_library_metadata')]
     public function metadataEndpoint(KoboDevice $koboDevice, ?Book $book, Request $request): Response
     {
         if (!$book instanceof Book) {
