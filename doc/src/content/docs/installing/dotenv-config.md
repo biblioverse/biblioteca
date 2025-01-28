@@ -2,7 +2,7 @@
 title: Dotenv configuration
 ---
 
-The following properties can be set in a `.env` file in the root of the project:
+The following properties can be set in a `.env.local` file in the root of the project:
     
 ```dotenv
 APP_ENV=prod
