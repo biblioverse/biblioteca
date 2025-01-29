@@ -2,7 +2,7 @@
 title: Dotenv configuration
 ---
 
-The following properties can be set in a `.env` file in the root of the project:
+The following properties can be set in a `.env.local` file in the root of the project:
     
 ```dotenv
 APP_ENV=prod
@@ -14,14 +14,9 @@ TYPESENSE_URL=http://typesense:8108
 TYPESENSE_KEY=xyz
 BOOK_FOLDER_NAMING_FORMAT="{authorFirst}/{author}/{title}/{serie}"
 BOOK_FILE_NAMING_FORMAT="{serie}-{serieIndex}-{title}"
-KOBO_PROXY_USE_DEV=0
 KOBO_PROXY_USE_EVERYWHERE=0
 KOBO_PROXY_ENABLED=1
 ALLOW_BOOK_RELOCATION=1
-OPEN_AI_API_KEY=
-OPEN_AI_MODEL=
-OLLAMA_URL=
-OLLAMA_MODEL=
 ```
 
 - `APP_ENV`: The environment the application is running in. This can be `dev` or `prod`. You should always use `prod` unless you need to debug the application.
@@ -37,5 +32,5 @@ OLLAMA_MODEL=
 - `KOBO_PROXY_USE_EVERYWHERE`: If set to `1`, the kobo proxy will be used everywhere and all request will be forwarded to the original store.
 - `KOBO_PROXY_ENABLED`: If set to `0`, the kobo proxy will be disabled.
 - `ALLOW_BOOK_RELOCATION`: If set to `0`, the books will not be moved to the correct folder when added to the library. This is useful if you want to manage the folder structure yourself.
-- `OPEN_AI_API_KEY` and `OLLAMA_URL` see AI configuration
+
 
