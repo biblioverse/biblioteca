@@ -1,87 +1,48 @@
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
 
-    {% set finished=false %}
-    {% set modalId=unique_id('interaction-', false) %}
 
-    {% if interaction is not null %}
-        {% if interaction.finished %}
-            {% set finished=true %}
-        {% endif %}
+    <div class="btn-group-vertical btn-group-sm w-100 my-2">
+    {% for case in enum('App\\Enum\\ReadStatus').cases() %}
+        <button
+            data-action="live#action"
+            data-live-action-param="toggleReadStatus(value={{ case.value }})"
+            data-live-value-param="{{ case.value }}"
+            class="btn btn-sm {{ case.value==interaction.readStatus.value?'btn-primary':'btn-outline-primary'}}"
+            title="Click to toggle read status"
+        >
+        {{ enum('App\\Enum\\ReadStatus').getLabel(case)|trans }}
+        </button>
+    {% endfor %}
+    </div>
+
+    {% if interaction.finishedDate is not null or interaction.readStatus == enum('App\\Enum\\ReadStatus').Finished %}
+    <div>
+        <input
+            data-action="live#action"
+            data-live-action-param="saveDate"
+            type="date"
+            data-model="finished"
+            class="form-control"
+        />
+    </div>
     {% endif %}
 
-    {% set hidden=false %}
-    {% if interaction is not null %}
-        {% if interaction.hidden %}
-            {% set hidden=true %}
-        {% endif %}
+    <div class="btn-group-vertical btn-group-sm w-100 my-2">
+    {% for case in enum('App\\Enum\\ReadingList').cases() %}
+        <button
+            data-action="live#action"
+            data-live-action-param="toggleReadingList(value={{ case.value }})"
+            data-live-value-param="{{ case.value }}"
+            class="btn btn-sm {{ case.value==interaction.readingList.value?'btn-primary':'btn-outline-primary'}}"
+            title="Click to toggle ReadingList"
+        >
+        {{ enum('App\\Enum\\ReadingList').getLabel(case)|trans }}
+        </button>
+    {% endfor %}
+    </div>
+    {% if flashMessage %}
+        <small class="text-muted alert-remove">{{ flashMessage }}</small>
     {% endif %}
+    <hr>
 
-    <button
-        data-action="live#action"
-        data-live-action-param="toggle"
-        class="btn btn-link btn-sm text-{{ finished?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle read status"
-    >
-        <i class="bi bi-check-square-fill"></i>
-        {% if flashMessage %}
-            <small class="text-muted alert-remove">{{ flashMessage }}</small>
-        {% endif %}
-    </button>
-
-
-    {% set favorite = false %}
-    {% if interaction is not null %}
-        {% if interaction.favorite %}
-            {% set favorite = true %}
-        {% endif %}
-    {% endif %}
-    <button
-        data-action="live#action"
-        data-live-action-param="toggleFavorite"
-        class="btn btn-link btn-sm text-{{ favorite?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle favorite"
-    >
-        <i class="bi bi-bookmark-heart"></i>
-        {% if flashMessageFav %}
-            <small class="text-muted alert-remove">{{ flashMessageFav }}</small>
-        {% endif %}
-
-    </button>
-
-    <button
-        data-action="live#action"
-        data-live-action-param="toggleHidden"
-        class="btn btn-link btn-sm text-{{ hidden?'success':'secondary' }} text-decoration-none"
-        title="Click to toggle hidden status"
-    >
-        <i class="bi bi-eye{{ hidden?'':'-slash' }}-fill"></i>
-        {% if flashMessageHidden %}
-            <small class="text-muted alert-remove">{{ flashMessageHidden }}</small>
-        {% endif %}
-
-    </button>
-
-    <button class="btn btn-link btn-sm text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#{{ modalId}}" type="button"
-            data-toggle="tooltip" data-placement="bottom" >
-        <i class="bi bi-box-arrow-up-right"></i>
-    </button>
-
-    {% component BootstrapModal with {id: modalId} %}
-        {% block modal_header %}
-            <h5>{{ book.title }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        {% endblock %}
-        {% block modal_body %}
-
-            {{ form(form,{
-                attr: {
-                    'novalidate': true,
-                    'class': '',
-                    'data-action': 'live#action',
-                    'data-live-action-param': 'prevent|saveInteraction',
-                }
-            }) }}
-        {% endblock %}
-
-    {% endcomponent %}
 </div>

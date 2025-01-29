@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\AgeCategory;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -70,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $birthday = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $maxAgeCategory = null;
+    private ?AgeCategory $maxAgeCategory = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     /**
@@ -355,12 +356,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getMaxAgeCategory(): ?int
+    public function getMaxAgeCategory(): ?AgeCategory
     {
         return $this->maxAgeCategory;
     }
 
-    public function setMaxAgeCategory(?int $maxAgeCategory): static
+    public function setMaxAgeCategory(?AgeCategory $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
 

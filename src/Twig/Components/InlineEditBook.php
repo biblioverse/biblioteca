@@ -63,7 +63,7 @@ class InlineEditBook extends AbstractController
     }
 
     #[LiveAction]
-    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion, EntityManagerInterface $entityManager): void
+    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion): void
     {
         $this->isEditing = true;
         $to_call = 'set'.ucfirst($field);
@@ -90,7 +90,7 @@ class InlineEditBook extends AbstractController
                 $this->book->$to_call($value);
             }
         }
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 
@@ -102,7 +102,7 @@ class InlineEditBook extends AbstractController
      */
     #[LiveAction]
     #[LiveListener('submit')]
-    public function save(Request $request, EntityManagerInterface $entityManager): void
+    public function save(Request $request): void
     {
         $all = $request->request->all();
         if (!array_key_exists('data', $all)) {
@@ -121,13 +121,14 @@ class InlineEditBook extends AbstractController
 
         if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('ageCategory', $data['updated'])) {
             if ($data['updated']['ageCategory'] !== '') {
+                // @phpstan-ignore-next-line
                 $this->book->setAgeCategory(AgeCategory::tryFrom($data['updated']['ageCategory']));
             } else {
                 $this->book->setAgeCategory(null);
             }
         }
 
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 

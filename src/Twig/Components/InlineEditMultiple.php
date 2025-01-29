@@ -3,6 +3,7 @@
 namespace App\Twig\Components;
 
 use App\Entity\Book;
+use App\Enum\AgeCategory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -63,7 +64,7 @@ class InlineEditMultiple extends AbstractController
                     break;
                 case 'ageCategory':
                     $value = reset($this->fieldValue);
-                    $book->setAgeCategory((int) $value);
+                    $book->setAgeCategory(AgeCategory::tryFrom((int) $value));
 
                     break;
                 default:

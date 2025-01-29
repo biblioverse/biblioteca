@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use App\Enum\AgeCategory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -42,7 +43,7 @@ class UserFixture extends Fixture
         $user->setUsername(self::CHILD_USERNAME);
         $user->setBirthday(new \DateTimeImmutable('1990-01-01'));
         $user->setLanguage('en');
-        $user->setMaxAgeCategory(1);
+        $user->setMaxAgeCategory(AgeCategory::TenPlus);
         $user->setPassword($this->passwordHasher->hashPassword($user, self::CHILD_PASSWORD));
         $user->setRoles(['ROLE_USER']);
 

@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Book;
 use App\Entity\User;
+use App\Enum\AgeCategory;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -34,7 +35,7 @@ class BookVoter extends Voter
 
         return match ($attribute) {
             self::EDIT => in_array('ROLE_ADMIN', $user->getRoles(), true),
-            self::VIEW => $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory(),
+            self::VIEW => !$user->getMaxAgeCategory() instanceof AgeCategory || ($subject->getAgeCategory()->value ?? 0) <= ($user->getMaxAgeCategory()->value ?? 999),
             default => false,
         };
     }

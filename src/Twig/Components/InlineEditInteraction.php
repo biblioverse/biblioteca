@@ -10,9 +10,9 @@ use App\Enum\ReadingList;
 use App\Enum\ReadStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -33,16 +33,17 @@ class InlineEditInteraction extends AbstractController
     #[LiveProp(writable: true)]
     public ?BookInteraction $interaction = null;
 
+    #[LiveProp(writable: true, format: 'Y-m-d')]
+    public ?\DateTime $finished = null;
+
     #[LiveProp()]
     public User $user;
     #[LiveProp()]
     public Book $book;
 
     public ?string $flashMessage = null;
-    public ?string $flashMessageFav = null;
-    public ?string $flashMessageHidden = null;
 
-    public function __construct(private EntityManagerInterface $entityManager, private FormFactoryInterface $formFactory)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
     }
 
@@ -50,6 +51,9 @@ class InlineEditInteraction extends AbstractController
     public function postMount(): void
     {
         $this->interaction = $this->getInteraction();
+
+        // @phpstan-ignore-next-line
+        $this->finished = $this->interaction->getFinishedDate();
 
         $shelfRepository = $this->entityManager->getRepository(Shelf::class);
 
@@ -75,11 +79,30 @@ class InlineEditInteraction extends AbstractController
     }
 
     #[LiveAction]
-    public function toggleReadStatus(): void
+    public function saveDate(): void
     {
         $interaction = $this->getInteraction();
 
-        $interaction->setReadStatus(ReadStatus::toggle($interaction->getReadStatus()));
+        $interaction->setFinishedDate($this->finished);
+
+        $this->entityManager->persist($interaction);
+
+        $this->entityManager->flush();
+
+        $this->flashMessage = 'Read status updated';
+    }
+
+    #[LiveAction]
+    public function toggleReadStatus(#[LiveArg] string $value): void
+    {
+        $interaction = $this->getInteraction();
+
+        $readStatus = ReadStatus::tryFrom($value);
+        match ($readStatus) {
+            null => $interaction->setReadStatus(ReadStatus::NotStarted),
+            default => $interaction->setReadStatus($readStatus),
+        };
+
         $this->book->setUpdated(new \DateTime('now'));
         $this->entityManager->persist($this->book);
         $this->entityManager->persist($interaction);
@@ -90,37 +113,22 @@ class InlineEditInteraction extends AbstractController
     }
 
     #[LiveAction]
-    public function saveInteraction(): void
+    public function toggleReadingList(#[LiveArg] string $value): void
     {
-        $this->submitForm();
+        $interaction = $this->getInteraction();
 
-        $interaction = $this->getForm()->getData();
-
-        if (!$interaction instanceof BookInteraction) {
-            throw new \RuntimeException('Invalid data');
-        }
+        $readingList = ReadingList::tryFrom($value);
+        match ($readingList) {
+            null => $interaction->setReadingList(ReadingList::NotDefined),
+            default => $interaction->setReadingList($readingList),
+        };
 
         $this->entityManager->persist($interaction);
         $this->book->setUpdated(new \DateTime('now'));
         $this->entityManager->persist($this->book);
         $this->entityManager->flush();
-        $this->flashMessageFav = 'Saved';
-        $this->dispatchBrowserEvent('manager:flush');
-    }
-
-    #[LiveAction]
-    public function toggleReadingList(EntityManagerInterface $entityManager): void
-    {
-        $interaction = $this->getInteraction();
-
-        $interaction->setReadingList(ReadingList::toggle($interaction->getReadingList()));
-
-        $entityManager->persist($interaction);
-        $this->book->setUpdated(new \DateTime('now'));
-        $this->entityManager->persist($this->book);
-        $entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessageFav = 'Reading list updated';
+        $this->flashMessage = 'Reading list updated';
     }
 }
