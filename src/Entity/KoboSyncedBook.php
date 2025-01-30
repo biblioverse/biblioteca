@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: KoboSyncedBookRepository::class)]
+#[ORM\UniqueConstraint(name: 'kobo_synced_book_unique', columns: ['book_id', 'kobo_device_id'])]
 class KoboSyncedBook
 {
     #[ORM\Id]
