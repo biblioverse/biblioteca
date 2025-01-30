@@ -35,10 +35,13 @@ class DownloadControllerTest extends KoboControllerTestCase
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
     }
 
-    public function testDownloadMissingBook(): void
+    /**
+     * Download a book with age-category 5 when user is not in age should fail.
+     */
+    public function testDownloadNotAllowedBook(): void
     {
         $book = $this->getService(BookRepository::class)
-           ->findByUuid(BookFixture::UUID_JUNGLE_BOOK);
+           ->findByUuid(BookFixture::UUID_MOBY_DICK);
         self::assertNotNull($book, 'Unable to load book');
 
         $client = self::getClient();

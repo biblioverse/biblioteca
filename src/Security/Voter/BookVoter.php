@@ -11,11 +11,12 @@ class BookVoter extends Voter
 {
     public const EDIT = 'EDIT';
     public const VIEW = 'VIEW';
+    public const DOWNLOAD = 'DOWNLOAD';
 
     #[\Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW], true)
+        return in_array($attribute, [self::EDIT, self::VIEW, self::DOWNLOAD], true)
             && $subject instanceof Book;
     }
 
@@ -34,7 +35,7 @@ class BookVoter extends Voter
 
         return match ($attribute) {
             self::EDIT => in_array('ROLE_ADMIN', $user->getRoles(), true),
-            self::VIEW => $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory(),
+            self::VIEW, self::DOWNLOAD => $user->getMaxAgeCategory() === null || $subject->getAgeCategory() <= $user->getMaxAgeCategory(),
             default => false,
         };
     }

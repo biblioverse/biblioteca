@@ -494,6 +494,9 @@ class BookRepository extends ServiceEntityRepository
         return $result;
     }
 
+    /**
+     * @deprecated use findByUuid instead
+     */
     public function findByUuidAndKoboDevice(string $bookUuid, KoboDevice $koboDevice): ?Book
     {
         /** @var Book|null $result */

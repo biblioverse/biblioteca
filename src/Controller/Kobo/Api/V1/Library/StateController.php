@@ -14,6 +14,7 @@ use App\Kobo\Response\ReadingStateResponseFactory;
 use App\Kobo\Response\StateResponse;
 use App\Kobo\SyncToken;
 use App\Repository\BookRepository;
+use App\Security\Voter\BookVoter;
 use App\Service\BookProgressionService;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -94,7 +95,7 @@ class StateController extends AbstractKoboController
         $response = new JsonResponse([]);
         $response->headers->set('x-kobo-api-token', 'e30=');
 
-        $book = $this->bookRepository->findByUuidAndKoboDevice($uuid, $koboDevice);
+        $book = $this->bookRepository->findByUuid($uuid);
 
         // Unknown book
         if (!$book instanceof Book) {
@@ -105,6 +106,8 @@ class StateController extends AbstractKoboController
 
             return $response->setStatusCode(Response::HTTP_NOT_IMPLEMENTED);
         }
+
+        $this->denyAccessUnlessGranted(BookVoter::VIEW, $book, 'You are not allowed to view this book');
 
         $rsResponse = $this->readingStateResponseFactory->create($syncToken, $koboDevice, $book);
 
