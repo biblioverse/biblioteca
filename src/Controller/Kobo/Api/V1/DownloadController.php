@@ -6,7 +6,7 @@ use App\Controller\Kobo\AbstractKoboController;
 use App\Entity\Book;
 use App\Kobo\DownloadHelper;
 use App\Repository\BookRepository;
-use App\Security\Voter\KoboDownloadVoter;
+use App\Security\Voter\BookVoter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -22,7 +22,7 @@ class DownloadController extends AbstractKoboController
     #[Route('/{id:book}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
     public function download(Book $book, string $extension): Response
     {
-        $this->denyAccessUnlessGranted(KoboDownloadVoter::KOBO_DOWNLOAD, $book, 'You are not allowed to download this book');
+        $this->denyAccessUnlessGranted(BookVoter::DOWNLOAD, $book, 'You are not allowed to download this book');
 
         return $this->downloadHelper->getResponse($book, $extension);
     }
