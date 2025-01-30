@@ -7,6 +7,13 @@ ai.configuration.form.ai_summary_prompt: Prompt pour les résumés
 ai.configuration.form.ai_tag_model: Connecteur pour les catégories
 ai.configuration.form.ai_tag_prompt: Prompt pour les catégories
 ai.configuration.form.submit: Enregistrer
+ai.form.url: "URL API"
+ai.form.model: "Nom du modèle"
+ai.form.token: "Token API"
+ai.form.useamazoncontext: "Utiliser le contexte Amazon"
+ai.form.useepubcontext: "Utiliser le contexte EPUB"
+ai.form.usewikipediacontext: "Utiliser le contexte Wikipedia"
+ai.form.systemprompt: "Prompt système"
 ai.context: Contexte
 ai.create-new-model: Créer un nouveau connecteur IA
 ai.edit-ai-model: Modifier connecteur IA
@@ -25,7 +32,7 @@ ai.querying-for-context-and-building-a-response-please-wait: Construction du con
 ai.responses-to-prompt-with-context: Réponses aux prompt avec contexte
 ai.summary-prompt-with-context: Prompt de résumé avec contexte
 ai.summary-prompt: Prompt de résumé
-ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
+ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
 ai.system-prompt: Prompt système
 ai.tag-prompt-with-context: Prompt de catégorie avec contexte
 ai.tag-prompt: Prompt de catégorie
@@ -73,6 +80,7 @@ book.serieIndex: Index dans la série
 book.size: Taille
 book.summary: Résumé
 book.tags: Catégories
+book.language: Langue
 book.this-action-is-irreversible: Cette action est irréversible
 book.title: Titre
 book.unknown-author: Auteur inconnu
@@ -80,6 +88,7 @@ book.updated: Modifié
 book.upload-book: Télévérser le livre
 book.upload-books-to-the-consume-folder: Téléverser le livre dans le dossier consume
 book.upload-cover: Téléverser la couverture
+book.upload-cover-title: Cliquez pour téléverser la couverture
 book.upload: Télévérser le livre
 book.uuid: Unique ID
 book.verified: Verifié
@@ -164,6 +173,7 @@ menu.kobodevices: Appareils Kobo
 menu.logout: Déconnexion
 menu.notverified: Non vérifiés
 menu.profile: Profil
+menu.publishers: Editeurs
 menu.readinglist: Liste de lecture
 menu.series: Séries
 menu.shelves: Etagères

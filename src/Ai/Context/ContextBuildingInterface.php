@@ -7,7 +7,7 @@ use App\Entity\Book;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.ai_context_builder', ['priority' => 20])]
-interface ContextBuildingInteface
+interface ContextBuildingInterface
 {
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool;
 

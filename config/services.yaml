@@ -31,7 +31,7 @@ parameters:
     env(GENERIC_SYSTEM_PROMPT): "As a highly skilled and experienced librarian AI model, I'm here to help you tag and summarize books as close to the original as possible. I will never make up any information. I will only use the information you provide me. I will communicate with you primarily using your preferred language."
 
     AI_SUMMARY_PROMPT: '%env(AI_SUMMARY_PROMPT)%'
-    env(AI_SUMMARY_PROMPT): "Can you make a factual summary of the book {book} in around 150 words in french"
+    env(AI_SUMMARY_PROMPT): "Can you make a factual summary of the book {book} in around 150 words in language {language}."
 
     AI_TAG_PROMPT: '%env(AI_TAG_PROMPT)%'
     env(AI_TAG_PROMPT): "I want to tag a book. Can you cite the genres and tags for the following book: {book}?"

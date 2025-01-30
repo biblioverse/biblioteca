@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 class ContextBuilder
 {
     /**
-     * @param iterable<ContextBuildingInteface> $handlers
+     * @param iterable<ContextBuildingInterface> $handlers
      */
     public function __construct(
         #[AutowireIterator('app.ai_context_builder')]
