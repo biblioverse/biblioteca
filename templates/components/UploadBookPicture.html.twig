@@ -4,7 +4,7 @@
 
             <input type="file" name="cover" accept="image/png, image/jpeg, image/webp" class="form-control"/>
             <button data-action="live#action" class="btn btn-sm btn-outline-primary" data-live-action-param="files|uploadFiles">
-                {{ 'book.upload'|trans }}
+                {{ 'book.upload-cover'|trans }}
             </button>
         </div>
     {% elseif is_granted('EDIT', book) %}
@@ -13,7 +13,7 @@
             data-action="live#action"
             data-live-action-param="activateEditing"
             class="btn btn-sm btn-outline-primary"
-            title="Click to upload cover!"
+            title="{{ "book.upload-cover-title"|trans }}"
         >
             <i class="bi bi-upload"></i> {{ 'book.upload-cover'|trans }}
         </button>

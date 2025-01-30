@@ -9,7 +9,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class AmazonContextBuilder implements ContextBuildingInteface
+class AmazonContextBuilder implements ContextBuildingInterface
 {
     public function __construct(
         private readonly HttpClientInterface $client,

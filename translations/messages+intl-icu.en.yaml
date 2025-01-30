@@ -7,6 +7,13 @@ ai.configuration.form.ai_summary_prompt: "Prompt for summaries"
 ai.configuration.form.ai_tag_model: "Model for tags"
 ai.configuration.form.ai_tag_prompt: "Prompt for tags"
 ai.configuration.form.submit: "Save"
+ai.form.url: "API URL"
+ai.form.model: "Model name"
+ai.form.token: "API token"
+ai.form.useamazoncontext: "Use Amazon context"
+ai.form.useepubcontext: "Use EPUB context"
+ai.form.usewikipediacontext: "Use Wikipedia context"
+ai.form.systemprompt: "AI system prompt"
 ai.context: Context
 ai.create-new-model: Create new AI model
 ai.edit-ai-model: Edit AI model
@@ -25,7 +32,7 @@ ai.querying-for-context-and-building-a-response-please-wait: Querying for contex
 ai.responses-to-prompt-with-context: Responses to prompt with context
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
-ai.summaryprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
+ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {language} to insert the book's language. This prompt will be used only if a prompt is not defined in the user profile."
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context
 ai.tag-prompt: Tag prompt
@@ -73,6 +80,7 @@ book.serieIndex: Serie Index
 book.size: Size
 book.summary: Summary
 book.tags: Tags
+book.language: Language
 book.this-action-is-irreversible: This action is irreversible
 book.title: Title
 book.unknown-author: Unknown author
@@ -80,6 +88,7 @@ book.updated: Updated
 book.upload-book: Upload book
 book.upload-books-to-the-consume-folder: Upload books to the consume folder
 book.upload-cover: Upload cover
+book.upload-cover-title: Click to upload cover
 book.upload: Upload book
 book.uuid: Unique ID
 book.verified: Verified
@@ -152,6 +161,7 @@ kobo.logs.show-kobo-logs: Display Kobo sync logs
 kobo.logs.title: Kobo Logs
 login.login: Log in
 menu.addbooks: Add books
+menu.publishers: Publishers
 menu.admin: Administrator
 menu.aimodels: AI Models
 menu.allbooks: All books

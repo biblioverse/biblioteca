@@ -8,7 +8,7 @@ use App\Service\BookFileSystemManagerInterface;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\Formats\Epub\EpubModule;
 
-class EpubContextBuilder implements ContextBuildingInteface
+class EpubContextBuilder implements ContextBuildingInterface
 {
     public function __construct(private readonly BookFileSystemManagerInterface $bookFileSystemManager)
     {

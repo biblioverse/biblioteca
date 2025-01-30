@@ -5,7 +5,7 @@ namespace App\Ai\Context;
 use App\Entity\AiModel;
 use App\Entity\Book;
 
-class SummaryContextBuilder implements ContextBuildingInteface
+class SummaryContextBuilder implements ContextBuildingInterface
 {
     #[\Override]
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool
