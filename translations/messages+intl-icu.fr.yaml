@@ -154,6 +154,26 @@ generic.yes: Oui
 group.filter-placeholder: Filtrer...
 group.rename: Renommer
 group.search: Chercher
+inlineeditinteraction.title: Actions
+inlineeditinteraction.favorites.add: Ajouter aux favoris
+inlineeditinteraction.favorites.remove: Retirer des favoris
+inlineeditinteraction.finished.add: Marquer comme lu
+inlineeditinteraction.finished.remove: Marquer comme non lu
+inlineeditinteraction.hidden.add: Cacher le livre
+inlineeditinteraction.hidden.remove: Montrer le livre
+inlineeditinteraction.edit: Editer l'interaction
+inlineeditinteraction.shelf.add: Ajouter a l'étagère
+inlineeditinteraction.shelf.new: Create une étagère
+inlineeditinteraction.flash.read: Bon travail!
+inlineeditinteraction.flash.unread: Marquer comme non lu
+inlineeditinteraction.flash.saveInteraction: Sauvegardé
+inlineeditinteraction.flash.saveShelf: Etagère sauvegardée
+inlineeditinteraction.flash.favorite: Ajouter a la liste de lecture
+inlineeditinteraction.flash.unfavorite: Retirer de la liste de lecture
+inlineeditinteraction.flash.hide: Caché
+inlineeditinteraction.flash.unhide: Visible
+inlineeditinteraction.flash.shelf: Ajouté a l'étagère
+inlineeditinteraction.flash.unshelf: Retiré de l'étagère
 instance-configuration.current-value: Valeur actuelle
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Modifier la configuration
@@ -291,23 +311,3 @@ user.max-age-category: Catégorie d'âge maximale
 user.new-user: Nouvel utilisateur(ice)
 user.roles: Roles
 user.username: Nom d'utilisateur(ice)
-InlineEditInteraction.title: Actions
-InlineEditInteraction.favorites.add: Ajouter aux favoris
-InlineEditInteraction.favorites.remove: Retirer des favoris
-InlineEditInteraction.finished.add: Marquer comme lu
-InlineEditInteraction.finished.remove: Marquer comme non lu
-InlineEditInteraction.hidden.add: Cacher le livre
-InlineEditInteraction.hidden.remove: Montrer le livre
-InlineEditInteraction.edit: Editer l'interaction
-InlineEditInteraction.shelf.add: Ajouter a l'étagère
-InlineEditInteraction.shelf.new: Create une étagère
-InlineEditInteraction.flash.read: Bon travail!
-InlineEditInteraction.flash.unread: Marquer comme non lu
-InlineEditInteraction.flash.saveInteraction: Sauvegardé
-InlineEditInteraction.flash.saveShelf: Etagère sauvegardée
-InlineEditInteraction.flash.favorite: Ajouter a la liste de lecture
-InlineEditInteraction.flash.unfavorite: Retirer de la liste de lecture
-InlineEditInteraction.flash.hide: Caché
-InlineEditInteraction.flash.unhide: Visible
-InlineEditInteraction.flash.shelf: Ajouté a l'étagère
-InlineEditInteraction.flash.unshelf: Retiré de l'étagère
