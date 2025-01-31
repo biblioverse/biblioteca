@@ -9,3 +9,5 @@ parameters:
         - '#(.*)no value type specified in iterable type array#'
   #      - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
     errorFormat: symplify
+    typeAliases:
+        ReadingStateCriteria: "array{'book':int, 'readPages': int|null, 'finished': boolean}"

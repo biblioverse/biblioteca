@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ShelfController extends AbstractController
 {
-    #[Route('/shelf/{slug}', name: 'app_shelf')]
+    #[Route('/shelf/{slug:shelf}', name: 'app_shelf')]
     public function index(Shelf $shelf, ShelfManager $shelfManager): Response
     {
         $books = $shelfManager->getBooksInShelf($shelf);
