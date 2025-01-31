@@ -225,7 +225,6 @@ kobo.logs.show-kobo-logs: Display Kobo sync logs
 kobo.logs.title: Kobo Logs
 login.login: Log in
 menu.addbooks: Add books
-menu.publishers: Publishers
 menu.admin: Administrator
 menu.aimodels: AI Models
 menu.allbooks: All books
@@ -238,8 +237,8 @@ menu.kobodevices: Kobo devices
 menu.logout: Log out
 menu.notverified: Not verified
 menu.profile: Profile
-menu.readinglist: Reading list
 menu.publishers: Publishers
+menu.readinglist: Reading list
 menu.series: Series
 menu.shelves: Shelves
 menu.tags: Tags
