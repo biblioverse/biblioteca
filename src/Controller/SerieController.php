@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\BookRepository;
 use App\Repository\ShelfRepository;
+use App\Service\BookInteractionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class SerieController extends AbstractController
 {
     #[Route('/{name}', name: 'app_serie_detail')]
-    public function detail(string $name, BookRepository $bookRepository, ShelfRepository $shelfRepository): Response
+    public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService, ShelfRepository $shelfRepository): Response
     {
         $books = $bookRepository->findBySerie($name);
 
@@ -30,9 +31,6 @@ class SerieController extends AbstractController
 
         $firstUnreadBook = $bookRepository->getFirstUnreadBook($name);
 
-        $readBooks = 0;
-        $hiddenBooks = 0;
-        $inProgressBooks = 0;
         $tags = [];
         $bookData = [];
         foreach ($books as $book) {
@@ -50,23 +48,14 @@ class SerieController extends AbstractController
             }
 
             $interaction = $book->getLastInteraction($user);
-            if ($interaction !== null) {
-                if ($interaction->isFinished()) {
-                    $readBooks++;
-                } elseif ($interaction->getReadPages() > 0) {
-                    $inProgressBooks++;
-                }
-
-                if ($interaction->isHidden()) {
-                    $hiddenBooks++;
-                }
-            }
 
             $bookData[] = [
                 'book' => $book,
                 'interaction' => $interaction,
             ];
         }
+
+        $stats = $bookInteractionService->getStats($books, $user);
 
         return $this->render('serie/detail.html.twig', [
             'serie' => $name,
@@ -75,9 +64,9 @@ class SerieController extends AbstractController
             'authors' => $authors,
             'firstUnreadBook' => $firstUnreadBook,
             'tags' => $tags,
-            'readBooks' => $readBooks,
-            'hiddenBooks' => $hiddenBooks,
-            'inProgressBooks' => $inProgressBooks,
+            'readBooks' => $stats['readBooks'],
+            'hiddenBooks' => $stats['hiddenBooks'],
+            'inProgressBooks' => $stats['inProgressBooks'],
         ]);
     }
 }
