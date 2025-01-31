@@ -69,7 +69,7 @@ for arg in "$@"; do
         FLAG_WITH_COMPOSER=1
         FLAG_WITH_TYPESENSE=1
         ;;
-    default)
+    *)
       if echo "$arg" | grep -q '/'; then
         REMOTE=$(echo "$arg" | cut -d'/' -f1)
         BRANCH=$(echo "$arg" | cut -d'/' -f2)
@@ -81,8 +81,8 @@ for arg in "$@"; do
 done
 
 # Keep the user on the same branch.
-if [[ "$(git branch --show-current)" != "$BRANCH" ]]; then
-  echo "You are not on the default branch.."
+if [[ "$(git branch --show-current)" != "$BRANCH" && "$BRANCH" = "main" ]]; then
+  echo "You are not on the default branch..."
   BRANCH=$(git branch --show-current)
 fi
 
