@@ -28,7 +28,7 @@ Below the model list, you can configure which model will be used for different a
 
 When your favourite LLM is configured, fill in the prompts that will be used to generate the summaries and tags.
 
-The application will replace the `{book}` placeholder with the book's title, author and series.
+The application will replace the `{book}` placeholder with the book's title, author and series. Also the `{language}` placeholder with the book's language or user's language.
 
 ### For tags
 
@@ -39,7 +39,7 @@ The output must be only valid JSON format. It must be an object with one key nam
 **Here are some example prompts:**
 
 ```
-Can you give 5 classifying keywords about the book {book} in a list without explanation in french
+Can you give 5 classifying keywords about the book {book} in a list without explanation in language {language}
 ```
 ```
 Give me a list of genres or tags for {book}. The first one must be about target audience (example: for teenagers), the second one must
@@ -47,7 +47,7 @@ be about the location of the main story (example: Switzerland), the next one are
 ```
 ### For summaries
 ```
-Can you make a factual summary of the book {book} in around 150 words in french
+Can you make a factual summary of the book {book} in around 150 words in language {language}.
 ```
 
 ### For search

@@ -82,6 +82,9 @@
                 <tr>
                     <th>{{ 'book.tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
                 </tr>
+                <tr>
+                    <th>{{ 'book.language'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'language'}) }}</td>
+                </tr>
                 {% if not book.verified %}
 
                     <tr>

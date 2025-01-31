@@ -10,8 +10,12 @@ abstract class AbstractBookPrompt implements BookPromptInterface
 {
     protected string $prompt;
 
-    public function __construct(protected Book $book, protected ?User $user, protected ConfigValue $config)
-    {
+    public function __construct(
+        protected Book $book,
+        protected ?User $user,
+        protected ConfigValue $config,
+        protected string $language,
+    ) {
     }
 
     #[\Override]
@@ -46,6 +50,19 @@ abstract class AbstractBookPrompt implements BookPromptInterface
             $bookString .= ' number '.$this->book->getSerieIndex().' in the series "'.$this->book->getSerie().'"';
         }
 
-        return str_replace('{book}', $bookString, $prompt);
+        $language = $this->book->getLanguage() ?? $this->language;
+
+        $prompt = str_replace('{book}', $bookString, $prompt);
+
+        return str_replace('{language}', $this->getFullLanguageName($language), $prompt);
+    }
+
+    private function getFullLanguageName(string $language): string
+    {
+        if (strlen($language) !== 2 || !class_exists('\Locale')) {
+            return $language;
+        }
+
+        return \Locale::getDisplayLanguage($language);
     }
 }
