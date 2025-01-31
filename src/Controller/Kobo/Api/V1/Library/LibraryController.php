@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/kobo/{accessKey}/v1/library', name: 'kobo_')]
 class LibraryController extends AbstractKoboController
 {
-    public const MAX_BOOKS_PER_SYNC = 100;
+    private const int MAX_BOOKS_PER_SYNC = 100;
 
     public function __construct(
         protected readonly BookRepository $bookRepository,
@@ -77,6 +77,8 @@ class LibraryController extends AbstractKoboController
 
         $httpResponse = $response->toJsonResponse();
         $httpResponse->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue || count($books) < $count ? 'continue' : 'done');
+        $httpResponse->headers->set('Access-Control-Allow-Headers', self::ACCESS_CONTROL_ALLOW_HEADERS);
+        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
 
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
