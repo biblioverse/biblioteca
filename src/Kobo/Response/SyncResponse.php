@@ -51,7 +51,7 @@ class SyncResponse
         $this->helper = new SyncResponseHelper($this->syncToken, $this->koboDevice);
     }
 
-    public function toJsonResponse(): JsonResponse
+    public function getData(): array
     {
         $list = [];
         array_push($list, ...$this->getNewEntitlement());
@@ -62,8 +62,12 @@ class SyncResponse
 
         $list = array_merge($list, $this->remoteItems);
 
-        array_filter($list, fn ($item) => $item !== []);
+        return array_filter($list, fn ($item) => $item !== []);
+    }
 
+    public function toJsonResponse(): JsonResponse
+    {
+        $list = $this->getData();
         $response = new JsonResponse();
         $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
 

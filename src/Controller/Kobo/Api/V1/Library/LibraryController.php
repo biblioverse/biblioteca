@@ -3,15 +3,19 @@
 namespace App\Controller\Kobo\Api\V1\Library;
 
 use App\Controller\Kobo\AbstractKoboController;
+use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Kobo\Response\SyncResponseFactory;
 use App\Kobo\SyncToken;
+use App\Kobo\SyncTokenParser;
 use App\Kobo\UpstreamSyncMerger;
 use App\Repository\BookRepository;
 use App\Repository\KoboDeviceRepository;
 use App\Repository\KoboSyncedBookRepository;
 use App\Repository\ShelfRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,6 +33,9 @@ class LibraryController extends AbstractKoboController
         protected readonly KoboDeviceRepository $koboDeviceRepository,
         protected readonly SyncResponseFactory $syncResponseFactory,
         protected readonly UpstreamSyncMerger $upstreamSyncMerger,
+        protected readonly SyncTokenParser $syncTokenParser,
+        #[Autowire('%kernel.debug')]
+        protected readonly bool $kernelDebug,
     ) {
     }
 
@@ -40,11 +47,17 @@ class LibraryController extends AbstractKoboController
      * Both
      * Kobo will call this url multiple times if there are more book to sync (x-kobo-sync: continue)
      * @param KoboDevice $koboDevice The kobo entity is retrieved via the accessKey in the url
-     * @param SyncToken $syncToken It's provided from HTTP Headers + Get parameters, see SyncTokenParamConverter and    KoboSyncTokenExtractor
+     * @param ?SyncToken $syncToken It's provided from HTTP Headers + Get parameters, see SyncTokenParamConverter and    KoboSyncTokenExtractor
      **/
     #[Route('/sync', name: 'api_endpoint_v1_library_sync')]
-    public function apiEndpoint(KoboDevice $koboDevice, SyncToken $syncToken, Request $request): Response
+    public function apiEndpoint(KoboDevice $koboDevice, ?SyncToken $syncToken, Request $request): Response
     {
+        if (!$syncToken instanceof SyncToken) {
+            $this->koboSyncLogger->debug('No sync-token provided for Kobo {id}', ['id' => $koboDevice->getId()]);
+            $syncToken = $koboDevice->getLastSyncToken();
+            $syncToken ??= SyncToken::createDummy();
+            $syncToken->currentDate = new \DateTimeImmutable('now');
+        }
         $forced = $koboDevice->isForceSync() || $request->query->has('force');
         $count = $this->koboSyncedBookRepository->countByKoboDevice($koboDevice);
         if ($forced || $count === 0) {
@@ -61,12 +74,13 @@ class LibraryController extends AbstractKoboController
             $syncToken->tagLastModified = null;
             $syncToken->archiveLastModified = null;
         }
+        $this->koboSyncLogger->debug('Using sync token', ['token' => $syncToken]);
 
         $maxBookPerSync = $request->query->getInt('per_page', self::MAX_BOOKS_PER_SYNC);
         // We fetch a subset of book to sync, based on the SyncToken.
         $books = $this->bookRepository->getChangedBooks($koboDevice, $syncToken, 0, $maxBookPerSync);
         $count = $this->bookRepository->getChangedBooksCount($koboDevice, $syncToken);
-        $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $koboDevice->getId(), 'count' => $count, 'token' => $syncToken]);
+        $this->koboSyncLogger->debug("Sync for Kobo {id}: {$count} books to sync", ['id' => $koboDevice->getId(), 'count' => $count]);
 
         $response = $this->syncResponseFactory->create($syncToken, $koboDevice)
             ->addBooks($books)
@@ -76,15 +90,25 @@ class LibraryController extends AbstractKoboController
         $shouldContinue = $this->upstreamSyncMerger->merge($koboDevice, $response, $request);
 
         $httpResponse = $response->toJsonResponse();
-        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue || count($books) < $count ? 'continue' : 'done');
-        $httpResponse->headers->set('Access-Control-Allow-Headers', self::ACCESS_CONTROL_ALLOW_HEADERS);
-        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
+        $this->koboSyncLogger->debug('Synced response', [
+            'data' => $response->getData(),
+            'books' => (new ArrayCollection($books))->map(fn (Book $book) => $book->getTitle())->toArray(),
+        ]);
 
+        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue || count($books) < $count ? 'continue' : 'done');
+        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
+        $httpResponse->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $this->syncTokenParser->encode($syncToken));
+        if ($this->kernelDebug) {
+            $httpResponse->headers->set('X-Debug-'.KoboDevice::KOBO_SYNC_TOKEN_HEADER, (string) json_encode($syncToken->toArray()));
+        }
         // Once the response is generated, we update the list of synced books
         // If you do this before, the logic will be broken
         $this->koboSyncLogger->debug('Set synced date for {count} downloaded books', ['count' => count($books)]);
-
         $this->koboSyncedBookRepository->updateSyncedBooks($koboDevice, $books, $syncToken);
+
+        // Store the current sync token
+        $koboDevice->setLastSyncToken($syncToken->marksAsLastUsed());
+        $this->koboDeviceRepository->save($koboDevice);
 
         return $httpResponse;
     }
