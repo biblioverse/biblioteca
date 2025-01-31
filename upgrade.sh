@@ -80,6 +80,12 @@ for arg in "$@"; do
   esac
 done
 
+# Keep the user on the same branch.
+if [[ "$(git branch --show-current)" != "$BRANCH" ]]; then
+  echo "You are not on the default branch.."
+  BRANCH=$(git branch --show-current)
+fi
+
 # Fetch the latest version and discard local changes
 echo "Upgrading to $REMOTE/$BRANCH."
 if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
