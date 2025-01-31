@@ -1,13 +1,6 @@
 {# @var book App\Entity\Book #}
 <div class="m-1 mb-4">
-    <div class="book">
-        <div class="book__cover" style="background-image:url('{{ asset('images/blank.jpg')|imagine_filter('thumb') }}');">
-            <div class="book__detail text-danger text-warning">
-                {{ "book.missing"|trans }}
-            </div>
-        </div>
-        <div class="book__page"></div>
-    </div>
+    {% include 'book/_cover_empty.html.twig' %}
     <small>
         <strong>{{ "book.missing"|trans }}</strong><br />
         {% if serie %}

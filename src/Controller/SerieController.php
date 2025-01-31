@@ -32,7 +32,8 @@ class SerieController extends AbstractController
         $firstUnreadBook = $bookRepository->getFirstUnreadBook($name);
 
         $tags = [];
-        $bookData = [];
+        $serie = [];
+        $serieMax = 0;
         foreach ($books as $book) {
             foreach ($book->getAuthors() as $author) {
                 $authors[$author] = $author;
@@ -47,12 +48,17 @@ class SerieController extends AbstractController
                 }
             }
 
-            $interaction = $book->getLastInteraction($user);
+            $index = $book->getSerieIndex();
+            if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
+                $index = '?';
+            }
+            $serie[$index] ??= [];
+            $serie[$index][] = $book;
+        }
 
-            $bookData[] = [
-                'book' => $book,
-                'interaction' => $interaction,
-            ];
+        $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));
+        if ($keys !== []) {
+            $serieMax = max($keys);
         }
 
         $stats = $bookInteractionService->getStats($books, $user);
@@ -60,7 +66,8 @@ class SerieController extends AbstractController
         return $this->render('serie/detail.html.twig', [
             'serie' => $name,
             'shelves' => $shelfRepository->findManualShelvesForUser($user),
-            'books' => $bookData,
+            'books' => $serie,
+            'serieMax' => $serieMax,
             'authors' => $authors,
             'firstUnreadBook' => $firstUnreadBook,
             'tags' => $tags,

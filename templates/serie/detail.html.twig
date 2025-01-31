@@ -48,38 +48,32 @@
 
     <div class="booksWithDetails">
         <div class="booksWithDetails__content">
+            {% if serieMax>=1 %}
             <h3>{{ 'books.in-serie'|trans }}</h3>
             <table class="table">
                 <tbody>
-                {% for book in books %}
-                    <tr>
-                        <td style="width: 50px; vertical-align: middle; text-align: right;">
-                            <span class="text-secondary">{{ book.book.serieIndex }}</span>
-                        </td>
-                        <td style="width: 100px">
-                            <a href="{{ path('app_book',{'slug':book.book.slug,'book':book.book.id}) }}" class=" small">
-                                {% include 'book/_cover.html.twig' with { book: book.book, interaction: book.interaction } %}
-                            </a>
-                        </td>
-                        <td style="vertical-align: middle;">
-                            <h4>{{ book.book.title }}</h4>
-                            {% if book.book.authors|length > 0%}
-                            <div>
-                                {% for author in book.book.authors %}
-                                    <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
-                                        <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                                    </a>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td style="vertical-align: middle;">
-                            {{ component('InlineEditInteraction', {book:book.book, user: app.user, interaction: book.interaction, shelves: shelves}) }}
-                        </td>
-                    </tr>
+                {% for index in 1..serieMax %}
+                    {% if books[index] is defined %}
+                        {% for book in books[index] %}
+                            {% include 'book/book-row.html.twig' with { book: book } %}
+                        {% endfor %}
+                    {% else %}
+                        {% include 'book/book-row-empty.html.twig' with { serie: serie, index: index } %}
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
+            {% endif %}
+            {% if books['?'] is defined %}
+                <h5>{{ 'books.other-books'|trans }}</h5>
+                <table class="table">
+                <tbody>
+                    {% for book in books['?'] %}
+                        {% include 'book/book-row.html.twig' with { book: book, index: "?" } %}
+                    {% endfor %}
+                </tbody>
+                </table>
+            {% endif %}
         </div>
 
         {% if tags|length > 0 %}
