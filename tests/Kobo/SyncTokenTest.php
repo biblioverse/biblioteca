@@ -22,35 +22,35 @@ class SyncTokenTest extends TestCase
     private function createToken(): SyncToken
     {
         $syncToken = new SyncToken();
+        $syncToken->archiveLastModified = new \DateTimeImmutable('2024-01-01', new \DateTimeZone('UTC'));
         $syncToken->filters = ['Filter' => 'ALL', 'DownloadUrlFilter' => 'Generic,Android', 'PrioritizeRecentReads' => true];
-        $syncToken->lastModified = new \DateTimeImmutable('2021-01-02');
-        $syncToken->lastCreated = new \DateTimeImmutable('2022-01-01');
-        $syncToken->readingStateLastModified = new \DateTimeImmutable('2023-01-01');
-        $syncToken->archiveLastModified = new \DateTimeImmutable('2024-01-01');
-        $syncToken->tagLastModified = new \DateTimeImmutable('2026-01-01');
-        $syncToken->currentDate = new \DateTimeImmutable('2028-01-01');
-        $syncToken->version = '1-1-0';
+        $syncToken->lastCreated = new \DateTimeImmutable('2022-01-01', new \DateTimeZone('UTC'));
+        $syncToken->lastModified = new \DateTimeImmutable('2021-01-02', new \DateTimeZone('UTC'));
         $syncToken->rawKoboStoreToken = 'hello world';
+        $syncToken->readingStateLastModified = new \DateTimeImmutable('2023-01-01');
+        $syncToken->tagLastModified = new \DateTimeImmutable('2026-01-01', new \DateTimeZone('UTC'));
+        $syncToken->version = '1-1-0';
 
         return $syncToken;
     }
 
     private function getExpected(): array
     {
+        // Sort alphabetically
         return [
-            'version' => '1-1-0',
-            'currentDate' => '2028-01-01T00:00:00+00:00',
-            'lastModified' => '2021-01-02T00:00:00+00:00',
-            'lastCreated' => '2022-01-01T00:00:00+00:00',
             'archiveLastModified' => '2024-01-01T00:00:00+00:00',
-            'readingStateLastModified' => '2023-01-01T00:00:00+00:00',
-            'tagLastModified' => '2026-01-01T00:00:00+00:00',
-            'rawKoboStoreToken' => 'hello world',
             'filters' => [
                 'Filter' => 'ALL',
                 'DownloadUrlFilter' => 'Generic,Android',
                 'PrioritizeRecentReads' => true,
             ],
+            'lastCreated' => '2022-01-01T00:00:00+00:00',
+            'lastModified' => '2021-01-02T00:00:00+00:00',
+            'page' => 1,
+            'rawKoboStoreToken' => 'hello world',
+            'readingStateLastModified' => '2023-01-01T00:00:00+00:00',
+            'tagLastModified' => '2026-01-01T00:00:00+00:00',
+            'version' => '1-1-0',
         ];
     }
 }

@@ -31,6 +31,7 @@ class ShelfManager
     {
         $books = [];
         foreach ($shelves as $shelf) {
+            // TODO: Use multi-search (when ready) to avoid many queries
             $shelfBooks = $this->getBooksInShelf($shelf);
             foreach ($shelfBooks as $book) {
                 $books[$book->getId()] = $book;

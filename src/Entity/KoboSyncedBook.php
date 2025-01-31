@@ -16,26 +16,18 @@ class KoboSyncedBook
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Book $book = null;
-
-    #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?KoboDevice $koboDevice = null;
-
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    #[Gedmo\Timestampable(on: 'create')]
-    private \DateTimeImmutable $created;
-
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updated = null;
+    private ?\DateTimeImmutable $archived = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $archived = null;
-
-    public function __construct()
+    public function __construct(#[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+        #[Gedmo\Timestampable(on: 'create')]
+        private \DateTimeImmutable $created, #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+        #[Gedmo\Timestampable(on: 'update')]
+        private ?\DateTimeImmutable $updated, #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
+        #[ORM\JoinColumn(nullable: true)]
+        private ?KoboDevice $koboDevice, #[ORM\ManyToOne(inversedBy: 'koboSyncedBooks')]
+        #[ORM\JoinColumn(nullable: true)]
+        private ?Book $book)
     {
         $this->created = new \DateTimeImmutable();
     }
@@ -98,12 +90,12 @@ class KoboSyncedBook
         return $this->archived instanceof \DateTimeInterface;
     }
 
-    public function getArchived(): ?\DateTimeInterface
+    public function getArchived(): ?\DateTimeImmutable
     {
         return $this->archived;
     }
 
-    public function setArchived(?\DateTimeInterface $removed): void
+    public function setArchived(?\DateTimeImmutable $removed): void
     {
         $this->archived = $removed;
     }

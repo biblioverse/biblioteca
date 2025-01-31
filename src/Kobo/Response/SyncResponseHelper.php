@@ -42,7 +42,11 @@ class SyncResponseHelper
 
     public function isNewEntitlement(Book $book): bool
     {
-        return $book->getKoboSyncedBook()->isEmpty(); // $book->getCreated() >= $syncToken->lastCreated;
+        if ($book->getKoboSyncedBook()->isEmpty()) {
+            return true;
+        }
+
+        return $this->syncToken->lastCreated instanceof \DateTimeInterface && $book->getCreated() > $this->syncToken->lastCreated;
     }
 
     public function isChangedReadingState(Book $book): bool
@@ -62,16 +66,20 @@ class SyncResponseHelper
 
     public function isNewTag(Shelf $shelf): bool
     {
-        if (!$this->syncToken->lastCreated instanceof \DateTimeInterface) {
+        if (!$this->syncToken->tagLastModified instanceof \DateTimeInterface) {
             return true;
         }
 
-        return $shelf->getCreated() >= $this->syncToken->lastCreated;
+        return $shelf->getCreated() >= $this->syncToken->tagLastModified;
     }
 
     public function isChangedTag(Shelf $shelf): bool
     {
-        return $this->syncToken->tagLastModified instanceof \DateTimeInterface && $shelf->getUpdated() >= $this->syncToken->tagLastModified;
+        if ($this->isNewTag($shelf)) {
+            return false;
+        }
+
+        return $shelf->getUpdated() >= $this->syncToken->tagLastModified;
     }
 
     public function isArchivedEntitlement(Book $book): bool

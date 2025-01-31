@@ -43,13 +43,19 @@ class BookArchiver
             return;
         }
 
+        // If no synced book exists, nothing to do
+        $syncedBooks = $this->syncedBookRepository->findByUserAndBook($user, $book);
+        if ($syncedBooks === []) {
+            return;
+        }
+
         // If the shelf is not synced with kobo, nothing to do
         $shelves = new ArrayCollection($this->shelfRepository->findByUserSyncedWithKobos($user));
         if (!$shelves->contains($shelf)) {
             return;
         }
 
-        // We can not archive a book if another synced shelf use it.
+        // We can not archive a book if another synced shelf uses it.
         $nbStaticShelves = $this->bookRepository->inHowManyStaticKoboShelves($book, $user);
         if ($archiveDate instanceof \DateTimeImmutable && $nbStaticShelves > 0) {
             return;
@@ -65,7 +71,6 @@ class BookArchiver
         }
 
         // Ok, we can now archive/un-archive the synced-book safely
-        $syncedBooks = $this->syncedBookRepository->findByUserAndBook($user, $book);
         foreach ($syncedBooks as $syncedBook) {
             // Nothing to do if already archived (Avoid changing the date)
             if ($archiveDate instanceof \DateTimeImmutable && $syncedBook->isArchived()) {

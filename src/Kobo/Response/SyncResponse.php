@@ -6,6 +6,7 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Kobo\SyncToken;
+use App\Kobo\SyncTokenParser;
 use App\Service\BookProgressionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -47,6 +48,8 @@ class SyncResponse
         protected KoboDevice $koboDevice,
         protected SerializerInterface $serializer,
         protected ReadingStateResponseFactory $readingStateResponseFactory,
+        protected readonly SyncTokenParser $syncTokenParser,
+        protected bool $kernelDebug,
     ) {
         $this->helper = new SyncResponseHelper($this->syncToken, $this->koboDevice);
     }
@@ -65,11 +68,18 @@ class SyncResponse
         return array_filter($list, fn ($item) => $item !== []);
     }
 
-    public function toJsonResponse(): JsonResponse
+    public function toJsonResponse(bool $shouldContinue): JsonResponse
     {
         $list = $this->getData();
         $response = new JsonResponse();
         $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
+
+        $response->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue ? 'continue' : 'done');
+        $response->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
+        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $this->syncTokenParser->encode($this->syncToken));
+        if ($this->kernelDebug) {
+            $response->headers->set('X-Debug-'.KoboDevice::KOBO_SYNC_TOKEN_HEADER, (string) json_encode($this->syncToken->toArray()));
+        }
 
         return $response;
     }
@@ -113,14 +123,14 @@ class SyncResponse
 
         return [
             'Accessibility' => 'Full',
-            'ActivePeriod' => ['From' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate)],
-            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate),
+            'ActivePeriod' => ['From' => $book->getCreated()],
+            'Created' => $book->getCreated(),
             'CrossRevisionId' => $uuid,
             'Id' => $uuid,
             'IsRemoved' => $removed,
             'IsHiddenFromArchive' => false,
             'IsLocked' => false,
-            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->currentDate),
+            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->lastModified),
             'OriginCategory' => 'Imported',
             'RevisionId' => $uuid,
             'Status' => 'Active',

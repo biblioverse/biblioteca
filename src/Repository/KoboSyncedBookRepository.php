@@ -102,11 +102,7 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
 
         // We mark the books as synced
         foreach ($books as $book) {
-            $object = new KoboSyncedBook();
-            $object->setBook($book);
-            $object->setKoboDevice($koboDevice);
-            $object->setUpdated($updatedAt);
-            $object->setCreated($createdAt);
+            $object = new KoboSyncedBook($createdAt, $updatedAt, $koboDevice, $book);
             $book->addKoboSyncedBook($object);
             $koboDevice->addKoboSyncedBook($object);
             $this->getEntityManager()->persist($object);
