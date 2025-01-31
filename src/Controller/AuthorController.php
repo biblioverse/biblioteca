@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\BookRepository;
+use App\Service\BookInteractionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class AuthorController extends AbstractController
 {
     #[Route('/{name}', name: 'app_author_detail')]
-    public function detail(string $name, BookRepository $bookRepository): Response
+    public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService): Response
     {
         $books = $bookRepository->findByAuthor($name);
 
@@ -21,9 +22,6 @@ class AuthorController extends AbstractController
             throw $this->createAccessDeniedException('Invalid user');
         }
 
-        $readBooks = 0;
-        $hiddenBooks = 0;
-        $inProgressBooks = 0;
         $series = [];
         $otherBooks = [];
         $tags = [];
@@ -42,19 +40,6 @@ class AuthorController extends AbstractController
                     $tags[$tag][] = $book;
                 }
             }
-
-            $interaction = $book->getLastInteraction($user);
-            if ($interaction !== null) {
-                if ($interaction->isFinished()) {
-                    $readBooks++;
-                } elseif ($interaction->getReadPages() > 0) {
-                    $inProgressBooks++;
-                }
-
-                if ($interaction->isHidden()) {
-                    $hiddenBooks++;
-                }
-            }
         }
 
         $booksInSeries = [];
@@ -62,15 +47,17 @@ class AuthorController extends AbstractController
             $booksInSeries[$serie] = $bookRepository->getFirstUnreadBook($serie);
         }
 
+        $stats = $bookInteractionService->getStats($books, $user);
+
         return $this->render('author/detail.html.twig', [
             'author' => $name,
             'books' => $books,
             'booksInSeries' => $booksInSeries,
             'otherBooks' => $otherBooks,
             'tags' => $tags,
-            'readBooks' => $readBooks,
-            'hiddenBooks' => $hiddenBooks,
-            'inProgressBooks' => $inProgressBooks,
+            'readBooks' => $stats['readBooks'],
+            'hiddenBooks' => $stats['hiddenBooks'],
+            'inProgressBooks' => $stats['inProgressBooks'],
         ]);
     }
 }

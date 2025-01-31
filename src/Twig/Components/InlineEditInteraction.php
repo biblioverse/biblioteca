@@ -64,7 +64,7 @@ class InlineEditInteraction extends AbstractController
             $interaction->setUser($this->user);
             $interaction->setBook($this->book);
             $interaction->setReadPages(0);
-            $interaction->setFinishedDate(new \DateTime('now'));
+            $interaction->setFinishedDate(null);
         }
 
         return $interaction;
