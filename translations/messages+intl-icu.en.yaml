@@ -163,6 +163,26 @@ generic.yes: Yes
 group.filter-placeholder: Filter...
 group.rename: Rename
 group.search: Search
+inlineeditinteraction.title: Actions
+inlineeditinteraction.favorites.add: Add to favorites
+inlineeditinteraction.favorites.remove: Remove from favorites
+inlineeditinteraction.finished.add: Mark as read
+inlineeditinteraction.finished.remove: Mark as unread
+inlineeditinteraction.hidden.add: Hide book
+inlineeditinteraction.hidden.remove: Unhide book
+inlineeditinteraction.edit: Edit Interaction
+inlineeditinteraction.shelf.add: Add to shelf
+inlineeditinteraction.shelf.new: Create new shelf
+inlineeditinteraction.flash.read: Good Job!
+inlineeditinteraction.flash.unread: Marked as not read
+inlineeditinteraction.flash.saveInteraction: Saved
+inlineeditinteraction.flash.saveShelf: Shelf saved
+inlineeditinteraction.flash.favorite: Added to readlist
+inlineeditinteraction.flash.unfavorite: Remove from readlist
+inlineeditinteraction.flash.hide: Hidden
+inlineeditinteraction.flash.unhide: Unhidden
+inlineeditinteraction.flash.shelf: Added to shelf
+inlineeditinteraction.flash.unshelf: Removed from shelf
 instance-configuration.current-value: Current value
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Edit configuration
@@ -301,23 +321,3 @@ user.max-age-category: Maximum age category allowed
 user.new-user: New user
 user.roles: Roles
 user.username: Username
-InlineEditInteraction.title: Actions
-InlineEditInteraction.favorites.add: Add to favorites
-InlineEditInteraction.favorites.remove: Remove from favorites
-InlineEditInteraction.finished.add: Mark as read
-InlineEditInteraction.finished.remove: Mark as unread
-InlineEditInteraction.hidden.add: Hide book
-InlineEditInteraction.hidden.remove: Unhide book
-InlineEditInteraction.edit: Edit Interaction
-InlineEditInteraction.shelf.add: Add to shelf
-InlineEditInteraction.shelf.new: Create new shelf
-InlineEditInteraction.flash.read: Good Job!
-InlineEditInteraction.flash.unread: Marked as not read
-InlineEditInteraction.flash.saveInteraction: Saved
-InlineEditInteraction.flash.saveShelf: Shelf saved
-InlineEditInteraction.flash.favorite: Added to readlist
-InlineEditInteraction.flash.unfavorite: Remove from readlist
-InlineEditInteraction.flash.hide: Hidden
-InlineEditInteraction.flash.unhide: Unhidden
-InlineEditInteraction.flash.shelf: Added to shelf
-InlineEditInteraction.flash.unshelf: Removed from shelf

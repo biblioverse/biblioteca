@@ -25,7 +25,7 @@
 
                 {% if buttonWithText %}
                     <i class="bi bi-three-dots-vertical"></i>
-                    {{ 'InlineEditInteraction.title'|trans }}
+                    {{ 'inlineeditinteraction.title'|trans }}
                 {% else %}
                     <i class="bi bi-three-dots-vertical"></i>
                 {% endif %}
@@ -40,9 +40,9 @@
                 >
                     <i class="bi bi-bookmark-heart"></i>
                     {% if finished %}
-                        {{ 'InlineEditInteraction.favorites.remove'|trans }}
+                        {{ 'inlineeditinteraction.favorites.remove'|trans }}
                     {% else %}
-                        {{ 'InlineEditInteraction.favorites.add'|trans }}
+                        {{ 'inlineeditinteraction.favorites.add'|trans }}
                     {% endif %}
                 </a>
             </li>
@@ -54,9 +54,9 @@
                 >
                     <i class="bi bi-eye{{ hidden?'':'-slash' }}-fill"></i>
                     {% if hidden %}
-                        {{ 'InlineEditInteraction.hidden.remove'|trans }}
+                        {{ 'inlineeditinteraction.hidden.remove'|trans }}
                     {% else %}
-                        {{ 'InlineEditInteraction.hidden.add'|trans }}
+                        {{ 'inlineeditinteraction.hidden.add'|trans }}
                     {% endif %}
                 </button>
             </li>
@@ -72,16 +72,16 @@
 
                     {% if finished %}
                         <i class="bi bi-check-circle-fill"></i>
-                        {{ 'InlineEditInteraction.finished.remove'|trans }}
+                        {{ 'inlineeditinteraction.finished.remove'|trans }}
                     {% else %}
                         <i class="bi bi-check-circle"></i>
-                        {{ 'InlineEditInteraction.finished.add'|trans }}
+                        {{ 'inlineeditinteraction.finished.add'|trans }}
                     {% endif %}
                 </a>
             </li>
             <li>
                 <button href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdInteraction}}" type="button" data-toggle="tooltip" data-placement="bottom">
-                    <i class="bi bi-pencil-fill"></i> {{ 'InlineEditInteraction.edit'|trans }}
+                    <i class="bi bi-pencil-fill"></i> {{ 'inlineeditinteraction.edit'|trans }}
                 </button>
             </li>
             <li>
@@ -91,7 +91,7 @@
                 <div class="btn-group dropend">
                     <a class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown"
                        data-bs-auto-close="outside" aria-expanded="false">
-                        {{ 'InlineEditInteraction.shelf.add'|trans }}
+                        {{ 'inlineeditinteraction.shelf.add'|trans }}
                     </a>
                     <ul class="dropdown-menu">
                         {% if shelves is not empty %}
@@ -100,7 +100,7 @@
                                     {% if shelf in book.shelves %}
                                         <a
                                             data-action="live#action"
-                                            data-live-action-param="shelfRemove(shelfId={{ shelf.id }})"
+                                            data-live-action-param="removeFromShelf(shelfId={{ shelf.id }})"
                                             data-live-shelf-param="{{ shelf.id }}"
                                             class="dropdown-item"
                                             title="{{shelf.name}}"
@@ -112,7 +112,7 @@
                                     {% else %}
                                         <a
                                             data-action="live#action"
-                                            data-live-action-param="shelfAdd(shelfId={{ shelf.id }})"
+                                            data-live-action-param="addToShelf(shelfId={{ shelf.id }})"
                                             data-live-shelf-param="{{ shelf.id }}"
                                             class="dropdown-item"
                                             title="{{shelf.name}}"
@@ -132,7 +132,7 @@
                         <!--
                         <li>
                             <a href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdShelf}}" type="button" data-toggle="tooltip" data-placement="bottom">
-                                <i class="bi bi-plus"></i> {{ 'InlineEditInteraction.shelf.new'|trans }}
+                                <i class="bi bi-plus"></i> {{ 'inlineeditinteraction.shelf.new'|trans }}
                             </a>
                         </li>
                         -->

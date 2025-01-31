@@ -83,8 +83,8 @@ class InlineEditInteraction extends AbstractController
         $this->interaction = $interaction;
 
         $this->flashMessage = $interaction->isFinished()
-            ? 'InlineEditInteraction.flash.read'
-            : 'InlineEditInteraction.flash.unread';
+            ? 'inlineeditinteraction.flash.read'
+            : 'inlineeditinteraction.flash.unread';
     }
 
     #[LiveAction]
@@ -102,7 +102,7 @@ class InlineEditInteraction extends AbstractController
         $this->book->setUpdated(new \DateTime('now'));
         $this->entityManager->persist($this->book);
         $this->entityManager->flush();
-        $this->flashMessage = 'InlineEditInteraction.flash.saveInteraction';
+        $this->flashMessage = 'inlineeditinteraction.flash.saveInteraction';
 
         $this->dispatchBrowserEvent('manager:flush');
     }
@@ -121,8 +121,8 @@ class InlineEditInteraction extends AbstractController
         $this->interaction = $interaction;
 
         $this->flashMessage = $interaction->isFavorite()
-            ? 'InlineEditInteraction.flash.favorite'
-            : 'InlineEditInteraction.flash.unfavorite';
+            ? 'inlineeditinteraction.flash.favorite'
+            : 'inlineeditinteraction.flash.unfavorite';
     }
 
     #[LiveAction]
@@ -138,12 +138,12 @@ class InlineEditInteraction extends AbstractController
         $this->interaction = $interaction;
 
         $this->flashMessage = $interaction->isHidden()
-            ? 'InlineEditInteraction.flash.hide'
-            : 'InlineEditInteraction.flash.unhide';
+            ? 'inlineeditinteraction.flash.hide'
+            : 'inlineeditinteraction.flash.unhide';
     }
 
     #[LiveAction]
-    public function shelfAdd(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    public function addToShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
     {
         $shelfRepository = $entityManager->getRepository(Shelf::class);
 
@@ -157,11 +157,11 @@ class InlineEditInteraction extends AbstractController
 
         $entityManager->flush();
 
-        $this->flashMessage = 'InlineEditInteraction.flash.shelf';
+        $this->flashMessage = 'inlineeditinteraction.flash.shelf';
     }
 
     #[LiveAction]
-    public function shelfRemove(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    public function removeFromShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
     {
         $shelfRepository = $entityManager->getRepository(Shelf::class);
 
@@ -175,6 +175,6 @@ class InlineEditInteraction extends AbstractController
 
         $entityManager->flush();
 
-        $this->flashMessage = 'InlineEditInteraction.flash.unshelf';
+        $this->flashMessage = 'inlineeditinteraction.flash.unshelf';
     }
 }
