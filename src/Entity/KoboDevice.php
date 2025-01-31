@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Kobo\SyncToken;
 use App\Repository\KoboDeviceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -68,6 +69,9 @@ class KoboDevice
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $upstreamSync = false;
+
+    #[ORM\Column(type: 'json', nullable: true, options: ['default' => null])]
+    private ?array $lastSyncToken = null;
 
     public function __construct()
     {
@@ -227,5 +231,21 @@ class KoboDevice
     public function setSyncReadingList(bool $syncReadingList): void
     {
         $this->syncReadingList = $syncReadingList;
+    }
+
+    public function setLastSyncToken(?SyncToken $lastSyncToken): KoboDevice
+    {
+        $this->lastSyncToken = $lastSyncToken?->toArray();
+
+        return $this;
+    }
+
+    public function getLastSyncToken(): ?SyncToken
+    {
+        if ($this->lastSyncToken === null) {
+            return null;
+        }
+
+        return SyncToken::fromArray($this->lastSyncToken);
     }
 }

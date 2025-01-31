@@ -18,6 +18,31 @@ class SyncToken
 
     public ?\DateTimeImmutable $currentDate = null;
 
+    public static function fromArray(array $lastSyncToken): SyncToken
+    {
+        $fromAtom = fn (?string $date): ?\DateTimeInterface => $date !== null ? new \DateTimeImmutable($date) : null;
+        $token = new self();
+        $token->version = $lastSyncToken['version'] ?? $token->version;
+        $token->lastModified = $fromAtom($lastSyncToken['lastModified'] ?? null);
+        $token->lastCreated = $fromAtom($lastSyncToken['lastCreated'] ?? null);
+        $token->archiveLastModified = $fromAtom($lastSyncToken['archiveLastModified'] ?? null);
+        $token->readingStateLastModified = $fromAtom($lastSyncToken['readingStateLastModified'] ?? null);
+        $token->tagLastModified = $fromAtom($lastSyncToken['tagLastModified'] ?? null);
+        $token->rawKoboStoreToken = $lastSyncToken['rawKoboStoreToken'] ?? $token->rawKoboStoreToken;
+        $token->filters = $lastSyncToken['filters'] ?? $token->filters;
+        $token->currentDate = $fromAtom($lastSyncToken['currentDate'] ?? null);
+
+        return $token;
+    }
+
+    public static function createDummy(): SyncToken
+    {
+        $token = new self();
+        $token->currentDate = new \DateTimeImmutable('now');
+
+        return $token;
+    }
+
     public function getFilterResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -72,5 +97,30 @@ class SyncToken
         }
 
         return $max;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'version' => $this->version,
+            'currentDate' => $this->currentDate?->format(\DateTime::ATOM),
+            'lastModified' => $this->lastModified?->format(\DateTime::ATOM),
+            'lastCreated' => $this->lastCreated?->format(\DateTime::ATOM),
+            'archiveLastModified' => $this->archiveLastModified?->format(\DateTime::ATOM),
+            'readingStateLastModified' => $this->readingStateLastModified?->format(\DateTime::ATOM),
+            'tagLastModified' => $this->tagLastModified?->format(\DateTime::ATOM),
+            'rawKoboStoreToken' => $this->rawKoboStoreToken,
+            'filters' => $this->filters,
+        ];
+    }
+
+    public function marksAsLastUsed(): self
+    {
+        if (!$this->currentDate instanceof \DateTimeInterface) {
+            $this->currentDate = new \DateTimeImmutable('now');
+        }
+        $this->lastModified = $this->tagLastModified = $this->readingStateLastModified = $this->lastCreated = $this->archiveLastModified = $this->currentDate;
+
+        return $this;
     }
 }
