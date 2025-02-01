@@ -31,9 +31,9 @@ class BookmarkUser
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $locationSource = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated = null;
+    private ?\DateTimeImmutable $updated = null;
 
     public function __construct(#[ORM\ManyToOne(inversedBy: 'bookmarkUsers')]
         #[ORM\JoinColumn(nullable: true)]
@@ -149,12 +149,12 @@ class BookmarkUser
         return $this->book;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdated(): ?\DateTimeImmutable
     {
         return $this->updated;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): void
+    public function setUpdated(?\DateTimeImmutable $updated): void
     {
         $this->updated = $updated;
     }

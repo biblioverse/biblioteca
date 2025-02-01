@@ -54,7 +54,7 @@ class KoboDeviceRepository extends ServiceEntityRepository
 
     public function save(KoboDevice $koboDevice): void
     {
-        $this->_em->persist($koboDevice);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($koboDevice);
+        $this->getEntityManager()->flush();
     }
 }

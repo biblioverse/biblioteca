@@ -48,13 +48,13 @@ class Shelf
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $queryOrder = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private \DateTimeInterface $created;
+    private \DateTimeImmutable $created;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated = null;
+    private ?\DateTimeImmutable $updated = null;
 
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, nullable: true)]
     private ?string $uuid = null;
@@ -193,22 +193,22 @@ class Shelf
         return $this->koboDevices;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdated(): ?\DateTimeImmutable
     {
         return $this->updated;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): void
+    public function setUpdated(?\DateTimeImmutable $updated): void
     {
         $this->updated = $updated;
     }
 
-    public function getCreated(): ?\DateTimeInterface
+    public function getCreated(): ?\DateTimeImmutable
     {
         return $this->created;
     }
 
-    public function setCreated(\DateTimeInterface $created): void
+    public function setCreated(\DateTimeImmutable $created): void
     {
         $this->created = $created;
     }

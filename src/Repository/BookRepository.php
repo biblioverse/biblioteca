@@ -224,6 +224,7 @@ class BookRepository extends ServiceEntityRepository
 
         $qb->andWhere($orModule);
 
+        // @phpstan-ignore-next-line
         return $qb->getQuery()->getResult();
     }
 
@@ -254,6 +255,7 @@ class BookRepository extends ServiceEntityRepository
         $qb->leftJoin('book.bookInteractions', 'bookInteractions');
         $qb->addSelect('bookInteractions');
 
+        // @phpstan-ignore-next-line
         return $qb->getQuery()->getResult();
     }
 
@@ -316,9 +318,12 @@ class BookRepository extends ServiceEntityRepository
         return $firstUnreadBook;
     }
 
-    public function getAllSeries(): Query
+    /**
+     * @return GroupType[]
+     */
+    public function getAllSeries(): array
     {
-        return $this->createQueryBuilder('serie')
+        $result = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
@@ -327,6 +332,9 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
             ->setParameter('user', $this->security->getUser())
             ->addGroupBy('serie.serie')->getQuery();
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($result->getResult());
     }
 
     public function getIncompleteSeries(): Query
@@ -359,9 +367,12 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getAllPublishers(): Query
+    /**
+     * @return GroupType[]
+     */
+    public function getAllPublishers(): array
     {
-        return $this->createQueryBuilder('publisher')
+        $results = $this->createQueryBuilder('publisher')
             ->select('publisher.publisher as item')
             ->addSelect('COUNT(publisher.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
@@ -369,6 +380,9 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('publisher.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
             ->setParameter('user', $this->security->getUser())
             ->addGroupBy('publisher.publisher')->getQuery();
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($results->getResult());
     }
 
     /**
@@ -385,6 +399,7 @@ class BookRepository extends ServiceEntityRepository
             ->addGroupBy('author.authors')
             ->getQuery();
 
+        // @phpstan-ignore-next-line
         return $this->convertResults($qb->getResult());
     }
 
@@ -402,6 +417,7 @@ class BookRepository extends ServiceEntityRepository
             ->addGroupBy('tag.tags')
             ->getQuery();
 
+        // @phpstan-ignore-next-line
         return $this->convertResults($qb->getResult());
     }
 
@@ -449,7 +465,7 @@ class BookRepository extends ServiceEntityRepository
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -492,7 +508,7 @@ class BookRepository extends ServiceEntityRepository
         }
 
         if ($koboDevice->isSyncReadingList()) {
-            $readingList = $this->_em->getRepository(BookInteraction::class)->getFavourite();
+            $readingList = $this->getEntityManager()->getRepository(BookInteraction::class)->getFavourite();
             foreach ($readingList as $bookInteraction) {
                 $book = $bookInteraction->getBook();
                 if ($book === null) {

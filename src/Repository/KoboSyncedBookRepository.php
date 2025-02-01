@@ -31,8 +31,8 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             return;
         }
 
-        $updatedAt = $syncToken->lastModified ?? new \DateTime();
-        $createdAt = $syncToken->lastCreated ?? new \DateTime();
+        $updatedAt = $syncToken->lastModified ?? new \DateTimeImmutable();
+        $createdAt = $syncToken->lastCreated ?? new \DateTimeImmutable();
 
         $syncedBooksQuery = $this->createQueryBuilder('koboSyncedBook')
              ->select('book.id')
@@ -78,10 +78,10 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             $object->setCreated($createdAt);
             $book->addKoboSyncedBook($object);
             $koboDevice->addKoboSyncedBook($object);
-            $this->_em->persist($object);
+            $this->getEntityManager()->persist($object);
         }
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function deleteAllSyncedBooks(KoboDevice|int $koboDeviceId): int
