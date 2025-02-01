@@ -42,7 +42,7 @@ class BooksExtractCoverCommand extends Command
         $force = $input->getOption('force');
         $books = $bookId === 'all' ? $this->bookRepository->findAll() : $this->bookRepository->findBy(['id' => $bookId]);
 
-        if (count($books) === 0) {
+        if ($books === []) {
             $io->error('No books found');
 
             return Command::FAILURE;
