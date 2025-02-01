@@ -119,6 +119,9 @@ class SmokeTest extends WebTestCase
             '/autocomplete/group/authors?query=a' => [],
             '/autocomplete/group/tags?query=a' => [],
             '/autocomplete/group/publisher?query=a' => [],
+            '/authors/Charles Dickens' => [],
+            '/authors/Charles%20Dickens' => [],
+            '/series/test' => [],
         ];
     }
 }
