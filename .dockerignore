@@ -1,0 +1,5 @@
+node_modules/
+public/tmp
+public/covers
+public/media/cache
+public/build

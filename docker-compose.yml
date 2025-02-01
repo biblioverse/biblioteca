@@ -2,7 +2,7 @@ services:
   biblioteca:
     image: ghcr.io/biblioverse/biblioteca-docker:2.0.2
     build:
-      target: prod
+      target: dev
     command: ["/bin/sh", "-c" , "apache2-foreground" ]
     ports:
       - "48480:8080" # Web
