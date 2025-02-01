@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7adafa21237ce200d1e6a74a97a93684",
+    "content-hash": "30ea4e2fbbc868c89be9e030ae0f5128",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -119,23 +119,23 @@
         },
         {
             "name": "biblioverse/typesense-bundle",
-            "version": "v0.0.1",
+            "version": "v0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/biblioverse/TypesenseBundle.git",
-                "reference": "04e350cf1e1f109eeea0260ef251ec868a17b02f"
+                "reference": "5cddfa35d8fe23d213f354066d549727bbed6d79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/04e350cf1e1f109eeea0260ef251ec868a17b02f",
-                "reference": "04e350cf1e1f109eeea0260ef251ec868a17b02f",
+                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/5cddfa35d8fe23d213f354066d549727bbed6d79",
+                "reference": "5cddfa35d8fe23d213f354066d549727bbed6d79",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "php-http/discovery": "^1.20",
                 "psr/http-client": "^1.0",
-                "psr/http-client-implementation": "*",
+                "psr/http-client-implementation": "1.0",
                 "psr/log": "^3.0",
                 "symfony/framework-bundle": "^6.4|^7.0",
                 "symfony/http-client": "^6.4|^7.2",
@@ -182,11 +182,11 @@
                 ],
                 "test-phpcs": [
                     "Composer\\Config::disableProcessTimeout",
-                    "./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv"
+                    "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --dry-run --verbose -vv"
                 ],
                 "phpcs": [
                     "Composer\\Config::disableProcessTimeout",
-                    "./vendor/bin/php-cs-fixer fi --verbose -vv"
+                    "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fi --verbose -vv"
                 ],
                 "test-rector": [
                     "Composer\\Config::disableProcessTimeout",
@@ -228,10 +228,10 @@
             },
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.1",
+                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.2",
                 "issues": "https://github.com/biblioverse/TypesenseBundle/issues"
             },
-            "time": "2025-01-21T21:45:40+00:00"
+            "time": "2025-01-30T16:09:20+00:00"
         },
         {
             "name": "clue/stream-filter",
