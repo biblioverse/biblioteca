@@ -31,7 +31,7 @@
     "phpdocumentor/reflection-docblock": "^5.3",
     "phpstan/phpdoc-parser": "^2.0",
     "rtheunissen/guzzle-log-middleware": "^2.0",
-    "scienta/doctrine-json-functions": "^5.3",
+    "scienta/doctrine-json-functions": "^6.0",
     "symfony/apache-pack": "^1.0",
     "symfony/asset": "^7.1",
     "symfony/console": "^7.1",
