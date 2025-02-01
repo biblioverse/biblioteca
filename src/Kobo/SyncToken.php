@@ -8,15 +8,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SyncToken
 {
     public string $version = '1-1-0';
-    public ?\DateTimeInterface $lastModified = null;
-    public ?\DateTimeInterface $lastCreated = null;
-    public ?\DateTimeInterface $archiveLastModified = null;
-    public ?\DateTimeInterface $readingStateLastModified = null;
-    public ?\DateTimeInterface $tagLastModified = null;
+    public ?\DateTimeImmutable $lastModified = null;
+    public ?\DateTimeImmutable $lastCreated = null;
+    public ?\DateTimeImmutable $archiveLastModified = null;
+    public ?\DateTimeImmutable $readingStateLastModified = null;
+    public ?\DateTimeImmutable $tagLastModified = null;
     public ?string $rawKoboStoreToken = null;
     public array $filters = [];
 
-    public ?\DateTimeInterface $currentDate = null;
+    public ?\DateTimeImmutable $currentDate = null;
 
     public function getFilterResolver(): OptionsResolver
     {
@@ -42,7 +42,7 @@ class SyncToken
         return $resolver;
     }
 
-    public function maxLastModified(?\DateTimeInterface ...$value): ?\DateTimeInterface
+    public function maxLastModified(?\DateTimeImmutable ...$value): ?\DateTimeImmutable
     {
         return self::max(
             $this->lastModified,
@@ -50,7 +50,7 @@ class SyncToken
         );
     }
 
-    public function maxLastCreated(?\DateTimeInterface ...$value): ?\DateTimeInterface
+    public function maxLastCreated(?\DateTimeImmutable ...$value): ?\DateTimeImmutable
     {
         return self::max(
             $this->lastCreated,
@@ -58,15 +58,15 @@ class SyncToken
         );
     }
 
-    protected static function max(?\DateTimeInterface ...$dates): ?\DateTimeInterface
+    protected static function max(?\DateTimeImmutable ...$dates): ?\DateTimeImmutable
     {
         $max = null;
         foreach ($dates as $date) {
-            if (!$date instanceof \DateTimeInterface) {
+            if (!$date instanceof \DateTimeImmutable) {
                 continue;
             }
 
-            if (!$max instanceof \DateTimeInterface || $date > $max) {
+            if (!$max instanceof \DateTimeImmutable || $date > $max) {
                 $max = $date;
             }
         }

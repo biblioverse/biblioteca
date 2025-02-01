@@ -53,7 +53,7 @@ class LibraryController extends AbstractKoboController
                 $this->koboSyncedBookRepository->deleteAllSyncedBooks($koboDevice);
                 $koboDevice->setForceSync(false);
                 $this->koboDeviceRepository->save($koboDevice);
-                $syncToken->currentDate = new \DateTime('now');
+                $syncToken->currentDate = new \DateTimeImmutable('now');
             }
             $this->koboSyncLogger->debug('First sync for Kobo {id}', ['id' => $koboDevice->getId()]);
             $syncToken->lastCreated = null;

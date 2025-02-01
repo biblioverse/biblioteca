@@ -74,8 +74,8 @@ class Opds
         $cover = $this->imagineCacheManager->getBrowserPath('covers/'.$book->getImagePath().$book->getImageFilename(), 'thumb');
 
         $updated = $book->getUpdated();
-        if (!$updated instanceof \DateTime) {
-            $updated = new \DateTime();
+        if (!$updated instanceof \DateTimeImmutable) {
+            $updated = new \DateTimeImmutable();
         }
 
         return new OpdsEntryBook(
@@ -83,7 +83,7 @@ class Opds
             $book->getTitle(),
             $this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             content: $book->getSummary() ?? ' ',
-            updated: $updated,
+            updated: new \DateTime($updated->format('Y-m-d h:i:s')),
             download: $this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL).$this->bookFileSystemManager->getBookPublicPath($book),
             mediaThumbnail: $cover,
             categories: $book->getTags() ?? [],
