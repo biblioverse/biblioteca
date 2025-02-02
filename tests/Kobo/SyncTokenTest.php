@@ -22,13 +22,13 @@ class SyncTokenTest extends TestCase
     private function createToken(): SyncToken
     {
         $syncToken = new SyncToken();
-        $syncToken->archiveLastModified = new \DateTimeImmutable('2024-01-01', new \DateTimeZone('UTC'));
+        $syncToken->archiveLastModified = new \DateTimeImmutable('2024-01-01');
         $syncToken->filters = ['Filter' => 'ALL', 'DownloadUrlFilter' => 'Generic,Android', 'PrioritizeRecentReads' => true];
-        $syncToken->lastCreated = new \DateTimeImmutable('2022-01-01', new \DateTimeZone('UTC'));
-        $syncToken->lastModified = new \DateTimeImmutable('2021-01-02', new \DateTimeZone('UTC'));
+        $syncToken->lastCreated = new \DateTimeImmutable('2022-01-01');
+        $syncToken->lastModified = new \DateTimeImmutable('2021-01-02');
         $syncToken->rawKoboStoreToken = 'hello world';
         $syncToken->readingStateLastModified = new \DateTimeImmutable('2023-01-01');
-        $syncToken->tagLastModified = new \DateTimeImmutable('2026-01-01', new \DateTimeZone('UTC'));
+        $syncToken->tagLastModified = new \DateTimeImmutable('2026-01-01');
         $syncToken->version = '1-1-0';
 
         return $syncToken;

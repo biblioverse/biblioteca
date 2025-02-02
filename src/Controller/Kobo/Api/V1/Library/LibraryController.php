@@ -56,7 +56,7 @@ class LibraryController extends AbstractKoboController
 
         if ($forced) {
             $this->koboSyncLogger->debug('Force sync for Kobo {id}', ['id' => $koboDevice->getId()]);
-            $this->koboSyncedBookRepository->deleteAllSyncedBooks($koboDevice);
+            $this->koboSyncedBookRepository->deleteAllSyncedBooks();
             $koboDevice->setForceSync(false);
             $syncToken = new SyncToken();
             $koboDevice->setLastSyncToken($syncToken);
@@ -101,7 +101,7 @@ class LibraryController extends AbstractKoboController
 
         // Calculate the new SyncToken value
         $shouldContinue
-            ? $syncToken->setPage($syncToken->page + 1)->setTagLastModified(new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
+            ? $syncToken->setPage($syncToken->page + 1)->setTagLastModified(new \DateTimeImmutable('now'))
             : $syncToken->markLastSyncDateAndResetPage();
 
         $koboDevice->setLastSyncToken($syncToken);

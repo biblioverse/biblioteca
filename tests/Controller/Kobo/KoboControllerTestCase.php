@@ -2,61 +2,23 @@
 
 namespace App\Tests\Controller\Kobo;
 
-use App\DataFixtures\BookFixture;
-use App\DataFixtures\ShelfFixture;
-use App\Entity\Book;
-use App\Entity\KoboDevice;
-use App\Entity\Shelf;
 use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
-use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
+use App\Tests\TestCaseHelperTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class KoboControllerTestCase extends WebTestCase
 {
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
-
-        return $entityManager;
-    }
+    use TestCaseHelperTrait;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         self::createClient();
-    }
-
-    public function getKoboDevice(): KoboDevice
-    {
-        $repository = $this->getEntityManager()->getRepository(KoboDevice::class);
-        $kobo = $repository->findOneBy(['id' => 1]);
-        if ($kobo === null) {
-            throw new \RuntimeException('Unable to find a Kobo, please load fixtures');
-        }
-
-        return $kobo;
-    }
-
-    protected function getBook(): Book
-    {
-        // @phpstan-ignore-next-line
-        return $this->getEntityManager()->getRepository(Book::class)->find(BookFixture::ID);
-    }
-
-    protected function getShelf(): Shelf
-    {
-        // @phpstan-ignore-next-line
-        return $this->getEntityManager()->getRepository(Shelf::class)->findOneBy(['name' => ShelfFixture::SHELF_NAME]);
     }
 
     protected static function getJsonResponse(): array
@@ -101,30 +63,6 @@ abstract class KoboControllerTestCase extends WebTestCase
         self::assertInstanceOf(KoboProxyConfiguration::class, $service);
 
         return $service;
-    }
-
-    /**
-     * @template T of object
-     * @param class-string<T> $name
-     * @return T
-     */
-    protected function getService(string $name): mixed
-    {
-        $service = self::getContainer()->get($name);
-        self::assertInstanceOf($name, $service);
-
-        return $service;
-    }
-
-    protected function getMockClient(string $returnValue, int $code = 200): ClientInterface
-    {
-        $mock = new MockHandler([
-            new \GuzzleHttp\Psr7\Response($code, ['Content-Type' => 'application/json'], $returnValue),
-        ]);
-
-        $handlerStack = HandlerStack::create($mock);
-
-        return new Client(['handler' => $handlerStack]);
     }
 
     protected function enableRemoteSync(): void

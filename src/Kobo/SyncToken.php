@@ -20,7 +20,7 @@ class SyncToken
 
     public static function fromArray(array $lastSyncToken): SyncToken
     {
-        $fromAtom = fn (?string $date): ?\DateTimeImmutable => $date !== null ? new \DateTimeImmutable($date, new \DateTimeZone('UTC')) : null;
+        $fromAtom = fn (?string $date): ?\DateTimeImmutable => $date !== null ? new \DateTimeImmutable($date) : null;
         $token = new self();
         $token->version = $lastSyncToken['version'] ?? $token->version;
         $token->lastModified = $fromAtom($lastSyncToken['lastModified'] ?? null);

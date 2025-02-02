@@ -115,17 +115,19 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function deleteAllSyncedBooks(KoboDevice|int $koboDeviceId): int
+    public function deleteAllSyncedBooks(KoboDevice|int|null $koboDeviceId = null): int
     {
-        $query = $this->createQueryBuilder('koboSyncedBook')
-            ->delete()
-            ->where('koboSyncedBook.koboDevice = :koboDevice')
-            ->setParameter('koboDevice', $koboDeviceId)
-            ->getQuery();
+        $queryBuilder = $this->createQueryBuilder('koboSyncedBook')
+            ->delete();
+        if ($koboDeviceId !== null) {
+            $queryBuilder
+                ->where('koboSyncedBook.koboDevice = :koboDevice')
+                ->setParameter('koboDevice', $koboDeviceId)
+                ->getQuery();
+        }
 
         /** @var int $result */
-        $result = $query
-            ->getResult();
+        $result = $queryBuilder->getQuery()->execute();
 
         return $result;
     }

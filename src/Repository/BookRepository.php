@@ -687,4 +687,16 @@ class BookRepository extends ServiceEntityRepository
 
         return $dynamicBooksIds;
     }
+
+    public function deleteByTitle(string $title): int
+    {
+        /** @var int $result */
+        $result = $this->createQueryBuilder('b')
+            ->delete()
+            ->where('b.title = :title')
+            ->setParameter('title', $title)
+            ->getQuery()->execute();
+
+        return $result;
+    }
 }
