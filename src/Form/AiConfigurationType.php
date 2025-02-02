@@ -18,14 +18,20 @@ class AiConfigurationType extends AbstractType
         $builder
             ->add('AI_SUMMARIZATION_MODEL', EntityType::class, [
                 'class' => AiModel::class,
+                'placeholder' => 'ai.summarizationmodel.form-placeholder',
+                'required' => false,
                 'choice_label' => 'label',
             ])
             ->add('AI_TAG_MODEL', EntityType::class, [
                 'class' => AiModel::class,
+                'placeholder' => 'ai.tagmodel.form-placeholder',
+                'required' => false,
                 'choice_label' => 'label',
             ])
             ->add('AI_SEARCH_MODEL', EntityType::class, [
                 'class' => AiModel::class,
+                'placeholder' => 'ai.searchmodel.form-placeholder',
+                'required' => false,
                 'choice_label' => 'label',
             ])
             ->add('AI_SUMMARY_PROMPT', TextareaType::class, [

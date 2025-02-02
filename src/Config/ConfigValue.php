@@ -22,7 +22,7 @@ readonly class ConfigValue
             return $existsInDb->getValue();
         }
 
-        if ($createIfMissing) {
+        if ($createIfMissing && !$existsInDb instanceof InstanceConfiguration) {
             $config = new InstanceConfiguration();
             $config->setName($name);
             $config->setValue($this->resolve($name));
@@ -41,8 +41,15 @@ readonly class ConfigValue
         }
     }
 
-    public function update(string $name, string $value): void
+    public function update(string $name, mixed $value): void
     {
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = $value->__toString();
+        }
+        if (!is_scalar($value)) {
+            throw new \InvalidArgumentException('Value must be a scalar');
+        }
+        $value = trim((string) $value);
         $config = $this->instanceConfigurationRepository->findOneBy(['name' => $name]);
         if (!$config instanceof InstanceConfiguration) {
             $config = new InstanceConfiguration();

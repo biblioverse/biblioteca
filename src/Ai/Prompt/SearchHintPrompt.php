@@ -34,7 +34,9 @@ class SearchHintPrompt implements BookPromptInterface
     #[\Override]
     public function convertResult(string $result): array
     {
-        $result = trim($result, '´`');
+        $result = preg_replace('/<think>.*?<\/think>/s', '', $result);
+
+        $result = trim((string) $result, '´`');
         if (str_starts_with($result, 'json')) {
             $result = substr($result, 4);
         }

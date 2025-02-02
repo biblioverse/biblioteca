@@ -30,12 +30,15 @@ ai.new-aimodel: Nouveau connecteur
 ai.prompts-and-context: Prompts et contexte
 ai.querying-for-context-and-building-a-response-please-wait: Construction du contexte et génération de la réponse, merci de patienter.
 ai.responses-to-prompt-with-context: Réponses aux prompt avec contexte
+ai.searchmodel.form-placeholder: "Choisir un modèle pour la conversion des requêtes de recherche"
 ai.summary-prompt-with-context: Prompt de résumé avec contexte
 ai.summary-prompt: Prompt de résumé
 ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
+ai.summarizationmodel.form-placeholder: "Choisir un modèle pour résumer"
 ai.system-prompt: Prompt système
 ai.tag-prompt-with-context: Prompt de catégorie avec contexte
 ai.tag-prompt: Prompt de catégorie
+ai.tagmodel.form-placeholder: "Choisir un modèle de catégorisation"
 ai.test-book: Livre de test
 ai.test-model: Tester le connecteur
 ai.token: Clé d'identification
