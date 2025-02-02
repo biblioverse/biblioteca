@@ -17,7 +17,7 @@
     "doctrine/annotations": "^2.0.2",
     "doctrine/doctrine-bundle": "^2.13.2",
     "doctrine/doctrine-migrations-bundle": "^3.4.0",
-    "doctrine/orm": "^2.20.1",
+    "doctrine/orm": "^3.0.0",
     "gedmo/doctrine-extensions": "^3.17.1",
     "gemorroj/archive7z": "^5.6",
     "guzzlehttp/guzzle": "^7.8",

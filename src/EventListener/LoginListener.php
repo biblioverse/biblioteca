@@ -25,7 +25,7 @@ final readonly class LoginListener
         if (!$user instanceof User) {
             return;
         }
-        $user->setLastLogin(new \DateTime());
+        $user->setLastLogin(new \DateTimeImmutable());
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 

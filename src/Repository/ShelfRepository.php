@@ -54,6 +54,7 @@ class ShelfRepository extends ServiceEntityRepository
             ->andWhere('shelf.queryFilter is null')
             ->andWhere('shelf.queryString is null');
 
+        // @phpstan-ignore-next-line
         return $qb->getQuery()->getResult();
     }
 
@@ -138,6 +139,6 @@ class ShelfRepository extends ServiceEntityRepository
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 }
