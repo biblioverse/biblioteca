@@ -3,14 +3,13 @@
 
 {% set interaction = book.lastInteraction(app.user) %}
 
-
 {% set read = false %}
-{% if interaction is not null and interaction.finished %}
+{% if interaction is not null and interaction.readStatus.value == enum('App\\Enum\\ReadStatus').Finished.value %}
     {% set read = true %}
 {% endif %}
 
 {% set hidden = false %}
-{% if interaction is not null and interaction.hidden %}
+{% if interaction is not null and interaction.readStatus.value == enum('App\\Enum\\ReadingList').Ignored.value %}
     {% set hidden = true %}
 {% endif %}
 

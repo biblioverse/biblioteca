@@ -12,7 +12,7 @@
                     <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'book.no-picture-for'|trans }} {{ book.title }}">
                 {% endif %}
 
-                {{ include('book/_interaction.html.twig') }}
+                {{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
 
                 <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
                     <i class="bi bi-book"></i>

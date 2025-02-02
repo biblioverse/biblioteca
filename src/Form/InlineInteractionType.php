@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
 
 class InlineInteractionType extends AbstractType
 {
@@ -29,13 +28,6 @@ class InlineInteractionType extends AbstractType
                 'attr' => [
                     'min' => 0, // Sets the HTML5 min attribute
                     'max' => 5, // Sets the HTML5 max attribute
-                ],
-                'constraints' => [
-                    new Range([
-                        'min' => 0,
-                        'max' => 5,
-                        'notInRangeMessage' => 'Rating must be between {{ min }} and {{ max }}.',
-                    ]),
                 ],
             ])
             ->add('finishedDate', null, [

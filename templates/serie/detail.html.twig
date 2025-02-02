@@ -55,10 +55,10 @@
                 {% for index in 1..serieMax %}
                     {% if books[index] is defined %}
                         {% for book in books[index] %}
-                            {% include 'book/book-row.html.twig' with { book: book } %}
+                            {% include 'book/_book-row.html.twig' with { book: book } %}
                         {% endfor %}
                     {% else %}
-                        {% include 'book/book-row-empty.html.twig' with { serie: serie, index: index } %}
+                        {% include 'book/_book-row-empty.html.twig' with { serie: serie, index: index } %}
                     {% endif %}
                 {% endfor %}
                 </tbody>
@@ -69,7 +69,7 @@
                 <table class="table">
                 <tbody>
                     {% for book in books['?'] %}
-                        {% include 'book/book-row.html.twig' with { book: book, index: "?" } %}
+                        {% include 'book/_book-row.html.twig' with { book: book, index: "?" } %}
                     {% endfor %}
                 </tbody>
                 </table>
