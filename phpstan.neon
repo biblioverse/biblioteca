@@ -10,4 +10,4 @@ parameters:
   #      - '#Asserted type (.*) for (.*) with type (.*) does not narrow down the type.#'
     errorFormat: symplify
     typeAliases:
-        ReadingStateCriteria: "array{'book':int, 'readPages': int|null, 'finished': boolean}"
+        ReadingStateCriteria: "array{'book':int, 'readPages': int|null, 'readStatus': App\\Enum\\ReadStatus}"

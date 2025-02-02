@@ -79,7 +79,7 @@ class BookProgressionServiceTest extends KernelTestCase
         $lastInteraction = $book->getLastInteraction($this->getUser());
         self::assertNotNull($lastInteraction, 'Interaction should be created');
 
-        self::assertSame($lastInteraction->getReadStatus(), ReadStatus::Finished, 'Book should not be finished');
+        self::assertSame($lastInteraction->getReadStatus(), ReadStatus::Started, 'Book should not be finished');
         self::assertSame(15, $lastInteraction->getReadPages(), 'Book should have half page read');
     }
 

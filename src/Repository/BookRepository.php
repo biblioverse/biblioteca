@@ -318,16 +318,21 @@ class BookRepository extends ServiceEntityRepository
 
         return $firstUnreadBook;
     }
+
+    /**
+     * @return GroupType[]
+     */
+    public function getAllSeries(): array
     {
-        $qb = $this->createQueryBuilder('serie')
+        $result = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.finished) as booksFinished')
-            ->where('serie.serie IS NOT NULL');
-        $qb = $this->joinInteractions($qb, 'serie');
-
-        return $qb->addGroupBy('serie.serie')->getQuery();
+            ->where('serie.serie IS NOT NULL')
+            ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.finished = true or bookInteraction.hidden=true) and bookInteraction.user= :user')
+            ->setParameter('user', $this->security->getUser())
+            ->addGroupBy('serie.serie')->getQuery();
 
         // @phpstan-ignore-next-line
         return $this->convertResults($result->getResult());
@@ -375,7 +380,10 @@ class BookRepository extends ServiceEntityRepository
             ->where('publisher.publisher IS NOT NULL');
         $qb = $this->joinInteractions($qb, 'publisher');
 
-        return $qb->addGroupBy('publisher.publisher')->getQuery();
+        $results = $qb->addGroupBy('publisher.publisher')->getQuery();
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($results->getResult());
     }
 
     private function joinInteractions(QueryBuilder $qb, string $alias = 'book'): QueryBuilder
@@ -385,9 +393,6 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('status_finished', ReadStatus::Finished)
             ->setParameter('list_ignored', ReadingList::Ignored)
             ->setParameter('user', $this->security->getUser());
-
-        // @phpstan-ignore-next-line
-        return $this->convertResults($results->getResult());
     }
 
     /**
@@ -403,6 +408,7 @@ class BookRepository extends ServiceEntityRepository
 
         $qb->addGroupBy('author.authors');
 
+        // @phpstan-ignore-next-line
         return $this->convertResults($qb->getQuery()->getResult());
     }
 
@@ -419,6 +425,7 @@ class BookRepository extends ServiceEntityRepository
 
         $qb->addGroupBy('tag.tags');
 
+        // @phpstan-ignore-next-line
         return $this->convertResults($qb->getQuery()->getResult());
     }
 
@@ -512,9 +519,6 @@ class BookRepository extends ServiceEntityRepository
             $readingList = $this->getEntityManager()->getRepository(BookInteraction::class)->getFavourite();
             foreach ($readingList as $bookInteraction) {
                 $book = $bookInteraction->getBook();
-                if ($book === null) {
-                    continue;
-                }
                 $books[$book->getId()] = $book;
             }
         }

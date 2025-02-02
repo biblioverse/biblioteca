@@ -211,7 +211,7 @@ class BookController extends AbstractController
 
             // TODO Add next unread in serie to reading list?
 
-            $interaction->setFinishedDate(new \DateTime());
+            $interaction->setFinishedDate(new \DateTimeImmutable());
             $this->addFlash('success', 'Book finished! Congratulations!');
             $manager->flush();
 

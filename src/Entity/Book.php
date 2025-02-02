@@ -435,10 +435,7 @@ class Book
 
     public function removeBookInteraction(BookInteraction $bookInteraction): static
     {
-        // set the owning side to null (unless already changed)
-        if ($this->bookInteractions->removeElement($bookInteraction) && $bookInteraction->getBook() === $this) {
-            $bookInteraction->setBook(null);
-        }
+        $this->bookInteractions->removeElement($bookInteraction);
 
         return $this;
     }
@@ -606,9 +603,7 @@ class Book
 
         foreach ($this->getBookInteractions() as $interaction) {
             $user = $interaction->getUser();
-            if ($user === null) {
-                continue;
-            }
+
             $userId = $user->getId();
             if ($interaction->getReadStatus() === ReadStatus::Finished) {
                 $return['read'][] = $userId;

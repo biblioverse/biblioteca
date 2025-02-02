@@ -53,8 +53,8 @@ class InlineEditBook extends AbstractController
     public ?string $flashMessage = null;
 
     public function __construct(private readonly EntityManagerInterface $entityManager)
-    {        $this->locales = $this->getTwoLettersLocales();
-
+    {
+        $this->locales = $this->getTwoLettersLocales();
     }
 
     #[PostMount]

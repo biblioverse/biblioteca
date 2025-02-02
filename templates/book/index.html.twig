@@ -35,18 +35,21 @@
                 <tr>
                     <th>{{ 'book.read-state'|trans }}</th>
                     <td>
-                        {% if interaction is not null and interaction.finished %}
-                            {{ 'interaction.status.finished'|trans }}
-                        {% elseif interaction is null or interaction.readPages is null or interaction.readPages==1 or book.pageNumber==0 or book.pageNumber is null %}
-                        {{ 'interaction.status.not-started'|trans }}
-                        {% else %}
+                        {{ enum('App\\Enum\\ReadStatus').getLabel(interaction.readStatus|default( enum('App\\Enum\\ReadStatus').NotStarted))|trans }}
+
+                        {% if interaction is not null and interaction.readPages >0 %}
                             <div class="progress">
                                 <div class="progress-bar" style="width: {{ (interaction.readPages/book.pageNumber) *100 }}%">
-
                                     {{ 'interaction.status.progress'|trans({"%read%": interaction.readPages, "%total%": book.pageNumber }) }}
                                 </div>
                             </div>
                         {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ 'book.readinglist-state'|trans }}</th>
+                    <td>
+                        {{ enum('App\\Enum\\ReadingList').getLabel(interaction.readingList|default( enum('App\\Enum\\ReadingList').NotDefined))|trans }}
                     </td>
                 </tr>
                 <tr>

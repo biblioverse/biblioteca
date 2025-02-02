@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: BookInteractionRepository::class)]
+#[ORM\Table(name: 'book_interaction', uniqueConstraints: [
+    new ORM\UniqueConstraint(name: 'unique_user_book', columns: ['user_id', 'book_id']),
+])]
 class BookInteraction
 {
     #[ORM\Id]
@@ -18,12 +21,12 @@ class BookInteraction
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookInteractions')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?User $user = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
 
     #[ORM\ManyToOne(inversedBy: 'bookInteractions')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Book $book = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private Book $book;
 
     /**
      * @deprecated Use ReadStatus enum instead
@@ -40,8 +43,8 @@ class BookInteraction
     #[ORM\Column(nullable: false)]
     private bool $favorite = false;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $finishedDate = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $finishedDate = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => '2024-01-12 00:00:00'])]
     #[Gedmo\Timestampable(on: 'create', )]
@@ -71,24 +74,24 @@ class BookInteraction
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getBook(): ?Book
+    public function getBook(): Book
     {
         return $this->book;
     }
 
-    public function setBook(?Book $book): static
+    public function setBook(Book $book): static
     {
         $this->book = $book;
 
@@ -131,12 +134,12 @@ class BookInteraction
         return $this;
     }
 
-    public function getFinishedDate(): ?\DateTimeInterface
+    public function getFinishedDate(): ?\DateTimeImmutable
     {
         return $this->finishedDate;
     }
 
-    public function setFinishedDate(?\DateTimeInterface $finishedDate): static
+    public function setFinishedDate(?\DateTimeImmutable $finishedDate): static
     {
         $this->finishedDate = $finishedDate;
 
@@ -155,7 +158,7 @@ class BookInteraction
 
     public function getReadPages(): ?int
     {
-        if ($this->readStatus !== ReadStatus::Started) {
+        if ($this->readStatus !== ReadStatus::Started && $this->readStatus !== ReadStatus::Finished) {
             return null;
         }
 

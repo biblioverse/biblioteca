@@ -21,4 +21,13 @@ enum ReadStatus: string
             self::Finished => 'enum.readstatus.finished',
         };
     }
+
+    public static function getIcon(self $value): string
+    {
+        return match ($value) {
+            self::NotStarted => 'question-circle',
+            self::Started => 'hourglass-split',
+            self::Finished => 'check-circle-fill',
+        };
+    }
 }

@@ -97,6 +97,7 @@ book.number-of-pages: Nombre de pages
 book.picture-for-book: Image pour
 book.publisher: Editeur
 book.read-state: Etat de lecture
+book.readinglist-state: Liste de lecture
 book.relocate: Relocation
 book.search-google-images: Chercher une couverture sur Google Images
 book.serie: série
@@ -151,6 +152,12 @@ enum.agecategories.everyone: Tout le monde
 enum.agecategories.sixteenplus: 16+ ans
 enum.agecategories.tenplus: 10+ ans
 enum.agecategories.thirteenplus: 13+ ans
+enum.readinglist.toread: 'A lire'
+enum.readinglist.ignored: 'Ignoré'
+enum.readinglist.notdefined : 'Non défini'
+enum.readstatus.not-started: 'Pas commencé'
+enum.readstatus.started: 'Commencé'
+enum.readstatus.finished: 'Terminé'
 error.error-happened: Une erreur est survenue
 error.stack-trace: Stack trace
 generic.are-you-sure-you-want-to-delete-this-item: Etes-vous sûr(e) de vouloir supprimer cet élément?

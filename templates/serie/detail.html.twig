@@ -36,10 +36,10 @@
         <div class="hero__progress">
             <div class="heroProgress">
                 <div class="heroProgress__text">
-                {{ 'books.reading.progress'|trans({"%read%": readBooks, "%total%": books|length }) }}
+                {{ 'books.reading.progress'|trans({"%read%": readBooks+hiddenBooks, "%total%": books|length }) }}
                 </div>
                 <div class="heroProgress__bar">
-                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks/books|length) *100 }}%">
+                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks+hiddenBooks/books|length) *100 }}%">
                     </div>
                 </div>
             </div>
