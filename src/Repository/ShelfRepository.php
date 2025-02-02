@@ -141,4 +141,24 @@ class ShelfRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * @return Shelf[]
+     */
+    public function findByUserSyncedWithKobos(User $user): array
+    {
+        $qb = $this->createQueryBuilder('shelf')
+            ->select('shelf')
+            ->leftJoin('shelf.books', 'book')
+            ->addSelect('book')
+            ->join('shelf.koboDevices', 'koboDevice')
+            ->join('koboDevice.user', 'user')
+            ->andWhere('user = :user')
+            ->setParameter('user', $user);
+
+        /** @var array<Shelf> $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
 }
