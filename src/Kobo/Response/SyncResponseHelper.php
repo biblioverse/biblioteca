@@ -18,50 +18,70 @@ use App\Kobo\SyncToken;
  */
 class SyncResponseHelper
 {
-    public function isChangedEntitlement(Book $book, SyncToken $syncToken): bool
+    public function __construct(private readonly SyncToken $syncToken, private readonly KoboDevice $koboDevice)
     {
-        if ($this->isNewEntitlement($book, $syncToken)) {
-            return false;
-        }
-
-        if (!$syncToken->lastModified instanceof \DateTimeInterface) {
-            return false;
-        }
-
-        return $book->getUpdated() >= $syncToken->lastModified;
     }
 
-    public function isNewEntitlement(Book $book, SyncToken $syncToken): bool
+    public function isChangedEntitlement(Book $book): bool
+    {
+        if ($this->isNewEntitlement($book)) {
+            return false;
+        }
+
+        $isDeleted = $this->isArchivedEntitlement($book);
+        if ($isDeleted) {
+            return true;
+        }
+
+        if (!$this->syncToken->lastModified instanceof \DateTimeInterface) {
+            return false;
+        }
+
+        return $book->getUpdated() >= $this->syncToken->lastModified;
+    }
+
+    public function isNewEntitlement(Book $book): bool
     {
         return $book->getKoboSyncedBook()->isEmpty(); // $book->getCreated() >= $syncToken->lastCreated;
     }
 
-    public function isChangedReadingState(Book $book, KoboDevice $koboDevice, SyncToken $syncToken): bool
+    public function isChangedReadingState(Book $book): bool
     {
-        if ($this->isChangedEntitlement($book, $syncToken)) {
+        if ($this->isChangedEntitlement($book)) {
             return false;
         }
 
-        if (!$syncToken->readingStateLastModified instanceof \DateTimeInterface) {
+        if (!$this->syncToken->readingStateLastModified instanceof \DateTimeInterface) {
             return false;
         }
 
-        $lastInteraction = $book->getLastInteraction($koboDevice->getUser());
+        $lastInteraction = $book->getLastInteraction($this->koboDevice->getUser());
 
-        return ($lastInteraction instanceof BookInteraction) && $lastInteraction->getUpdated() >= $syncToken->readingStateLastModified;
+        return ($lastInteraction instanceof BookInteraction) && $lastInteraction->getUpdated() >= $this->syncToken->readingStateLastModified;
     }
 
-    public function isNewTag(Shelf $shelf, SyncToken $syncToken): bool
+    public function isNewTag(Shelf $shelf): bool
     {
-        if (!$syncToken->lastCreated instanceof \DateTimeInterface) {
+        if (!$this->syncToken->lastCreated instanceof \DateTimeInterface) {
             return true;
         }
 
-        return $shelf->getCreated() >= $syncToken->lastCreated;
+        return $shelf->getCreated() >= $this->syncToken->lastCreated;
     }
 
-    public function isChangedTag(Shelf $shelf, SyncToken $syncToken): bool
+    public function isChangedTag(Shelf $shelf): bool
     {
-        return $syncToken->tagLastModified instanceof \DateTimeInterface && $shelf->getUpdated() >= $syncToken->tagLastModified;
+        return $this->syncToken->tagLastModified instanceof \DateTimeInterface && $shelf->getUpdated() >= $this->syncToken->tagLastModified;
+    }
+
+    public function isArchivedEntitlement(Book $book): bool
+    {
+        foreach ($book->getKoboSyncedBook() as $syncedBook) {
+            if ($syncedBook->getKoboDevice() === $this->koboDevice && $syncedBook->isArchived()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

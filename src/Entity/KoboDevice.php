@@ -154,6 +154,9 @@ class KoboDevice
         return $this;
     }
 
+    /**
+     * You can also set "archived" on the syncedBook instead of removing it.
+     */
     public function removeKoboSyncedBook(KoboSyncedBook $koboSyncedBook): static
     {
         // set the owning side to null (unless already changed)

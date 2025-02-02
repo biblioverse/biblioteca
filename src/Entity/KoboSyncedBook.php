@@ -32,6 +32,9 @@ class KoboSyncedBook
     #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updated = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $archived = null;
+
     public function __construct()
     {
         $this->created = new \DateTimeImmutable();
@@ -88,5 +91,20 @@ class KoboSyncedBook
         $this->updated = $updated;
 
         return $this;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived instanceof \DateTimeInterface;
+    }
+
+    public function getArchived(): ?\DateTimeInterface
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(?\DateTimeInterface $removed): void
+    {
+        $this->archived = $removed;
     }
 }

@@ -217,4 +217,43 @@ class SyncControllerTest extends KoboControllerTestCase
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();
     }
+
+    public function testArchivedBookSync(): void
+    {
+        $client = static::getClient();
+
+        $clock = $this->getService(TestClock::class)
+            ->setTime((new \DateTimeImmutable())->modify('+10 second'));
+
+        $syncToken = new SyncToken();
+        $syncToken->lastCreated = $clock->now();
+        $syncToken->lastModified = $clock->now();
+
+        // Mark all books as synced
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        self::assertResponseIsSuccessful();
+        $syncedBook = $this->getEntityManager()->getRepository(KoboSyncedBook::class)
+            ->findOneBy(['koboDevice' => 1, 'book' => $this->getBook()]);
+        self::assertNotNull($syncedBook, 'You should have the book marked as synced');
+
+        // Mark one book as removed from kobo/shelf
+        $syncedBook->setArchived($clock->now());
+        $clock->setTime($clock->now()->modify('+10 seconds'));
+        $this->getEntityManager()->flush();
+
+        // Make sure the book is there with the archived flag
+        $syncToken->archiveLastModified = $clock->now()->modify('+1 second');
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        $response = self::getJsonResponse();
+
+        self::assertResponseIsSuccessful();
+        self::assertThat($response, new JSONIsValidSyncResponse([
+            'ChangedEntitlement' => 1,
+        ]), 'Response is not a valid sync response');
+
+        $removed = $response[0]['ChangedEntitlement']['BookEntitlement']['IsRemoved'] ?? null;
+        self::assertTrue($removed, 'The book should be marked as removed');
+    }
 }

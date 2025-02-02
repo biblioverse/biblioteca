@@ -549,6 +549,16 @@ class BookRepository extends ServiceEntityRepository
             $qb->setParameter('lastCreated', $syncToken->lastCreated);
         }
 
+        if ($syncToken->archiveLastModified instanceof \DateTimeInterface) {
+            $bigOr->addMultiple([
+                $qb->expr()->andX(
+                    $qb->expr()->gte('koboSyncedBooks.archived', ':archiveLastModified'),
+                    $qb->expr()->isNotNull('koboSyncedBooks.archived'),
+                ),
+            ]);
+            $qb->setParameter('archiveLastModified', $syncToken->archiveLastModified);
+        }
+
         if ($syncToken->lastModified instanceof \DateTimeInterface) {
             $bigOr->addMultiple([
                 'book.updated > :lastModified',
@@ -605,5 +615,23 @@ class BookRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
 
         return $result;
+    }
+
+    public function inHowManyStaticKoboShelves(Book $book, ?User $user): int
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('count(shelves.id)')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.koboDevices', 'koboDevice')
+            ->where('koboDevice.user = :user')
+            ->andWhere('book.id = :bookId')
+            ->setParameter('user', $user)
+            ->setParameter('bookId', $book->getId())
+        ;
+
+        /** @var array{0: int} $result */
+        $result = $qb->getQuery()->getSingleColumnResult();
+
+        return $result[0];
     }
 }
