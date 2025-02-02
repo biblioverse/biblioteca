@@ -45,4 +45,9 @@ class KoboSyncTokenExtractor
     {
         return $request->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
     }
+
+    public function has(Request $request): bool
+    {
+        return $request->headers->has(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
+    }
 }
