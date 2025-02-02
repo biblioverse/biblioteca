@@ -30,12 +30,15 @@ ai.new-aimodel: New model
 ai.prompts-and-context: Prompts and context
 ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
 ai.responses-to-prompt-with-context: Responses to prompt with context
+ai.searchmodel.form-placeholder: "Select a model for converting search hints or leave it empty to disable"
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
 ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {language} to insert the book's language. This prompt will be used only if a prompt is not defined in the user profile."
+ai.summarizationmodel.form-placeholder: "Select a model for summarizing books or leave it empty to disable"
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context
 ai.tag-prompt: Tag prompt
+ai.tagmodel.form-placeholder: "Select a model for tagging books or leave it empty to disable"
 ai.test-book: Test book
 ai.test-model: Test model
 ai.token: Token
