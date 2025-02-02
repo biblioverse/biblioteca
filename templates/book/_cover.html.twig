@@ -1,20 +1,15 @@
 {# @var book App\Entity\Book #}
 {# @var interaction App\Entity\BookInteraction #}
 
-{% set interaction = null %}
-{% for currentInteraction in book.bookInteractions|default([]) %}
-    {% if currentInteraction.user.id == app.user.id %}
-        {% set interaction = currentInteraction %}
-    {% endif %}
-{% endfor %}
+{% set interaction = book.lastInteraction(app.user) %}
 
 {% set read = false %}
-{% if interaction is not null and interaction.finished %}
+{% if interaction is not null and interaction.readStatus.value == enum('App\\Enum\\ReadStatus').Finished.value %}
     {% set read = true %}
 {% endif %}
 
 {% set hidden = false %}
-{% if interaction is not null and interaction.hidden %}
+{% if interaction is not null and interaction.readStatus.value == enum('App\\Enum\\ReadingList').Ignored.value %}
     {% set hidden = true %}
 {% endif %}
 

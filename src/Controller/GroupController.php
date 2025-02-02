@@ -45,8 +45,8 @@ class GroupController extends AbstractController
         }
 
         $group = match ($search) {
-            '' => array_filter($group, static fn (mixed $item) => str_contains(strtolower($item['item']), strtolower($search))),
-            default => array_filter($group, static fn (mixed $item) => str_starts_with(strtolower($item['item']), $letter)),
+            default => array_filter($group, static fn (mixed $item) => str_contains(strtolower($item['item']), strtolower($search))),
+            '' => array_filter($group, static fn (mixed $item) => str_starts_with(strtolower($item['item']), $letter)),
         };
 
         return $this->render('group/index.html.twig', [

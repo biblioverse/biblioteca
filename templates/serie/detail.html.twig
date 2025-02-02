@@ -36,10 +36,10 @@
         <div class="hero__progress">
             <div class="heroProgress">
                 <div class="heroProgress__text">
-                {{ 'books.reading.progress'|trans({"%read%": readBooks, "%total%": books|length }) }}
+                {{ 'books.reading.progress'|trans({"%read%": readBooks+hiddenBooks, "%total%": books|length }) }}
                 </div>
                 <div class="heroProgress__bar">
-                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks/books|length) *100 }}%">
+                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks+hiddenBooks/books|length) *100 }}%">
                     </div>
                 </div>
             </div>
@@ -55,10 +55,10 @@
                 {% for index in 1..serieMax %}
                     {% if books[index] is defined %}
                         {% for book in books[index] %}
-                            {% include 'book/book-row.html.twig' with { book: book } %}
+                            {% include 'book/_book-row.html.twig' with { book: book } %}
                         {% endfor %}
                     {% else %}
-                        {% include 'book/book-row-empty.html.twig' with { serie: serie, index: index } %}
+                        {% include 'book/_book-row-empty.html.twig' with { serie: serie, index: index } %}
                     {% endif %}
                 {% endfor %}
                 </tbody>
@@ -69,7 +69,7 @@
                 <table class="table">
                 <tbody>
                     {% for book in books['?'] %}
-                        {% include 'book/book-row.html.twig' with { book: book, index: "?" } %}
+                        {% include 'book/_book-row.html.twig' with { book: book, index: "?" } %}
                     {% endfor %}
                 </tbody>
                 </table>

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\AgeCategory;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,13 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const AGE_CATEGORIES = [
-        'user.agecategories.everyone' => '1',
-        'user.agecategories.tenplus' => '2',
-        'user.agecategories.thirteenplus' => '3',
-        'user.agecategories.sixteenplus' => '4',
-        'user.agecategories.adults' => '5',
-    ];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -77,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $birthday = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $maxAgeCategory = null;
+    private ?AgeCategory $maxAgeCategory = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bookSummaryPrompt = null;
@@ -239,10 +233,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeBookInteraction(BookInteraction $bookInteraction): static
     {
-        // set the owning side to null (unless already changed)
-        if ($this->bookInteractions->removeElement($bookInteraction) && $bookInteraction->getUser() === $this) {
-            $bookInteraction->setUser(null);
-        }
+        $this->bookInteractions->removeElement($bookInteraction);
 
         return $this;
     }
@@ -356,12 +347,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getMaxAgeCategory(): ?int
+    public function getMaxAgeCategory(): ?AgeCategory
     {
         return $this->maxAgeCategory;
     }
 
-    public function setMaxAgeCategory(?int $maxAgeCategory): static
+    public function setMaxAgeCategory(?AgeCategory $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
 

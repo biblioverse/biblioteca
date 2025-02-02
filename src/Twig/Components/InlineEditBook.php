@@ -3,6 +3,7 @@
 namespace App\Twig\Components;
 
 use App\Entity\Book;
+use App\Enum\AgeCategory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentToolsTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\LiveComponent\ValidatableComponentTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent(method: 'get')]
 class InlineEditBook extends AbstractController
@@ -23,8 +25,11 @@ class InlineEditBook extends AbstractController
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'ageCategory', 'pageNumber', 'language'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'pageNumber', 'language'])]
     public Book $book;
+
+    #[LiveProp(writable: true)]
+    public ?AgeCategory $ageCategory = null;
 
     #[LiveProp()]
     public bool $isEditing = false;
@@ -47,9 +52,15 @@ class InlineEditBook extends AbstractController
 
     public ?string $flashMessage = null;
 
-    public function __construct()
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
         $this->locales = $this->getTwoLettersLocales();
+    }
+
+    #[PostMount]
+    public function postMount(): void
+    {
+        $this->ageCategory = $this->book->getAgeCategory();
     }
 
     #[LiveAction]
@@ -59,7 +70,7 @@ class InlineEditBook extends AbstractController
     }
 
     #[LiveAction]
-    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion, EntityManagerInterface $entityManager): void
+    public function usesuggestion(#[LiveArg] string $field, #[LiveArg] string $suggestion): void
     {
         $this->isEditing = true;
         $to_call = 'set'.ucfirst($field);
@@ -86,7 +97,7 @@ class InlineEditBook extends AbstractController
                 $this->book->$to_call($value);
             }
         }
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 
@@ -98,7 +109,7 @@ class InlineEditBook extends AbstractController
      */
     #[LiveAction]
     #[LiveListener('submit')]
-    public function save(Request $request, EntityManagerInterface $entityManager): void
+    public function save(Request $request): void
     {
         $all = $request->request->all();
         if (!array_key_exists('data', $all)) {
@@ -115,7 +126,16 @@ class InlineEditBook extends AbstractController
             $this->book->setSerieIndex(null);
         }
 
-        $entityManager->flush();
+        if (array_key_exists('updated', $data) && is_array($data['updated']) && array_key_exists('ageCategory', $data['updated'])) {
+            if ($data['updated']['ageCategory'] !== '') {
+                // @phpstan-ignore-next-line
+                $this->book->setAgeCategory(AgeCategory::tryFrom($data['updated']['ageCategory']));
+            } else {
+                $this->book->setAgeCategory(null);
+            }
+        }
+
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
 

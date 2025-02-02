@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Enum\AgeCategory;
+use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -109,8 +112,8 @@ class Book
     #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books', cascade: ['persist'])]
     private Collection $shelves;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $ageCategory = null;
+    #[ORM\Column(enumType: AgeCategory::class, nullable: true)]
+    private ?AgeCategory $ageCategory = null;
 
     /**
      * @var Collection<int, KoboSyncedBook>
@@ -432,10 +435,7 @@ class Book
 
     public function removeBookInteraction(BookInteraction $bookInteraction): static
     {
-        // set the owning side to null (unless already changed)
-        if ($this->bookInteractions->removeElement($bookInteraction) && $bookInteraction->getBook() === $this) {
-            $bookInteraction->setBook(null);
-        }
+        $this->bookInteractions->removeElement($bookInteraction);
 
         return $this;
     }
@@ -504,16 +504,21 @@ class Book
         return $this;
     }
 
-    public function getAgeCategory(): ?int
+    public function getAgeCategory(): ?AgeCategory
     {
         return $this->ageCategory;
     }
 
-    public function setAgeCategory(?int $ageCategory): static
+    public function setAgeCategory(?AgeCategory $ageCategory): static
     {
         $this->ageCategory = $ageCategory;
 
         return $this;
+    }
+
+    public function getAgeCategoryLabel(): ?string
+    {
+        return $this->ageCategory?->label() ?? 'enum.agecategories.notset';
     }
 
     public function getUuid(): string
@@ -598,17 +603,15 @@ class Book
 
         foreach ($this->getBookInteractions() as $interaction) {
             $user = $interaction->getUser();
-            if ($user === null) {
-                continue;
-            }
+
             $userId = $user->getId();
-            if ($interaction->isFinished()) {
+            if ($interaction->getReadStatus() === ReadStatus::Finished) {
                 $return['read'][] = $userId;
             }
-            if ($interaction->isFavorite()) {
+            if ($interaction->getReadingList() === ReadingList::ToRead) {
                 $return['favorite'][] = $userId;
             }
-            if ($interaction->isHidden()) {
+            if ($interaction->getReadingList() === ReadingList::Ignored) {
                 $return['hidden'][] = $userId;
             }
         }

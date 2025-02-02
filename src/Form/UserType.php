@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Enum\AgeCategory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,7 +28,7 @@ class UserType extends AbstractType
                 'label' => 'user.form.roles',
                 'translation_domain' => false,
             ])
-            ->add('maxAgeCategory', ChoiceType::class, ['choices' => User::AGE_CATEGORIES, 'required' => false])
+            ->add('maxAgeCategory', EnumType::class, ['class' => AgeCategory::class, 'required' => false])
             ->add('language', ChoiceType::class, [
                 'choices' => [
                     'user.form.language.english' => 'en',

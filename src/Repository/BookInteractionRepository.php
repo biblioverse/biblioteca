@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\BookInteraction;
+use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,10 +28,12 @@ class BookInteractionRepository extends ServiceEntityRepository
     {
         $results = $this->createQueryBuilder('b')
             ->andWhere('b.readPages >0')
-            ->andWhere('b.finished = false')
-            ->andWhere('b.hidden = false')
+            ->andWhere('b.readStatus = :read_status')
+            ->andWhere('b.readingList != :reading_list')
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
+            ->setParameter('read_status', ReadStatus::Started)
+            ->setParameter('reading_list', ReadingList::Ignored)
             ->orderBy('b.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
@@ -48,12 +52,15 @@ class BookInteractionRepository extends ServiceEntityRepository
     public function getFavourite(?int $max = null, bool $hideFinished = true): array
     {
         $qb = $this->createQueryBuilder('b')
-            ->andWhere('b.favorite = true');
+            ->andWhere('b.readingList = :to_read');
+        $qb->setParameter('to_read', ReadingList::ToRead);
         if ($hideFinished) {
-            $qb->andWhere('b.finished = false');
+            $qb->andWhere('b.readingList != :finished');
+            $qb->setParameter('finished', ReadStatus::Finished);
         }
 
-        $qb->andWhere('b.hidden = false')
+        $qb->andWhere('b.readingList != :hidden')
+            ->setParameter('hidden', ReadingList::Ignored)
             ->andWhere('b.user = :val')
             ->setParameter('val', $this->security->getUser())
             ->orderBy('b.created', 'ASC')
@@ -67,14 +74,4 @@ class BookInteractionRepository extends ServiceEntityRepository
 
         return $results;
     }
-
-    //    public function findOneBySomeField($value): ?BookInteraction
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
