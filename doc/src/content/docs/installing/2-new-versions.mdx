@@ -2,8 +2,11 @@
 title: Updating to new versions
 ---
 import { Steps } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-
+<Aside type="tip">
+    As a developer, you can use the script `./update.sh` to update the application. If you have local changes in the application code, they will be overwritten by the latest release. 
+</Aside>
 <Steps>
 
 1. Update the docker image to the latest version:

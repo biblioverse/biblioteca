@@ -92,7 +92,7 @@ class OpdsController extends AbstractController
         $group = match ($type) {
             'authors' => $this->bookRepository->getAllAuthors(),
             'tags' => $this->bookRepository->getAllTags(),
-            'series' => $this->bookRepository->getAllSeries()->getResult(),
+            'series' => $this->bookRepository->getAllSeries(),
             default => throw $this->createAccessDeniedException('Invalid group type'),
         };
 

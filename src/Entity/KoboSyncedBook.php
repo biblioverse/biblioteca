@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: KoboSyncedBookRepository::class)]
+#[ORM\UniqueConstraint(name: 'kobo_synced_book_unique', columns: ['book_id', 'kobo_device_id'])]
 class KoboSyncedBook
 {
     #[ORM\Id]
@@ -23,13 +24,13 @@ class KoboSyncedBook
     #[ORM\JoinColumn(nullable: true)]
     private ?KoboDevice $koboDevice = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private \DateTimeInterface $created;
+    private \DateTimeImmutable $created;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated = null;
+    private ?\DateTimeImmutable $updated = null;
 
     public function __construct()
     {
@@ -65,24 +66,24 @@ class KoboSyncedBook
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeInterface
+    public function getCreated(): ?\DateTimeImmutable
     {
         return $this->created;
     }
 
-    public function setCreated(\DateTimeInterface $created): static
+    public function setCreated(\DateTimeImmutable $created): static
     {
         $this->created = $created;
 
         return $this;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdated(): ?\DateTimeImmutable
     {
         return $this->updated;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): static
+    public function setUpdated(?\DateTimeImmutable $updated): static
     {
         $this->updated = $updated;
 

@@ -23,6 +23,6 @@ class SummaryPrompt extends AbstractBookPrompt
     #[\Override]
     public function convertResult(string $result): string
     {
-        return $result;
+        return preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
     }
 }

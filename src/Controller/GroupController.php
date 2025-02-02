@@ -32,10 +32,10 @@ class GroupController extends AbstractController
                 $group = $this->bookRepository->getAllTags();
                 break;
             case 'publisher':
-                $group = $this->bookRepository->getAllPublishers()->getResult();
+                $group = $this->bookRepository->getAllPublishers();
                 break;
             case 'serie':
-                $group = $this->bookRepository->getAllSeries()->getResult();
+                $group = $this->bookRepository->getAllSeries();
                 break;
         }
         $search = $request->get('search', '');
@@ -43,15 +43,11 @@ class GroupController extends AbstractController
         if (!is_string($search)) {
             throw new RuntimeException('Invalid search type');
         }
-        if (!is_array($group)) {
-            throw new RuntimeException('Invalid group type');
-        }
 
-        if ($search !== '') {
-            $group = array_filter($group, static fn (mixed $item) => is_array($item) && array_key_exists('item', $item) && is_string($item['item']) && str_contains(strtolower($item['item']), strtolower($search)));
-        } else {
-            $group = array_filter($group, static fn (mixed $item) => is_array($item) && array_key_exists('item', $item) && is_string($item['item']) && str_starts_with(strtolower($item['item']), $letter));
-        }
+        $group = match ($search) {
+            '' => array_filter($group, static fn (mixed $item) => str_contains(strtolower($item['item']), strtolower($search))),
+            default => array_filter($group, static fn (mixed $item) => str_starts_with(strtolower($item['item']), $letter)),
+        };
 
         return $this->render('group/index.html.twig', [
             'group' => $group,

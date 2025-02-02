@@ -67,17 +67,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(options: ['default' => true])]
     private bool $displayAllBooks = true;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $birthday = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $birthday = null;
 
     #[ORM\Column(nullable: true)]
     private ?AgeCategory $maxAgeCategory = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    /**
-     * @deprecated must used dotenv configuration instead
-     */
-    private ?string $openAIKey = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bookSummaryPrompt = null;
@@ -94,8 +88,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: KoboDevice::class, orphanRemoval: true)]
     private Collection $kobos;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $lastLogin = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $lastLogin = null;
 
     #[ORM\Column(length: 2, nullable: false, options: ['default' => 'en'])]
     private string $language = 'en';
@@ -344,12 +338,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
+    public function getBirthday(): ?\DateTimeImmutable
     {
         return $this->birthday;
     }
 
-    public function setBirthday(?\DateTimeInterface $birthday): static
+    public function setBirthday(?\DateTimeImmutable $birthday): static
     {
         $this->birthday = $birthday;
 
@@ -412,12 +406,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->kobos;
     }
 
-    public function getLastLogin(): ?\DateTimeInterface
+    public function getLastLogin(): ?\DateTimeImmutable
     {
         return $this->lastLogin;
     }
 
-    public function setLastLogin(?\DateTimeInterface $lastLogin): static
+    public function setLastLogin(?\DateTimeImmutable $lastLogin): static
     {
         $this->lastLogin = $lastLogin;
 

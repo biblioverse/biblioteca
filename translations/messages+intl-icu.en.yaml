@@ -7,6 +7,13 @@ ai.configuration.form.ai_summary_prompt: "Prompt for summaries"
 ai.configuration.form.ai_tag_model: "Model for tags"
 ai.configuration.form.ai_tag_prompt: "Prompt for tags"
 ai.configuration.form.submit: "Save"
+ai.form.url: "API URL"
+ai.form.model: "Model name"
+ai.form.token: "API token"
+ai.form.useamazoncontext: "Use Amazon context"
+ai.form.useepubcontext: "Use EPUB context"
+ai.form.usewikipediacontext: "Use Wikipedia context"
+ai.form.systemprompt: "AI system prompt"
 ai.context: Context
 ai.create-new-model: Create new AI model
 ai.edit-ai-model: Edit AI model
@@ -23,12 +30,15 @@ ai.new-aimodel: New model
 ai.prompts-and-context: Prompts and context
 ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
 ai.responses-to-prompt-with-context: Responses to prompt with context
+ai.searchmodel.form-placeholder: "Select a model for converting search hints or leave it empty to disable"
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
-ai.summaryprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
+ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {language} to insert the book's language. This prompt will be used only if a prompt is not defined in the user profile."
+ai.summarizationmodel.form-placeholder: "Select a model for summarizing books or leave it empty to disable"
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context
 ai.tag-prompt: Tag prompt
+ai.tagmodel.form-placeholder: "Select a model for tagging books or leave it empty to disable"
 ai.test-book: Test book
 ai.test-model: Test model
 ai.token: Token
@@ -38,6 +48,27 @@ ai.usage-configuration: Usage configuration
 ai.use-amazon-context: Use amazon context
 ai.use-epub-context: Use EPUB Context
 ai.use-wikipedia-context: Use Wikipedia context
+author.books: >-
+    {books_count, plural,
+        =0    {0 books}
+        =1    {
+          {series, plural,
+            =0    {1 book including 0 series}
+            =1    {1 book including 1 series}
+            other {1 book including # series}
+          }
+        }
+        other {
+          {series, plural,
+            =0    {{books} books including 0 series}
+            =1    {{books} books including 1 series}
+            other {{books} books including # series}
+          }
+        }
+    }
+author.tags: Tags
+author.standalone-books: Books not in a series
+author.in-series: Series
 book.actions: Actions
 book.add-to-favorites: Add to reading list
 book.age-category: Age category
@@ -73,6 +104,7 @@ book.serieIndex: Serie Index
 book.size: Size
 book.summary: Summary
 book.tags: Tags
+book.language: Language
 book.this-action-is-irreversible: This action is irreversible
 book.title: Title
 book.unknown-author: Unknown author
@@ -80,13 +112,34 @@ book.updated: Updated
 book.upload-book: Upload book
 book.upload-books-to-the-consume-folder: Upload books to the consume folder
 book.upload-cover: Upload cover
+book.upload-cover-title: Click to upload cover
 book.upload: Upload book
 book.uuid: Unique ID
 book.verified: Verified
+book.read-in-browser: Read in browser
 books.in-serie: Books in serie
 books.other-books: Other books in serie
 books.same-author: Books by same author
 books.same-index: Books with same index
+books.reading.progress: "{read} / {total}"
+books.stat.progress: >-
+    {count, plural,
+        =0    {0 books in progress}
+        =1    {1 book in progress}
+        other {# books in progress}
+    }
+books.stat.read: >-
+    {count, plural,
+        =0    {0 books read}
+        =1    {1 book read}
+        other {# books read}
+    }
+books.stat.hidden: >-
+    {count, plural,
+        =0    {0 books hidden}
+        =1    {1 book hidden}
+        other {# books hidden}
+    }
 dashboard.continue-reading: Continue reading
 dashboard.hello: Aloha
 dashboard.need-inspiration: Need some inspiration?
@@ -119,6 +172,26 @@ generic.yes: Yes
 group.filter-placeholder: Filter...
 group.rename: Rename
 group.search: Search
+inlineeditinteraction.title: Actions
+inlineeditinteraction.favorites.add: Add to favorites
+inlineeditinteraction.favorites.remove: Remove from favorites
+inlineeditinteraction.finished.add: Mark as read
+inlineeditinteraction.finished.remove: Mark as unread
+inlineeditinteraction.hidden.add: Hide book
+inlineeditinteraction.hidden.remove: Unhide book
+inlineeditinteraction.edit: Edit Interaction
+inlineeditinteraction.shelf.add: Add to shelf
+inlineeditinteraction.shelf.new: Create new shelf
+inlineeditinteraction.flash.read: Good Job!
+inlineeditinteraction.flash.unread: Marked as not read
+inlineeditinteraction.flash.saveInteraction: Saved
+inlineeditinteraction.flash.saveShelf: Shelf saved
+inlineeditinteraction.flash.favorite: Added to readlist
+inlineeditinteraction.flash.unfavorite: Remove from readlist
+inlineeditinteraction.flash.hide: Hidden
+inlineeditinteraction.flash.unhide: Unhidden
+inlineeditinteraction.flash.shelf: Added to shelf
+inlineeditinteraction.flash.unshelf: Removed from shelf
 instance-configuration.current-value: Current value
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Edit configuration
@@ -130,8 +203,11 @@ instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This
 instance-configuration.title: Title
 interaction.form.favorite: Reading list
 interaction.form.finished: Finished
-interaction.form.finishedDate: Finished date
+interaction.form.finisheddate: Finished date
 interaction.form.submit: Save
+interaction.status.finished: Finished
+interaction.status.not-started: Not Started
+interaction.status.progress: "{read} / {total}"
 kobo.device.access-key: Access key
 kobo.device.create-new: Create new
 kobo.device.delete: Delete
@@ -170,6 +246,7 @@ menu.kobodevices: Kobo devices
 menu.logout: Log out
 menu.notverified: Not verified
 menu.profile: Profile
+menu.publishers: Publishers
 menu.readinglist: Reading list
 menu.series: Series
 menu.shelves: Shelves

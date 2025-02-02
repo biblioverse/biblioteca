@@ -74,7 +74,7 @@ class SyncControllerTest extends KoboControllerTestCase
         $numberOfPages = (int) ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
 
         $syncToken = new SyncToken();
-        $syncToken->lastCreated = new \DateTime('now');
+        $syncToken->lastCreated = new \DateTimeImmutable('now');
         $syncToken->lastModified = null;
 
         foreach (range(1, $numberOfPages) as $pageNum) {
@@ -113,6 +113,37 @@ class SyncControllerTest extends KoboControllerTestCase
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage, [], [], $headers);
         self::assertResponseIsSuccessful();
         self::assertThat(self::getJsonResponse(), new JSONIsValidSyncResponse([], $numberOfPages + 1));
+    }
+
+    /**
+     * Syncing book multiple times should not change the number of synced books.
+     */
+    public function testSyncControllerSyncedBookCount(): void
+    {
+        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
+        self::assertSame(0, $count, 'Number of synced book is invalid');
+
+        $client = static::getClient();
+        $syncToken = new SyncToken();
+        $syncToken->lastModified = new \DateTimeImmutable('now');
+
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
+        self::assertGreaterThan(0, $count, 'Number of synced book is invalid');
+
+        // Edit a book to force it to be synced again
+        $this->getBook()->setUpdated(new \DateTimeImmutable('+1 day'));
+        $this->getEntityManager()->flush();
+
+        // Same query a second time, the amount of synced-books must be the same.
+        $syncToken->lastModified = new \DateTimeImmutable('now');
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        $count2 = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
+        self::assertSame($count, $count2, 'Number of synced book should not change');
     }
 
     /**

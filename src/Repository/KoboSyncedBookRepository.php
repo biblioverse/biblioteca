@@ -31,42 +31,43 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             return;
         }
 
-        $updatedAt = $syncToken->lastModified ?? new \DateTime();
-        $createdAt = $syncToken->lastCreated ?? new \DateTime();
+        $updatedAt = $syncToken->lastModified ?? new \DateTimeImmutable();
+        $createdAt = $syncToken->lastCreated ?? new \DateTimeImmutable();
 
-        $qb = $this->createQueryBuilder('koboSyncedBook')
+        $syncedBooksQuery = $this->createQueryBuilder('koboSyncedBook')
              ->select('book.id')
+             ->distinct()
              ->join('koboSyncedBook.book', 'book')
              ->where('koboSyncedBook.koboDevice = :koboDevice')
              ->andWhere('koboSyncedBook.book IN (:books)')
              ->setParameter('koboDevice', $koboDevice)
              ->setParameter('books', $books)
         ;
-        $updatedBooks = (array) $qb
+        $updatedBooks = (array) $syncedBooksQuery
             ->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
 
-        $qb->update()
+        $syncedBooksQuery->update()
             ->set('koboSyncedBook.updated', ':updatedAt')
             ->setParameter('updatedAt', $updatedAt)
         ->getQuery()
             ->execute();
 
         /** @var array<int, Book> $books */
-        $qb1 = $this->createQueryBuilder('koboSyncedBook')
+        $booksToSyncQuery = $this->createQueryBuilder('koboSyncedBook')
             ->resetDQLPart('select')
             ->resetDQLPart('from')
             ->from(Book::class, 'book')
             ->select('book')
-            ->where($qb->expr()->in('book.id', ':booksIds'))
+            ->where($syncedBooksQuery->expr()->in('book.id', ':booksIds'))
             ->setParameter('booksIds', array_map(fn (Book $book) => $book->getId(), $books));
 
         if ($updatedBooks !== []) {
-            $qb->andWhere($qb->expr()->notIn('book.id', ':excludedIds'))
+            $booksToSyncQuery->andWhere($syncedBooksQuery->expr()->notIn('book.id', ':excludedIds'))
                 ->setParameter('excludedIds', $updatedBooks);
         }
 
         /** @var Book[] $books */
-        $books = $qb1
+        $books = $booksToSyncQuery
             ->getQuery()->getResult();
 
         foreach ($books as $book) {
@@ -77,10 +78,10 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             $object->setCreated($createdAt);
             $book->addKoboSyncedBook($object);
             $koboDevice->addKoboSyncedBook($object);
-            $this->_em->persist($object);
+            $this->getEntityManager()->persist($object);
         }
 
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function deleteAllSyncedBooks(KoboDevice|int $koboDeviceId): int

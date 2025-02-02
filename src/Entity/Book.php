@@ -38,13 +38,13 @@ class Book
     #[Gedmo\Slug(fields: ['title', 'id'], style: 'lower')]
     private string $slug;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private \DateTimeInterface $created;
+    private \DateTimeImmutable $created;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeInterface $updated = null;
+    private ?\DateTimeImmutable $updated = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $imagePath = null;
@@ -71,8 +71,8 @@ class Book
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $publisher = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $publishDate = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $publishDate = null;
 
     /**
      * @var array<string>
@@ -161,7 +161,7 @@ class Book
         $this->slug = $slug;
     }
 
-    public function getCreated(): \DateTimeInterface
+    public function getCreated(): \DateTimeImmutable
     {
         return $this->created;
     }
@@ -179,17 +179,17 @@ class Book
         return null;
     }
 
-    public function setCreated(\DateTimeInterface $created): void
+    public function setCreated(\DateTimeImmutable $created): void
     {
         $this->created = $created;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    public function getUpdated(): ?\DateTimeImmutable
     {
         return $this->updated;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): void
+    public function setUpdated(?\DateTimeImmutable $updated): void
     {
         $this->updated = $updated;
     }
@@ -306,12 +306,12 @@ class Book
         return $this;
     }
 
-    public function getPublishDate(): ?\DateTimeInterface
+    public function getPublishDate(): ?\DateTimeImmutable
     {
         return $this->publishDate;
     }
 
-    public function setPublishDate(?\DateTimeInterface $publishDate): static
+    public function setPublishDate(?\DateTimeImmutable $publishDate): static
     {
         $this->publishDate = $publishDate;
 

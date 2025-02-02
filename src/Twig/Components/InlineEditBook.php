@@ -7,6 +7,7 @@ use App\Enum\AgeCategory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Intl\Locales;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -24,7 +25,7 @@ class InlineEditBook extends AbstractController
     use ValidatableComponentTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'pageNumber'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'pageNumber', 'language'])]
     public Book $book;
 
     #[LiveProp(writable: true)]
@@ -44,10 +45,16 @@ class InlineEditBook extends AbstractController
     #[LiveProp()]
     public string $field;
 
+    /**
+     * @var array<string,string> list of locales indexed by 2 letters code
+     */
+    public array $locales;
+
     public ?string $flashMessage = null;
 
     public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    {        $this->locales = $this->getTwoLettersLocales();
+
     }
 
     #[PostMount]
@@ -133,5 +140,14 @@ class InlineEditBook extends AbstractController
         $this->isEditing = false;
 
         $this->flashMessage = ' book updated';
+    }
+
+    /**
+     * @return array<string,string> list of languages indexed by their 2-letter locale code
+     */
+    private function getTwoLettersLocales(): array
+    {
+        // Currently only 2-letter locales are supported in DB field.
+        return array_filter(Locales::getNames(), fn (string $locale) => strlen($locale) === 2, ARRAY_FILTER_USE_KEY);
     }
 }

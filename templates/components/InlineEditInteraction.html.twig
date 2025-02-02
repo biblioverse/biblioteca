@@ -1,48 +1,167 @@
+{% set buttonWithText = buttonWithText | default(false) %}
+
 <div {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+    {% set modalIdInteraction=unique_id('interaction-', false) %}
+    {% set modalIdShelf=unique_id('shelf-', false) %}
 
-
-    <div class="btn-group-vertical btn-group-sm w-100 my-2">
-    {% for case in enum('App\\Enum\\ReadStatus').cases() %}
-        <button
-            data-action="live#action"
-            data-live-action-param="toggleReadStatus(value={{ case.value }})"
-            data-live-value-param="{{ case.value }}"
-            class="btn btn-sm {{ case.value==interaction.readStatus.value?'btn-primary':'btn-outline-primary'}}"
-            title="Click to toggle read status"
-        >
-        {{ enum('App\\Enum\\ReadStatus').getLabel(case)|trans }}
-        </button>
-    {% endfor %}
-    </div>
-
-    {% if interaction.finishedDate is not null or interaction.readStatus == enum('App\\Enum\\ReadStatus').Finished %}
-    <div>
-        <input
-            data-action="live#action"
-            data-live-action-param="saveDate"
-            type="date"
-            data-model="finished"
-            class="form-control"
-        />
-    </div>
+    {% set finished=false %}
+    {% set hidden=false %}
+    {% set favorite = false %}
+    {% if interaction is not null %}
+        {% if interaction.finished %}
+            {% set finished=true %}
+        {% endif %}
+        {% if interaction.hidden %}
+            {% set hidden=true %}
+        {% endif %}
+        {% if interaction.favorite %}
+            {% set favorite = true %}
+        {% endif %}
     {% endif %}
 
-    <div class="btn-group-vertical btn-group-sm w-100 my-2">
-    {% for case in enum('App\\Enum\\ReadingList').cases() %}
-        <button
-            data-action="live#action"
-            data-live-action-param="toggleReadingList(value={{ case.value }})"
-            data-live-value-param="{{ case.value }}"
-            class="btn btn-sm {{ case.value==interaction.readingList.value?'btn-primary':'btn-outline-primary'}}"
-            title="Click to toggle ReadingList"
-        >
-        {{ enum('App\\Enum\\ReadingList').getLabel(case)|trans }}
+    <div class="dropend">
+        <button type="button" class="btn btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
+                data-bs-auto-close="outside" aria-expanded="false">
+
+                {% if buttonWithText %}
+                    <i class="bi bi-three-dots-vertical"></i>
+                    {{ 'inlineeditinteraction.title'|trans }}
+                {% else %}
+                    <i class="bi bi-three-dots-vertical"></i>
+                {% endif %}
         </button>
-    {% endfor %}
+        <ul class="dropdown-menu">
+            <li>
+                <a
+                    href="#"
+                    class="dropdown-item"
+                    data-action="live#action"
+                    data-live-action-param="toggleFavorite"
+                >
+                    <i class="bi bi-bookmark-heart"></i>
+                    {% if finished %}
+                        {{ 'inlineeditinteraction.favorites.remove'|trans }}
+                    {% else %}
+                        {{ 'inlineeditinteraction.favorites.add'|trans }}
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <button
+                    class="dropdown-item" href="#"
+                    data-action="live#action"
+                    data-live-action-param="toggleHidden"
+                >
+                    <i class="bi bi-eye{{ hidden?'':'-slash' }}-fill"></i>
+                    {% if hidden %}
+                        {{ 'inlineeditinteraction.hidden.remove'|trans }}
+                    {% else %}
+                        {{ 'inlineeditinteraction.hidden.add'|trans }}
+                    {% endif %}
+                </button>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li>
+                <a  href="#"
+                    class="dropdown-item"
+                    data-action="live#action"
+                    data-live-action-param="toggle"
+                >
+
+                    {% if finished %}
+                        <i class="bi bi-check-circle-fill"></i>
+                        {{ 'inlineeditinteraction.finished.remove'|trans }}
+                    {% else %}
+                        <i class="bi bi-check-circle"></i>
+                        {{ 'inlineeditinteraction.finished.add'|trans }}
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <button href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdInteraction}}" type="button" data-toggle="tooltip" data-placement="bottom">
+                    <i class="bi bi-pencil-fill"></i> {{ 'inlineeditinteraction.edit'|trans }}
+                </button>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li>
+                <div class="btn-group dropend">
+                    <a class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                       data-bs-auto-close="outside" aria-expanded="false">
+                        {{ 'inlineeditinteraction.shelf.add'|trans }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% if shelves is not empty %}
+                            {% for shelf in shelves %}
+                                <li>
+                                    {% if shelf in book.shelves %}
+                                        <a
+                                            data-action="live#action"
+                                            data-live-action-param="removeFromShelf(shelfId={{ shelf.id }})"
+                                            data-live-shelf-param="{{ shelf.id }}"
+                                            class="dropdown-item"
+                                            title="{{shelf.name}}"
+                                            href="#"
+                                        >
+                                            <i class="bi bi-check-square"></i>
+                                            {{ shelf.name }}
+                                        </a>
+                                    {% else %}
+                                        <a
+                                            data-action="live#action"
+                                            data-live-action-param="addToShelf(shelfId={{ shelf.id }})"
+                                            data-live-shelf-param="{{ shelf.id }}"
+                                            class="dropdown-item"
+                                            title="{{shelf.name}}"
+                                        >
+                                            <i class="bi bi-square"></i>
+                                            {{ shelf.name }}
+                                        </a>
+                                    {% endif %}
+                                </li>
+
+                            {% endfor %}
+                            <!--<li>
+                                <hr class="dropdown-divider">
+                            </li>-->
+                        {% endif %}
+
+                        <!--
+                        <li>
+                            <a href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdShelf}}" type="button" data-toggle="tooltip" data-placement="bottom">
+                                <i class="bi bi-plus"></i> {{ 'inlineeditinteraction.shelf.new'|trans }}
+                            </a>
+                        </li>
+                        -->
+                    </ul>
+                </div>
+            </li>
+        </ul>
     </div>
+
+    {# Add form to create new shelf #}
+
+    {% component BootstrapModal with {id: modalIdInteraction} %}
+        {% block modal_header %}
+            <h5>{{ book.title }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% endblock %}
+        {% block modal_body %}
+            {{ form(form,{
+                attr: {
+                    'novalidate': true,
+                    'class': '',
+                    'data-action': 'live#action',
+                    'data-live-action-param': 'prevent|saveInteraction',
+                }
+            }) }}
+        {% endblock %}
+    {% endcomponent %}
+
     {% if flashMessage %}
-        <small class="text-muted alert-remove">{{ flashMessage }}</small>
+        <small class="text-muted alert-remove">{{ flashMessage | trans }}</small>
     {% endif %}
-    <hr>
-
 </div>

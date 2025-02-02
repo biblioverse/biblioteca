@@ -173,6 +173,9 @@ class BookRepository extends ServiceEntityRepository
             }
             $qb->andWhere($orModule);
 
+            $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+            $qb->addSelect('bookInteractions');
+
             /** @var Book[] $results */
             $results = $qb->getQuery()->getResult();
         } catch (\Exception $e) {
@@ -223,6 +226,7 @@ class BookRepository extends ServiceEntityRepository
 
         $qb->andWhere($orModule);
 
+        // @phpstan-ignore-next-line
         return $qb->getQuery()->getResult();
     }
 
@@ -250,6 +254,10 @@ class BookRepository extends ServiceEntityRepository
             $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
         }
 
+        $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+        $qb->addSelect('bookInteractions');
+
+        // @phpstan-ignore-next-line
         return $qb->getQuery()->getResult();
     }
 
@@ -272,6 +280,11 @@ class BookRepository extends ServiceEntityRepository
             $qb->setParameter('ageCategory', $user->getMaxAgeCategory());
         }
 
+        $qb->leftJoin('book.bookInteractions', 'bookInteractions');
+        $qb->addSelect('bookInteractions');
+        $qb->leftJoin('book.shelves', 'shelves');
+        $qb->addSelect('shelves');
+
         $result = $qb->getQuery()->getResult();
         if (!is_array($result)) {
             return [];
@@ -293,8 +306,9 @@ class BookRepository extends ServiceEntityRepository
                 throw new \RuntimeException('Invalid user');
             }
             $li = $book->getLastInteraction($user);
-            if ($firstUnreadBook === null && ($li === null || $li->getReadStatus() !== ReadStatus::Finished)) {
+            if ($li === null || !$li->isFinished()) {
                 $firstUnreadBook = $book;
+                break;
             }
         }
 
@@ -304,8 +318,6 @@ class BookRepository extends ServiceEntityRepository
 
         return $firstUnreadBook;
     }
-
-    public function getAllSeries(): Query
     {
         $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
@@ -316,6 +328,9 @@ class BookRepository extends ServiceEntityRepository
         $qb = $this->joinInteractions($qb, 'serie');
 
         return $qb->addGroupBy('serie.serie')->getQuery();
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($result->getResult());
     }
 
     public function getIncompleteSeries(): Query
@@ -348,7 +363,10 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getAllPublishers(): Query
+    /**
+     * @return GroupType[]
+     */
+    public function getAllPublishers(): array
     {
         $qb = $this->createQueryBuilder('publisher')
             ->select('publisher.publisher as item')
@@ -367,6 +385,9 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('status_finished', ReadStatus::Finished)
             ->setParameter('list_ignored', ReadingList::Ignored)
             ->setParameter('user', $this->security->getUser());
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($results->getResult());
     }
 
     /**
@@ -445,7 +466,7 @@ class BookRepository extends ServiceEntityRepository
 
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -488,7 +509,7 @@ class BookRepository extends ServiceEntityRepository
         }
 
         if ($koboDevice->isSyncReadingList()) {
-            $readingList = $this->_em->getRepository(BookInteraction::class)->getFavourite();
+            $readingList = $this->getEntityManager()->getRepository(BookInteraction::class)->getFavourite();
             foreach ($readingList as $bookInteraction) {
                 $book = $bookInteraction->getBook();
                 if ($book === null) {
@@ -556,6 +577,9 @@ class BookRepository extends ServiceEntityRepository
         return $result;
     }
 
+    /**
+     * @deprecated use findByUuid instead
+     */
     public function findByUuidAndKoboDevice(string $bookUuid, KoboDevice $koboDevice): ?Book
     {
         /** @var Book|null $result */

@@ -82,6 +82,17 @@
                                 autofocus
                                 id="book_{{ book.id }}_{{ field }}"
                         />
+                    {% elseif field=='language' %}
+                        <select
+                            id="book_{{ book.id }}_{{ field }}"
+                            data-action="live#action"
+                            data-model="book.{{ field }}"
+                            data-live-action-param="prevent|save"
+                        >
+                            {% for key, value in locales %}
+                                <option value="{{ key }}" {{ key==book.language?'selected' }}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
                     {% else %}
                         <input
                                 type="text"

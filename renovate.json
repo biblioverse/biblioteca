@@ -4,7 +4,8 @@
     "config:recommended",
     "schedule:weekends",
     ":dependencyDashboard",
-    ":automergeMinor"
+    ":automergeMinor",
+    "group:allNonMajor"
   ],
   "major": {
     "dependencyDashboardApproval": true

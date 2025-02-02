@@ -7,6 +7,13 @@ ai.configuration.form.ai_summary_prompt: Prompt pour les résumés
 ai.configuration.form.ai_tag_model: Connecteur pour les catégories
 ai.configuration.form.ai_tag_prompt: Prompt pour les catégories
 ai.configuration.form.submit: Enregistrer
+ai.form.url: "URL API"
+ai.form.model: "Nom du modèle"
+ai.form.token: "Token API"
+ai.form.useamazoncontext: "Utiliser le contexte Amazon"
+ai.form.useepubcontext: "Utiliser le contexte EPUB"
+ai.form.usewikipediacontext: "Utiliser le contexte Wikipedia"
+ai.form.systemprompt: "Prompt système"
 ai.context: Contexte
 ai.create-new-model: Créer un nouveau connecteur IA
 ai.edit-ai-model: Modifier connecteur IA
@@ -23,12 +30,15 @@ ai.new-aimodel: Nouveau connecteur
 ai.prompts-and-context: Prompts et contexte
 ai.querying-for-context-and-building-a-response-please-wait: Construction du contexte et génération de la réponse, merci de patienter.
 ai.responses-to-prompt-with-context: Réponses aux prompt avec contexte
+ai.searchmodel.form-placeholder: "Choisir un modèle pour la conversion des requêtes de recherche"
 ai.summary-prompt-with-context: Prompt de résumé avec contexte
 ai.summary-prompt: Prompt de résumé
-ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
+ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
+ai.summarizationmodel.form-placeholder: "Choisir un modèle pour résumer"
 ai.system-prompt: Prompt système
 ai.tag-prompt-with-context: Prompt de catégorie avec contexte
 ai.tag-prompt: Prompt de catégorie
+ai.tagmodel.form-placeholder: "Choisir un modèle de catégorisation"
 ai.test-book: Livre de test
 ai.test-model: Tester le connecteur
 ai.token: Clé d'identification
@@ -38,6 +48,27 @@ ai.usage-configuration: Configuration
 ai.use-amazon-context: Utiliser le contexte Amazon
 ai.use-epub-context: Utiliser le contexte
 ai.use-wikipedia-context: Utiliser le contexte Wikipedia
+author.books: >-
+    {books_count, plural,
+        =0    {0 books}
+        =1    {
+          {series, plural,
+            =0    {1 livre dont 0 séries}
+            =1    {1 livre dont 1 série}
+            other {1 livre dont # séries}
+          }
+        }
+        other {
+          {series, plural,
+            =0    {{books} livres dont 0 séries}
+            =1    {{books} livres dont 1 série}
+            other {{books} livres dont # séries}
+          }
+        }
+    }
+author.tags: Tags
+author.standalone-books: Livres en dehors des séries
+author.in-series: Séries
 book.actions: Actions
 book.add-to-favorites: Ajouter à la listre de lecture
 book.age-category: Catégorie d'âge
@@ -73,6 +104,7 @@ book.serieIndex: Index dans la série
 book.size: Taille
 book.summary: Résumé
 book.tags: Catégories
+book.language: Langue
 book.this-action-is-irreversible: Cette action est irréversible
 book.title: Titre
 book.unknown-author: Auteur inconnu
@@ -80,13 +112,34 @@ book.updated: Modifié
 book.upload-book: Télévérser le livre
 book.upload-books-to-the-consume-folder: Téléverser le livre dans le dossier consume
 book.upload-cover: Téléverser la couverture
+book.upload-cover-title: Cliquez pour téléverser la couverture
 book.upload: Télévérser le livre
 book.uuid: Unique ID
 book.verified: Verifié
+book.read-in-browser: Lire dans le navigateur
 books.in-serie: Livres dans la serie
 books.other-books: Hors-série
 books.same-author: Livres avec le même auteur
 books.same-index: Livres avec le même index
+books.reading.progress: "{read} / {total}"
+books.stat.progress: >-
+    {count, plural,
+        =0    {0 livres en cours}
+        =1    {1 livre en cours}
+        other {# livres en cours}
+    }
+books.stat.read: >-
+    {count, plural,
+        =0    {0 livre lu}
+        =1    {1 livre lu}
+        other {# livres lus}
+    }
+books.stat.hidden: >-
+    {count, plural,
+        =0    {0 livres cachés}
+        =1    {1 livre caché}
+        other {# livres cachés}
+    }
 dashboard.continue-reading: Continuer à lire
 dashboard.hello: Aloha
 dashboard.need-inspiration: Besoin d'inspiration?
@@ -119,6 +172,26 @@ generic.yes: Oui
 group.filter-placeholder: Filtrer...
 group.rename: Renommer
 group.search: Chercher
+inlineeditinteraction.title: Actions
+inlineeditinteraction.favorites.add: Ajouter aux favoris
+inlineeditinteraction.favorites.remove: Retirer des favoris
+inlineeditinteraction.finished.add: Marquer comme lu
+inlineeditinteraction.finished.remove: Marquer comme non lu
+inlineeditinteraction.hidden.add: Cacher le livre
+inlineeditinteraction.hidden.remove: Montrer le livre
+inlineeditinteraction.edit: Editer l'interaction
+inlineeditinteraction.shelf.add: Ajouter a l'étagère
+inlineeditinteraction.shelf.new: Create une étagère
+inlineeditinteraction.flash.read: Bon travail!
+inlineeditinteraction.flash.unread: Marquer comme non lu
+inlineeditinteraction.flash.saveInteraction: Sauvegardé
+inlineeditinteraction.flash.saveShelf: Etagère sauvegardée
+inlineeditinteraction.flash.favorite: Ajouter a la liste de lecture
+inlineeditinteraction.flash.unfavorite: Retirer de la liste de lecture
+inlineeditinteraction.flash.hide: Caché
+inlineeditinteraction.flash.unhide: Visible
+inlineeditinteraction.flash.shelf: Ajouté a l'étagère
+inlineeditinteraction.flash.unshelf: Retiré de l'étagère
 instance-configuration.current-value: Valeur actuelle
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Modifier la configuration
@@ -130,8 +203,11 @@ instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This
 instance-configuration.title: Titre
 interaction.form.favorite: Liste de lecture
 interaction.form.finished: Fini
-interaction.form.finishedDate: Date de lecture
+interaction.form.finisheddate: Date de lecture
 interaction.form.submit: Sauvegarder
+interaction.status.finished: Terminé
+interaction.status.not-started: Pas commencé
+interaction.status.progress: "{read} / {total}"
 kobo.device.access-key: Clé d'accès
 kobo.device.create-new: Créer nouveau
 kobo.device.delete: Supprimer
@@ -170,6 +246,7 @@ menu.kobodevices: Appareils Kobo
 menu.logout: Déconnexion
 menu.notverified: Non vérifiés
 menu.profile: Profil
+menu.publishers: Editeurs
 menu.readinglist: Liste de lecture
 menu.series: Séries
 menu.shelves: Etagères

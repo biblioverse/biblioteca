@@ -38,6 +38,7 @@ class BookFixture extends Fixture implements DependentFixtureInterface
     public const ID = 1;
     public const UUID = '54c8fb05-cf05-4cb6-9482-bc25fa49fa80';
     public const UUID_JUNGLE_BOOK = '6b6a0c48-d0e6-4722-8b43-d50e612dc240';
+    public const UUID_MOBY_DICK = 'b05b405f-8b90-4d66-9be6-61038d7c0e09';
 
     public const NUMBER_OF_OWNED_YAML_BOOKS = 20;
     public const NUMBER_OF_UNOWNED_YAML_BOOKS = 1;

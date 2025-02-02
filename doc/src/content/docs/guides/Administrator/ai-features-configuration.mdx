@@ -11,9 +11,10 @@ Currently the app allows to have Ollama compatible and OpenAI compatible models.
 
 
 - Please refer to OpenAI's documentation to get your API key and model for ChatGPT.
+  * Example: use `https://api.openai.com/v1/` as URL and `gpt-4o-mini` as model.
 - Please refer to perplexity.ai documentation to get your API key and models for Perplexity
 
-On this page you can test your model and the results.
+You can test your model and the results directly from the UI.
 
 You can enable or disable the addition of context per model. You can also configure system prompts for each model.
 
@@ -27,7 +28,7 @@ Below the model list, you can configure which model will be used for different a
 
 When your favourite LLM is configured, fill in the prompts that will be used to generate the summaries and tags.
 
-The application will replace the `{book}` placeholder with the book's title, author and series.
+The application will replace the `{book}` placeholder with the book's title, author and series. Also the `{language}` placeholder with the book's language or user's language.
 
 ### For tags
 
@@ -38,7 +39,7 @@ The output must be only valid JSON format. It must be an object with one key nam
 **Here are some example prompts:**
 
 ```
-Can you give 5 classifying keywords about the book {book} in a list without explanation in french
+Can you give 5 classifying keywords about the book {book} in a list without explanation in language {language}
 ```
 ```
 Give me a list of genres or tags for {book}. The first one must be about target audience (example: for teenagers), the second one must
@@ -46,7 +47,7 @@ be about the location of the main story (example: Switzerland), the next one are
 ```
 ### For summaries
 ```
-Can you make a factual summary of the book {book} in around 150 words in french
+Can you make a factual summary of the book {book} in around 150 words in language {language}.
 ```
 
 ### For search

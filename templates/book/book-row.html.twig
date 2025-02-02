@@ -1,0 +1,26 @@
+<tr>
+    <td style="width: 50px; vertical-align: middle; text-align: right;">
+        <span class="text-secondary">{{ index }}</span>
+    </td>
+    
+    <td style="width: 100px">
+        <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
+            {% include 'book/_cover.html.twig' with { book: book } %}
+        </a>
+    </td>
+    <td style="vertical-align: middle;">
+        <h4>{{ book.title }}</h4>
+        {% if book.authors|length > 0%}
+        <div>
+            {% for author in book.authors %}
+                <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </td>
+    <td style="vertical-align: middle; width: 100px;">
+        {{ component('InlineEditInteraction', {book:book, user: app.user, shelves: shelves}) }}
+    </td>
+</tr>

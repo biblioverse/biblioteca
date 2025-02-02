@@ -8,8 +8,10 @@ use App\Entity\Shelf;
 use App\Entity\User;
 use App\Enum\ReadingList;
 use App\Enum\ReadStatus;
+use App\Form\InlineInteractionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -41,6 +43,12 @@ class InlineEditInteraction extends AbstractController
     #[LiveProp()]
     public Book $book;
 
+    /**
+     * @var array<Shelf>
+     */
+    #[LiveProp()]
+    public ?array $shelves = null;
+
     public ?string $flashMessage = null;
 
     public function __construct(private EntityManagerInterface $entityManager)
@@ -50,7 +58,7 @@ class InlineEditInteraction extends AbstractController
     #[PostMount]
     public function postMount(): void
     {
-        $this->interaction = $this->getInteraction();
+        $this->interaction = $this->getOrCreateInteraction();
 
         // @phpstan-ignore-next-line
         $this->finished = $this->interaction->getFinishedDate();
@@ -61,18 +69,23 @@ class InlineEditInteraction extends AbstractController
         $this->shelves = array_filter($this->shelves, static fn ($item) => $item->getQueryString() === null);
     }
 
-    private function getInteraction(): BookInteraction
+    #[\Override]
+    protected function instantiateForm(): FormInterface
+    {
+        return $this->formFactory->createNamed(uniqid('interactionform-', false), InlineInteractionType::class, $this->getOrCreateInteraction(), ['method' => 'POST']);
+    }
+
+    private function getOrCreateInteraction(): BookInteraction
     {
         $interaction = $this->interaction;
         if (!$interaction instanceof BookInteraction) {
-            $bookInteractionRepo = $this->entityManager->getRepository(BookInteraction::class);
-            $interaction = $bookInteractionRepo->findOneBy(['user' => $this->user, 'book' => $this->book]);
-            if (null === $interaction) {
-                $interaction = new BookInteraction();
-                $interaction->setUser($this->user);
-                $interaction->setBook($this->book);
-                $interaction->setReadPages(0);
-            }
+            // as the interaction value should be passed from the parent component
+            // if it is not set we consider no interaction exists yet
+            $interaction = new BookInteraction();
+            $interaction->setUser($this->user);
+            $interaction->setBook($this->book);
+            $interaction->setReadPages(0);
+            $interaction->setFinishedDate(null);
         }
 
         return $interaction;
@@ -81,15 +94,20 @@ class InlineEditInteraction extends AbstractController
     #[LiveAction]
     public function saveDate(): void
     {
-        $interaction = $this->getInteraction();
+        $interaction = $this->getOrCreateInteraction();
 
+        $interaction->setFinished(!$interaction->isFinished());
+        $this->book->setUpdated(new \DateTimeImmutable('now'));
+        $this->entityManager->persist($this->book);
         $interaction->setFinishedDate($this->finished);
 
         $this->entityManager->persist($interaction);
 
         $this->entityManager->flush();
 
-        $this->flashMessage = 'Read status updated';
+        $this->flashMessage = $interaction->isFinished()
+            ? 'inlineeditinteraction.flash.read'
+            : 'inlineeditinteraction.flash.unread';
     }
 
     #[LiveAction]
@@ -103,19 +121,19 @@ class InlineEditInteraction extends AbstractController
             default => $interaction->setReadStatus($readStatus),
         };
 
-        $this->book->setUpdated(new \DateTime('now'));
+        $this->book->setUpdated(new \DateTimeImmutable('now'));
         $this->entityManager->persist($this->book);
         $this->entityManager->persist($interaction);
         $this->entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessage = 'Read status updated';
+        $this->flashMessage = 'inlineeditinteraction.flash.readstatus';
     }
 
     #[LiveAction]
     public function toggleReadingList(#[LiveArg] string $value): void
     {
-        $interaction = $this->getInteraction();
+        $interaction = $this->getOrCreateInteraction();
 
         $readingList = ReadingList::tryFrom($value);
         match ($readingList) {
@@ -124,11 +142,47 @@ class InlineEditInteraction extends AbstractController
         };
 
         $this->entityManager->persist($interaction);
-        $this->book->setUpdated(new \DateTime('now'));
+        $this->book->setUpdated(new \DateTimeImmutable('now'));
         $this->entityManager->persist($this->book);
         $this->entityManager->flush();
         $this->interaction = $interaction;
 
-        $this->flashMessage = 'Reading list updated';
+        $this->flashMessage = 'inlineeditinteraction.flash.readinglist';
+    }
+
+    #[LiveAction]
+    public function addToShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    {
+        $shelfRepository = $entityManager->getRepository(Shelf::class);
+
+        $shelf = $shelfRepository->find($shelf);
+
+        if (null === $shelf) {
+            throw new \RuntimeException('Shelf not found');
+        }
+
+        $this->book->addShelf($shelf);
+
+        $entityManager->flush();
+
+        $this->flashMessage = 'inlineeditinteraction.flash.shelf';
+    }
+
+    #[LiveAction]
+    public function removeFromShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    {
+        $shelfRepository = $entityManager->getRepository(Shelf::class);
+
+        $shelf = $shelfRepository->find($shelf);
+
+        if (null === $shelf) {
+            throw new \RuntimeException('Shelf not found');
+        }
+
+        $this->book->removeShelf($shelf);
+
+        $entityManager->flush();
+
+        $this->flashMessage = 'inlineeditinteraction.flash.unshelf';
     }
 }

@@ -16,7 +16,6 @@
                     Make sure to replace the <code>reading_services_host</code> if it exists, to avoid loosing your reading progression. <br>
                     You can also edit the <code>image_host</code> and <code>image_url_quality_template</code> entries.
                     <pre>
-                        {% apply spaceless -%}
                         <code>
                             {{- "\n" }}[OneStoreServices]
                             {{- "\n" }}...{{ "" -}}
@@ -26,7 +25,6 @@
                             {{- "\n" }}reading_services_host={{ app.request.getUriForPath("") -}}
                             {{- "\n"}}...
                         </code>
-                        {%- endapply %}
                     </pre>
                 </li>
                 {%  if token is not defined %}

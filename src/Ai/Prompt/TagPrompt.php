@@ -24,8 +24,11 @@ The output must be only valid JSON format. It must be an object with one key nam
     #[\Override]
     public function convertResult(string $result): array
     {
+        // remove deepseek thinking
+        $result = preg_replace('/<think>.*?<\/think>/s', '', $result);
+
         try {
-            $result = trim($result, '´`');
+            $result = trim((string) $result, "´`\n\r\t\v\0");
             if (str_starts_with($result, 'json')) {
                 $result = substr($result, 4);
             }

@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ 'menu.authors'|trans }} <i class="bi bi-chevron-right mx-2"></i> {{ author }}{% endblock %}
+
+{% block body %}
+    <div class="hero">
+        <div class="hero__background"></div>
+        <div class="hero__image">
+           {% include 'book/_cover.html.twig' with {book: books[0], interaction: null} %}
+        </div>
+        <div class="hero__title">
+            <h1>{{ author }}</h1>
+            {{ 'author.books'|trans({"%books%": books|length, "%books_count%": books|length, "%series%": booksInSeries|length}) }}
+        </div>
+        <div class="hero__stats">
+            <div>
+                <i class="bi bi-play-circle-fill"></i> 
+                {{ 'books.stat.progress'|trans({"%count%": inProgressBooks }) }}
+            </div>
+            <div>
+                <i class="bi bi-check-circle-fill"></i>
+                {{ 'books.stat.read'|trans({"%count%": readBooks }) }}
+            </div>
+            <div>
+                <i class="bi bi-eye-slash-fill"></i>
+                {{ 'books.stat.hidden'|trans({"%count%": hiddenBooks }) }}
+            </div>
+        </div>
+        <div class="hero__progress">
+            <div class="heroProgress">
+                <div class="heroProgress__text">
+                {{ 'books.reading.progress'|trans({"%read%": readBooks, "%total%": books|length }) }}
+                </div>
+                <div class="heroProgress__bar">
+                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks/books|length) *100 }}%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="booksWithDetails">
+        <div class="booksWithDetails__content">
+            {% if booksInSeries|length > 0 %}
+            <h3>{{ 'author.in-series'|trans }}</h3>
+            <div class="bookGrid">
+                {% for serie, book in booksInSeries %}
+                    <div class="bookGrid__item">
+                        <a href="{{ path('app_serie_detail',{'name':book.serie}) }}" class=" small">
+                            {% include 'book/_cover.html.twig' with {book: book, interaction: null} %}
+                        </a>
+                        <strong>{{ serie }}</strong><br />
+                        {% for author in book.authors %}
+                        <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                            <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                        </a><br />
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if otherBooks|length > 0 %}
+            <h3>{{ 'author.standalone-books'|trans }}</h3>
+            <div class="bookGrid">
+                {% for book in otherBooks %}
+                    <div class="bookGrid__item">
+                        {% include 'book/_teaser.html.twig' with {book: book} %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% if tags|length > 0 %}
+        <div class="booksWithDetails__info">
+            <div class="infoBlock">
+                <h3>{{ 'author.tags'|trans }}</h3>
+                <ul style="list-style-type: none; padding-left: 1rem;">
+                {% for tag, books in tags %}
+                    <li>
+                        <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none p-1">
+                            <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

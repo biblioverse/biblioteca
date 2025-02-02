@@ -3,10 +3,10 @@
 {% for interaction in book.bookInteractions %}
     {% if is_granted('VIEW',interaction) %}
         {% set existing=true %}
-        {{ component('InlineEditInteraction',{'user':app.user,'book':book, 'interaction':interaction}) }}
+        {{ component('InlineEditInteraction',{'user':app.user,'book':book, 'interaction': interaction, 'shelves': shelves, 'buttonWithText': true}) }}
     {% endif %}
 {% endfor %}
 
 {% if not existing %}
-    {{ component('InlineEditInteraction',{'user':app.user,'book':book}) }}
+    {{ component('InlineEditInteraction',{'user':app.user,'book':book, 'shelves': shelves, 'buttonWithText': true}) }}
 {% endif %}

@@ -33,6 +33,7 @@ books:
     serie: 'test'
     serieIndex: 1
     ageCategory: 5
+    uuid: "b05b405f-8b90-4d66-9be6-61038d7c0e09"
     pageNumber: 70
   - title: "Great Expectations"
     authors: ["Charles Dickens"]
