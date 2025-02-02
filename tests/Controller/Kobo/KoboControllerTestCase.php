@@ -3,8 +3,10 @@
 namespace App\Tests\Controller\Kobo;
 
 use App\DataFixtures\BookFixture;
+use App\DataFixtures\ShelfFixture;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
+use App\Entity\Shelf;
 use App\Kobo\Kepubify\KepubifyEnabler;
 use App\Kobo\Proxy\KoboProxyConfiguration;
 use App\Kobo\Proxy\KoboStoreProxy;
@@ -49,6 +51,12 @@ abstract class KoboControllerTestCase extends WebTestCase
     {
         // @phpstan-ignore-next-line
         return $this->getEntityManager()->getRepository(Book::class)->find(BookFixture::ID);
+    }
+
+    protected function getShelf(): Shelf
+    {
+        // @phpstan-ignore-next-line
+        return $this->getEntityManager()->getRepository(Shelf::class)->findOneBy(['name' => ShelfFixture::SHELF_NAME]);
     }
 
     protected static function getJsonResponse(): array

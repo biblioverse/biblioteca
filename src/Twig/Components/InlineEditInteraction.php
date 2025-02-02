@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Enum\ReadingList;
 use App\Enum\ReadStatus;
 use App\Form\InlineInteractionType;
+use App\Service\BookArchiver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -44,8 +45,12 @@ class InlineEditInteraction extends AbstractController
     public ?string $flashMessage = null;
     public ?array $shelves = null;
 
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly Security $security, private readonly FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private FormFactoryInterface $formFactory,
+        private Security $security,
+        private BookArchiver $bookArchiver,
+    ) {
     }
 
     private function getCurrentUser(): User
@@ -154,6 +159,8 @@ class InlineEditInteraction extends AbstractController
 
         $entityManager->flush();
 
+        $this->bookArchiver->unArchiveBookFromShelf($shelf, $this->book);
+
         $this->flashMessage = 'inlineeditinteraction.flash.shelf';
     }
 
@@ -171,6 +178,8 @@ class InlineEditInteraction extends AbstractController
         $this->book->removeShelf($shelf);
 
         $entityManager->flush();
+
+        $this->bookArchiver->archiveBookFromShelf($shelf, $this->book);
 
         $this->flashMessage = 'inlineeditinteraction.flash.unshelf';
     }

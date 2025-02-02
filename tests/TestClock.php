@@ -20,4 +20,9 @@ class TestClock implements ClockInterface
 
         return $this;
     }
+
+    public function alter(string $diff): void
+    {
+        $this->setTime($this->now()->modify($diff));
+    }
 }
