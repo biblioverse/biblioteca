@@ -4,11 +4,8 @@ namespace App\Tests\Controller\Kobo\Api\V1\Library;
 
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
-use App\Entity\Book;
-use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
-use App\Entity\Shelf;
 use App\Kobo\SyncToken;
 use App\Repository\BookRepository;
 use App\Service\KoboSyncTokenExtractor;
@@ -25,8 +22,8 @@ class SyncControllerTest extends KoboControllerTestCase
         $this->getKoboStoreProxy()->setClient(null);
         $this->getKoboProxyConfiguration()->setEnabled(false);
         $this->getKoboDevice()->setLastSyncToken(null);
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks($this->getKoboDevice());
-        $this->getEntityManager()->getRepository(BookInteraction::class)->createQueryBuilder('bi')->delete()->getQuery()->execute();
+        $this->deleteAllSyncedBooks();
+        $this->deleteAllInteractions();
         $this->changeAllBooksDate(new \DateTimeImmutable('2025-01-01 00:00:00', new \DateTimeZone('UTC')));
         $this->changeAllShelvesDate(new \DateTimeImmutable('2025-01-01 00:00:00', new \DateTimeZone('UTC')));
         $this->getEntityManager()->flush();
@@ -180,7 +177,6 @@ class SyncControllerTest extends KoboControllerTestCase
      */
     public function testSyncControllerSyncedBookCount(): void
     {
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(0, $count, 'Number of synced book is invalid');
 
@@ -310,47 +306,5 @@ class SyncControllerTest extends KoboControllerTestCase
 
         $removed = $response[0]['ChangedEntitlement']['BookEntitlement']['IsRemoved'] ?? null;
         self::assertTrue($removed, 'The book should be marked as removed');
-    }
-
-    private function markAllBooksAsSynced(\DateTimeImmutable $when): void
-    {
-        $em = $this->getEntityManager();
-        $books = $this->getService(BookRepository::class)->findAll();
-
-        $koboDevice = $this->getKoboDevice();
-        foreach ($books as $book) {
-            $syncedBook = new KoboSyncedBook($when, $when, $koboDevice, $book);
-            $book->addKoboSyncedBook($syncedBook);
-            $em->persist($syncedBook);
-        }
-        $em->flush();
-    }
-
-    private function changeAllBooksDate(\DateTimeImmutable $when): void
-    {
-        // It seems that Gedmo take over, so we tells him the date too
-        (new TestClock())->setTime($when);
-        $this->getEntityManager()->createQueryBuilder()
-            ->update(Book::class, 'b')
-            ->set('b.updated', ':when')
-            ->set('b.created', ':when')
-            ->where('b.id > 0')
-            ->setParameter('when', $when)
-            ->getQuery()
-            ->execute();
-    }
-
-    private function changeAllShelvesDate(\DateTimeImmutable $when): void
-    {
-        // It seems that Gedmo take over, so we tells him the date too
-        (new TestClock())->setTime($when);
-        $this->getEntityManager()->createQueryBuilder()
-            ->update(Shelf::class, 's')
-            ->set('s.updated', ':when')
-            ->set('s.created', ':when')
-            ->orWhere('s.id > 0')
-            ->setParameter('when', $when)
-            ->getQuery()
-            ->execute();
     }
 }

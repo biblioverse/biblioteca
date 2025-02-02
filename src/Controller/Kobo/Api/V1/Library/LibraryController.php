@@ -56,7 +56,7 @@ class LibraryController extends AbstractKoboController
 
         if ($forced) {
             $this->koboSyncLogger->debug('Force sync for Kobo {id}', ['id' => $koboDevice->getId()]);
-            $this->koboSyncedBookRepository->deleteAllSyncedBooks($koboDevice);
+            $this->koboSyncedBookRepository->deleteAllSyncedBooks();
             $koboDevice->setForceSync(false);
             $syncToken = new SyncToken();
             $koboDevice->setLastSyncToken($syncToken);
