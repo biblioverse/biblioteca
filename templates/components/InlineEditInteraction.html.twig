@@ -5,7 +5,7 @@
     {% set modalIdShelf=unique_id('shelf-', false) %}
 
     <div class="dropend">
-        <button type="button" class="btn btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
+        <button type="button" class="btn btn-sm btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
                 data-bs-auto-close="outside" aria-expanded="false">
 
                 {% if buttonWithText %}
@@ -45,6 +45,29 @@
                     >
                         <i class="bi bi-{{ enum('App\\Enum\\ReadStatus').getIcon(case) }}"></i>
                         {{ enum('App\\Enum\\ReadStatus').getLabel(case)|trans }}
+                    </a>
+                </li>
+            {% endfor %}
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            {% for rating in 0..5 %}
+                <li>
+                    <a
+                        href="#"
+                        data-action="live#action"
+                        data-live-action-param="changeRating(value={{ rating }})"
+                        data-live-value-param="{{ rating }}"
+                        class="dropdown-item {{ rating==interaction.rating?'text-success':''}}"
+                    >
+                        {% if rating==0 %}
+                            {{ 'inlineeditinteraction.notrated'|trans }}
+                        {% else %}
+                            {% for current in 1..rating %}
+                                <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        {% endif %}
+
                     </a>
                 </li>
             {% endfor %}

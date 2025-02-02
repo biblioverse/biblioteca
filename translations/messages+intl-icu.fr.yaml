@@ -96,6 +96,7 @@ book.no-picture-for: Pas d'image pour
 book.number-of-pages: Nombre de pages
 book.picture-for-book: Image pour
 book.publisher: Editeur
+book.rating: Notation
 book.read-state: Etat de lecture
 book.readinglist-state: Liste de lecture
 book.relocate: Relocation
@@ -199,6 +200,7 @@ inlineeditinteraction.flash.hide: Caché
 inlineeditinteraction.flash.unhide: Visible
 inlineeditinteraction.flash.shelf: Ajouté a l'étagère
 inlineeditinteraction.flash.unshelf: Retiré de l'étagère
+inlineeditinteraction.notrated: Pas de note
 instance-configuration.current-value: Valeur actuelle
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Modifier la configuration

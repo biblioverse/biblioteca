@@ -96,6 +96,7 @@ book.no-picture-for: No picture for
 book.number-of-pages: Number of pages
 book.picture-for-book: Picture for
 book.publisher: Publisher
+book.rating: Rating
 book.read-state: Read state
 book.readinglist-state: Reading list
 book.relocate: Relocate
@@ -199,6 +200,7 @@ inlineeditinteraction.flash.hide: Hidden
 inlineeditinteraction.flash.unhide: Unhidden
 inlineeditinteraction.flash.shelf: Added to shelf
 inlineeditinteraction.flash.unshelf: Removed from shelf
+inlineeditinteraction.notrated: Not rated
 instance-configuration.current-value: Current value
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Edit configuration

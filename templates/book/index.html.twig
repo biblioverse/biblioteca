@@ -47,6 +47,16 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>{{ 'book.rating'|trans }}</th>
+                    <td>
+                        {% if interaction is not null and interaction.rating >0 %}
+                            {% for current in 1..interaction.rating %}
+                            <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
                     <th>{{ 'book.readinglist-state'|trans }}</th>
                     <td>
                         {{ enum('App\\Enum\\ReadingList').getLabel(interaction.readingList|default( enum('App\\Enum\\ReadingList').NotDefined))|trans }}

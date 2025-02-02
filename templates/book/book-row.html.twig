@@ -19,6 +19,12 @@
             {% endfor %}
         </div>
         {% endif %}
+        {% set interaction = book.lastInteraction(app.user) %}
+        {% if interaction is not null and interaction.rating > 0 %}
+            {% for current in 1..interaction.rating %}
+                <i class="bi bi-star-fill"></i>
+            {% endfor %}
+        {% endif %}
     </td>
     <td style="vertical-align: middle; width: 100px;">
         {{ component('InlineEditInteraction', {book:book}) }}

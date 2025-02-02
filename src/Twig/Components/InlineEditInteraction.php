@@ -174,4 +174,41 @@ class InlineEditInteraction extends AbstractController
 
         $this->flashMessage = 'inlineeditinteraction.flash.unshelf';
     }
+
+    #[LiveAction]
+    public function saveInteraction(): void
+    {
+        $this->submitForm();
+
+        $interaction = $this->getForm()->getData();
+
+        if (!$interaction instanceof BookInteraction) {
+            throw new \RuntimeException('Invalid data');
+        }
+
+        $this->entityManager->persist($interaction);
+        $this->book->setUpdated(new \DateTimeImmutable('now'));
+        $this->entityManager->persist($this->book);
+        $this->entityManager->flush();
+        $this->flashMessage = 'inlineeditinteraction.flash.saveInteraction';
+
+        $this->dispatchBrowserEvent('manager:flush');
+    }
+
+    #[LiveAction]
+    public function changeRating(#[LiveArg] int $value): void
+    {
+        $interaction = $this->getOrCreateInteraction();
+
+        $interaction->setRating($value);
+
+        $this->entityManager->persist($interaction);
+
+        $this->book->setUpdated(new \DateTimeImmutable('now'));
+        $this->entityManager->persist($this->book);
+        $this->entityManager->flush();
+        $this->interaction = $interaction;
+
+        $this->dispatchBrowserEvent('manager:flush');
+    }
 }

@@ -1,4 +1,2 @@
 {# @var book App\Entity\Book #}
-{% if is_granted('VIEW',interaction) %}
-    {{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
-{% endif %}
+{{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
