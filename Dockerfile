@@ -6,13 +6,37 @@ RUN mkdir -p /tmp && chown -R www-data:www-data /tmp && chmod -R 777 /tmp
 RUN mkdir -p /var/run/ && chown -R www-data:www-data /var/run && chmod -R 777 /var/run
 USER www-data
 
-FROM base AS prod
+# We install the dependencies in a separate layer as the frontend image also needs them
+FROM base AS vendor
 USER root
-COPY . /var/www/html
+
+# Copying the full context is not great for caching
+# But composer install executes symfony commands that need the full context
+COPY . /var/www/html/
 
 RUN composer install
+
+FROM node:22 AS frontend
+
+WORKDIR /var/www/html
+
+# Needed for some symfony specific modules
+COPY --from=vendor /var/www/html/vendor /var/www/html/vendor
+
+# Only copy what is needed, improves cacheability
+COPY package.json package-lock.json webpack.config.js /var/www/html/
+COPY assets/ /var/www/html/assets/
+
 RUN npm install
 RUN npm run build
+
+FROM base AS prod
+USER root
+
+COPY . /var/www/html/
+
+COPY --from=vendor /var/www/html/vendor /var/www/html/vendor
+COPY --from=frontend /var/www/html/public/build /var/www/html/public/build
 
 RUN chown -R www-data:www-data /var/www/html
 
@@ -20,6 +44,15 @@ USER www-data
 
 FROM base AS dev
 USER root
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+    wget \
+    git \
+    curl \
+    sudo \
+    vim \
+    nodejs
+
 RUN /usr/local/bin/install-php-extensions xdebug
 
 RUN echo ' \n\
