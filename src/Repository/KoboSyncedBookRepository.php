@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
+use App\Entity\User;
 use App\Kobo\SyncToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
@@ -34,24 +35,48 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         $updatedAt = $syncToken->lastModified ?? new \DateTimeImmutable();
         $createdAt = $syncToken->lastCreated ?? new \DateTimeImmutable();
 
+        // Query for all the book to be synced (modified/or new)
         $syncedBooksQuery = $this->createQueryBuilder('koboSyncedBook')
              ->select('book.id')
              ->distinct()
              ->join('koboSyncedBook.book', 'book')
              ->where('koboSyncedBook.koboDevice = :koboDevice')
              ->andWhere('koboSyncedBook.book IN (:books)')
+             ->andWhere('koboSyncedBook.archived is null')
              ->setParameter('koboDevice', $koboDevice)
              ->setParameter('books', $books)
         ;
+
         $updatedBooks = (array) $syncedBooksQuery
             ->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
 
+        // Archived books are deleted from the synced books
+        $archivedBooksQueryBuilder = $this->createQueryBuilder('koboSyncedBook');
+        $archivedBooksQuery = $archivedBooksQueryBuilder
+            ->select('book.id')
+            ->distinct()
+            ->join('koboSyncedBook.book', 'book')
+            ->where('koboSyncedBook.koboDevice = :koboDevice')
+            ->andWhere('koboSyncedBook.book IN (:books)')
+            ->andWhere($archivedBooksQueryBuilder->expr()->isNotNull('koboSyncedBook.archived'))
+            ->setParameter('koboDevice', $koboDevice)
+            ->setParameter('books', $books);
+
+        $archivedBooks = (array) $syncedBooksQuery
+            ->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+
+        // We delete the archived synced books.
+        $archivedBooksQuery->delete()->getQuery()->execute();
+        // Note that you might need to refresh $koboDevice..
+
+        // We set the updated date for the synced books
         $syncedBooksQuery->update()
             ->set('koboSyncedBook.updated', ':updatedAt')
             ->setParameter('updatedAt', $updatedAt)
         ->getQuery()
             ->execute();
 
+        // Fetch all the books that we now need to consider as synced
         /** @var array<int, Book> $books */
         $booksToSyncQuery = $this->createQueryBuilder('koboSyncedBook')
             ->resetDQLPart('select')
@@ -66,16 +91,18 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
                 ->setParameter('excludedIds', $updatedBooks);
         }
 
+        if ($archivedBooks !== []) {
+            $booksToSyncQuery->andWhere($syncedBooksQuery->expr()->notIn('book.id', ':removedIds'))
+                ->setParameter('removedIds', $archivedBooks);
+        }
+
         /** @var Book[] $books */
         $books = $booksToSyncQuery
             ->getQuery()->getResult();
 
+        // We mark the books as synced
         foreach ($books as $book) {
-            $object = new KoboSyncedBook();
-            $object->setBook($book);
-            $object->setKoboDevice($koboDevice);
-            $object->setUpdated($updatedAt);
-            $object->setCreated($createdAt);
+            $object = new KoboSyncedBook($createdAt, $updatedAt, $koboDevice, $book);
             $book->addKoboSyncedBook($object);
             $koboDevice->addKoboSyncedBook($object);
             $this->getEntityManager()->persist($object);
@@ -84,17 +111,19 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function deleteAllSyncedBooks(KoboDevice|int $koboDeviceId): int
+    public function deleteAllSyncedBooks(KoboDevice|int|null $koboDeviceId = null): int
     {
-        $query = $this->createQueryBuilder('koboSyncedBook')
-            ->delete()
-            ->where('koboSyncedBook.koboDevice = :koboDevice')
-            ->setParameter('koboDevice', $koboDeviceId)
-            ->getQuery();
+        $queryBuilder = $this->createQueryBuilder('koboSyncedBook')
+            ->delete();
+        if ($koboDeviceId !== null) {
+            $queryBuilder
+                ->where('koboSyncedBook.koboDevice = :koboDevice')
+                ->setParameter('koboDevice', $koboDeviceId)
+                ->getQuery();
+        }
 
         /** @var int $result */
-        $result = $query
-            ->getResult();
+        $result = $queryBuilder->getQuery()->execute();
 
         return $result;
     }
@@ -110,5 +139,27 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         return $result;
+    }
+
+    public function findByUserAndBook(User $user, Book $book): array
+    {
+        /** @var KoboSyncedBook[] $result */
+        $result = $this->createQueryBuilder('kobo_synced_book')
+            ->select('kobo_synced_book')
+            ->join('kobo_synced_book.koboDevice', 'kobo_device')
+            ->join('kobo_device.user', 'user')
+            ->where('kobo_device.user = :user')
+            ->andWhere('kobo_synced_book.book = :book')
+            ->setParameter('user', $user)
+            ->setParameter('book', $book)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

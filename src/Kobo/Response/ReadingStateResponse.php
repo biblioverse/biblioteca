@@ -29,11 +29,11 @@ class ReadingStateResponse implements \Stringable
         $book = $this->book;
         $uuid = $book->getUuid();
 
-        $lastModified = $this->syncToken->maxLastModified($this->koboDevice->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $this->syncToken->currentDate, $book->getLastInteraction($this->koboDevice->getUser())?->getUpdated());
+        $lastModified = $this->syncToken->maxLastModified($this->koboDevice->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $book->getLastInteraction($this->koboDevice->getUser())?->getUpdated());
 
         return [[
             'EntitlementId' => $uuid,
-            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $this->syncToken->currentDate, $book->getLastInteraction($this->koboDevice->getUser())?->getCreated()),
+            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $book->getLastInteraction($this->koboDevice->getUser())?->getCreated()),
             'LastModified' => $lastModified,
             'PriorityTimestamp' => $lastModified,
             'StatusInfo' => [

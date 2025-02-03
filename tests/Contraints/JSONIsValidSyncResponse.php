@@ -25,6 +25,8 @@ class JSONIsValidSyncResponse extends Constraint
                 throw new \InvalidArgumentException(sprintf('The type %s has an invalid count', $key));
             }
         }
+
+        $this->fillEmptyWithZero($this->expectedKeysCount);
     }
 
     public const KNOWN_TYPES = [
@@ -82,12 +84,10 @@ class JSONIsValidSyncResponse extends Constraint
             $count[$type] = ($count[$type] ?? 0) + 1;
         }
 
-        foreach (self::KNOWN_TYPES as $type) {
-            (new IsIdentical($this->expectedKeysCount[$type] ?? 0))->evaluate($count[$type] ?? 0, sprintf('The number for %s doesnt matches', $type));
-        }
+        $this->fillEmptyWithZero($count);
 
-        asort($count);
-        asort($this->expectedKeysCount);
+        ksort($count);
+        ksort($this->expectedKeysCount);
 
         (new IsIdentical($this->expectedKeysCount))->evaluate($count, 'Sync response doesnt contains the right entries count for page '.$this->pageNum, false);
     }
@@ -144,6 +144,18 @@ class JSONIsValidSyncResponse extends Constraint
     {
         foreach ($keys as $key) {
             (new ArrayHasNestedKey($key))->evaluate($item, sprintf('Entitlement doesnt have a %s key', $key));
+        }
+    }
+
+    /**
+     * @param array<string, int> $values
+     */
+    private function fillEmptyWithZero(array &$values): void
+    {
+        foreach (self::KNOWN_TYPES as $type) {
+            if (false === array_key_exists($type, $values)) {
+                $values[$type] = 0;
+            }
         }
     }
 }
