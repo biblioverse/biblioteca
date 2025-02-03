@@ -10,9 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: BookInteractionRepository::class)]
-#[ORM\Table(name: 'book_interaction', uniqueConstraints: [
-    new ORM\UniqueConstraint(name: 'unique_user_book', columns: ['user_id', 'book_id']),
-])]
+#[ORM\Table(name: 'book_interaction')]
+#[ORM\UniqueConstraint(name: 'unique_user_book', columns: ['user_id', 'book_id'])]
 class BookInteraction
 {
     #[ORM\Id]
