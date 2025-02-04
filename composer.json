@@ -161,6 +161,7 @@
       "@php bin/console doctrine:database:create --env=test -n",
       "@php bin/console doctrine:migrations:migrate --env=test -n",
       "@php bin/console doctrine:fixtures:load --env=test --append -n",
+      "@php bin/console doctrine:schema:validate --env=test",
       "@php bin/console biblioverse:typesense:populate --env=test"
     ],
     "test": [
