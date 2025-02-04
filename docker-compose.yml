@@ -1,6 +1,5 @@
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:2.0.2
     build:
       target: dev
     command: ["/bin/sh", "-c" , "apache2-foreground" ]

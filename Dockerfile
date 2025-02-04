@@ -1,3 +1,5 @@
+ARG NODE_VERSION=22
+
 FROM ghcr.io/biblioverse/biblioteca-docker:2.0.2 AS base
 WORKDIR /var/www/html
 
@@ -12,11 +14,11 @@ USER root
 
 # Copying the full context is not great for caching
 # But composer install executes symfony commands that need the full context
-COPY . /var/www/html/
+COPY composer.json composer.lock /var/www/html/
 
-RUN composer install
+RUN composer install --no-interaction --no-progress --no-dev --no-scripts --optimize-autoloader
 
-FROM node:22 AS frontend
+FROM node:${NODE_VERSION} AS frontend
 
 WORKDIR /var/www/html
 
@@ -33,12 +35,10 @@ RUN npm run build
 FROM base AS prod
 USER root
 
-COPY . /var/www/html/
+COPY --chown=www-data:www-data . /var/www/html/
 
-COPY --from=vendor /var/www/html/vendor /var/www/html/vendor
-COPY --from=frontend /var/www/html/public/build /var/www/html/public/build
-
-RUN chown -R www-data:www-data /var/www/html
+COPY --chown=www-data:www-data --from=vendor /var/www/html/vendor /var/www/html/vendor
+COPY --chown=www-data:www-data --from=frontend /var/www/html/public/build /var/www/html/public/build
 
 USER www-data
 
