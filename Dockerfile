@@ -42,6 +42,8 @@ COPY --chown=www-data:www-data --from=frontend /var/www/html/public/build /var/w
 
 USER www-data
 
+RUN composer install --no-interaction --no-progress --no-dev --optimize-autoloader
+
 FROM base AS dev
 USER root
 

@@ -7,7 +7,10 @@ services:
       - "48480:8080" # Web
       - "48181:8181" # NPM
     depends_on:
-      - db
+      db:  
+        condition: service_started  
+      typesense:
+        condition: service_started
     volumes:
       - .:/var/www/html
       - .composer:/home/.composer:cached
