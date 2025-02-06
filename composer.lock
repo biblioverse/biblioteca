@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60ebd508806e2a2b562f4d5a5b17d5d3",
+    "content-hash": "c68bf95f8b9182262a8cad0799acaffc",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -119,16 +119,16 @@
         },
         {
             "name": "biblioverse/typesense-bundle",
-            "version": "v0.0.2",
+            "version": "v0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/biblioverse/TypesenseBundle.git",
-                "reference": "5cddfa35d8fe23d213f354066d549727bbed6d79"
+                "reference": "521851093528a2315fb7dc6933c90ed2e9d0cf29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/5cddfa35d8fe23d213f354066d549727bbed6d79",
-                "reference": "5cddfa35d8fe23d213f354066d549727bbed6d79",
+                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/521851093528a2315fb7dc6933c90ed2e9d0cf29",
+                "reference": "521851093528a2315fb7dc6933c90ed2e9d0cf29",
                 "shasum": ""
             },
             "require": {
@@ -228,10 +228,10 @@
             },
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.2",
+                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.3",
                 "issues": "https://github.com/biblioverse/TypesenseBundle/issues"
             },
-            "time": "2025-01-30T16:09:20+00:00"
+            "time": "2025-02-04T10:54:26+00:00"
         },
         {
             "name": "clue/stream-filter",

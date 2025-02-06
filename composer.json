@@ -12,7 +12,7 @@
     "ext-imagick": "*",
     "ext-zip": "*",
     "beberlei/doctrineextensions": "^1.3",
-    "biblioverse/typesense-bundle": "^0.0.2",
+    "biblioverse/typesense-bundle": "^0.0.3",
     "devdot/monolog-parser": "^1.6",
     "doctrine/annotations": "^2.0.2",
     "doctrine/doctrine-bundle": "^2.13.2",
@@ -161,6 +161,7 @@
       "@php bin/console doctrine:database:create --env=test -n",
       "@php bin/console doctrine:migrations:migrate --env=test -n",
       "@php bin/console doctrine:fixtures:load --env=test --append -n",
+      "@php bin/console doctrine:schema:validate --env=test",
       "@php bin/console biblioverse:typesense:populate --env=test"
     ],
     "test": [

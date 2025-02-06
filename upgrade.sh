@@ -24,7 +24,6 @@ FLAG_WITH_DOCKER_BUILD=0
 FLAG_WITH_MIGRATIONS=0
 FLAG_WITH_COMPOSER=0
 FLAG_WITH_TYPESENSE=0
-TYPESENSE_URL="http://typesense:8108/health"
 for arg in "$@"; do
   case $arg in
     --fast)
@@ -50,11 +49,6 @@ for arg in "$@"; do
     --with-typesense)
         echo "With typesense populate" >&2
         FLAG_WITH_TYPESENSE=1
-        ;;
-    --typesenseurl)
-        TYPESENSE_URL=$2
-        echo "With typesense_url ${TYPESENSE_URL}" >&2
-        shift
         ;;
     --all)
         echo "Does all the build operations" >&2
@@ -131,25 +125,7 @@ fi
 docker compose up -d --force-recreate --remove-orphans
 docker compose exec biblioteca bin/console cache:clear --env=prod
 
-# wait for typesense to be ready
+# populate
 if [ $FLAG_WITH_TYPESENSE -eq 1 ]; then
-  tries=0
-  echo "Waiting for Typesense to be ready"
-  sleep 1
-  while true; do
-    EXIT_CODE=0
-    docker compose exec biblioteca curl -s -f "${TYPESENSE_URL}" >/dev/null 2>&1 || EXIT_CODE=$?
-    if [ $EXIT_CODE -eq 0 ]; then
-      break
-    fi
-
-    echo -n "."
-    tries=$((tries + 1))
-    sleep 1
-    if [ $tries -gt 15 ]; then
-      echo "Typesense is not ready, skipping wait." >&2
-      break
-    fi
-  done
   docker compose exec biblioteca bin/console biblioverse:typesense:populate --env=prod
 fi
