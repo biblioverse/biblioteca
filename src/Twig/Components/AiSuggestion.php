@@ -23,7 +23,7 @@ final class AiSuggestion
 {
     use DefaultActionTrait;
 
-    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags', 'ageCategory'])]
+    #[LiveProp(writable: ['title', 'serie', 'serieIndex', 'publisher', 'verified', 'summary', 'authors', 'tags'])]
     public Book $book;
 
     #[LiveProp()]

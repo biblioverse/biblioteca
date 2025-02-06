@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\User;
+use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
 use App\Repository\ShelfRepository;
 use App\Security\Voter\BookVoter;
@@ -199,15 +200,18 @@ class BookController extends AbstractController
 
         $page = (int) max(1, $page);
 
-        if (!$interaction->isFinished() && $interaction->getReadPages() < $page) {
+        if ($interaction->getReadStatus() !== ReadStatus::Finished && $interaction->getReadPages() < $page) {
             $interaction->setReadPages($page);
         }
         $manager->persist($interaction);
         $manager->flush();
 
-        if (!$interaction->isFinished() && $page === $book->getPageNumber()) {
-            $interaction->setFinished(true);
-            $interaction->setFinishedDate(new \DateTime());
+        if ($interaction->getReadStatus() !== ReadStatus::Finished && $page === $book->getPageNumber()) {
+            $interaction->setReadStatus(ReadStatus::Finished);
+
+            // TODO Add next unread in serie to reading list?
+
+            $interaction->setFinishedDate(new \DateTimeImmutable());
             $this->addFlash('success', 'Book finished! Congratulations!');
             $manager->flush();
 
@@ -390,9 +394,9 @@ class BookController extends AbstractController
             $book = $fileSystemManager->renameFiles($book);
             $entityManager->persist($book);
             $entityManager->flush();
-            $this->addFlash('success', 'Files relocated');
+            $this->addFlash('success', 'Book relocated.');
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
+            $this->addFlash('danger', 'Error during relocation: '.$e->getMessage());
         }
 
         return $this->redirect($request->headers->get('referer') ?? '/');

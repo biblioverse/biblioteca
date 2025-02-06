@@ -96,7 +96,9 @@ book.no-picture-for: Pas d'image pour
 book.number-of-pages: Nombre de pages
 book.picture-for-book: Image pour
 book.publisher: Editeur
+book.rating: Notation
 book.read-state: Etat de lecture
+book.readinglist-state: Liste de lecture
 book.relocate: Relocation
 book.search-google-images: Chercher une couverture sur Google Images
 book.serie: série
@@ -145,6 +147,18 @@ dashboard.hello: Aloha
 dashboard.need-inspiration: Besoin d'inspiration?
 dashboard.reading-list: Dans votre liste de lecture
 dashboard.series-in-progress: Séries entamées
+enum.agecategories.notset: Non défini
+enum.agecategories.adults: Adultes
+enum.agecategories.everyone: Tout le monde
+enum.agecategories.sixteenplus: 16+ ans
+enum.agecategories.tenplus: 10+ ans
+enum.agecategories.thirteenplus: 13+ ans
+enum.readinglist.toread: 'A lire'
+enum.readinglist.ignored: 'Ignoré'
+enum.readinglist.notdefined : 'Non défini'
+enum.readstatus.not-started: 'Pas commencé'
+enum.readstatus.started: 'Commencé'
+enum.readstatus.finished: 'Terminé'
 error.error-happened: Une erreur est survenue
 error.stack-trace: Stack trace
 generic.are-you-sure-you-want-to-delete-this-item: Etes-vous sûr(e) de vouloir supprimer cet élément?
@@ -186,6 +200,7 @@ inlineeditinteraction.flash.hide: Caché
 inlineeditinteraction.flash.unhide: Visible
 inlineeditinteraction.flash.shelf: Ajouté a l'étagère
 inlineeditinteraction.flash.unshelf: Retiré de l'étagère
+inlineeditinteraction.notrated: Pas de note
 instance-configuration.current-value: Valeur actuelle
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Modifier la configuration
@@ -301,20 +316,15 @@ shelf.query: Requête
 shelf.shelves: Etagères
 timeline.timeline-for: Historique pour
 timeline.title: Titre
-user.agecategories.adults: Adultes
-user.agecategories.everyone: Tout le monde
-user.agecategories.sixteenplus: 16+ ans
-user.agecategories.tenplus: 10+ ans
-user.agecategories.thirteenplus: 13+ ans
 user.edit-user: Modifier l'utilisateur
-user.form.roles.user: Utilisateur
-user.form.roles.admin: Administrateur
 user.form.language.english: English
 user.form.language.french: Français
 user.form.language: Langue
 user.form.leave-blank-to-keep-current-password: Laissez vide pour conserver votre mode de passe actuel
 user.form.maxagecategory: Catégorie d'âge maximale
 user.form.plainpassword: Mot de passe
+user.form.roles.admin: Administrateur
+user.form.roles.user: Utilisateur
 user.form.roles: Roles
 user.form.username: Nom d'utilisateur(ice)
 user.last-login: Dernière connexion

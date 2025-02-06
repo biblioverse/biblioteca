@@ -6,6 +6,7 @@ use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
+use App\Enum\ReadStatus;
 use App\Kobo\Request\Bookmark;
 use App\Kobo\Request\ReadingState;
 use App\Kobo\Request\ReadingStateLocation;
@@ -145,7 +146,7 @@ class StateControllerTest extends KoboControllerTestCase
                 [
                     'book' => BookFixture::ID,
                     'readPages' => 15,
-                    'finished' => false,
+                    'readStatus' => ReadStatus::Started,
                 ],
             ],
             [
@@ -154,7 +155,7 @@ class StateControllerTest extends KoboControllerTestCase
                 [
                     'book' => BookFixture::ID,
                     'readPages' => 30,
-                    'finished' => true,
+                    'readStatus' => ReadStatus::Finished,
                 ],
             ],
             [
@@ -163,7 +164,7 @@ class StateControllerTest extends KoboControllerTestCase
                 [
                     'book' => BookFixture::ID,
                     'readPages' => null,
-                    'finished' => false,
+                    'readStatus' => ReadStatus::NotStarted,
                 ],
             ],
         ];

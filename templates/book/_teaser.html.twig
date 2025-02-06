@@ -4,22 +4,7 @@
 {% set withDetail = true %}
 {% endif %}
 
-{% set interaction = null %}
-{% for currentInteraction in book.bookInteractions|default([]) %}
-    {% if currentInteraction.user.id == app.user.id %}
-        {% set interaction = currentInteraction %}
-    {% endif %}
-{% endfor %}
-
-{% set read = false %}
-{% if interaction is not null and interaction.finished %}
-    {% set read = true %}
-{% endif %}
-
-{% set hidden = false %}
-{% if interaction is not null and interaction.hidden %}
-    {% set hidden = true %}
-{% endif %}
+{% set interaction = book.lastInteraction(app.user) %}
 
 {% if book.extension in ['epub','mobi'] %}
     {% set icon='bi-file-text-fill' %}
@@ -47,8 +32,13 @@
             {% for author in book.authors %}
                 <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
                     <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                </a><br />
+                </a>
             {% endfor %}
+            {% if interaction is not null and interaction.rating > 0 %}
+                {% for current in 1..interaction.rating %}
+                    <i class="bi bi-star-fill"></i>
+                {% endfor %}
+            {% endif %}
         </small>
     {% endif %}
 </div>

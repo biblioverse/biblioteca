@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Entity\Book;
 use App\Entity\User;
+use App\Enum\ReadingList;
+use App\Enum\ReadStatus;
 
 class BookInteractionService
 {
@@ -19,13 +21,13 @@ class BookInteractionService
         foreach ($books as $book) {
             $interaction = $book->getLastInteraction($user);
             if ($interaction !== null) {
-                if ($interaction->isFinished()) {
+                if ($interaction->getReadStatus() === ReadStatus::Finished) {
                     $readBooks++;
-                } elseif ($interaction->getReadPages() > 0) {
+                } elseif ($interaction->getReadStatus() === ReadStatus::Started) {
                     $inProgressBooks++;
                 }
 
-                if ($interaction->isHidden()) {
+                if ($interaction->getReadingList() === ReadingList::Ignored) {
                     $hiddenBooks++;
                 }
             }

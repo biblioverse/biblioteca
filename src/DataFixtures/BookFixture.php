@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Book;
+use App\Enum\AgeCategory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -91,7 +92,7 @@ class BookFixture extends Fixture implements DependentFixtureInterface
             }
 
             if (array_key_exists('ageCategory', $bookData)) {
-                $book->setAgeCategory($bookData['ageCategory']);
+                $book->setAgeCategory(AgeCategory::tryFrom($bookData['ageCategory']));
             }
 
             if (array_key_exists('tags', $bookData)) {

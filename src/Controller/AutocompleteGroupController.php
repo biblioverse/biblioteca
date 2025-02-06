@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Enum\AgeCategory;
 use App\Repository\BookRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @phpstan-type GroupType array{ item:string, slug:string, bookCount:int, booksFinished:int, lastBookIndex:int }
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class AutocompleteGroupController extends AbstractController
 {
     #[Route('/autocomplete/group/{type}', name: 'app_autocomplete_group')]
-    public function index(Request $request, BookRepository $bookRepository, string $type): Response
+    public function index(Request $request, BookRepository $bookRepository, string $type, TranslatorInterface $translator): Response
     {
         $query = $request->get('query');
         if (!is_string($query)) {
@@ -25,8 +26,8 @@ class AutocompleteGroupController extends AbstractController
         $json = ['results' => []];
 
         if ($type === 'ageCategory') {
-            foreach (User::AGE_CATEGORIES as $ageCategory => $ageCategoryId) {
-                $json['results'][] = ['value' => $ageCategoryId, 'text' => $ageCategory];
+            foreach (AgeCategory::cases() as $ageCategory) {
+                $json['results'][] = ['value' => $ageCategory->value, 'text' => $translator->trans(AgeCategory::getLabel($ageCategory))];
             }
 
             return new JsonResponse($json);

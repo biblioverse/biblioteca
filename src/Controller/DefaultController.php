@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Enum\ReadStatus;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManagerInterface;
@@ -61,7 +62,7 @@ class DefaultController extends AbstractController
             'finished' => [],
         ];
         foreach ($readList as $bookInteraction) {
-            if ($bookInteraction->isFinished()) {
+            if ($bookInteraction->getReadStatus() === ReadStatus::Finished) {
                 $statuses['finished'][] = $bookInteraction->getBook();
             } else {
                 $statuses['unread'][] = $bookInteraction->getBook();

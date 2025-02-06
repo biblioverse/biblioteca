@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/series')]
 class SerieController extends AbstractController
 {
-    #[Route('/{name}', name: 'app_serie_detail')]
+    #[Route('/{name}', name: 'app_serie_detail', requirements: ['name' => '.+'])]
     public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService, ShelfRepository $shelfRepository): Response
     {
         $books = $bookRepository->findBySerie($name);

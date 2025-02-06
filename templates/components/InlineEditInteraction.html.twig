@@ -4,23 +4,8 @@
     {% set modalIdInteraction=unique_id('interaction-', false) %}
     {% set modalIdShelf=unique_id('shelf-', false) %}
 
-    {% set finished=false %}
-    {% set hidden=false %}
-    {% set favorite = false %}
-    {% if interaction is not null %}
-        {% if interaction.finished %}
-            {% set finished=true %}
-        {% endif %}
-        {% if interaction.hidden %}
-            {% set hidden=true %}
-        {% endif %}
-        {% if interaction.favorite %}
-            {% set favorite = true %}
-        {% endif %}
-    {% endif %}
-
     <div class="dropend">
-        <button type="button" class="btn btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
+        <button type="button" class="btn btn-sm btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
                 data-bs-auto-close="outside" aria-expanded="false">
 
                 {% if buttonWithText %}
@@ -31,53 +16,63 @@
                 {% endif %}
         </button>
         <ul class="dropdown-menu">
-            <li>
-                <a
-                    href="#"
-                    class="dropdown-item" 
-                    data-action="live#action"
-                    data-live-action-param="toggleFavorite"
-                >
-                    <i class="bi bi-bookmark-heart"></i>
-                    {% if finished %}
-                        {{ 'inlineeditinteraction.favorites.remove'|trans }}
-                    {% else %}
-                        {{ 'inlineeditinteraction.favorites.add'|trans }}
-                    {% endif %}
-                </a>
-            </li>
-            <li>
-                <button
-                    class="dropdown-item" href="#"
-                    data-action="live#action"
-                    data-live-action-param="toggleHidden"
-                >
-                    <i class="bi bi-eye{{ hidden?'':'-slash' }}-fill"></i>
-                    {% if hidden %}
-                        {{ 'inlineeditinteraction.hidden.remove'|trans }}
-                    {% else %}
-                        {{ 'inlineeditinteraction.hidden.add'|trans }}
-                    {% endif %}
-                </button>
-            </li>
+            {% for case in enum('App\\Enum\\ReadingList').cases() %}
+                <li>
+                    <a
+                        href="#"
+                        data-action="live#action"
+                        data-live-action-param="toggleReadingList(value={{ case.value }})"
+                        data-live-value-param="{{ case.value }}"
+                        class="dropdown-item {{ case.value==interaction.readingList.value?'text-success':''}}"
+                    >
+                        <i class="bi bi-{{ enum('App\\Enum\\ReadingList').getIcon(case) }}"></i>
+                        {{ enum('App\\Enum\\ReadingList').getLabel(case)|trans }}
+                    </a>
+                </li>
+            {% endfor %}
+
             <li>
                 <hr class="dropdown-divider">
             </li>
+            {% for case in enum('App\\Enum\\ReadStatus').cases() %}
+                <li>
+                    <a
+                        href="#"
+                        data-action="live#action"
+                        data-live-action-param="toggleReadStatus(value={{ case.value }})"
+                        data-live-value-param="{{ case.value }}"
+                        class="dropdown-item {{ case.value==interaction.readStatus.value?'text-success':''}}"
+                    >
+                        <i class="bi bi-{{ enum('App\\Enum\\ReadStatus').getIcon(case) }}"></i>
+                        {{ enum('App\\Enum\\ReadStatus').getLabel(case)|trans }}
+                    </a>
+                </li>
+            {% endfor %}
             <li>
-                <a  href="#"
-                    class="dropdown-item" 
-                    data-action="live#action"
-                    data-live-action-param="toggle"
-                >
+                <hr class="dropdown-divider">
+            </li>
+            {% for rating in 0..5 %}
+                <li>
+                    <a
+                        href="#"
+                        data-action="live#action"
+                        data-live-action-param="changeRating(value={{ rating }})"
+                        data-live-value-param="{{ rating }}"
+                        class="dropdown-item {{ rating==interaction.rating?'text-success':''}}"
+                    >
+                        {% if rating==0 %}
+                            {{ 'inlineeditinteraction.notrated'|trans }}
+                        {% else %}
+                            {% for current in 1..rating %}
+                                <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                        {% endif %}
 
-                    {% if finished %}
-                        <i class="bi bi-check-circle-fill"></i>
-                        {{ 'inlineeditinteraction.finished.remove'|trans }}
-                    {% else %}
-                        <i class="bi bi-check-circle"></i>
-                        {{ 'inlineeditinteraction.finished.add'|trans }}
-                    {% endif %}
-                </a>
+                    </a>
+                </li>
+            {% endfor %}
+            <li>
+                <hr class="dropdown-divider">
             </li>
             <li>
                 <button href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdInteraction}}" type="button" data-toggle="tooltip" data-placement="bottom">
@@ -128,7 +123,7 @@
                                 <hr class="dropdown-divider">
                             </li>-->
                         {% endif %}
-                        
+
                         <!--
                         <li>
                             <a href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#{{modalIdShelf}}" type="button" data-toggle="tooltip" data-placement="bottom">

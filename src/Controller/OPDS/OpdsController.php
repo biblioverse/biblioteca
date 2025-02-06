@@ -151,9 +151,6 @@ class OpdsController extends AbstractController
 
         $feeds = [];
         foreach ($books as $bookInteraction) {
-            if ($bookInteraction->getBook() === null) {
-                continue;
-            }
             $feeds[] = $this->opds->convertBookToOpdsEntry($bookInteraction->getBook());
         }
         $opds->feeds($feeds);

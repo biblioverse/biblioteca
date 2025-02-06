@@ -23,7 +23,7 @@
                 </td>
                 <td>
                     {% if user.maxAgeCategory is not null %}
-                        {{ user.maxAgeCategory }} - {{ age_categories[user.maxAgeCategory] }}
+                       {{ enum("App\\Enum\\AgeCategory").getLabel(user.maxAgeCategory)|trans }}
                     {% endif %}
                 </td>
                 <td>
