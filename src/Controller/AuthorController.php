@@ -24,6 +24,8 @@ class AuthorController extends AbstractController
 
         $series = [];
         $otherBooks = [];
+        $publishers = [];
+        $ageCategories = [];
         $tags = [];
         foreach ($books as $book) {
             if ($book->getSerie() !== null) {
@@ -40,6 +42,14 @@ class AuthorController extends AbstractController
                     $tags[$tag][] = $book;
                 }
             }
+
+            if ($book->getPublisher() !== null) {
+                $publishers[$book->getPublisher()][] = $book;
+            }
+
+            if ($book->getAgeCategory() !== null) {
+                $ageCategories[$book->getAgeCategory()->label()][] = $book;
+            }
         }
 
         $booksInSeries = [];
@@ -55,6 +65,8 @@ class AuthorController extends AbstractController
             'booksInSeries' => $booksInSeries,
             'otherBooks' => $otherBooks,
             'tags' => $tags,
+            'ageCategories' => $ageCategories,
+            'publishers' => $publishers,
             'readBooks' => $stats['readBooks'],
             'hiddenBooks' => $stats['hiddenBooks'],
             'inProgressBooks' => $stats['inProgressBooks'],

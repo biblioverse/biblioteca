@@ -184,7 +184,7 @@ body.bg-darker{
             "cover progress ."
             "cover stats .";
   grid-template-columns: 300px auto 2rem;
-  grid-template-rows: auto auto auto 6em;
+  grid-template-rows: 2em auto 2em 6em;
   border-bottom: 1px solid var(--bs-border-color-translucent);
   margin-bottom: 2rem;
 }
@@ -196,6 +196,12 @@ body.bg-darker{
 
 .hero__title {
   grid-area: title;
+  align-self: center;
+}
+
+.hero__subtitle {
+  display: flex;
+  gap: 1rem;
 }
 
 .hero__background {
@@ -232,6 +238,12 @@ body.bg-darker{
   align-items: center;
 }
 
+.hero__stats div {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .hero__stats i {
   font-size: 1.25em;
 }
@@ -256,4 +268,8 @@ body.bg-darker{
 .infoBlock {
   background: rgba(var(--bs-body-color-rgb), 0.03);
   padding: 2rem;
+}
+
+.Rating {
+  color: rgba(var(--bs-secondary-rgb), 1);
 }

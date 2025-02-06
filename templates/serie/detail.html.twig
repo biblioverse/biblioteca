@@ -15,9 +15,13 @@
         </div>
         <div class="hero__title">
             <h1>{{ serie }}</h1>
+            <div class="hero__subtitle">
             {% for author in authors %}
-                <i class="bi bi-person-fill"></i>&nbsp;<a href="{{ filter_book_url({'authors':[author]}) }}">{{ author }}</a>
+                <a href="{{ filter_book_url({'authors':[author]}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                </a>
             {% endfor %}
+            </div>
         </div>
         <div class="hero__stats">
             <div>
@@ -39,7 +43,7 @@
                 {{ 'books.reading.progress'|trans({"%read%": readBooks+hiddenBooks, "%total%": books|length }) }}
                 </div>
                 <div class="heroProgress__bar">
-                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks+hiddenBooks/books|length) *100 }}%">
+                    <div class="heroProgress__bar__progress" style="width: {{ ((readBooks+hiddenBooks)/books|length) *100 }}%">
                     </div>
                 </div>
             </div>
@@ -76,19 +80,47 @@
             {% endif %}
         </div>
 
-        {% if tags|length > 0 %}
+        {% if tags|length > 0 or ageCategories|length > 0 or publishers|length > 0  %}
         <div class="booksWithDetails__info">
             <div class="infoBlock">
-                <h3>{{ 'author.tags'|trans }}</h3>
+                {% if tags|length > 0  %}
+                <h4>{{ 'author.tags'|trans }}</h4>
                 <ul style="list-style-type: none; padding-left: 1rem;">
                 {% for tag, books in tags %}
                     <li>
-                        <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none p-1">
+                        <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none text-secondary">
                             <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
                         </a>
                     </li>
                 {% endfor %}
                 </ul>
+                {% endif %}
+
+                {% if ageCategories|length > 0  %}
+                <h4>{{ 'book.age-category'|trans }}</h4>
+                <ul style="list-style-type: none; padding-left: 1rem;">
+                {% for ageCategory, books in ageCategories %}
+                    <li>
+                        <a href="{{ filter_book_url({'age':ageCategory}) }}" class="text-decoration-none text-secondary">
+                            {{ ageCategory|trans }}
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if publishers|length > 0  %}
+                <h4>{{ 'book.publisher'|trans }}</h4>
+                <ul style="list-style-type: none; padding-left: 1rem;">
+                {% for publisher, books in publishers %}
+                    <li>
+                        <a href="{{ filter_book_url({'publisher':publisher}) }}" class="text-decoration-none text-secondary">
+                            {{ publisher }}
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+                {% endif %}
             </div>
         </div>
         {% endif %}
