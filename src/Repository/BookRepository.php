@@ -326,12 +326,23 @@ class BookRepository extends ServiceEntityRepository
         return $firstUnreadBook;
     }
 
+    public function getAllSeriesCount(): int
+    {
+        /** @var int $nb */
+        $nb = $this->createQueryBuilder('serie')
+            ->select('count(serie.serie) as nb')
+            ->where('serie.serie IS NOT NULL')
+            ->getQuery()->getSingleScalarResult();
+
+        return $nb;
+    }
+
     /**
      * @return GroupType[]
      */
-    public function getAllSeries(): array
+    public function getAllSeries(?int $page = null, ?int $perPage = null): array
     {
-        $result = $this->createQueryBuilder('serie')
+        $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
@@ -341,7 +352,14 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.readStatus = :finished or bookInteraction.readingList=:ignored) and bookInteraction.user= :user')
             ->setParameter('ignored', ReadingList::Ignored)
             ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('serie.serie')->getQuery();
+            ->addGroupBy('serie.serie');
+
+        if ($page !== null && $perPage !== null) {
+            $qb->setMaxResults($perPage);
+            $qb->setFirstResult(($page - 1) * $perPage);
+        }
+
+        $result = $qb->getQuery();
 
         // @phpstan-ignore-next-line
         return $this->convertResults($result->getResult());
@@ -379,16 +397,31 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function getAllPublishersCount(): int
+    {
+        /** @var int $nb */
+        $nb = $this->createQueryBuilder('publisher')
+            ->select('count(publisher.publisher) as nb')
+            ->where('publisher.publisher IS NOT NULL')
+            ->getQuery()->getSingleScalarResult();
+
+        return $nb;
+    }
+
     /**
      * @return GroupType[]
      */
-    public function getAllPublishers(): array
+    public function getAllPublishers(?int $page = null, ?int $perPage = null): array
     {
         $qb = $this->createQueryBuilder('publisher')
             ->select('publisher.publisher as item')
             ->addSelect('COUNT(publisher.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished')
             ->where('publisher.publisher IS NOT NULL');
+        if ($page !== null && $perPage !== null) {
+            $qb->setMaxResults($perPage);
+            $qb->setFirstResult(($page - 1) * $perPage);
+        }
         $qb = $this->joinInteractions($qb, 'publisher');
 
         $results = $qb->addGroupBy('publisher.publisher')->getQuery();
@@ -406,33 +439,65 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('user', $this->security->getUser());
     }
 
-    /**
-     * @return GroupType[]
-     */
-    public function getAllAuthors(): array
+    public function getAllAuthorsCount(): int
     {
-        $qb = $this->createQueryBuilder('author')
-            ->select('author.authors as item')
-            ->addSelect('COUNT(author.id) as bookCount')
-            ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished');
-        $qb = $this->joinInteractions($qb, 'author');
+        /** @var int $r */
+        $r = $this->createQueryBuilder('author')
+            ->select('count(author.authors) as count')
+            ->andWhere('author is not null')
+            ->getQuery()->getSingleScalarResult();
 
-        $qb->addGroupBy('author.authors');
-
-        // @phpstan-ignore-next-line
-        return $this->convertResults($qb->getQuery()->getResult());
+        return $r;
     }
 
     /**
      * @return GroupType[]
      */
-    public function getAllTags(): array
+    public function getAllAuthors(?int $page = null, ?int $perPage = null): array
+    {
+        $qb = $this->createQueryBuilder('author')
+            ->select('author.authors as item')
+            ->addSelect('COUNT(author.id) as bookCount')
+            ->andWhere('author is not null')
+            ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished');
+        if ($page !== null && $perPage !== null) {
+            $qb->setMaxResults($perPage);
+            $qb->setFirstResult(($page - 1) * $perPage);
+        }
+        $qb = $this->joinInteractions($qb, 'author');
+
+        $qb->addGroupBy('author.authors');
+        $qb->orderBy('author.authors', 'asc');
+
+        // @phpstan-ignore-next-line
+        return $this->convertResults($qb->getQuery()->getResult());
+    }
+
+    public function getAllTagsCount(): int
+    {
+        /** @var int $qb */
+        $qb = $this->createQueryBuilder('tag')
+            ->select('count(tag.tags) as nb')
+            ->getQuery()->getSingleScalarResult();
+
+        return $qb;
+    }
+
+    /**
+     * @return GroupType[]
+     */
+    public function getAllTags(?int $page = null, ?int $perPage = null): array
     {
         $qb = $this->createQueryBuilder('tag')
             ->select('tag.tags as item')
             ->addSelect('COUNT(tag.id) as bookCount')
             ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished');
         $qb = $this->joinInteractions($qb, 'tag');
+
+        if ($page !== null && $perPage !== null) {
+            $qb->setMaxResults($perPage);
+            $qb->setFirstResult(($page - 1) * $perPage);
+        }
 
         $qb->addGroupBy('tag.tags');
 
