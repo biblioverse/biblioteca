@@ -1,14 +1,16 @@
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:2.0.2
     build:
-      target: prod
+      target: dev
     command: ["/bin/sh", "-c" , "apache2-foreground" ]
     ports:
       - "48480:8080" # Web
       - "48181:8181" # NPM
     depends_on:
-      - db
+      db:  
+        condition: service_started  
+      typesense:
+        condition: service_started
     volumes:
       - .:/var/www/html
       - .composer:/home/.composer:cached
