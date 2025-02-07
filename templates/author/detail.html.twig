@@ -73,10 +73,13 @@
             </div>
             {% endif %}
         </div>
-        {% if tags|length > 0 or ageCategories|length > 0 or publishers|length > 0  %}
+        {% set showTags=(tags|length > 0) and app.user.isDisplayTags %}
+        {% set showAgeCategories=(ageCategories|length > 0) %}
+        {% set showPublishers=(publishers|length > 0) and app.user.isDisplayPublishers %}
+        {% if showTags or showAgeCategories or showPublishers  %}
         <div class="booksWithDetails__info">
             <div class="infoBlock">
-                {% if tags|length > 0  %}
+                {% if showTags  %}
                 <h4>{{ 'author.tags'|trans }}</h4>
                 <ul style="list-style-type: none; padding-left: 1rem;">
                 {% for tag, books in tags %}
@@ -89,7 +92,7 @@
                 </ul>
                 {% endif %}
 
-                {% if ageCategories|length > 0  %}
+                {% if showAgeCategories  %}
                 <h4>{{ 'book.age-category'|trans }}</h4>
                 <ul style="list-style-type: none; padding-left: 1rem;">
                 {% for ageCategory, books in ageCategories %}
@@ -102,7 +105,7 @@
                 </ul>
                 {% endif %}
 
-                {% if publishers|length > 0  %}
+                {% if showPublishers  %}
                 <h4>{{ 'book.publisher'|trans }}</h4>
                 <ul style="list-style-type: none; padding-left: 1rem;">
                 {% for publisher, books in publishers %}
