@@ -72,6 +72,18 @@ biblioverse_typesense:
             optional: true
             type: int32[]
             entity_attribute: users.favorite
+          embedding:
+            name: embedding
+            type: float[]
+            index: true
+            mapped: false
+            numDim: 768
+            embed:
+              from: ["tags", "summary"]
+              model_config:
+                model_name: "openai/nomic-embed-text"
+                api_key: ''
+                url: "http://10.10.10.55:11434/"
 
         default_sorting_field: sortable_id
         symbols_to_index: ['+', '#', '@', '_']

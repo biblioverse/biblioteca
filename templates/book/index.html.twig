@@ -200,27 +200,15 @@
                     </div>
                 {% endif %}
             {% endif %}
-            {% if sameAuthor is not empty %}
-                <h5>{{ 'books.same-author'|trans }}</h5>
+            {% if similar is not empty %}
+                <h5>{{ 'books.similar'|trans }}</h5>
                 <div class="bookGrid">
-                    {% for indexBook in sameAuthor %}
+                    {% for indexBook in similar %}
                         <div class="bookGrid__item">
                             {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}
                 </div>
-            {% endif %}
-            {% if sameTags is not empty %}
-                {% for tag,bookTags in sameTags %}
-                <h5>{{ tag }}</h5>
-                <div class="bookGrid">
-                    {% for indexBook in bookTags %}
-                        <div class="bookGrid__item">
-                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
-                        </div>
-                    {% endfor %}
-                </div>
-                {%endfor%}
             {% endif %}
         </div>
     </div>

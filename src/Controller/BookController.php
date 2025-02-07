@@ -13,6 +13,9 @@ use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
+use Biblioverse\TypesenseBundle\Query\SearchQuery;
+use Biblioverse\TypesenseBundle\Query\SimilarVectorQuery;
+use Biblioverse\TypesenseBundle\Search\SearchCollectionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -33,7 +36,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -85,16 +88,21 @@ class BookController extends AbstractController
             }
         }
 
-        $sameAuthorBooks = $bookRepository->getWithSameAuthors($book, 6);
-
-        $myTags = $book->getTags();
-        $sameTagBooks = [];
-
-        if ($myTags !== null) {
-            foreach ($myTags as $tag) {
-                $sameTagBooks[$tag] = $bookRepository->findByTag($tag, 6);
-            }
+        $filter = null;
+        if($book->getSerie()!==null){
+            $filter = 'serie:!'.$book->getSerie();
         }
+
+        $querySimilar = new SearchQuery(
+            q: '*',
+            queryBy: 'title',
+            vectorQuery: 'embedding:([], id: '.$book->getId().')',
+            filterBy: $filter,
+            limit: 12
+        );
+
+        $similar = $searchBooks->search($querySimilar);
+
 
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
@@ -106,8 +114,7 @@ class BookController extends AbstractController
             'shelves' => $shelfRepository->findManualShelvesForUser($user),
             'serie' => $serie,
             'serieMax' => $serieMax,
-            'sameAuthor' => $sameAuthorBooks,
-            'sameTags' => $sameTagBooks,
+            'similar' => $similar,
             'interaction' => $interaction,
             'form' => $form->createView(),
             'calculatedPath' => $calculatedPath,
