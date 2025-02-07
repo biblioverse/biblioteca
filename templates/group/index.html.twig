@@ -8,7 +8,7 @@
         {{ type }} - {{ letter|upper }}
     </div>
 
-    <form method="get" class="form-inline my-2">
+    <form method="get" class="form-inline my-2" action="{{ path('app_groups', {'type':type, 'letter': null, 'page': 1}) }}">
         <div class="input-group">
             <input type="text" name="search" id="search" class="form-control" placeholder="{{ "group.filter-placeholder"|trans }}" value="{{ search }}">
             <button type="submit" class="btn btn-primary">{{ 'group.search'|trans }}</button>
@@ -16,9 +16,11 @@
     </form>
 
     <div class="btn-group btn-group-sm">
-    {% for other_letter in "a".."z" %}
-        <a href="{{ path('app_groups', {'type':type, 'letter': other_letter}) }}" class="btn {{ other_letter==letter?'btn-primary':'btn-outline-primary' }}">{{ other_letter|upper }}</a>
-    {% endfor %}
+        <a href="{{ path('app_groups', {'type':type, 'page': '1'}) }}" class="btn btn-cross"><i class="bi bi-clipboard-x"></i></a>
+        <a href="{{ path('app_groups', {'type':type, 'letter': 'alpha'}) }}" class="btn {{ 'alpha'==letter?'btn-primary':'btn-outline-primary' }}">{{ '0-9'|upper }}</a>
+        {% for other_letter in "a".."z" %}
+            <a href="{{ path('app_groups', {'type':type, 'letter': other_letter}) }}" class="btn {{ other_letter==letter?'btn-primary':'btn-outline-primary' }}">{{ other_letter|upper }}</a>
+        {% endfor %}
     </div>
         <ul class="list-unstyled my-3">
             {% for item in group %}
@@ -41,5 +43,13 @@
                 </li>
             {% endfor %}
         </ul>
+
+    {% if page is not null %}
+        <div class="btn-group btn-group-sm">
+            {% for pageNum in 1..total %}
+                <a href="{{ path('app_groups', {'type':type, 'page': pageNum, 'letter': letter}) }}" class="btn {{ pageNum==page?'btn-primary':'btn-outline-primary' }}">{{ pageNum }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
 
 {% endblock %}
