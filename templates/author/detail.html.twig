@@ -6,7 +6,7 @@
     <div class="hero">
         <div class="hero__background"></div>
         <div class="hero__image">
-           {% include 'book/_cover.html.twig' with {book: books[0], interaction: null} %}
+           {% include themedTemplate('book/_cover.html.twig') with {book: books[0], interaction: null} %}
         </div>
         <div class="hero__title">
             <h1>{{ author }}</h1>
@@ -49,7 +49,7 @@
                 {% for serie, book in booksInSeries %}
                     <div class="bookGrid__item">
                         <a href="{{ path('app_serie_detail',{'name':book.serie}) }}" class=" small">
-                            {% include 'book/_cover.html.twig' with {book: book, interaction: null} %}
+                            {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: null} %}
                         </a>
                         <strong>{{ serie }}</strong><br />
                         {% for author in book.authors %}
@@ -67,7 +67,7 @@
             <div class="bookGrid">
                 {% for book in otherBooks %}
                     <div class="bookGrid__item">
-                        {% include 'book/_teaser.html.twig' with {book: book} %}
+                        {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                     </div>
                 {% endfor %}
             </div>

@@ -161,7 +161,7 @@
                             <h5>{{ facet.field_name|capitalize }}</h5>
                             <ul class="list-group mb-3">
                                 {% for count in facet.counts %}
-                                    {% include 'components/_facet.html.twig' %}
+                                    {% include themedTemplate('components/_facet.html.twig') %}
                                 {% endfor %}
                             </ul>
                         {% endfor %}

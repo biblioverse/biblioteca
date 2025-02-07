@@ -1,6 +1,6 @@
 {# @var book App\Entity\Book #}
 <div class="m-1 mb-4">
-    {% include 'book/_cover_empty.html.twig' %}
+    {% include themedTemplate('book/_cover_empty.html.twig') %}
     <small>
         <strong>{{ "book.missing"|trans }}</strong><br />
         {% if serie %}
