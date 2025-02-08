@@ -32,6 +32,8 @@ class SerieController extends AbstractController
         $firstUnreadBook = $bookRepository->getFirstUnreadBook($name);
 
         $tags = [];
+        $publishers = [];
+        $ageCategories = [];
         $serie = [];
         $serieMax = 0;
         foreach ($books as $book) {
@@ -46,6 +48,14 @@ class SerieController extends AbstractController
                     }
                     $tags[$tag][] = $book;
                 }
+            }
+
+            if ($book->getPublisher() !== null) {
+                $publishers[$book->getPublisher()][] = $book;
+            }
+
+            if ($book->getAgeCategory() !== null) {
+                $ageCategories[$book->getAgeCategory()->label()][] = $book;
             }
 
             $index = $book->getSerieIndex();
@@ -71,6 +81,8 @@ class SerieController extends AbstractController
             'authors' => $authors,
             'firstUnreadBook' => $firstUnreadBook,
             'tags' => $tags,
+            'ageCategories' => $ageCategories,
+            'publishers' => $publishers,
             'readBooks' => $stats['readBooks'],
             'hiddenBooks' => $stats['hiddenBooks'],
             'inProgressBooks' => $stats['inProgressBooks'],

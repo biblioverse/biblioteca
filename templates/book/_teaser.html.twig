@@ -17,7 +17,7 @@
 {% endif %}
 <div class=" m-1 {{ withDetail?'mb-4' }}">
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
-        {% include 'book/_cover.html.twig' with {book: book, interaction: interaction} %}
+        {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: interaction} %}
     </a>
     {% if withDetail %}
         <small>
@@ -35,9 +35,7 @@
                 </a>
             {% endfor %}
             {% if interaction is not null and interaction.rating > 0 %}
-                {% for current in 1..interaction.rating %}
-                    <i class="bi bi-star-fill"></i>
-                {% endfor %}
+                {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
             {% endif %}
         </small>
     {% endif %}

@@ -50,9 +50,7 @@
                     <th>{{ 'book.rating'|trans }}</th>
                     <td>
                         {% if interaction is not null and interaction.rating >0 %}
-                            {% for current in 1..interaction.rating %}
-                            <i class="bi bi-star-fill"></i>
-                            {% endfor %}
+                            {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
                         {% endif %}
                     </td>
                 </tr>
