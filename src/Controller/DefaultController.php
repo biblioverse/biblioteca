@@ -22,6 +22,9 @@ class DefaultController extends AbstractController
         $reading = $bookInteractionRepository->getStartedBooks();
         $readList = $bookInteractionRepository->getFavourite(6);
 
+        /**
+         * @var array<string, array{booksFinished: int, bookCount: int, item: string}> $startedSeries
+         */
         $startedSeries = $bookRepository->getStartedSeries()->getResult();
         $booksInSeries = [];
         foreach ($startedSeries as $serie) {
