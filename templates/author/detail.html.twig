@@ -48,7 +48,7 @@
             <div class="bookGrid">
                 {% for serie, book in booksInSeries %}
                     <div class="bookGrid__item">
-                        <a href="{{ path('app_serie_detail',{'name':book.serie}) }}" class=" small">
+                        <a href="{{ path('app_serie_detail',{'name':serie}) }}">
                             {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: null} %}
                         </a>
                         <strong>{{ serie }}</strong><br />

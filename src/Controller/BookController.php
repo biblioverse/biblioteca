@@ -201,6 +201,7 @@ class BookController extends AbstractController
         $page = (int) max(1, $page);
 
         if ($interaction->getReadStatus() !== ReadStatus::Finished && $interaction->getReadPages() < $page) {
+            $interaction->setReadStatus(ReadStatus::Started);
             $interaction->setReadPages($page);
         }
         $manager->persist($interaction);
