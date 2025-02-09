@@ -31,7 +31,7 @@ class DefaultController extends AbstractController
 
             $booksInSeries[$serie['item']] = [
                 'progress' => $serie,
-                'book' => $bookRepository->getFirstUnreadBook($serie['item'])
+                'book' => $bookRepository->getFirstUnreadBook($serie['item']),
             ];
         }
 
