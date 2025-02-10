@@ -6,44 +6,31 @@
 
 {% block body %}
 
-{% if books|length>0 %}
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <h3>{{ 'dashboard.continue-reading'|trans }}</h3>
-        </div>
-    </div>
-    <div class="row mb-4">
-        {% for bookInteraction in books %}
-            <div class="col-1">
-                {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
-            </div>
-            <div class="col-3">
-                <h5>{{ bookInteraction.book.title }}</h5>
-                <h6>{{ bookInteraction.book.serie }} #{{ bookInteraction.book.serieIndex }}</h6>
-                <div class="progress">
-                    <div class="progress-bar" style="width: {{ (bookInteraction.readPages/bookInteraction.book.pageNumber) *100 }}%">
-                        {{ bookInteraction.readPages }}/{{ bookInteraction.book.pageNumber }}
-                    </div>
-                </div>
-                <a href="{{ path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages}) }}" class="mt-2 btn btn-sm btn-primary">{{ "dashboard.continue-reading"|trans }}</a>
+{% if reading|length>0 %}
+    <h3 class="mt-4">{{ 'dashboard.continue-reading'|trans }}</h3>
+    <div class="bookGrid bookGrid--large">
+        {% for bookInteraction in reading %}
+            <div class="bookGrid__item">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book, progress: {
+                    read: bookInteraction.readPages,
+                    total: bookInteraction.book.pageNumber,
+                    readUrl: path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages})
+                }} %}
             </div>
         {% endfor %}
     </div>
 {% endif %}
 
-
-<div class="row mt-4">
-    <div class="col-md-12">
-        <h3>{{ 'dashboard.reading-list'|trans }}</h3>
-    </div>
-</div>
+<h3 class="mt-4">{{ 'dashboard.reading-list'|trans }}</h3>
 <div class="row mb-4">
     {% if readlist|length>0 %}
-    {% for bookInteraction in readlist %}
-        <div class="col-4 col-md-2">
-            {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+        <div class="bookGrid bookGrid--large">
+        {% for bookInteraction in readlist %}
+            <div class="bookGrid__item">
+                {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book} %}
+            </div>
+        {% endfor %}
         </div>
-    {% endfor %}
     {% else %}
         <div class="col-12 text-muted">
             {{ 'book.add-to-favorites'|trans }}
@@ -54,36 +41,34 @@
     </div>
 </div>
 
-{% if series|length >0 %}
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <h3>{{ 'dashboard.series-in-progress'|trans }}</h3>
-        </div>
-    </div>
-    <div class="row mb-4">
-        {% for item in series %}
-            {% if item.booksFinished<item.bookCount %}
-                <div class="col-3 p-2">
-                    {% set params = { serie: item.item } %}
-                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
-                        {{ item.item }}
-                        <div class="progress">
-                            <div class="progress-bar" style="width: {{ (item.booksFinished/item.bookCount) *100 }}%">
-                                {{ item.booksFinished }}/{{ item.bookCount }}
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            {% endif %}
+{% if booksInSeries|length >0 %}
+    <h3 class="mt-4">{{ 'dashboard.series-in-progress'|trans }}</h3>
+    <div class="bookGrid">
+        {% for serie, book in booksInSeries %}
+            <div class="bookGrid__item">
+                <a href="{{ path('app_serie_detail',{'name':serie}) }}">
+                    {% include themedTemplate('book/_cover.html.twig') with {
+                        book: book.book,
+                        interaction: null,
+                        progress: {
+                            read: book.progress.booksFinished,
+                            total: book.progress.bookCount,
+                            readUrl: path('app_book_read',{'book':book.book.id,'slug':book.book.slug})
+                        }
+                    } %}
+                </a>
+                <strong>{{ serie }}</strong><br />
+                {% for author in book.book.authors %}
+                <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                </a><br />
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
 {% endif %}
 
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <h3>{{ 'dashboard.need-inspiration'|trans }}</h3>
-        </div>
-    </div>
+    <h3 class="mt-4">{{ 'dashboard.need-inspiration'|trans }}</h3>
     <div class="row mb-4">
 
     {% for tag in inspiration %}

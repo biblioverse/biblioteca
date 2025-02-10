@@ -7,36 +7,25 @@
 {% block body %}
 
     {% if readlist.unread|length>0 %}
-
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h3>{{ 'reading-list.to-read'|trans }}</h3>
-            </div>
-        </div>
-        <div class="row mb-4">
+        <h3 class="mt-4">{{ 'reading-list.to-read'|trans }}</h3>
+        <div class="bookGrid bookGrid--large">
             {% for book in readlist.unread %}
-                <div class="col-4 col-md-2">
+                <div class="bookGrid__item">
                     {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                 </div>
             {% endfor %}
-
         </div>
     {% else %}
-        <div class="col-12 text-muted">
+        <div class="text-muted">
             {{ 'reading-list.add-to-favorites'|trans }}
         </div>
     {% endif %}
 
     {% if readlist.finished|length>0 %}
-
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h3>{{ 'reading-list.finished'|trans }}</h3>
-            </div>
-        </div>
-        <div class="row mb-4">
+        <h3 class="mt-4">{{ 'reading-list.finished'|trans }}</h3>
+        <div class="bookGrid">
             {% for book in readlist.finished %}
-                <div class="col- col-md-1">
+                <div class="bookGrid__item">
                     {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                 </div>
             {% endfor %}

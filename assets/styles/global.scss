@@ -2,6 +2,13 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
+:root {
+  --progress__track--background: #e9ecef;
+  --progress__track--height: 1em;
+  --progress__track--border-radius: 4px;
+  --progress__bar--background: #333;
+}
+
 body.bg-darker{
   background-color: #000;
   color: #fff;
@@ -110,42 +117,6 @@ body.bg-darker{
       font-size: 1.5em;
       color: #333;
     }
-
-    &:hover {
-      >.book__detail {
-        opacity: 1;
-        height: auto;
-        min-height: 20%;
-        >p{
-          display: block;
-        }
-      }
-    }
-  }
-
-  &__detail {
-    background-color: rgba(51, 51, 51, 0.6);
-    height: 15%;
-    width: 100%;
-    bottom:5%;
-    padding: 10px;
-    font-size: 11px;
-    font-weight: 800;
-    position: absolute;
-    overflow: hidden;
-    z-index: 10;
-    color: #fff;
-    text-align: left;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-    opacity: 0.7;
-    transition: all 0.5s ease-in-out;
-    >p{
-      display: none;
-    }
-    a{
-      color: #fff !important;
-    }
-
   }
 
   &__page {
@@ -159,6 +130,30 @@ body.bg-darker{
     overflow: hidden;
   }
 
+  &__progress {
+    position: absolute;
+    bottom: .5em;
+    left: .5em;
+    right: .5em;
+  }
+
+  &__progress__link {
+    display: flex;
+    justify-content: center;
+    margin-bottom: .5rem;
+  }
+
+  &__progress__track {
+    background: var(--progress__track--background);
+    border-radius: var(--progress__track--border-radius);
+    height: var(--progress__track--height);
+    overflow: hidden;
+  }
+
+  &__progress__bar {
+    background: var(--progress__bar--background);
+    height: 100%;
+  }
 }
 
 .suggestion{
@@ -173,7 +168,12 @@ body.bg-darker{
 .bookGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.bookGrid--large {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
 }
 
 .hero {
@@ -222,11 +222,11 @@ body.bg-darker{
   right: 0;
 }
 .heroProgress__bar {
-  background: var(--bs-secondary-bg);
+  background: var(--progress__track--background);
   height: 4px;
 }
 .heroProgress__bar__progress {
-  background: #333;
+  background: var(--progress__bar--background);
   height: 4px;
 }
 

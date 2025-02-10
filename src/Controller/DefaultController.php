@@ -19,10 +19,24 @@ class DefaultController extends AbstractController
         $exts = $bookRepository->countBooks(false);
         $types = $bookRepository->countBooks(true);
 
-        $books = $bookInteractionRepository->getStartedBooks();
+        $reading = $bookInteractionRepository->getStartedBooks();
         $readList = $bookInteractionRepository->getFavourite(6);
 
-        $series = $bookRepository->getStartedSeries()->getResult();
+        /**
+         * @var array<string, array{booksFinished: int, bookCount: int, item: string}> $startedSeries
+         */
+        $startedSeries = $bookRepository->getStartedSeries()->getResult();
+        $booksInSeries = [];
+        foreach ($startedSeries as $serie) {
+            if ($serie['booksFinished'] === $serie['bookCount']) {
+                continue;
+            }
+
+            $booksInSeries[$serie['item']] = [
+                'progress' => $serie,
+                'book' => $bookRepository->getFirstUnreadBook($serie['item']),
+            ];
+        }
 
         $tags = $bookRepository->getAllTags();
 
@@ -45,9 +59,9 @@ class DefaultController extends AbstractController
         return $this->render('default/dashboard.html.twig', [
             'extensions' => $exts,
             'types' => $types,
-            'books' => $books,
+            'reading' => $reading,
             'readlist' => $readList,
-            'series' => $series,
+            'booksInSeries' => $booksInSeries,
             'inspiration' => $inspiration,
         ]);
     }

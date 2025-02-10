@@ -148,9 +148,9 @@
                 <div class="row">
                     <div class="col-10">
                         <h5>{{ found }} {{ "generic.results"|trans }}</h5>
-                        <div class="row">
+                        <div class="bookGrid">
                         {% for book in books %}
-                            <div class="col-6 col-md-3">
+                            <div class="bookGrid__item">
                                 {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                             </div>
                         {% endfor %}
