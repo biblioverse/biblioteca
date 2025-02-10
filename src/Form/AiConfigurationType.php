@@ -34,6 +34,12 @@ class AiConfigurationType extends AbstractType
                 'required' => false,
                 'choice_label' => 'label',
             ])
+            ->add('AI_ASSISTANT_MODEL', EntityType::class, [
+                'class' => AiModel::class,
+                'placeholder' => 'ai.assistantmodel.form-placeholder',
+                'required' => false,
+                'choice_label' => 'label',
+            ])
             ->add('AI_SUMMARY_PROMPT', TextareaType::class, [
                 'required' => false,
                 'help' => 'ai.summaryprompt.form-help',

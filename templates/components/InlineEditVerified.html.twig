@@ -1,0 +1,19 @@
+<span {{ attributes.defaults(stimulus_controller('inline-edit')) }}>
+    {% if is_granted('EDIT', book) %}
+        <form onsubmit="return false">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch"
+                     data-action="live#action"
+                     data-model="book.verified"
+                     data-live-action-param="prevent|save"
+                     autofocus
+                     id="book_{{ book.id }}_verified"
+              >
+              <label class="form-check-label" for="book_{{ book.id }}_verified">{{ "book.verified"|trans }}</label>
+            </div>
+        </form>
+    {% endif %}
+    {% if flashMessage %}
+        <i class="bi bi-hourglass-split alert-remove"></i>
+    {% endif %}
+</span>

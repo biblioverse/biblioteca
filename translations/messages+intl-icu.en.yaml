@@ -1,24 +1,26 @@
 ai.actions: Possible actions
 ai.ai-features: Ai Features
+ai.assistantmodel.form-placeholder: "Select a model for the assistant or leave it empty to disable"
 ai.bookprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
+ai.configuration.form.ai_assistant_model: "Model for the assistant"
 ai.configuration.form.ai_search_model: "Model for search hints"
 ai.configuration.form.ai_summarization_model: "Model for summaries"
 ai.configuration.form.ai_summary_prompt: "Prompt for summaries"
 ai.configuration.form.ai_tag_model: "Model for tags"
 ai.configuration.form.ai_tag_prompt: "Prompt for tags"
 ai.configuration.form.submit: "Save"
-ai.form.url: "API URL"
-ai.form.model: "Model name"
-ai.form.token: "API token"
-ai.form.useamazoncontext: "Use Amazon context"
-ai.form.useepubcontext: "Use EPUB context"
-ai.form.usewikipediacontext: "Use Wikipedia context"
-ai.form.systemprompt: "AI system prompt"
 ai.context: Context
 ai.create-new-model: Create new AI model
 ai.edit-ai-model: Edit AI model
 ai.edit-model-configuration: Edit model configuration
 ai.edit-prompt: Edit prompt
+ai.form.model: "Model name"
+ai.form.systemprompt: "AI system prompt"
+ai.form.token: "API token"
+ai.form.url: "API URL"
+ai.form.useamazoncontext: "Use Amazon context"
+ai.form.useepubcontext: "Use EPUB context"
+ai.form.usewikipediacontext: "Use Wikipedia context"
 ai.generate: Generate
 ai.id: Id
 ai.initial-summary-prompt: Initial summary prompt
@@ -31,10 +33,10 @@ ai.prompts-and-context: Prompts and context
 ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
 ai.responses-to-prompt-with-context: Responses to prompt with context
 ai.searchmodel.form-placeholder: "Select a model for converting search hints or leave it empty to disable"
+ai.summarizationmodel.form-placeholder: "Select a model for summarizing books or leave it empty to disable"
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
 ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {language} to insert the book's language. This prompt will be used only if a prompt is not defined in the user profile."
-ai.summarizationmodel.form-placeholder: "Select a model for summarizing books or leave it empty to disable"
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context
 ai.tag-prompt: Tag prompt
@@ -66,9 +68,9 @@ author.books: >-
           }
         }
     }
-author.tags: Tags
-author.standalone-books: Books not in a series
 author.in-series: Series
+author.standalone-books: Books not in a series
+author.tags: Tags
 book.actions: Actions
 book.add-to-favorites: Add to reading list
 book.age-category: Age category
@@ -89,14 +91,17 @@ book.extract-cover-from-file: Extract cover from file
 book.form.delete: Delete
 book.image-path: Image path
 book.index: Serie Index
+book.language: Language
 book.loading-book: Loading Book...
 book.missing: Missing book
 book.no-books-in-consume-folder: No books in consume folder
 book.no-picture-for: No picture for
 book.number-of-pages: Number of pages
+book.paths: 'Paths'
 book.picture-for-book: Picture for
 book.publisher: Publisher
 book.rating: Rating
+book.read-in-browser: Read in browser
 book.read-state: Read state
 book.readinglist-state: Reading list
 book.relocate: Relocate
@@ -106,24 +111,23 @@ book.serieIndex: Serie Index
 book.size: Size
 book.summary: Summary
 book.tags: Tags
-book.language: Language
 book.this-action-is-irreversible: This action is irreversible
 book.title: Title
 book.unknown-author: Unknown author
 book.updated: Updated
 book.upload-book: Upload book
 book.upload-books-to-the-consume-folder: Upload books to the consume folder
-book.upload-cover: Upload cover
 book.upload-cover-title: Click to upload cover
+book.upload-cover: Upload
 book.upload: Upload book
+book.utilities: 'Utilities'
 book.uuid: Unique ID
 book.verified: Verified
-book.read-in-browser: Read in browser
 books.in-serie: Books in serie
 books.other-books: Other books in serie
+books.reading.progress: "{read} / {total}"
 books.same-author: Books by same author
 books.same-index: Books with same index
-books.reading.progress: "{read} / {total}"
 books.stat.progress: >-
     {count, plural,
         =0    {0 books in progress}
@@ -142,23 +146,44 @@ books.stat.hidden: >-
         =1    {1 book hidden}
         other {# books hidden}
     }
+book.edition: "Edit"
+book.form.accept-suggestion: "Accept"
+book.form.agecategory: "Age Category"
+book.form.ask-assistant: "Ask you assistant"
+book.form.authorsstring: "Author(s)"
+book.form.close-without-saving: "Close without saving"
+book.form.generate-categories: "Generate categories"
+book.form.generate-summary: "Generate summary"
+book.form.initial-system-prompt: "Initial system prompt"
+book.form.language: "Language"
+book.form.pagenumber: "Number of pages"
+book.form.publishdate: "Published on"
+book.form.publisher: "Publisher"
+book.form.save-book: "Save Book"
+book.form.send-message: "Send query"
+book.form.serie: "Serie"
+book.form.serieindex: "Number"
+book.form.summary: "Summary"
+book.form.tagsstring: "Tags"
+book.form.title: "Title"
+book.form.verified: "Verified"
 dashboard.continue-reading: Continue reading
 dashboard.hello: Aloha
 dashboard.need-inspiration: Need some inspiration?
 dashboard.reading-list: In your reading list
 dashboard.series-in-progress: Series that you started
-enum.agecategories.notset: Not defined
 enum.agecategories.adults: Adults
 enum.agecategories.everyone: Everyone
+enum.agecategories.notset: Not defined
 enum.agecategories.sixteenplus: 16+ Years old
 enum.agecategories.tenplus: 10+ Years old
 enum.agecategories.thirteenplus: 13+ Years old
-enum.readinglist.toread: 'To read'
 enum.readinglist.ignored: 'Ignored'
 enum.readinglist.notdefined : 'Not defined'
+enum.readinglist.toread: 'To read'
+enum.readstatus.finished: 'Finished'
 enum.readstatus.not-started: 'Not started'
 enum.readstatus.started: 'Currently reading'
-enum.readstatus.finished: 'Finished'
 error.error-happened: An error happend
 error.stack-trace: Stack trace
 generic.are-you-sure-you-want-to-delete-this-item: Are you sure you want to delete this item?
@@ -180,27 +205,27 @@ generic.yes: Yes
 group.filter-placeholder: Filter...
 group.rename: Rename
 group.search: Search
-inlineeditinteraction.title: Actions
+inlineeditinteraction.edit: Edit Interaction
 inlineeditinteraction.favorites.add: Add to favorites
 inlineeditinteraction.favorites.remove: Remove from favorites
 inlineeditinteraction.finished.add: Mark as read
 inlineeditinteraction.finished.remove: Mark as unread
-inlineeditinteraction.hidden.add: Hide book
-inlineeditinteraction.hidden.remove: Unhide book
-inlineeditinteraction.edit: Edit Interaction
-inlineeditinteraction.shelf.add: Add to shelf
-inlineeditinteraction.shelf.new: Create new shelf
+inlineeditinteraction.flash.favorite: Added to readlist
+inlineeditinteraction.flash.hide: Hidden
 inlineeditinteraction.flash.read: Good Job!
-inlineeditinteraction.flash.unread: Marked as not read
 inlineeditinteraction.flash.saveInteraction: Saved
 inlineeditinteraction.flash.saveShelf: Shelf saved
-inlineeditinteraction.flash.favorite: Added to readlist
-inlineeditinteraction.flash.unfavorite: Remove from readlist
-inlineeditinteraction.flash.hide: Hidden
-inlineeditinteraction.flash.unhide: Unhidden
 inlineeditinteraction.flash.shelf: Added to shelf
+inlineeditinteraction.flash.unfavorite: Remove from readlist
+inlineeditinteraction.flash.unhide: Unhidden
+inlineeditinteraction.flash.unread: Marked as not read
 inlineeditinteraction.flash.unshelf: Removed from shelf
+inlineeditinteraction.hidden.add: Hide book
+inlineeditinteraction.hidden.remove: Unhide book
 inlineeditinteraction.notrated: Not rated
+inlineeditinteraction.shelf.add: Add to shelf
+inlineeditinteraction.shelf.new: Create new shelf
+inlineeditinteraction.title: Actions
 instance-configuration.current-value: Current value
 instance-configuration.description: Description
 instance-configuration.edit-configuration: Edit configuration

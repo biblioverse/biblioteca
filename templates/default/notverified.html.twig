@@ -47,44 +47,42 @@
                                 <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
                             </a>
                         {% else %}
-                            <img class="w-100" src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" />
-                        {% endif %}
-                        <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">
-                            {{ "book.book-details"|trans }}
-                        </a>
-
-                        {% if book.imageFilename is null %}
                             <a href="{{ path('app_extractCover', { 'id':book.id }) }}" >Get Cover</a>
                         {% endif %}
                     </td>
                     <td>
                         <div>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
+                        <a class="h4" href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">{{ book.title }}</a>
+                        {% for author in book.authors %}
+                        <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                            <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                        </a>
+                        {% endfor %}
                         </div>
                         <div>
-                        {{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}
-                            {% for author in book.authors %}
-                                {% if author=='Unknown' %}
-                                    <span class="badge bg-warning">{{ "book.unknown-author"|trans }}</span>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
+                            {{ book.serie }}
 
                             {% if book.serie is not null %}
-                                <div class="w-25"> {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}</div>
+                                #{{ book.serieIndex }}
                             {% endif %}
                             {{ component('FieldGuesser',{'book':book}) }}
                         </div>
                         <div>
-                        {{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}
+                            {% if book.ageCategory is not null %}
+                                {{ enum("App\\Enum\\AgeCategory").label(book.ageCategory)|trans }}
+                            {% endif %}
                         </div>
-                        {{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}
+
+
+                        <div class="my-1">
+
+                        {{ component('Assistant', {book: book}) }}
+                        </div>
+
                     </td>
                     <td>
                         {% if not book.verified and is_granted('RELOCATE', book) %}
-                            {{ component('InlineEditBook',{'book':book, 'field':'verified'}) }}
+                            {{ component('InlineEditVerified',{'book':book}) }}
                             <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">{{ "book.relocate"|trans }}</a>
                         {% endif %}
                     </td>

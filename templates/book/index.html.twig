@@ -25,35 +25,38 @@
             </div>
         </div>
         <div class="col-md-9">
-            <table class="table w-100  mb-5">
+            <table class="table table-borderless w-100  mb-5">
                 <tr>
-                    <th style="width:15%;">{{ 'book.title'|trans }}</th>
+                    <th style="width:20%">{{ 'book.title'|trans }}</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
+                        {{ book.title }}
                     </td>
                 </tr>
+                {% if interaction is not null and interaction.readPages >0 %}
                 <tr>
                     <th>{{ 'book.read-state'|trans }}</th>
                     <td>
                         {{ enum('App\\Enum\\ReadStatus').getLabel(interaction.readStatus|default( enum('App\\Enum\\ReadStatus').NotStarted))|trans }}
 
-                        {% if interaction is not null and interaction.readPages >0 %}
+
                             <div class="progress">
                                 <div class="progress-bar" style="width: {{ (interaction.readPages/book.pageNumber) *100 }}%">
                                     {{ 'interaction.status.progress'|trans({"%read%": interaction.readPages, "%total%": book.pageNumber }) }}
                                 </div>
                             </div>
-                        {% endif %}
+
                     </td>
                 </tr>
+                {% endif %}
+                {% if interaction is not null and interaction.rating >0 %}
                 <tr>
                     <th>{{ 'book.rating'|trans }}</th>
                     <td>
-                        {% if interaction is not null and interaction.rating >0 %}
+
                             {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
-                        {% endif %}
                     </td>
                 </tr>
+                {% endif %}
                 <tr>
                     <th>{{ 'book.readinglist-state'|trans }}</th>
                     <td>
@@ -62,61 +65,83 @@
                 </tr>
                 <tr>
                     <th>{{ 'book.authors'|trans }}</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.summary'|trans }}</th><td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'summary'}) }}
+                    <td>
+                        {% for author in book.authors %}
+                            <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                            </a>
+                        {% endfor %}
                     </td>
                 </tr>
+                {% if book.summary %}
+                <tr>
+                    <th>{{ 'book.summary'|trans }}</th><td>
+                        {{ book.summary|default('')|markdown_to_html }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if book.serie %}
                 <tr>
                     <th>{{ 'book.serie'|trans }}</th><td>
                         <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
+                            <a href="{{ filter_book_url({'serie': book.serie}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
+                            </a>
+                            {% if book.serie is not null %}
+                            #{{ book.serieIndex }}
+                            {% endif %}
                         </div>
-                        {% if book.serie is not null %}
-                            <div class="w-25 d-inline-block">
-                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
-                            </div>
-                        {% endif %}
+
 
                     </td>
                 </tr>
+                {% endif %}
+                {% if book.publisher %}
                 <tr>
-                    <th>{{ 'book.publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher'}) }}</td>
+                    <th>{{ 'book.publisher'|trans }}</th><td>{{ book.publisher }}</td>
                 </tr>
+                {% endif %}
 
+                {% if book.ageCategory is not null %}
                 <tr>
-                    <th>{{ 'book.age-category'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}</td>
+                    <th>{{ 'book.age-category'|trans }}</th><td>
+                        {% if book.ageCategory is not null %}
+                            {{ enum("App\\Enum\\AgeCategory").getLabel(book.ageCategory)|trans }}
+                        {% else %}
+                            {{ "enum.agecategories.notset"|trans }}
+                        {% endif %}
+                    </td>
                 </tr>
+                {% endif %}
 
+                {% if book.tags %}
                 <tr>
-                    <th>{{ 'book.tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
+                    <th>{{ 'book.tags'|trans }}</th><td>
+                        {% for tag in book.tags %}
+                            <a href="{{ filter_book_url({'tag': tag}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+                            </a>
+                        {% endfor %}
+                    </td>
                 </tr>
+                {% endif %}
+                {% if book.language %}
                 <tr>
-                    <th>{{ 'book.language'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'language'}) }}</td>
+                    <th>{{ 'book.language'|trans }}</th><td>{{ book.language }}</td>
                 </tr>
-                {% if not book.verified %}
+                {% endif %}
+
+                {% if not book.verified and is_granted('EDIT', book) %}
 
                     <tr>
-                        <th>Utilities</th>
+                        <th>{{ "book.utilities"|trans }}</th>
                         <td>
-                            <ul class="small m-0">
+                            <ul class="list-unstyled m-0">
                                 <li>
-                                    <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'book.search-google-images'|trans }}</a>
+                                    <a target="_blank" class="btn btn-link p-0" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'book.search-google-images'|trans }}</a>
                                 </li>
-                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Tags ) %}
                                 <li>
-                                    {{ component('AiSuggestion', {book: book, field:'tags'}) }}
-                                </li>
-                                {% endif %}
-                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Summary ) %}
-                                <li>
-                                    {{ component('AiSuggestion', {book: book, field:'summary'}) }}
-                                </li>
-                                {% endif %}
-                                <li>
-                                    <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'book.extract-cover-from-file'|trans }}</a>
+                                    <a class="btn btn-link p-0" href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'book.extract-cover-from-file'|trans }}</a>
                                 </li>
                                 <li>
                                     {{ component('UploadBookPicture',{'book':book}) }}
@@ -125,9 +150,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Paths</th>
+                        <th>{{ "book.paths"|trans }}</th>
                         <td>
-                            <ul class="small m-0">
+                            <ul class="list-unstyled m-0">
                                 <li>{{ 'book.book-path'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
                                 <li>{{ 'book.image-path'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
                                 {% if not book.verified and needsRelocation %}
@@ -143,26 +168,18 @@
                     </tr>
                 {% endif %}
 
-                {% if app.debug %}
+                {% if is_granted('EDIT',book) %}
                 <tr>
-                    <th>{{ 'book.number-of-pages'|trans }}</th>
                     <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'pageNumber'}) }}
+                        {{ component('Assistant', {book: book}) }}
+                    </td>
+                    <td>
+                        <div class="p-2">
+                        {{ component('InlineEditVerified',{'book':book}) }}
+                        </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>{{ 'book.uuid'|trans }}</th>
-                    <td>{{ book.uuid }}</td>
-                </tr>
                 {% endif %}
-
-                <tr>
-                    <th>{{ 'book.verified'|trans }}</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'verified'}) }}</td>
-                </tr>
-
-
-
             </table>
 
             {% if serie|length > 0 %}
