@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c68bf95f8b9182262a8cad0799acaffc",
+    "content-hash": "6fe7f489a4cd127b0f755e8d3c97edb4",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -119,16 +119,16 @@
         },
         {
             "name": "biblioverse/typesense-bundle",
-            "version": "v0.0.3",
+            "version": "v0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/biblioverse/TypesenseBundle.git",
-                "reference": "521851093528a2315fb7dc6933c90ed2e9d0cf29"
+                "reference": "c8c00d26f306179aa41dcf5bc24266ce94c82b01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/521851093528a2315fb7dc6933c90ed2e9d0cf29",
-                "reference": "521851093528a2315fb7dc6933c90ed2e9d0cf29",
+                "url": "https://api.github.com/repos/biblioverse/TypesenseBundle/zipball/c8c00d26f306179aa41dcf5bc24266ce94c82b01",
+                "reference": "c8c00d26f306179aa41dcf5bc24266ce94c82b01",
                 "shasum": ""
             },
             "require": {
@@ -138,9 +138,10 @@
                 "psr/http-client-implementation": "1.0",
                 "psr/log": "^3.0",
                 "symfony/framework-bundle": "^6.4|^7.0",
-                "symfony/http-client": "^6.4|^7.2",
+                "symfony/http-client": "^6.4.18|^7.2",
                 "symfony/http-kernel": "^6.4|^7.2",
                 "symfony/property-access": "^6.4|^7.2",
+                "symfony/service-contracts": "^3.5",
                 "typesense/typesense-php": "^4.9"
             },
             "conflict": {
@@ -151,10 +152,10 @@
                 "doctrine/doctrine-fixtures-bundle": "^4.0",
                 "doctrine/orm": "^3.3",
                 "friendsofphp/php-cs-fixer": "dev-master",
-                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan": "^2.1.2",
                 "phpstan/phpstan-symfony": "^2.0",
-                "phpunit/phpunit": "^10.0|^11.5",
-                "rector/rector": "^2.0",
+                "phpunit/phpunit": "^10.0|^11.5|^12.0",
+                "rector/rector": "^2.0.8",
                 "symfony/console": "^6.4|^7.2",
                 "symfony/dotenv": "^6.4|^7.2",
                 "symfony/phpunit-bridge": "^7.0",
@@ -228,10 +229,10 @@
             },
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.3",
+                "source": "https://github.com/biblioverse/TypesenseBundle/tree/v0.0.4",
                 "issues": "https://github.com/biblioverse/TypesenseBundle/issues"
             },
-            "time": "2025-02-04T10:54:26+00:00"
+            "time": "2025-02-08T16:58:05+00:00"
         },
         {
             "name": "clue/stream-filter",
