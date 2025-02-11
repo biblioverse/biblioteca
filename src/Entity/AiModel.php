@@ -118,11 +118,13 @@ class AiModel implements \Stringable
         return $this;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function isUseEpubContext(): bool
     {
         return $this->useEpubContext;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function setUseEpubContext(bool $useEpubContext): static
     {
         $this->useEpubContext = $useEpubContext;
@@ -130,11 +132,13 @@ class AiModel implements \Stringable
         return $this;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function isUseWikipediaContext(): bool
     {
         return $this->useWikipediaContext;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function setUseWikipediaContext(bool $useWikipediaContext): static
     {
         $this->useWikipediaContext = $useWikipediaContext;
@@ -142,11 +146,13 @@ class AiModel implements \Stringable
         return $this;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function isUseAmazonContext(): bool
     {
         return $this->useAmazonContext;
     }
 
+    /** @deprecated use the context model to retrieve context */
     public function setUseAmazonContext(bool $useAmazonContext): static
     {
         $this->useAmazonContext = $useAmazonContext;

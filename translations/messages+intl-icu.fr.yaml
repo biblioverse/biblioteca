@@ -3,6 +3,7 @@ ai.ai-features: 'Fonctionnalités IA'
 ai.assistantmodel.form-placeholder: "Choisir un modèle pour l'assistant d'édition"
 ai.bookprompt.form-help: "Utilisez {book} pour les informations du livre. Ce prompt ne sera utilisé que si l'utilisateur n'a pas défini de prompt dans son profil."
 ai.configuration.form.ai_assistant_model: "Connecteur pour l'assistant d'édition"
+ai.configuration.form.ai_context_model: "Connecteur pour les recherches de contexte"
 ai.configuration.form.ai_search_model: 'Connecteur pour les requêtes de recherche'
 ai.configuration.form.ai_summarization_model: 'Connecteur pour les résumés'
 ai.configuration.form.ai_summary_prompt: 'Prompt pour les résumés'
@@ -36,6 +37,7 @@ ai.searchmodel.form-placeholder: 'Choisir un modèle pour la conversion des requ
 ai.summarizationmodel.form-placeholder: 'Choisir un modèle pour résumer'
 ai.summary-prompt-with-context: 'Prompt de résumé avec contexte'
 ai.summary-prompt: 'Prompt de résumé'
+ai.contextmodel.form-help: "Select a model that is able to perform web research to provide context, like Perplexica or Perplexity"
 ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
 ai.system-prompt: 'Prompt système'
 ai.tag-prompt-with-context: 'Prompt de catégorie avec contexte'

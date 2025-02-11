@@ -35,8 +35,12 @@ class OpenAiCommunicator extends AbstractCommunicator implements AiChatInterface
         return $result;
     }
 
-    private function getPerplexityUrl(string $path): string
+    private function getApiUrl(string $path): string
     {
+        if (!str_ends_with((string) $this->aiModel->getUrl(), '/')) {
+            $this->aiModel->setUrl($this->aiModel->getUrl().'/');
+        }
+
         return "{$this->aiModel->getUrl()}{$path}";
     }
 
@@ -51,7 +55,7 @@ class OpenAiCommunicator extends AbstractCommunicator implements AiChatInterface
             ],
         ];
 
-        return $this->sendRequest($this->getPerplexityUrl('chat/completions'), $params, 'POST');
+        return $this->sendRequest($this->getApiUrl('chat/completions'), $params, 'POST');
     }
 
     public function chat(array $messages): string
@@ -65,6 +69,6 @@ class OpenAiCommunicator extends AbstractCommunicator implements AiChatInterface
             'messages' => $processedMessages,
         ];
 
-        return $this->sendRequest($this->getPerplexityUrl('chat/completions'), $params, 'POST');
+        return $this->sendRequest($this->getApiUrl('chat/completions'), $params, 'POST');
     }
 }

@@ -46,7 +46,10 @@ readonly class ConfigValue
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         }
-        if (!is_scalar($value)) {
+        if ($value === '') {
+            $value = null;
+        }
+        if (!is_scalar($value) && !is_null($value)) {
             throw new \InvalidArgumentException('Value must be a scalar');
         }
         $value = trim((string) $value);

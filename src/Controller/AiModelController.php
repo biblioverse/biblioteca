@@ -34,6 +34,7 @@ final class AiModelController extends AbstractController
             'AI_TAG_MODEL' => $allModels[(int) $configValue->resolve('AI_TAG_MODEL', true)] ?? null,
             'AI_SEARCH_MODEL' => $allModels[(int) $configValue->resolve('AI_SEARCH_MODEL', true)] ?? null,
             'AI_ASSISTANT_MODEL' => $allModels[(int) $configValue->resolve('AI_ASSISTANT_MODEL', true)] ?? null,
+            'AI_CONTEXT_MODEL' => $allModels[(int) $configValue->resolve('AI_CONTEXT_MODEL', true)] ?? null,
             'AI_SUMMARY_PROMPT' => $configValue->resolve('AI_SUMMARY_PROMPT', true),
             'AI_TAG_PROMPT' => $configValue->resolve('AI_TAG_PROMPT', true),
         ];

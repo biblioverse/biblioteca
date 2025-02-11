@@ -3,6 +3,7 @@ ai.ai-features: Ai Features
 ai.assistantmodel.form-placeholder: "Select a model for the assistant or leave it empty to disable"
 ai.bookprompt.form-help: "Use {book} to insert the title of the book. This prompt will be used only if a prompt is not defined in the user profile."
 ai.configuration.form.ai_assistant_model: "Model for the assistant"
+ai.configuration.form.ai_context_model: "Model for context research"
 ai.configuration.form.ai_search_model: "Model for search hints"
 ai.configuration.form.ai_summarization_model: "Model for summaries"
 ai.configuration.form.ai_summary_prompt: "Prompt for summaries"
@@ -32,10 +33,10 @@ ai.new-aimodel: New model
 ai.prompts-and-context: Prompts and context
 ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
 ai.responses-to-prompt-with-context: Responses to prompt with context
-ai.searchmodel.form-placeholder: "Select a model for converting search hints or leave it empty to disable"
-ai.summarizationmodel.form-placeholder: "Select a model for summarizing books or leave it empty to disable"
+ai.contextmodel.form-placeholder: "Select a model for for providing context"
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
+ai.contextmodel.form-help: "Select a model that is able to perform web research to provide context, like Perplexica or Perplexity"
 ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {language} to insert the book's language. This prompt will be used only if a prompt is not defined in the user profile."
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context

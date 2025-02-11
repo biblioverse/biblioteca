@@ -21,4 +21,20 @@ class Message
             'content' => $this->text,
         ];
     }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function toPerplexica(): array
+    {
+        $roleValue = match ($this->role) {
+            AiMessageRole::System => 'human',
+            AiMessageRole::User => 'human',
+            AiMessageRole::Assistant => 'assistant',
+        };
+
+        return [$roleValue, $this->text];
+    }
 }

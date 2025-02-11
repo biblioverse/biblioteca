@@ -2,6 +2,7 @@
 
 namespace App\Ai\Context;
 
+use App\Ai\Prompt\BookPromptInterface;
 use App\Entity\AiModel;
 use App\Entity\Book;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -11,5 +12,5 @@ interface ContextBuildingInterface
 {
     public function isEnabled(AiModel $aiModel, ?Book $book = null): bool;
 
-    public function getContextForPrompt(Book $book): string;
+    public function getContextForPrompt(BookPromptInterface $prompt): string;
 }
