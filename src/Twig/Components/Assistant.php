@@ -143,6 +143,14 @@ If you don\'t know the answer to the user question, mention it in your answer.
             $names = Locales::getNames();
             $language = $names[$language] ?? $language;
         }
+
+        if ($this->book->getLanguage() !== null) {
+            $fallback = $language;
+            $language = $this->book->getLanguage();
+            $names = Locales::getNames();
+            $language = $names[$language] ?? $fallback;
+        }
+
         $this->message = 'Can you generate a '.$field.' for me in '.$language.'?';
         $this->sendMessage();
     }
