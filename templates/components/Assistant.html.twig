@@ -8,7 +8,8 @@
         {% block modal_full_content %}
             {{ form_start(form,{attr: {
                 'data-action': 'live#action:prevent',
-                'data-live-action-param': 'save'
+                'data-live-action-param': 'save',
+                autocomplete: "off",
             }}) }}
 
             {{ parent() }}

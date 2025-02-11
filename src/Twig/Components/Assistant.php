@@ -32,13 +32,11 @@ final class Assistant extends AbstractController
     use ComponentWithFormTrait;
     use ComponentToolsTrait;
 
-    #[LiveProp(fieldName: 'formData')]
+    #[LiveProp(fieldName: 'formData', updateFromParent: true)]
     public Book $book;
 
     #[LiveProp(writable: true)]
     public string $message = '';
-
-    public bool $isProcessing = false;
 
     /**
      * @var Message[]
@@ -52,13 +50,26 @@ final class Assistant extends AbstractController
     ) {
     }
 
+    public function __invoke(): void
+    {
+    }
+
     protected function instantiateForm(): FormInterface
     {
         // we can extend AbstractController to get the normal shortcuts
         $form = $this->createForm(BookType::class, $this->book);
 
         if ($this->messages === []) {
-            $initialMessage = new Message('
+            $initialMessage = $this->getInitialMessage();
+            $this->messages[] = $initialMessage;
+        }
+
+        return $form;
+    }
+
+    public function getInitialMessage(): Message
+    {
+        return new Message('
 You are a librarian expert in retrieving information about books. Currently we are talking about '.$this->getBookString($this->book).'
 The user may ask you questions about the book, you can answer how you need but 
 - if the user asks for a summary, you should provide a markdown formatted json with only the "summary" key in addition.
@@ -67,16 +78,19 @@ The user may ask you questions about the book, you can answer how you need but
 feel free to ask for more information if needed.
 If you don\'t know the answer to the user question, mention it in your answer.
 ', AiMessageRole::System);
-            $this->messages[] = $initialMessage;
-        }
-
-        return $form;
     }
 
     #[LiveAction]
     public function sendMessage(): void
     {
-        $this->isProcessing = true;
+        $this->submitForm();
+        foreach ($this->messages as $key => $message) {
+            if ($message->role === AiMessageRole::System) {
+                $this->messages[$key] = $this->getInitialMessage();
+                break;
+            }
+        }
+
         $this->messages[] = new Message($this->message, AiMessageRole::User);
         $this->message = '';
 
@@ -97,8 +111,6 @@ If you don\'t know the answer to the user question, mention it in your answer.
         }
 
         $this->messages[] = $message;
-
-        $this->isProcessing = false;
     }
 
     #[LiveAction]
