@@ -150,7 +150,7 @@ books.stat.hidden: >-
 book.edition: "Edit"
 book.form.accept-suggestion: "Accept"
 book.form.agecategory: "Age Category"
-book.form.ask-assistant: "Ask you assistant"
+book.form.ask-assistant: "Ask your assistant"
 book.form.authorsstring: "Author(s)"
 book.form.close-without-saving: "Close without saving"
 book.form.generate-categories: "Generate categories"

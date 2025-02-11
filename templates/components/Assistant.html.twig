@@ -88,10 +88,17 @@
 
                         <div class="alert alert-{{ enum('App\\Enum\\AiMessageRole').getClass(message.role) }}" role="alert">
                             {% if message.role.value=="system" %}
-                                <details>
+                                <details class="small">
                                     <summary>{{ "book.form.initial-system-prompt"|trans }}</summary>
                                     {{ message.text }}
                                 </details>
+                            {% elseif message.role.value=="user" %}
+                                <small class="text-muted">{{ message.date|date('m.d H:i') }}: {{ app.user.username }}</small><br>
+                                <details class="small">
+                                    <summary>{{ message.text|slice(0,50) }}...</summary>
+                                    {{ message.text|markdown_to_html }}
+                                </details>
+
                             {% else %}
                                 <small class="text-muted">{{ message.date|date('m.d H:i') }}: {{ message.role.value }}</small><br>
                                 {{ message.text|markdown_to_html }}
