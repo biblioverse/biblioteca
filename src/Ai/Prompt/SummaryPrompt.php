@@ -2,8 +2,6 @@
 
 namespace App\Ai\Prompt;
 
-use App\Entity\User;
-
 class SummaryPrompt extends AbstractBookPrompt
 {
     #[\Override]
@@ -11,15 +9,20 @@ class SummaryPrompt extends AbstractBookPrompt
     {
         $prompt = $this->config->resolve('AI_SUMMARY_PROMPT');
 
-        if ($this->user instanceof User) {
-            $prompt = $this->user->getBookSummaryPrompt() ?? $prompt;
-        }
+        $this->prompt = $this->replaceBookOccurrence($prompt ?? '');
+    }
 
-        $prompt .= ' Remember to keep it short and concise. Do not add any comment or opinion. The output must be only valid JSON format. 
-It must be an object with one key named "summary" containing the summary for this book in strings. 
-Do not add anything else than json. Do not add any other text or comment.';
+    #[\Override]
+    public function getPrompt(): string
+    {
+        return $this->getPromptWithoutInstructions().'Remember to keep it short and concise. Do not add any comment or opinion. 
+The output must be only valid markdwon containing and the result must be the JSON of an object with one key named "summary" containing the summary for this book in strings. 
+';
+    }
 
-        $this->prompt = $this->replaceBookOccurrence($prompt);
+    public function getPromptWithoutInstructions(): string
+    {
+        return $this->prompt;
     }
 
     #[\Override]

@@ -85,15 +85,7 @@
                         {{ form_row(form.theme) }}
                     </div>
                 </div>
-                <div class="card m-2">
-                    <div class="card-header">
-                        {{ 'ai.ai-features'|trans }}
-                    </div>
-                    <div class="card-body">
-                        {{ form_row(form.bookKeywordPrompt) }}
-                        {{ form_row(form.bookSummaryPrompt) }}
-                    </div>
-                </div>
+
                 {{ form_rest(form) }}
                 {{ form_end(form) }}
             {%endif%}

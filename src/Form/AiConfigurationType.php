@@ -37,11 +37,11 @@ class AiConfigurationType extends AbstractType
             ])
             ->add('AI_SUMMARY_PROMPT', TextareaType::class, [
                 'required' => false,
-                'help' => 'ai.summaryprompt.form-help',
+                'help' => 'ai.summaryprompt.form-help', 'attr' => ['rows' => 10],
             ])
             ->add('AI_TAG_PROMPT', TextareaType::class, [
                 'required' => false,
-                'help' => 'ai.bookprompt.form-help',
+                'help' => 'ai.bookprompt.form-help', 'attr' => ['rows' => 10],
             ])->add('submit', SubmitType::class)
 
         ;

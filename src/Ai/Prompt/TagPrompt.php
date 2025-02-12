@@ -2,8 +2,6 @@
 
 namespace App\Ai\Prompt;
 
-use App\Entity\User;
-
 class TagPrompt extends AbstractBookPrompt
 {
     #[\Override]
@@ -11,29 +9,20 @@ class TagPrompt extends AbstractBookPrompt
     {
         $prompt = $this->config->resolve('AI_TAG_PROMPT');
 
-        if ($this->user instanceof User) {
-            $prompt = $this->user->getBookKeywordPrompt() ?? $prompt;
-        }
-        $prompt .= '
+        $this->prompt = $this->replaceBookOccurrence($prompt ?? '');
+    }
 
-The output must be only valid JSON format. It must be an object with one key named "tags" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
-
-        $this->prompt = $this->replaceBookOccurrence($prompt);
+    #[\Override]
+    public function getPrompt(): string
+    {
+        return $this->getPromptWithoutInstructions().'
+The output must be only valid JSON format. It must be an object with one key named "tags" containing an array of genres and tags for this book in strings. 
+Do not add anything else than json. Do not add any other text or comment.';
     }
 
     public function getPromptWithoutInstructions(): string
     {
-        $prompt = $this->config->resolve('AI_TAG_PROMPT');
-
-        if ($this->user instanceof User) {
-            $prompt = $this->user->getBookKeywordPrompt() ?? $prompt;
-        }
-
-        if (!is_string($prompt)) {
-            return '';
-        }
-
-        return $this->replaceBookOccurrence($prompt);
+        return $this->prompt;
     }
 
     #[\Override]

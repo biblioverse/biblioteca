@@ -161,8 +161,8 @@ If you don\'t know the answer to the user question, mention it in your answer.
         }
 
         $prompt = match ($field) {
-            'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book, $user),
-            'categories' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book, $user),
+            'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book),
+            'categories' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book),
             default => 'Can you generate a '.$field.' for me for '.$this->getBookString($this->book).' in '.$language.'?',
         };
 

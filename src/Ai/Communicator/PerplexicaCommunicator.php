@@ -89,13 +89,21 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
             $processedMessages[] = $message->toPerplexica();
         }
 
+        $model = $this->aiModel->getModel();
+        $provider = 'ollama';
+        if (str_contains((string) $model, '/')) {
+            $exp = explode('/', (string) $model);
+            $provider = $exp[0];
+            $model = $exp[1];
+        }
+
         $params = [
             'chatModel' => [
-                'model' => $this->aiModel->getModel(),
-                'provider' => 'ollama',
+                'model' => $model,
+                'provider' => $provider,
             ],
             'focusMode' => 'webSearch',
-            'optimizationMode' => 'balanced',
+            'optimizationMode' => 'speed',
             'query' => $lastMessage->getText(),
             'messages' => $processedMessages,
         ];

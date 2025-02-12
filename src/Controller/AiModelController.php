@@ -81,8 +81,8 @@ final class AiModelController extends AbstractController
 
                 return $this->redirectToRoute('app_ai_model_index');
             }
-            $tagPrompt = $promptFactory->getPrompt(TagPrompt::class, $book, $user);
-            $summaryPrompt = $promptFactory->getPrompt(SummaryPrompt::class, $book, $user);
+            $tagPrompt = $promptFactory->getPrompt(TagPrompt::class, $book);
+            $summaryPrompt = $promptFactory->getPrompt(SummaryPrompt::class, $book);
 
             $initialTagPrompt = clone $tagPrompt;
             $initialSummaryPrompt = clone $summaryPrompt;

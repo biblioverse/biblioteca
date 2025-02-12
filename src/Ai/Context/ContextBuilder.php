@@ -35,6 +35,9 @@ class ContextBuilder
                     $prompt .= $handler->getContextForPrompt($abstractBookPrompt);
                     $hasContext = true;
                 } catch (\Exception $e) {
+                    if ($output instanceof NullOutput) {
+                        throw $e;
+                    }
                     $output->writeln('An error happened while fetching context with '.($handler::class).': '.$e->getMessage());
                 }
             }

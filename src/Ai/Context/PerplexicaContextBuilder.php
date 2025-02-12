@@ -6,7 +6,6 @@ use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\Prompt\BookPromptInterface;
-use App\Ai\Prompt\TagPrompt;
 use App\Entity\AiModel;
 use App\Entity\Book;
 
@@ -32,10 +31,6 @@ class PerplexicaContextBuilder implements ContextBuildingInterface
             return '';
         }
 
-        if ($prompt instanceof TagPrompt) {
-            return $this->communicator->interrogate($prompt->getPromptWithoutInstructions());
-        }
-
-        return $this->communicator->interrogate($prompt->getPrompt());
+        return $this->communicator->interrogate($prompt->getPromptWithoutInstructions());
     }
 }
