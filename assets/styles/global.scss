@@ -274,6 +274,8 @@ body.bg-darker{
   color: rgba(var(--bs-secondary-rgb), 1);
 }
 
-.modal.modal-xl{
-  --bs-modal-width: 90%
+@media (min-width: 1200px) {
+  .modal-xl {
+    --bs-modal-width: 90%;
+  }
 }
