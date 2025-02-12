@@ -74,17 +74,15 @@ class BooksAiCommand extends Command
             }
         }
 
-        $tagCommunicator = $this->aiCommunicator->getCommunicator(AiAction::Tags);
-        $summaryCommunicator = $this->aiCommunicator->getCommunicator(AiAction::Summary);
+        $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
 
-        if (!$tagCommunicator instanceof AiCommunicatorInterface || !$summaryCommunicator instanceof AiCommunicatorInterface) {
+        if (!$communicator instanceof AiCommunicatorInterface) {
             $io->error('AI communicator not available');
 
             return Command::FAILURE;
         }
 
-        $io->title('Summary data with '.$summaryCommunicator::class);
-        $io->title('Tag data with '.$tagCommunicator::class);
+        $io->title('Communicator data with '.$communicator::class);
 
         if ($bookId === null) {
             $io->note('Processing all books without tags or summary');
@@ -119,8 +117,8 @@ class BooksAiCommand extends Command
             if (($type === 'summary' || $type === 'both') && (trim((string) $book->getSummary()) === '' || $overwrite === true)) {
                 $io->comment('Generating Summary');
                 $summaryPrompt = $this->promptFactory->getPrompt(SummaryPrompt::class, $book, $user);
-                $summaryPrompt = $this->contextBuilder->getContext($summaryCommunicator->getAiModel(), $summaryPrompt, $output);
-                $summary = $summaryCommunicator->interrogate($summaryPrompt->getPrompt());
+                $summaryPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $summaryPrompt, $output);
+                $summary = $communicator->interrogate($summaryPrompt->getPrompt());
                 $summary = $summaryPrompt->convertResult($summary);
                 $io->block($summary);
                 if (is_string($summary)) {
@@ -131,9 +129,9 @@ class BooksAiCommand extends Command
             if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $overwrite === true)) {
                 $io->comment('Generating Tags');
                 $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book, $user);
-                $tagPrompt = $this->contextBuilder->getContext($tagCommunicator->getAiModel(), $tagPrompt, $output);
+                $tagPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $tagPrompt, $output);
 
-                $array = $tagCommunicator->interrogate($tagPrompt->getPrompt());
+                $array = $communicator->interrogate($tagPrompt->getPrompt());
 
                 $array = $tagPrompt->convertResult($array);
 

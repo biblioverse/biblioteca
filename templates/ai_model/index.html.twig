@@ -10,7 +10,6 @@
                 <th>{{ "ai.type"|trans }}</th>
                 <th>{{ "ai.url"|trans }}</th>
                 <th>{{ "ai.model"|trans }}</th>
-                <th>{{ "ai.context"|trans }}</th>
                 <th>{{ "ai.actions"|trans }}</th>
             </tr>
         </thead>
@@ -21,11 +20,6 @@
                 <td>{{ ai_model.type }}</td>
                 <td>{{ ai_model.url }}</td>
                 <td>{{ ai_model.model }}</td>
-                <td>
-                    {{ ai_model.useAmazonContext?'Amazon' }}
-                    {{ ai_model.useWikipediaContext?'Wikipedia' }}
-                    {{ ai_model.useEpubContext?'Epub' }}
-                </td>
                 <td>
                     <div class="btn-group">
                     <a class="btn btn-primary" href="{{ path('app_ai_model_test', {'id': ai_model.id}) }}">Test</a>

@@ -47,9 +47,9 @@ class AbstractApiMock extends MockHttpClient
     private function getGenerateMock(): MockResponse
     {
         $mock = [
-            'response' => 'This is a valid response from the communicator',
+            'response' => '{"summary": "This is a valid response from the communicator"}',
             'choices' => [
-                ['message' => ['content' => 'This is a valid response from the communicator']],
+                ['message' => ['content' => '{"summary": "This is a valid response from the communicator"}']],
             ],
         ];
 

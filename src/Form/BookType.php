@@ -33,7 +33,7 @@ class BookType extends AbstractType
             ->add('serie', TextType::class, [
                 'required' => false,
                 'autocomplete' => true,
-                'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'authors']),
+                'autocomplete_url' => $this->router->generate('app_autocomplete_group', ['type' => 'serie']),
             ])
             ->add('serieIndex', NumberType::class, [
                 'required' => false,

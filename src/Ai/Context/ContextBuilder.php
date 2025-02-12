@@ -27,12 +27,12 @@ class ContextBuilder
 
         $hasContext = false;
         $prompt = "Use the following pieces of context to answer the query at the end. If you don't know the answer, don't try to make up an answer. Context:
----------------------
+[context]
 ";
         foreach ($this->handlers as $handler) {
             if ($handler->isEnabled($aiModel, $abstractBookPrompt->getBook())) {
                 try {
-                    $prompt .= $handler->getContextForPrompt($abstractBookPrompt->getBook());
+                    $prompt .= $handler->getContextForPrompt($abstractBookPrompt);
                     $hasContext = true;
                 } catch (\Exception $e) {
                     $output->writeln('An error happened while fetching context with '.($handler::class).': '.$e->getMessage());
@@ -40,7 +40,9 @@ class ContextBuilder
             }
         }
         $prompt .= '
----------------------
+        
+[/context]
+
 Given the context information, answer the query.
 Query: '.$abstractBookPrompt->getPrompt();
 

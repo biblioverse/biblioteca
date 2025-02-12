@@ -5,7 +5,12 @@ namespace App\Twig\Components;
 use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiChatInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
+use App\Ai\Context\ContextBuilder;
 use App\Ai\Message;
+use App\Ai\Prompt\BookPromptInterface;
+use App\Ai\Prompt\PromptFactory;
+use App\Ai\Prompt\SummaryPrompt;
+use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Enum\AiMessageRole;
@@ -17,6 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -47,6 +53,8 @@ final class Assistant extends AbstractController
     public function __construct(
         private readonly CommunicatorDefiner $communicatorDefiner,
         private readonly RouterInterface $router,
+        private readonly PromptFactory $promptFactory,
+        private readonly ContextBuilder $contextBuilder,
     ) {
     }
 
@@ -136,13 +144,14 @@ If you don\'t know the answer to the user question, mention it in your answer.
     #[LiveAction]
     public function generate(#[LiveArg] string $field): void
     {
-        $language = 'english';
         $user = $this->getUser();
-        if ($user instanceof User) {
-            $language = $user->getLanguage();
-            $names = Locales::getNames();
-            $language = $names[$language] ?? $language;
+        if (!$user instanceof User) {
+            throw new AccessDeniedException('You must be logged in to generate a book');
         }
+
+        $language = $user->getLanguage();
+        $names = Locales::getNames();
+        $language = $names[$language] ?? $language;
 
         if ($this->book->getLanguage() !== null) {
             $fallback = $language;
@@ -151,7 +160,23 @@ If you don\'t know the answer to the user question, mention it in your answer.
             $language = $names[$language] ?? $fallback;
         }
 
-        $this->message = 'Can you generate a '.$field.' for me in '.$language.'?';
+        $prompt = match ($field) {
+            'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book, $user),
+            'categories' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book, $user),
+            default => 'Can you generate a '.$field.' for me for '.$this->getBookString($this->book).' in '.$language.'?',
+        };
+
+        $contextModel = $this->communicatorDefiner->getCommunicator(AiAction::Context);
+        if ($prompt instanceof BookPromptInterface && $contextModel instanceof AiChatInterface) {
+            $prompt = $this->contextBuilder->getContext($contextModel->getAiModel(), $prompt);
+        }
+
+        if ($prompt instanceof BookPromptInterface) {
+            $prompt = $prompt->getPrompt();
+        }
+
+        $this->message = $prompt;
+
         $this->sendMessage();
     }
 

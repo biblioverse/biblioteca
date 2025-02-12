@@ -16,9 +16,24 @@ class TagPrompt extends AbstractBookPrompt
         }
         $prompt .= '
 
-The output must be only valid JSON format. It must be an object with one key named "genres" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
+The output must be only valid JSON format. It must be an object with one key named "tags" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
 
         $this->prompt = $this->replaceBookOccurrence($prompt);
+    }
+
+    public function getPromptWithoutInstructions(): string
+    {
+        $prompt = $this->config->resolve('AI_TAG_PROMPT');
+
+        if ($this->user instanceof User) {
+            $prompt = $this->user->getBookKeywordPrompt() ?? $prompt;
+        }
+
+        if (!is_string($prompt)) {
+            return '';
+        }
+
+        return $this->replaceBookOccurrence($prompt);
     }
 
     #[\Override]
@@ -37,10 +52,10 @@ The output must be only valid JSON format. It must be an object with one key nam
             return [];
         }
 
-        if (!is_array($items) || !isset($items['genres']) || !is_array($items['genres'])) {
+        if (!is_array($items) || !isset($items['tags']) || !is_array($items['tags'])) {
             return [$result];
         }
 
-        return array_filter($items['genres'], fn ($item) => $item !== null);
+        return array_filter($items['tags'], fn ($item) => $item !== null);
     }
 }

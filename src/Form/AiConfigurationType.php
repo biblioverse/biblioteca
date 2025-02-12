@@ -16,18 +16,6 @@ class AiConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('AI_SUMMARIZATION_MODEL', EntityType::class, [
-                'class' => AiModel::class,
-                'placeholder' => 'ai.summarizationmodel.form-placeholder',
-                'required' => false,
-                'choice_label' => 'label',
-            ])
-            ->add('AI_TAG_MODEL', EntityType::class, [
-                'class' => AiModel::class,
-                'placeholder' => 'ai.tagmodel.form-placeholder',
-                'required' => false,
-                'choice_label' => 'label',
-            ])
             ->add('AI_SEARCH_MODEL', EntityType::class, [
                 'class' => AiModel::class,
                 'placeholder' => 'ai.searchmodel.form-placeholder',
@@ -39,6 +27,13 @@ class AiConfigurationType extends AbstractType
                 'placeholder' => 'ai.assistantmodel.form-placeholder',
                 'required' => false,
                 'choice_label' => 'label',
+            ])
+            ->add('AI_CONTEXT_MODEL', EntityType::class, [
+                'class' => AiModel::class,
+                'placeholder' => 'ai.contextmodel.form-placeholder',
+                'required' => false,
+                'choice_label' => 'label',
+                'help' => 'ai.contextmodel.form-help',
             ])
             ->add('AI_SUMMARY_PROMPT', TextareaType::class, [
                 'required' => false,

@@ -69,7 +69,7 @@
                         </div>
                         <div>
                             {% if book.ageCategory is not null %}
-                                {{ enum("App\\Enum\\AgeCategory").label(book.ageCategory)|trans }}
+                                {{ book.ageCategory.label|trans }}
                             {% endif %}
                         </div>
 

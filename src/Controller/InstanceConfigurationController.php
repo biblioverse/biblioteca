@@ -42,7 +42,7 @@ final class InstanceConfigurationController extends AbstractController
             ];
         }
 
-        $availableParamsForEdit = ['WIKIPEDIA_API_TOKEN', 'GENERIC_SYSTEM_PROMPT'];
+        $availableParamsForEdit = ['GENERIC_SYSTEM_PROMPT'];
         $editableParams = [];
         foreach ($availableParamsForEdit as $key) {
             $editableParams[$key] = $configValue->resolve($key, true);
