@@ -153,6 +153,13 @@ If you don\'t know the answer to the user question, mention it in your answer.
         $names = Locales::getNames();
         $language = $names[$language] ?? $language;
 
+        if ($this->book->getLanguage() !== null) {
+            $fallback = $language;
+            $language = $this->book->getLanguage();
+            $names = Locales::getNames();
+            $language = $names[$language] ?? $fallback;
+        }
+
         $prompt = match ($field) {
             'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book, $user),
             'categories' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book, $user),

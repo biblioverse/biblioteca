@@ -273,3 +273,9 @@ body.bg-darker{
 .Rating {
   color: rgba(var(--bs-secondary-rgb), 1);
 }
+
+@media (min-width: 1200px) {
+  .modal-xl {
+    --bs-modal-width: 90%;
+  }
+}
