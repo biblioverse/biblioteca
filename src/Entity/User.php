@@ -73,18 +73,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?AgeCategory $maxAgeCategory = null;
 
-    /**
-     * @deprecated use global prompts
-     */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $bookSummaryPrompt = null;
-
-    /**
-     * @deprecated use global prompts
-     */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $bookKeywordPrompt = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $theme = null;
 
@@ -361,42 +349,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMaxAgeCategory(?AgeCategory $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated use global prompts
-     */
-    public function getBookSummaryPrompt(): ?string
-    {
-        return $this->bookSummaryPrompt;
-    }
-
-    /**
-     * @deprecated use global prompts
-     */
-    public function setBookSummaryPrompt(?string $bookSummaryPrompt): static
-    {
-        $this->bookSummaryPrompt = $bookSummaryPrompt;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated use global prompts
-     */
-    public function getBookKeywordPrompt(): ?string
-    {
-        return $this->bookKeywordPrompt;
-    }
-
-    /**
-     * @deprecated use global prompts
-     */
-    public function setBookKeywordPrompt(?string $bookKeywordPrompt): static
-    {
-        $this->bookKeywordPrompt = $bookKeywordPrompt;
 
         return $this;
     }

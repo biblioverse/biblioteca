@@ -33,15 +33,6 @@ class AiModel implements \Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $systemPrompt = null;
 
-    #[ORM\Column(nullable: false, options: ['default' => '0'])]
-    private bool $useEpubContext = false;
-
-    #[ORM\Column(nullable: false, options: ['default' => '0'])]
-    private bool $useWikipediaContext = false;
-
-    #[ORM\Column(nullable: false, options: ['default' => '0'])]
-    private bool $useAmazonContext = false;
-
     #[\Override]
     public function __toString(): string
     {
@@ -114,48 +105,6 @@ class AiModel implements \Stringable
     public function setSystemPrompt(?string $systemPrompt): static
     {
         $this->systemPrompt = $systemPrompt;
-
-        return $this;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function isUseEpubContext(): bool
-    {
-        return $this->useEpubContext;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function setUseEpubContext(bool $useEpubContext): static
-    {
-        $this->useEpubContext = $useEpubContext;
-
-        return $this;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function isUseWikipediaContext(): bool
-    {
-        return $this->useWikipediaContext;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function setUseWikipediaContext(bool $useWikipediaContext): static
-    {
-        $this->useWikipediaContext = $useWikipediaContext;
-
-        return $this;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function isUseAmazonContext(): bool
-    {
-        return $this->useAmazonContext;
-    }
-
-    /** @deprecated use the context model to retrieve context */
-    public function setUseAmazonContext(bool $useAmazonContext): static
-    {
-        $this->useAmazonContext = $useAmazonContext;
 
         return $this;
     }

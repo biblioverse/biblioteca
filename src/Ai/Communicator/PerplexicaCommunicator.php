@@ -90,18 +90,30 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
         }
 
         $model = $this->aiModel->getModel();
-        $provider = 'ollama';
+        $modelInfo = [
+            'chatModel' => [
+                'model' => $model,
+                'provider' => 'ollama',
+            ],
+        ];
         if (str_contains((string) $model, '/')) {
             $exp = explode('/', (string) $model);
             $provider = $exp[0];
             $model = $exp[1];
+            $modelInfo = [
+                'chatModel' => [
+                    'model' => $model,
+                    'provider' => $provider,
+                ],
+            ];
+        }
+
+        if ($model === '') {
+            $modelInfo = [];
         }
 
         $params = [
-            'chatModel' => [
-                'model' => $model,
-                'provider' => $provider,
-            ],
+            ...$modelInfo,
             'focusMode' => 'webSearch',
             'optimizationMode' => 'speed',
             'query' => $lastMessage->getText(),

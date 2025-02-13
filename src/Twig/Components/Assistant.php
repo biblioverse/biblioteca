@@ -206,7 +206,16 @@ If you don\'t know the answer to the user question, mention it in your answer.
             return ['suggestions' => $suggestions, 'text' => $text];
         }
 
-        return null;
+        try {
+            $suggestions = json_decode($text, true, 512, JSON_THROW_ON_ERROR);
+            if (is_array($suggestions)) {
+                return ['suggestions' => $suggestions, 'text' => $text];
+            }
+
+            return null;
+        } catch (\JsonException) {
+            return null;
+        }
     }
 
     public function getBookString(Book $book): string
