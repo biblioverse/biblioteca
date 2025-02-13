@@ -146,6 +146,7 @@
 
         {% endblock %}
         {% block modal_footer %}
+            <span class="text-muted small">{{ 'book.book-path'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></span>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ "book.form.close-without-saving"|trans }}</button>
                 <button type="submit" class="btn btn-success">{{ "book.form.save-book"|trans }}</button>
@@ -153,6 +154,5 @@
         {% endblock %}
 
     {% endcomponent %}
-
 
 </div>
