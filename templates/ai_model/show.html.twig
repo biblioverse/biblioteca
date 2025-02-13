@@ -30,18 +30,6 @@
             <td>{{ ai_model.systemPrompt }}</td>
         </tr>
         <tr>
-            <th>{{ "ai.use-epub-context"|trans }}</th>
-            <td>{{ ai_model.useEpubContext?"generic.yes"|trans :"generic.no"|trans }}</td>
-        </tr>
-        <tr>
-            <th>{{ "ai.use-wikipedia-context"|trans }}</th>
-            <td>{{ ai_model.useWikipediaContext?"generic.yes"|trans :"generic.no"|trans }}</td>
-        </tr>
-        <tr>
-            <th>{{ "ai.use-amazon-context"|trans }}</th>
-            <td>{{ ai_model.useAmazonContext?"generic.yes"|trans :"generic.no"|trans }}</td>
-        </tr>
-        <tr>
             <td colspan="2">
                 <a href="{{ path('app_ai_model_edit', {'id':ai_model.id}) }}">{{ "ai.edit-model-configuration"|trans }}</a>
             </td>

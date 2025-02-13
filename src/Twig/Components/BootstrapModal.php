@@ -17,4 +17,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class BootstrapModal
 {
     public ?string $id = null;
+
+    public function __invoke(): void
+    {
+    }
 }

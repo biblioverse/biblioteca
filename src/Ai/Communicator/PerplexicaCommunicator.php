@@ -2,10 +2,12 @@
 
 namespace App\Ai\Communicator;
 
+use App\Ai\Message;
 use App\Entity\AiModel;
+use App\Enum\AiMessageRole;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OllamaCommunicator extends AbstractCommunicator implements AiChatInterface
+class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInterface
 {
     public function __construct(
         private HttpClientInterface $client,
@@ -36,18 +38,17 @@ class OllamaCommunicator extends AbstractCommunicator implements AiChatInterface
             } catch (\JsonException) {
                 continue;
             }
-            if (!is_array($data) || (!array_key_exists('response', $data) && !array_key_exists('message', $data))) {
+            if (!is_array($data) || (!array_key_exists('message', $data))) {
                 continue;
             }
 
-            // @phpstan-ignore-next-line
-            $content[] = $data['response'] ?? $data['message']['content'];
+            $content[] = $data['message'];
         }
 
         return implode('', $content);
     }
 
-    private function getOllamaUrl(string $path): string
+    private function getPerplexicaUrl(string $path): string
     {
         if (!str_ends_with((string) $this->aiModel->getUrl(), '/')) {
             $this->aiModel->setUrl($this->aiModel->getUrl().'/');
@@ -65,30 +66,60 @@ class OllamaCommunicator extends AbstractCommunicator implements AiChatInterface
     #[\Override]
     public function interrogate(string $prompt): string
     {
-        $params = [
-            'model' => $this->aiModel->getModel(),
-            'prompt' => $prompt,
-            'system' => $this->aiModel->getSystemPrompt(),
-            'options' => [
-                'temperature' => 0,
-            ],
+        $messages = [
+            new Message($prompt, AiMessageRole::User),
         ];
 
-        return $this->sendRequest($this->getOllamaUrl('generate'), $params, 'POST');
+        return $this->chat($messages);
     }
 
     public function chat(array $messages): string
     {
+        // https://github.com/ItzCrazyKns/Perplexica/blob/master/docs/API/SEARCH.md
+
         $processedMessages = [];
+
+        $lastMessage = array_pop($messages);
+
+        if ($lastMessage === null) {
+            return '';
+        }
+
         foreach ($messages as $message) {
-            $processedMessages[] = $message->toOpenAI();
+            $processedMessages[] = $message->toPerplexica();
+        }
+
+        $model = $this->aiModel->getModel();
+        $modelInfo = [
+            'chatModel' => [
+                'model' => $model,
+                'provider' => 'ollama',
+            ],
+        ];
+        if (str_contains((string) $model, '/')) {
+            $exp = explode('/', (string) $model);
+            $provider = $exp[0];
+            $model = $exp[1];
+            $modelInfo = [
+                'chatModel' => [
+                    'model' => $model,
+                    'provider' => $provider,
+                ],
+            ];
+        }
+
+        if ($model === '') {
+            $modelInfo = [];
         }
 
         $params = [
-            'model' => $this->aiModel->getModel(),
+            ...$modelInfo,
+            'focusMode' => 'webSearch',
+            'optimizationMode' => 'speed',
+            'query' => $lastMessage->getText(),
             'messages' => $processedMessages,
         ];
 
-        return $this->sendRequest($this->getOllamaUrl('chat'), $params, 'POST');
+        return $this->sendRequest($this->getPerplexicaUrl('search'), $params, 'POST');
     }
 }

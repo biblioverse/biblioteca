@@ -34,9 +34,6 @@ class AiModelType extends AbstractType
             ->add('url', null, ['required' => true])
             ->add('model', null, ['required' => true])
             ->add('token', null, ['required' => false])
-            ->add('useAmazonContext', null, ['required' => false])
-            ->add('useEpubContext', null, ['required' => false])
-            ->add('useWikipediaContext', null, ['required' => false])
             ->add('systemPrompt', null, ['required' => true])
         ;
     }

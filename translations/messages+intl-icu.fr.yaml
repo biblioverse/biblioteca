@@ -1,335 +1,347 @@
-ai.actions: Actions possibles
-ai.ai-features: Fonctionnalités IA
+ai.actions: 'Actions possibles'
+ai.ai-features: 'Fonctionnalités IA'
+ai.assistantmodel.form-placeholder: "Choisir un modèle pour l'assistant d'édition"
 ai.bookprompt.form-help: "Utilisez {book} pour les informations du livre. Ce prompt ne sera utilisé que si l'utilisateur n'a pas défini de prompt dans son profil."
-ai.configuration.form.ai_search_model: Connecteur pour les requêtes de recherche
-ai.configuration.form.ai_summarization_model: Connecteur pour les résumés
-ai.configuration.form.ai_summary_prompt: Prompt pour les résumés
-ai.configuration.form.ai_tag_model: Connecteur pour les catégories
-ai.configuration.form.ai_tag_prompt: Prompt pour les catégories
+ai.configuration.form.ai_assistant_model: "Connecteur pour l'assistant d'édition"
+ai.configuration.form.ai_context_model: "Connecteur pour les recherches de contexte"
+ai.configuration.form.ai_search_model: 'Connecteur pour les requêtes de recherche'
+ai.configuration.form.ai_summarization_model: 'Connecteur pour les résumés'
+ai.configuration.form.ai_summary_prompt: 'Prompt pour les résumés'
+ai.configuration.form.ai_tag_model: 'Connecteur pour les catégories'
+ai.configuration.form.ai_tag_prompt: 'Prompt pour les catégories'
 ai.configuration.form.submit: Enregistrer
-ai.form.url: "URL API"
-ai.form.model: "Nom du modèle"
-ai.form.token: "Token API"
-ai.form.useamazoncontext: "Utiliser le contexte Amazon"
-ai.form.useepubcontext: "Utiliser le contexte EPUB"
-ai.form.usewikipediacontext: "Utiliser le contexte Wikipedia"
-ai.form.systemprompt: "Prompt système"
 ai.context: Contexte
-ai.create-new-model: Créer un nouveau connecteur IA
-ai.edit-ai-model: Modifier connecteur IA
-ai.edit-model-configuration: Modifier la configuration du connecteur
-ai.edit-prompt: Modifier le prompt
+ai.create-new-model: 'Créer un nouveau connecteur IA'
+ai.edit-ai-model: 'Modifier connecteur IA'
+ai.edit-model-configuration: 'Modifier la configuration du connecteur'
+ai.edit-prompt: 'Modifier le prompt'
+ai.form.model: 'Nom du modèle'
+ai.form.systemprompt: 'Prompt système'
+ai.form.token: 'Token API'
+ai.form.url: 'URL API'
+ai.form.useamazoncontext: 'Utiliser le contexte Amazon'
+ai.form.useepubcontext: 'Utiliser le contexte EPUB'
+ai.form.usewikipediacontext: 'Utiliser le contexte Wikipedia'
 ai.generate: Générer
 ai.id: Id
-ai.initial-summary-prompt: Prompt de résumé initial
-ai.initial-tag-prompt: Prompt de catégorie initial
-ai.model-information: Informations du connecteur
-ai.model-type: Type de connecteur
+ai.initial-summary-prompt: 'Prompt de résumé initial'
+ai.initial-tag-prompt: 'Prompt de catégorie initial'
+ai.model-information: 'Informations du connecteur'
+ai.model-type: 'Type de connecteur'
 ai.model: Connecteur
-ai.new-aimodel: Nouveau connecteur
-ai.prompts-and-context: Prompts et contexte
-ai.querying-for-context-and-building-a-response-please-wait: Construction du contexte et génération de la réponse, merci de patienter.
-ai.responses-to-prompt-with-context: Réponses aux prompt avec contexte
-ai.searchmodel.form-placeholder: "Choisir un modèle pour la conversion des requêtes de recherche"
-ai.summary-prompt-with-context: Prompt de résumé avec contexte
-ai.summary-prompt: Prompt de résumé
+ai.new-aimodel: 'Nouveau connecteur'
+ai.prompts-and-context: 'Prompts et contexte'
+ai.querying-for-context-and-building-a-response-please-wait: 'Construction du contexte et génération de la réponse, merci de patienter.'
+ai.responses-to-prompt-with-context: 'Réponses aux prompt avec contexte'
+ai.searchmodel.form-placeholder: 'Choisir un modèle pour la conversion des requêtes de recherche'
+ai.summarizationmodel.form-placeholder: 'Choisir un modèle pour résumer'
+ai.summary-prompt-with-context: 'Prompt de résumé avec contexte'
+ai.summary-prompt: 'Prompt de résumé'
+ai.contextmodel.form-help: "Select a model that is able to perform web research to provide context, like Perplexica or Perplexity"
 ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
-ai.summarizationmodel.form-placeholder: "Choisir un modèle pour résumer"
-ai.system-prompt: Prompt système
-ai.tag-prompt-with-context: Prompt de catégorie avec contexte
-ai.tag-prompt: Prompt de catégorie
-ai.tagmodel.form-placeholder: "Choisir un modèle de catégorisation"
-ai.test-book: Livre de test
-ai.test-model: Tester le connecteur
-ai.token: Clé d'identification
-ai.type: Type de connecteur
-ai.url: URL du connecteur
+ai.system-prompt: 'Prompt système'
+ai.tag-prompt-with-context: 'Prompt de catégorie avec contexte'
+ai.tag-prompt: 'Prompt de catégorie'
+ai.tagmodel.form-placeholder: 'Choisir un modèle de catégorisation'
+ai.test-book: 'Livre de test'
+ai.test-model: 'Tester le connecteur'
+ai.token: "Clé d'identification"
+ai.type: 'Type de connecteur'
+ai.url: 'URL du connecteur'
 ai.usage-configuration: Configuration
-ai.use-amazon-context: Utiliser le contexte Amazon
-ai.use-epub-context: Utiliser le contexte
-ai.use-wikipedia-context: Utiliser le contexte Wikipedia
+ai.use-amazon-context: 'Utiliser le contexte Amazon'
+ai.use-epub-context: 'Utiliser le contexte'
+ai.use-wikipedia-context: 'Utiliser le contexte Wikipedia'
 author.books: >-
-    {books_count, plural,
-        =0    {0 books}
-        =1    {
-          {series, plural,
-            =0    {1 livre dont 0 séries}
-            =1    {1 livre dont 1 série}
-            other {1 livre dont # séries}
-          }
+  {books_count, plural,
+      =0    {0 books}
+      =1    {
+        {series, plural,
+          =0    {1 livre dont 0 séries}
+          =1    {1 livre dont 1 série}
+          other {1 livre dont # séries}
         }
-        other {
-          {series, plural,
-            =0    {{books} livres dont 0 séries}
-            =1    {{books} livres dont 1 série}
-            other {{books} livres dont # séries}
-          }
+      }
+      other {
+        {series, plural,
+          =0    {{books} livres dont 0 séries}
+          =1    {{books} livres dont 1 série}
+          other {{books} livres dont # séries}
         }
-    }
-author.tags: Tags
-author.standalone-books: Livres en dehors des séries
+      }
+  }
 author.in-series: Séries
+author.standalone-books: 'Livres en dehors des séries'
+author.tags: Tags
 book.actions: Actions
-book.add-to-favorites: Ajouter à la listre de lecture
-book.age-category: Catégorie d'âge
-book.all-books: Tous les livres
-book.and-rename: et renommer
+book.add-to-favorites: 'Ajouter à la listre de lecture'
+book.age-category: "Catégorie d'âge"
+book.all-books: 'Tous les livres'
+book.and-rename: 'et renommer'
 book.author: auteur
 book.authors: Auteurs
-book.back-to: Retour à
-book.book-details: Détails du livre
-book.book-path: Chemin du livre
+book.back-to: 'Retour à'
+book.book-details: 'Détails du livre'
+book.book-path: 'Chemin du livre'
 book.book: livre
-book.books-in-consume-folder: Livre dans le dossier consume
-book.books_placed_in_public_books_consume_folder_will_be_listed_here: Les livres placés dans le dossier consume seront listés ici
-book.consume-books: Consommer les livres
-book.delete-book: Supprimer le livre
+book.books-in-consume-folder: 'Livre dans le dossier consume'
+book.books_placed_in_public_books_consume_folder_will_be_listed_here: 'Les livres placés dans le dossier consume seront listés ici'
+book.consume-books: 'Consommer les livres'
+book.delete-book: 'Supprimer le livre'
 book.download: Télécharger
-book.extract-cover-from-file: Extraire la couverture du fichier
+book.edition: "Edition"
+book.extract-cover-from-file: 'Extraire la couverture du fichier'
+book.form.accept-suggestion: "Accepter"
+book.form.agecategory: "Catégorie d'âge"
+book.form.ask-assistant: "Demander à l'assistant..."
+book.form.authorsstring: "Auteur(s)"
+book.form.close-without-saving: "Fermer sans enregistrer"
 book.form.delete: Supprimer
-book.image-path: Chemin de l'image
-book.index: Index dans la série
-book.loading-book: Chargement du livre...
-book.missing: Livre manquant
-book.no-books-in-consume-folder: Pas de livres dans le dossier consume
-book.no-picture-for: Pas d'image pour
-book.number-of-pages: Nombre de pages
-book.picture-for-book: Image pour
+book.form.generate-categories: "Générer des tags"
+book.form.generate-summary: "Générer un résumé"
+book.form.initial-system-prompt: "Instruction système initiales"
+book.form.language: "Langue"
+book.form.pagenumber: "Nombre de pages"
+book.form.publishdate: "Sorti le"
+book.form.publisher: "Editeur"
+book.form.save-book: "Enregistrer"
+book.form.send-message: "Envoyer"
+book.form.serie: "Série"
+book.form.serieindex: "N°"
+book.form.summary: "Résumé"
+book.form.tagsstring: "Tags"
+book.form.title: "Titre"
+book.form.verified: "Verifié"
+book.image-path: "Chemin de l'image"
+book.index: 'Index dans la série'
+book.language: Langue
+book.loading-book: 'Chargement du livre...'
+book.missing: 'Livre manquant'
+book.no-books-in-consume-folder: 'Pas de livres dans le dossier consume'
+book.no-picture-for: "Pas d'image pour"
+book.number-of-pages: 'Nombre de pages'
+book.paths: 'Chemins'
+book.picture-for-book: 'Image pour'
 book.publisher: Editeur
 book.rating: Notation
-book.read-state: Etat de lecture
-book.readinglist-state: Liste de lecture
+book.read-in-browser: 'Lire dans le navigateur'
+book.read-state: 'Etat de lecture'
+book.readinglist-state: 'Liste de lecture'
 book.relocate: Relocation
-book.search-google-images: Chercher une couverture sur Google Images
+book.search-google-images: 'Chercher une couverture sur Google Images'
 book.serie: série
-book.serieIndex: Index dans la série
+book.serieIndex: 'Index dans la série'
 book.size: Taille
 book.summary: Résumé
 book.tags: Catégories
-book.language: Langue
-book.this-action-is-irreversible: Cette action est irréversible
+book.this-action-is-irreversible: 'Cette action est irréversible'
 book.title: Titre
-book.unknown-author: Auteur inconnu
+book.unknown-author: 'Auteur inconnu'
 book.updated: Modifié
-book.upload-book: Télévérser le livre
-book.upload-books-to-the-consume-folder: Téléverser le livre dans le dossier consume
-book.upload-cover: Téléverser la couverture
-book.upload-cover-title: Cliquez pour téléverser la couverture
-book.upload: Télévérser le livre
-book.uuid: Unique ID
+book.upload-book: 'Télévérser le livre'
+book.upload-books-to-the-consume-folder: 'Téléverser le livre dans le dossier consume'
+book.upload-cover-title: 'Cliquez pour téléverser la couverture'
+book.upload-cover: Téléverser
+book.upload: 'Télévérser le livre'
+book.utilities: 'Utilitaires'
+book.uuid: 'Unique ID'
 book.verified: Verifié
-book.read-in-browser: Lire dans le navigateur
-books.in-serie: Livres dans la serie
+books.in-serie: 'Livres dans la serie'
 books.other-books: Hors-série
-books.same-author: Livres avec le même auteur
-books.same-index: Livres avec le même index
-books.reading.progress: "{read} / {total}"
-books.stat.progress: >-
-    {count, plural,
-        =0    {0 livres en cours}
-        =1    {1 livre en cours}
-        other {# livres en cours}
-    }
-books.stat.read: >-
-    {count, plural,
-        =0    {0 livre lu}
-        =1    {1 livre lu}
-        other {# livres lus}
-    }
-books.stat.hidden: >-
-    {count, plural,
-        =0    {0 livres cachés}
-        =1    {1 livre caché}
-        other {# livres cachés}
-    }
-dashboard.continue-reading: Continuer à lire
+books.reading.progress: '{read} / {total}'
+books.same-author: 'Livres avec le même auteur'
+books.same-index: 'Livres avec le même index'
+books.stat.hidden: "{count, plural,\n    =0    {0 livres cachés}\n    =1    {1 livre caché}\n    other {# livres cachés}\n}"
+books.stat.progress: "{count, plural,\n    =0    {0 livres en cours}\n    =1    {1 livre en cours}\n    other {# livres en cours}\n}"
+books.stat.read: "{count, plural,\n    =0    {0 livre lu}\n    =1    {1 livre lu}\n    other {# livres lus}\n}"
+dashboard.continue-reading: 'Continuer à lire'
 dashboard.hello: Aloha
-dashboard.need-inspiration: Besoin d'inspiration?
-dashboard.reading-list: Dans votre liste de lecture
-dashboard.series-in-progress: Séries entamées
-enum.agecategories.notset: Non défini
+dashboard.need-inspiration: "Besoin d'inspiration?"
+dashboard.reading-list: 'Dans votre liste de lecture'
+dashboard.series-in-progress: 'Séries entamées'
 enum.agecategories.adults: Adultes
-enum.agecategories.everyone: Tout le monde
-enum.agecategories.sixteenplus: 16+ ans
-enum.agecategories.tenplus: 10+ ans
-enum.agecategories.thirteenplus: 13+ ans
+enum.agecategories.everyone: 'Tout le monde'
+enum.agecategories.notset: 'Non défini'
+enum.agecategories.sixteenplus: '16+ ans'
+enum.agecategories.tenplus: '10+ ans'
+enum.agecategories.thirteenplus: '13+ ans'
+enum.readinglist.ignored: Ignoré
+enum.readinglist.notdefined: 'Non défini'
 enum.readinglist.toread: 'A lire'
-enum.readinglist.ignored: 'Ignoré'
-enum.readinglist.notdefined : 'Non défini'
+enum.readstatus.finished: Terminé
 enum.readstatus.not-started: 'Pas commencé'
-enum.readstatus.started: 'Commencé'
-enum.readstatus.finished: 'Terminé'
-error.error-happened: Une erreur est survenue
-error.stack-trace: Stack trace
-generic.are-you-sure-you-want-to-delete-this-item: Etes-vous sûr(e) de vouloir supprimer cet élément?
-generic.are-you-sure: Etes-vous sûr(e)?
-generic.back-to-list: Retour à la liste
+enum.readstatus.started: Commencé
+error.error-happened: 'Une erreur est survenue'
+error.stack-trace: 'Stack trace'
+generic.are-you-sure-you-want-to-delete-this-item: 'Etes-vous sûr(e) de vouloir supprimer cet élément?'
+generic.are-you-sure: 'Etes-vous sûr(e)?'
+generic.back-to-list: 'Retour à la liste'
 generic.create: Créer
 generic.delete: Supprimer
 generic.edit: Modifier
 generic.next: Suivant
-generic.no-records-found: Aucun enregistrement trouvé
+generic.no-records-found: 'Aucun enregistrement trouvé'
 generic.no: Non
 generic.page: Page
 generic.previous: Précédent
 generic.results: résultats
 generic.save: Sauvegarder
 generic.show: Afficher
-generic.update: Mettre à jour
+generic.update: 'Mettre à jour'
 generic.yes: Oui
 group.filter-placeholder: Filtrer...
 group.rename: Renommer
 group.search: Chercher
-inlineeditinteraction.title: Actions
-inlineeditinteraction.favorites.add: Ajouter aux favoris
-inlineeditinteraction.favorites.remove: Retirer des favoris
-inlineeditinteraction.finished.add: Marquer comme lu
-inlineeditinteraction.finished.remove: Marquer comme non lu
-inlineeditinteraction.hidden.add: Cacher le livre
-inlineeditinteraction.hidden.remove: Montrer le livre
-inlineeditinteraction.edit: Editer l'interaction
-inlineeditinteraction.shelf.add: Ajouter a l'étagère
-inlineeditinteraction.shelf.new: Create une étagère
-inlineeditinteraction.flash.read: Bon travail!
-inlineeditinteraction.flash.unread: Marquer comme non lu
-inlineeditinteraction.flash.saveInteraction: Sauvegardé
-inlineeditinteraction.flash.saveShelf: Etagère sauvegardée
-inlineeditinteraction.flash.favorite: Ajouter a la liste de lecture
-inlineeditinteraction.flash.unfavorite: Retirer de la liste de lecture
+inlineeditinteraction.edit: "Editer l'interaction"
+inlineeditinteraction.favorites.add: 'Ajouter aux favoris'
+inlineeditinteraction.favorites.remove: 'Retirer des favoris'
+inlineeditinteraction.finished.add: 'Marquer comme lu'
+inlineeditinteraction.finished.remove: 'Marquer comme non lu'
+inlineeditinteraction.flash.favorite: 'Ajouter a la liste de lecture'
 inlineeditinteraction.flash.hide: Caché
+inlineeditinteraction.flash.read: 'Bon travail!'
+inlineeditinteraction.flash.saveInteraction: Sauvegardé
+inlineeditinteraction.flash.saveShelf: 'Etagère sauvegardée'
+inlineeditinteraction.flash.shelf: "Ajouté a l'étagère"
+inlineeditinteraction.flash.unfavorite: 'Retirer de la liste de lecture'
 inlineeditinteraction.flash.unhide: Visible
-inlineeditinteraction.flash.shelf: Ajouté a l'étagère
-inlineeditinteraction.flash.unshelf: Retiré de l'étagère
-inlineeditinteraction.notrated: Pas de note
-instance-configuration.current-value: Valeur actuelle
+inlineeditinteraction.flash.unread: 'Marquer comme non lu'
+inlineeditinteraction.flash.unshelf: "Retiré de l'étagère"
+inlineeditinteraction.hidden.add: 'Cacher le livre'
+inlineeditinteraction.hidden.remove: 'Montrer le livre'
+inlineeditinteraction.notrated: 'Pas de note'
+inlineeditinteraction.shelf.add: "Ajouter a l'étagère"
+inlineeditinteraction.shelf.new: 'Create une étagère'
+inlineeditinteraction.title: Actions
+instance-configuration.current-value: 'Valeur actuelle'
 instance-configuration.description: Description
-instance-configuration.edit-configuration: Modifier la configuration
-instance-configuration.edit: Modifier la valeur
+instance-configuration.edit-configuration: 'Modifier la configuration'
+instance-configuration.edit: 'Modifier la valeur'
 instance-configuration.form.name: Nom
 instance-configuration.form.value: Valeur
 instance-configuration.parameter: Paramètre
-instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This value can be set from .env file or from this page
+instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: 'This value can be set from .env file or from this page'
 instance-configuration.title: Titre
-interaction.form.favorite: Liste de lecture
+interaction.form.favorite: 'Liste de lecture'
 interaction.form.finished: Fini
-interaction.form.finisheddate: Date de lecture
+interaction.form.finisheddate: 'Date de lecture'
 interaction.form.submit: Sauvegarder
 interaction.status.finished: Terminé
-interaction.status.not-started: Pas commencé
-interaction.status.progress: "{read} / {total}"
-kobo.device.access-key: Clé d'accès
-kobo.device.create-new: Créer nouveau
+interaction.status.not-started: 'Pas commencé'
+interaction.status.progress: '{read} / {total}'
+kobo.device.access-key: "Clé d'accès"
+kobo.device.create-new: 'Créer nouveau'
 kobo.device.delete: Supprimer
-kobo.device.edit-kobo: Modifier l'appareil Kobo
+kobo.device.edit-kobo: "Modifier l'appareil Kobo"
 kobo.device.name: Nom
-kobo.device.no-records-found: Pas d'appareils Kobo
+kobo.device.no-records-found: "Pas d'appareils Kobo"
 kobo.device.owner: Propriétaire
-kobo.device.reader-settings: Réglages de l'appareil
+kobo.device.reader-settings: "Réglages de l'appareil"
 kobo.device.shelves: Etagères
 kobo.device.title: Titre
-kobo.form.accesskey: Clé d'accès
+kobo.form.accesskey: "Clé d'accès"
 kobo.form.deviceid: Identifiant
-kobo.form.forcesync: Forcer la prochaine synchronisation
-kobo.form.model: Modèle de l'appareil Kobo
+kobo.form.forcesync: 'Forcer la prochaine synchronisation'
+kobo.form.model: "Modèle de l'appareil Kobo"
 kobo.form.name: Nom
-kobo.form.shelves: Etagères synchronisées
-kobo.form.syncReadingList: Synchroniser la liste de lecture
-kobo.form.upstreamSync: Synchroniser avec le store officiel
-kobo.logs.channel: Log Channel
+kobo.form.shelves: 'Etagères synchronisées'
+kobo.form.syncReadingList: 'Synchroniser la liste de lecture'
+kobo.form.upstreamSync: 'Synchroniser avec le store officiel'
+kobo.logs.channel: 'Log Channel'
 kobo.logs.date: Date
 kobo.logs.device: Appareil
 kobo.logs.message: Message
-kobo.logs.show-kobo-logs: Afficher les logs Kobo
-kobo.logs.title: Kobo Logs
+kobo.logs.show-kobo-logs: 'Afficher les logs Kobo'
+kobo.logs.title: 'Kobo Logs'
 login.login: Connexion
-menu.addbooks: Ajouter des livres
+menu.addbooks: 'Ajouter des livres'
 menu.admin: Administrateur
-menu.aimodels: Connecteurs AI
-menu.allbooks: Tous les livres
+menu.aimodels: 'Connecteurs AI'
+menu.allbooks: 'Tous les livres'
 menu.authors: Auteurs
 menu.books: Bibliothèque
-menu.editshelves: Gérer les étagères
-menu.home: Tableau de bord
-menu.instanceconfig: Configuration de l'application
-menu.kobodevices: Appareils Kobo
+menu.editshelves: 'Gérer les étagères'
+menu.home: 'Tableau de bord'
+menu.instanceconfig: "Configuration de l'application"
+menu.kobodevices: 'Appareils Kobo'
 menu.logout: Déconnexion
-menu.notverified: Non vérifiés
+menu.notverified: 'Non vérifiés'
 menu.profile: Profil
 menu.publishers: Editeurs
-menu.readinglist: Liste de lecture
+menu.readinglist: 'Liste de lecture'
 menu.series: Séries
 menu.shelves: Etagères
 menu.tags: Catégories
-menu.timeline: Historique de lectures
-menu.useradmin: Gestion des utilisateurs
-notverified.all-books-have-been-verified: Tous les livres ont été vérifiés!
-notverified.all-books: Vérifiez les données des livres
-notverified.batch-edit-all-books-in-the-list: Editer tous les livres de la liste
-notverified.books: Livres à vérifier
-notverified.extract-all-covers: Extraire toutes les couvertures
-notverified.mark-all-as-validated: Tout marquer comme vérifié
-notverified.only-the-first-100-books-are-displayed: Seuls les 100 premiers livres sont listés
-notverified.relocate-all-books: Repositionner tous les livres
-opds.access-settings: Accès OPDS
-opds.catalog: Catalogue OPDS
-profile.form.bookkeywordprompt: Prompt de génération de catégories
-profile.form.booksummaryprompt: Prompt de génération de résumé
-profile.form.displayallbooks: Afficher le lien "Tous les livres" dans le menu
-profile.form.displayauthors: Afficher le lien "Auteurs" dans le menu
-profile.form.displaypublishers: Afficher le lien "Editeurs" dans le menu
-profile.form.displayseries: Afficher le lien "Séries" dans le menu
-profile.form.displaytags: Afficher le lien "Catégories" dans le menu
-profile.form.displaytimeline: Afficher le lien "Historique de lecture" dans le menu
-profile.form.first: Entrez votre mot de passe
+menu.timeline: 'Historique de lectures'
+menu.useradmin: 'Gestion des utilisateurs'
+notverified.all-books-have-been-verified: 'Tous les livres ont été vérifiés!'
+notverified.all-books: 'Vérifiez les données des livres'
+notverified.batch-edit-all-books-in-the-list: 'Editer tous les livres de la liste'
+notverified.books: 'Livres à vérifier'
+notverified.extract-all-covers: 'Extraire toutes les couvertures'
+notverified.mark-all-as-validated: 'Tout marquer comme vérifié'
+notverified.only-the-first-100-books-are-displayed: 'Seuls les 100 premiers livres sont listés'
+notverified.relocate-all-books: 'Repositionner tous les livres'
+opds.access-settings: 'Accès OPDS'
+opds.catalog: 'Catalogue OPDS'
+profile.form.bookkeywordprompt: 'Prompt de génération de catégories'
+profile.form.booksummaryprompt: 'Prompt de génération de résumé'
+profile.form.displayallbooks: 'Afficher le lien "Tous les livres" dans le menu'
+profile.form.displayauthors: 'Afficher le lien "Auteurs" dans le menu'
+profile.form.displaypublishers: 'Afficher le lien "Editeurs" dans le menu'
+profile.form.displayseries: 'Afficher le lien "Séries" dans le menu'
+profile.form.displaytags: 'Afficher le lien "Catégories" dans le menu'
+profile.form.displaytimeline: 'Afficher le lien "Historique de lecture" dans le menu'
+profile.form.first: 'Entrez votre mot de passe'
 profile.form.language.english: English
 profile.form.language.french: Français
 profile.form.language: Langue
-profile.form.second: Répéter le mot de passe
-profile.form.submit: Enregistrer les préférences
+profile.form.second: 'Répéter le mot de passe'
+profile.form.submit: 'Enregistrer les préférences'
 profile.form.theme.dark: Sombre
-profile.form.theme.default: Par défaut
+profile.form.theme.default: 'Par défaut'
 profile.form.theme: Apparence
-profile.my-profile: Mon profil
-profile.user-information: Informations de l'utilisateur
-reading-list.add-to-favorites: Ajouter aux favoris
+profile.my-profile: 'Mon profil'
+profile.user-information: "Informations de l'utilisateur"
+reading-list.add-to-favorites: 'Ajouter aux favoris'
 reading-list.finished: Terminés
-reading-list.showall: Afficher toute la liste de lecture
-reading-list.title: Liste de lecture
-reading-list.to-read: Livres à lire
-search.advanced-filters: Filtres avancés
+reading-list.showall: 'Afficher toute la liste de lecture'
+reading-list.title: 'Liste de lecture'
+reading-list.to-read: 'Livres à lire'
+search.advanced-filters: 'Filtres avancés'
 search.records: enregistrements
-search.save-to-shelf: Enregistrer dans une étagère dynamique
-search.search-for: Que voulez-vous lire?
-search.sort-results: Ordonner les résultats
-search.write-a-search-query-in-natural-language-and-let-ai-convert-it-to-filters: entrez une question et laisser l'IA la convertir en filtres
+search.save-to-shelf: 'Enregistrer dans une étagère dynamique'
+search.search-for: 'Que voulez-vous lire?'
+search.sort-results: 'Ordonner les résultats'
+search.write-a-search-query-in-natural-language-and-let-ai-convert-it-to-filters: "entrez une question et laisser l'IA la convertir en filtres"
 shelf.actions: Actions
-shelf.edit-shelf: Modifier l'étagère
+shelf.edit-shelf: "Modifier l'étagère"
 shelf.filters: Filtres
-shelf.max-number-of-books: Nombre maximal de livres atteint
-shelf.my-shelves: Mes étagères
+shelf.max-number-of-books: 'Nombre maximal de livres atteint'
+shelf.my-shelves: 'Mes étagères'
 shelf.name: Nom
 shelf.new: Nouvelle
-shelf.no-shelves-found: Aucune étagère
+shelf.no-shelves-found: 'Aucune étagère'
 shelf.order: Ordre
 shelf.parameters: Paramètres
 shelf.query: Requête
 shelf.shelves: Etagères
-timeline.timeline-for: Historique pour
+timeline.timeline-for: 'Historique pour'
 timeline.title: Titre
-user.edit-user: Modifier l'utilisateur
+user.edit-user: "Modifier l'utilisateur"
 user.form.language.english: English
 user.form.language.french: Français
 user.form.language: Langue
-user.form.leave-blank-to-keep-current-password: Laissez vide pour conserver votre mode de passe actuel
-user.form.maxagecategory: Catégorie d'âge maximale
-user.form.plainpassword: Mot de passe
+user.form.leave-blank-to-keep-current-password: 'Laissez vide pour conserver votre mode de passe actuel'
+user.form.maxagecategory: "Catégorie d'âge maximale"
+user.form.plainpassword: 'Mot de passe'
 user.form.roles.admin: Administrateur
 user.form.roles.user: Utilisateur
 user.form.roles: Roles
-user.form.username: Nom d'utilisateur(ice)
-user.last-login: Dernière connexion
-user.manage-users: Gérer les utilisateurs
-user.max-age-category: Catégorie d'âge maximale
-user.new-user: Nouvel utilisateur(ice)
+user.form.username: "Nom d'utilisateur(ice)"
+user.last-login: 'Dernière connexion'
+user.manage-users: 'Gérer les utilisateurs'
+user.max-age-category: "Catégorie d'âge maximale"
+user.new-user: 'Nouvel utilisateur(ice)'
 user.roles: Roles
-user.username: Nom d'utilisateur(ice)
+user.username: "Nom d'utilisateur(ice)"

@@ -16,31 +16,32 @@ class AiConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('AI_SUMMARIZATION_MODEL', EntityType::class, [
-                'class' => AiModel::class,
-                'placeholder' => 'ai.summarizationmodel.form-placeholder',
-                'required' => false,
-                'choice_label' => 'label',
-            ])
-            ->add('AI_TAG_MODEL', EntityType::class, [
-                'class' => AiModel::class,
-                'placeholder' => 'ai.tagmodel.form-placeholder',
-                'required' => false,
-                'choice_label' => 'label',
-            ])
             ->add('AI_SEARCH_MODEL', EntityType::class, [
                 'class' => AiModel::class,
                 'placeholder' => 'ai.searchmodel.form-placeholder',
                 'required' => false,
                 'choice_label' => 'label',
             ])
+            ->add('AI_ASSISTANT_MODEL', EntityType::class, [
+                'class' => AiModel::class,
+                'placeholder' => 'ai.assistantmodel.form-placeholder',
+                'required' => false,
+                'choice_label' => 'label',
+            ])
+            ->add('AI_CONTEXT_MODEL', EntityType::class, [
+                'class' => AiModel::class,
+                'placeholder' => 'ai.contextmodel.form-placeholder',
+                'required' => false,
+                'choice_label' => 'label',
+                'help' => 'ai.contextmodel.form-help',
+            ])
             ->add('AI_SUMMARY_PROMPT', TextareaType::class, [
                 'required' => false,
-                'help' => 'ai.summaryprompt.form-help',
+                'help' => 'ai.summaryprompt.form-help', 'attr' => ['rows' => 10],
             ])
             ->add('AI_TAG_PROMPT', TextareaType::class, [
                 'required' => false,
-                'help' => 'ai.bookprompt.form-help',
+                'help' => 'ai.bookprompt.form-help', 'attr' => ['rows' => 10],
             ])->add('submit', SubmitType::class)
 
         ;

@@ -23,7 +23,7 @@ please.sign.in: 'Merci de vous connecter'
 logged.in.as: 'Vous êtes connectés en tant que '
 logout: Déconnexion
 sign.in: Connexion
-login.please-sign-in: Merci de vous connecter
-login.username: Nom d'utilisateur-rice
-login.password: Mot de passe
-login.remember-me: Se souvenir de moi
+login.please-sign-in: 'Merci de vous connecter'
+login.username: "Nom d'utilisateur-rice"
+login.password: 'Mot de passe'
+login.remember-me: 'Se souvenir de moi'

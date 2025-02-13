@@ -1,0 +1,158 @@
+<div{{ attributes.defaults(stimulus_controller('assistant')) }}>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#book-assistant-{{ book.id }}" type="button"
+            data-toggle="tooltip" data-placement="bottom" >
+        <i class="bi bi-pencil"></i> {{ "book.edition"|trans }}
+    </button>
+
+    {% component BootstrapModal with {id: 'book-assistant-'~book.id} %}
+        {% block modal_full_content %}
+            {{ form_start(form,{attr: {
+                'data-action': 'live#action:prevent',
+                'data-live-action-param': 'save',
+                autocomplete: "off",
+            }}) }}
+
+            {{ parent() }}
+
+            {{ form_end(form) }}
+        {% endblock %}
+
+        {% block modal_header %}
+            <h5>{{ book.title }} </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% endblock %}
+        {% block modal_body %}
+
+            <div class="row">
+                <div class="col-md-2">
+                    {% if book.imageFilename is not null %}
+                        <a href="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" target="_blank">
+                            <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+
+                    {{ form_errors(form) }}
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.summary) }}
+                    <button type="button" class="btn btn-bar m-0 p-0 mb-3 btn-sm text-muted"
+                            data-action="live#action"
+                            data-live-action-param="generate"
+                            data-live-field-param="summary"
+                    >{{ "book.form.generate-summary"|trans }}</button>
+
+                    {{ form_row(form.authorsString) }}
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form_row(form.serie) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.serieIndex) }}
+                        </div>
+                    </div>
+                    {{ form_row(form.tagsString) }}
+                    <button type="button" class="btn btn-bar m-0 p-0 mb-3 btn-sm text-muted"
+                            data-action="live#action"
+                            data-live-action-param="generate"
+                            data-live-field-param="categories"
+                    >{{ "book.form.generate-categories"|trans }}</button>
+<hr>
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form_row(form.publisher) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.publishDate) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form_row(form.ageCategory) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.pageNumber) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.language) }}
+                        </div>
+                    </div>
+                    {{ form_rest(form) }}
+
+                </div>
+                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Assistant ) %}
+                <div class="col-md-4">
+
+                    {% for message in messages %}
+
+                        <div class="alert alert-{{ enum('App\\Enum\\AiMessageRole').getClass(message.role) }}" role="alert">
+                            {% if message.role.value=="system" %}
+                                <details class="small">
+                                    <summary>{{ "book.form.initial-system-prompt"|trans }}</summary>
+                                    {{ message.text }}
+                                </details>
+                            {% elseif message.role.value=="user" %}
+                                <small class="text-muted">{{ message.date|date('m.d H:i') }}: {{ app.user.username }}</small><br>
+                                <details class="small">
+                                    <summary>{{ message.text|slice(0,50) }}...</summary>
+                                    {{ message.text|markdown_to_html }}
+                                </details>
+
+                            {% else %}
+                                <small class="text-muted">{{ message.date|date('m.d H:i') }}: {{ message.role.value }}</small><br>
+                                {{ message.text|markdown_to_html }}
+
+                            {% endif %}
+
+                            {% if message.suggestions is not null %}
+                                {% for field,suggestion in message.suggestions %}
+                                    <div class="border-start border-primary border-3 px-3 my-2 fst-italic">
+                                        {% if suggestion is iterable %}
+                                            <ul>
+                                            {% for s in suggestion %}
+                                                <li>{{ s }}</li>
+                                            {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            {{ suggestion }}
+                                        {% endif %}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-primary btn-sm"
+                                        data-action="live#action"
+                                        data-live-action-param="acceptSuggestion"
+                                        data-live-field-param="{{ field }}"
+                                        data-live-suggestion-param="{{ suggestion|json_encode }}"
+                                    >{{ "book.form.accept-suggestion"|trans }}</button>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                    {% endfor %}
+
+                    <hr>
+
+                    <div class="form-group">
+                        <textarea data-model="message" class="form-control" id="message" rows="3" placeholder="{{ "book.form.ask-assistant"|trans }}"></textarea>
+                    </div>
+                    <button  data-loading="addAttribute(disabled)" data-action="live#action" data-live-action-param="sendMessage" type="button" class="mt-2 btn btn-primary">{{ "book.form.send-message"|trans }}</button>
+
+                </div>
+                {% endif %}
+            </div>
+
+
+        {% endblock %}
+        {% block modal_footer %}
+            <span class="text-muted small">{{ 'book.book-path'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></span>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ "book.form.close-without-saving"|trans }}</button>
+                <button type="submit" class="btn btn-success">{{ "book.form.save-book"|trans }}</button>
+            </div>
+        {% endblock %}
+
+    {% endcomponent %}
+
+</div>

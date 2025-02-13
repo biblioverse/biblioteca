@@ -4,7 +4,6 @@ namespace App\Ai\Prompt;
 
 use App\Config\ConfigValue;
 use App\Entity\Book;
-use App\Entity\User;
 
 abstract class AbstractBookPrompt implements BookPromptInterface
 {
@@ -12,7 +11,6 @@ abstract class AbstractBookPrompt implements BookPromptInterface
 
     public function __construct(
         protected Book $book,
-        protected ?User $user,
         protected ConfigValue $config,
         protected string $language,
     ) {
@@ -52,9 +50,7 @@ abstract class AbstractBookPrompt implements BookPromptInterface
 
         $language = $this->book->getLanguage() ?? $this->language;
 
-        $prompt = str_replace('{book}', $bookString, $prompt);
-
-        return str_replace('{language}', $this->getFullLanguageName($language), $prompt);
+        return str_replace(['{book}', '{language}'], [$bookString, $this->getFullLanguageName($language)], $prompt);
     }
 
     private function getFullLanguageName(string $language): string

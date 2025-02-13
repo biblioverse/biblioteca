@@ -26,6 +26,7 @@
     "kiwilan/php-opds": "^2.1",
     "knplabs/knp-menu-bundle": "^3.5.0",
     "knplabs/knp-paginator-bundle": "^6.6.1",
+    "league/commonmark": "^2.6",
     "liip/imagine-bundle": "^2.10",
     "nikic/php-parser": "^5.4",
     "phpdocumentor/reflection-docblock": "^5.3",
@@ -72,6 +73,7 @@
     "symfony/webpack-encore-bundle": "^2.0",
     "symfony/yaml": "^7.1",
     "twig/extra-bundle": "^2.12|^3.0",
+    "twig/markdown-extra": "^3.19",
     "twig/twig": "^2.12|^3.0"
   },
   "config": {

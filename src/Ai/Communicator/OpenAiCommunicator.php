@@ -4,7 +4,7 @@ namespace App\Ai\Communicator;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OpenAiCommunicator extends AbstractCommunicator
+class OpenAiCommunicator extends AbstractCommunicator implements AiChatInterface
 {
     public function __construct(
         private HttpClientInterface $client,
@@ -35,8 +35,12 @@ class OpenAiCommunicator extends AbstractCommunicator
         return $result;
     }
 
-    private function getPerplexityUrl(string $path): string
+    private function getApiUrl(string $path): string
     {
+        if (!str_ends_with((string) $this->aiModel->getUrl(), '/')) {
+            $this->aiModel->setUrl($this->aiModel->getUrl().'/');
+        }
+
         return "{$this->aiModel->getUrl()}{$path}";
     }
 
@@ -51,6 +55,20 @@ class OpenAiCommunicator extends AbstractCommunicator
             ],
         ];
 
-        return $this->sendRequest($this->getPerplexityUrl('chat/completions'), $params, 'POST');
+        return $this->sendRequest($this->getApiUrl('chat/completions'), $params, 'POST');
+    }
+
+    public function chat(array $messages): string
+    {
+        $processedMessages = [];
+        foreach ($messages as $message) {
+            $processedMessages[] = $message->toOpenAI();
+        }
+        $params = [
+            'model' => $this->aiModel->getModel(),
+            'messages' => $processedMessages,
+        ];
+
+        return $this->sendRequest($this->getApiUrl('chat/completions'), $params, 'POST');
     }
 }

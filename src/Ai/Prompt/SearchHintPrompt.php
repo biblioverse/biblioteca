@@ -14,6 +14,11 @@ class SearchHintPrompt implements BookPromptInterface
         return $this->prompt;
     }
 
+    public function getPromptWithoutInstructions(): string
+    {
+        return $this->prompt;
+    }
+
     #[\Override]
     public function setPrompt(string $prompt): void
     {
