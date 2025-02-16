@@ -642,4 +642,10 @@ class Book
 
         return (object) $return;
     }
+
+    public function __clone(): void
+    {
+        $this->id = null;
+        $this->uuid = $this->generateUuid();
+    }
 }

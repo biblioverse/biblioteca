@@ -28,13 +28,17 @@ class SyncTokenParamConverter implements ValueResolverInterface
     }
 
     /**
-     * @return iterable<SyncToken>
+     * @return iterable<?SyncToken>
      */
     #[\Override]
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($this->supports($argument) === false) {
             return [];
+        }
+
+        if ($argument->isNullable() && !$this->koboSyncTokenExtractor->has($request)) {
+            return [null];
         }
 
         return [$this->apply($request)];

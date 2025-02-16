@@ -19,6 +19,16 @@
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
+            <exclude>tests/Controller/Kobo</exclude>
+            <exclude>tests/Kobo</exclude>
+            <exclude>tests/SmokeTest.php</exclude>
+        </testsuite>
+        <testsuite name="kobo">
+            <directory>tests/Controller/Kobo</directory>
+            <directory>tests/Kobo</directory>
+        </testsuite>
+        <testsuite name="smoketest">
+            <file>tests/SmokeTest.php</file>
         </testsuite>
     </testsuites>
 

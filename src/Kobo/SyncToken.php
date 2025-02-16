@@ -16,7 +16,24 @@ class SyncToken
     public ?string $rawKoboStoreToken = null;
     public array $filters = [];
 
-    public ?\DateTimeImmutable $currentDate = null;
+    public int $page = 1;
+
+    public static function fromArray(array $lastSyncToken): SyncToken
+    {
+        $fromAtom = fn (?string $date): ?\DateTimeImmutable => $date !== null ? new \DateTimeImmutable($date) : null;
+        $token = new self();
+        $token->version = $lastSyncToken['version'] ?? $token->version;
+        $token->lastModified = $fromAtom($lastSyncToken['lastModified'] ?? null);
+        $token->lastCreated = $fromAtom($lastSyncToken['lastCreated'] ?? null);
+        $token->archiveLastModified = $fromAtom($lastSyncToken['archiveLastModified'] ?? null);
+        $token->readingStateLastModified = $fromAtom($lastSyncToken['readingStateLastModified'] ?? null);
+        $token->tagLastModified = $fromAtom($lastSyncToken['tagLastModified'] ?? null);
+        $token->rawKoboStoreToken = $lastSyncToken['rawKoboStoreToken'] ?? $token->rawKoboStoreToken;
+        $token->filters = $lastSyncToken['filters'] ?? $token->filters;
+        $token->page = $lastSyncToken['page'] ?? 1;
+
+        return $token;
+    }
 
     public function getFilterResolver(): OptionsResolver
     {
@@ -72,5 +89,50 @@ class SyncToken
         }
 
         return $max;
+    }
+
+    public function toArray(): array
+    {
+        $format = \DateTime::W3C;
+
+        // Sort alphabetically
+        return [
+            'archiveLastModified' => $this->archiveLastModified?->format($format),
+            'filters' => $this->filters,
+            'lastCreated' => $this->lastCreated?->format($format),
+            'lastModified' => $this->lastModified?->format($format),
+            'page' => $this->page,
+            'rawKoboStoreToken' => $this->rawKoboStoreToken,
+            'readingStateLastModified' => $this->readingStateLastModified?->format($format),
+            'tagLastModified' => $this->tagLastModified?->format($format),
+            'version' => $this->version,
+        ];
+    }
+
+    public function markLastSyncDateAndResetPage(): self
+    {
+        $now = new \DateTimeImmutable('now');
+        $this->lastModified = $now;
+        $this->tagLastModified = $now;
+        $this->readingStateLastModified = $now;
+        $this->lastCreated = $now;
+        $this->archiveLastModified = $now;
+        $this->page = 1;
+
+        return $this;
+    }
+
+    public function setPage(int $page): self
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+
+    public function setTagLastModified(?\DateTimeImmutable $lastModified): self
+    {
+        $this->tagLastModified = $lastModified;
+
+        return $this;
     }
 }

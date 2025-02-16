@@ -22,6 +22,10 @@ class TagControllerTest extends KoboControllerTestCase
     {
         $this->getService(ShelfRepository::class)
             ->deleteByName(self::SHELF_TEMPORARY);
+
+        $this->getBook()->addShelf($this->getShelf());
+        $this->getEntityManager()->flush();
+
         parent::tearDown();
     }
 

@@ -7,6 +7,7 @@ use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\SyncToken;
+use App\Repository\BookRepository;
 use App\Service\KoboSyncTokenExtractor;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
 use App\Tests\Controller\Kobo\KoboControllerTestCase;
@@ -18,16 +19,20 @@ class SyncControllerTest extends KoboControllerTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
+        $this->getKoboStoreProxy()->setClient(null);
+        $this->getKoboProxyConfiguration()->setEnabled(false);
+        $this->getKoboDevice()->setLastSyncToken(null);
+        $this->deleteAllSyncedBooks();
+        $this->deleteAllInteractions();
+        $this->changeAllBooksDate(new \DateTimeImmutable('2025-01-01 00:00:00'));
+        $this->changeAllShelvesDate(new \DateTimeImmutable('2025-01-01 00:00:00'));
+        $this->getEntityManager()->flush();
+        $this->getService(TestClock::class)->setTime(null); // Keep after the flush for gedmo.
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $this->getKoboStoreProxy()->setClient(null);
-        $this->getKoboProxyConfiguration()->setEnabled(false);
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
-        $this->getService(TestClock::class)->setTime(null);
         parent::tearDown();
     }
 
@@ -66,7 +71,54 @@ class SyncControllerTest extends KoboControllerTestCase
     /**
      * @throws \JsonException
      */
-    public function testSyncControllerPaginated(): void
+    public function testSyncControllerPaginatedWithSyncToken(): void
+    {
+        $client = static::getClient();
+
+        $perPage = 7;
+        $numberOfPages = (int) ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
+
+        $syncToken = new SyncToken();
+        $syncToken->lastCreated = new \DateTimeImmutable('now');
+        // Build the sync-token header
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+
+        $count = $this->getService(BookRepository::class)->getChangedBooksCount($this->getKoboDevice(), $syncToken);
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'We expect to have 20 books to sync');
+
+        foreach (range(1, $numberOfPages) as $pageNum) {
+            $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage, [], [], $headers);
+
+            $response = self::getJsonResponse();
+            self::assertResponseIsSuccessful();
+
+            // We have 20 books, with 7 book per page, we do 3 calls that have respectively 7, 7 and 6 books
+            self::assertThat($response, new JSONIsValidSyncResponse(match ($pageNum) {
+                1 => [
+                    'NewTag' => 1,
+                    'NewEntitlement' => 7,
+                ],
+                2 => [
+                    'NewEntitlement' => 7,
+                ],
+                3 => [
+                    'NewEntitlement' => 6,
+                ],
+                default => [],
+            }, $pageNum), 'Response is not a valid sync response for page '.$pageNum);
+
+            $expectedContinueHeader = $pageNum === $numberOfPages ? 'done' : 'continue';
+            self::assertResponseHeaderSame(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $expectedContinueHeader, 'x-kobo-sync is invalid');
+        }
+
+        $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'Number of synced book is invalid');
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function testSyncControllerPaginatedWithoutSyncToken(): void
     {
         $client = static::getClient();
 
@@ -76,17 +128,22 @@ class SyncControllerTest extends KoboControllerTestCase
         $syncToken = new SyncToken();
         $syncToken->lastCreated = new \DateTimeImmutable('now');
         $syncToken->lastModified = null;
+        $this->getKoboDevice()->setLastSyncToken($syncToken);
+        $today = new \DateTimeImmutable('today');
+        $this->getShelf()->setCreated($today->modify('-1 day'));
+        $this->getEntityManager()->flush();
+
+        $count = $this->getService(BookRepository::class)->getChangedBooksCount($this->getKoboDevice(), $syncToken);
+        self::assertSame(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS, $count, 'We expect to have 20 books to sync');
 
         foreach (range(1, $numberOfPages) as $pageNum) {
-            // Build the sync-token header
-            $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
-
-            $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage, [], [], $headers);
+            $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync?per_page='.$perPage);
 
             $response = self::getJsonResponse();
             self::assertResponseIsSuccessful();
 
             // We have 20 books, with 7 book per page, we do 3 calls that have respectively 7, 7 and 6 books
+
             self::assertThat($response, new JSONIsValidSyncResponse(match ($pageNum) {
                 1 => [
                     'NewTag' => 1,
@@ -120,7 +177,6 @@ class SyncControllerTest extends KoboControllerTestCase
      */
     public function testSyncControllerSyncedBookCount(): void
     {
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
         $count = $this->getEntityManager()->getRepository(KoboSyncedBook::class)->count(['koboDevice' => 1]);
         self::assertSame(0, $count, 'Number of synced book is invalid');
 
@@ -153,30 +209,27 @@ class SyncControllerTest extends KoboControllerTestCase
     public function testSyncControllerEdited(): void
     {
         $client = static::getClient();
+        $clock = $this->getService(TestClock::class);
+        $book = $this->getBook();
+        $book->setCreated($clock->now());
+        $book->setUpdated($clock->now());
 
-        // Create an old sync token
-        $clock = $this->getService(TestClock::class)
-            ->setTime(new \DateTimeImmutable('now'));
+        $this->markAllBooksAsSynced($clock->now());
+
+        $clock->alter('+ 10 seconds');
+
+        // Create a sync token
         $syncToken = new SyncToken();
         $syncToken->lastCreated = $clock->now();
         $syncToken->lastModified = $clock->now();
         $syncToken->tagLastModified = $clock->now();
 
-        // Sync all the books
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
-        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
-        self::assertResponseIsSuccessful();
 
         // Edit the book detail
-        $clock->setTime($clock->now()->modify('+ 1 hour'));
-        $book = $this->getBook();
-        $slug = $book->getSlug();
-        $book->setSlug($slug.'..');
+        $clock->alter('+ 10 seconds');
+        $book->setUpdated($clock->now());
         $this->getEntityManager()->flush();
-        $book->setSlug($slug);
-        $this->getEntityManager()->flush();
-
-        // Restore the real time
         $clock->setTime(null);
 
         // Make sure the book has changed.
@@ -216,5 +269,46 @@ class SyncControllerTest extends KoboControllerTestCase
 
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();
+    }
+
+    public function testArchivedBookSync(): void
+    {
+        $client = static::getClient();
+
+        $clock = $this->getService(TestClock::class);
+        $clock->setTime(new \DateTimeImmutable('2020-01-01 00:00:00'));
+
+        // Mark all books as synced
+        $this->markAllBooksAsSynced($clock->now());
+        $clock->setTime(null);
+
+        $syncedBook = $this->getEntityManager()->getRepository(KoboSyncedBook::class)
+            ->findOneBy(['koboDevice' => 1, 'book' => $this->getBook()]);
+        self::assertNotNull($syncedBook, 'You should have the book marked as synced');
+
+        // Mark one book as removed from kobo/shelf
+        $archivedDate = new \DateTimeImmutable('2025-01-31 22:00:00');
+        $syncedBook->setArchived($archivedDate);
+        $this->getEntityManager()->flush();
+
+        // Make sure the book is there with the archived flag
+        $syncToken = new SyncToken();
+        $syncToken->archiveLastModified = new \DateTimeImmutable('2025-01-31 19:00:00');
+        $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        $response = self::getJsonResponse();
+
+        self::assertResponseIsSuccessful();
+        self::assertThat($response, new JSONIsValidSyncResponse([
+            'ChangedEntitlement' => 1,
+            'NewTag' => 1,
+        ]), 'Response is not a valid sync response');
+
+        $removed = $response[0]['ChangedEntitlement']['BookEntitlement']['IsRemoved'] ?? null;
+        self::assertTrue($removed, 'The book should be marked as removed');
+
+        $syncedBook = $this->getEntityManager()->getRepository(KoboSyncedBook::class)
+            ->findOneBy(['koboDevice' => 1, 'book' => $this->getBook()]);
+        self::assertNull($syncedBook, 'The syncedBook should be removed');
     }
 }
