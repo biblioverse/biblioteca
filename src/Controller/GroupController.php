@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\BookRepository;
-use http\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,41 +14,57 @@ class GroupController extends AbstractController
     {
     }
 
-    #[Route('/{type}/{letter}', name: 'app_groups')]
-    public function groups(Request $request, string $type, string $letter = 'a'): Response
+    #[Route('/{type}/{letter}/{page}', name: 'app_groups', defaults: ['page' => 1], requirements: ['page' => '\d+', 'letter' => '[a-zA-Z]|alpha|$^'])]
+    public function groups(Request $request, string $type, int $page, ?string $letter = null): Response
     {
         $group = [];
-        $letter = strtolower($letter);
-        if (strlen($letter) !== 1 || !ctype_alpha($letter)) {
-            return $this->redirectToRoute('app_groups', ['type' => $type, 'letter' => 'a']);
+        $count = 0;
+        $letter = trim((string) $letter) === '' ? null : strtolower((string) $letter);
+
+        if ($letter !== null && preg_match('/^[a-z0-9]|alpha$/', $letter) !== 1) {
+            return $this->redirectToRoute('app_groups', ['type' => $type, 'letter' => null]);
         }
+        $page = $letter === null ? $page : null; // Paginate except if filtered
+        $perPage = 50;
 
         switch ($type) {
             case 'authors':
-                $group = $this->bookRepository->getAllAuthors();
+                $count = $this->bookRepository->getAllAuthorsCount();
+                $group = $this->bookRepository->getAllAuthors($page, $perPage);
                 break;
             case 'tags':
-                $group = $this->bookRepository->getAllTags();
+                $count = $this->bookRepository->getAllTagsCount();
+                $group = $this->bookRepository->getAllTags($page, $perPage);
                 break;
             case 'publisher':
-                $group = $this->bookRepository->getAllPublishers();
+                $count = $this->bookRepository->getAllPublishersCount();
+                $group = $this->bookRepository->getAllPublishers($page, $perPage);
                 break;
             case 'serie':
-                $group = $this->bookRepository->getAllSeries();
+                $count = $this->bookRepository->getAllSeriesCount();
+                $group = $this->bookRepository->getAllSeries($page, $perPage);
                 break;
         }
-        $search = $request->get('search', '');
-
-        if (!is_string($search)) {
-            throw new RuntimeException('Invalid search type');
+        $search = $request->query->getString('search');
+        if (trim($search) !== '') {
+            $page = null; // Don't paginate search results
         }
 
         $group = match ($search) {
             default => array_filter($group, static fn (mixed $item) => str_contains(strtolower($item['item']), strtolower($search))),
-            '' => array_filter($group, static fn (mixed $item) => str_starts_with(strtolower($item['item']), $letter)),
+            '' => array_filter(
+                $group,
+                static fn (mixed $item) => $letter === null
+                || ($letter !== 'alpha' && str_starts_with(strtolower($item['item']), $letter))
+                || ($letter === 'alpha' && preg_match('/^\d/', $item['item']) === 1)
+            ),
         };
 
         return $this->render('group/index.html.twig', [
+            'count' => $count,
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => intval(ceil($count / $perPage)),
             'group' => $group,
             'letter' => $letter,
             'type' => $type,
