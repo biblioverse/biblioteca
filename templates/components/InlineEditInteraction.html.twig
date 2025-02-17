@@ -5,7 +5,7 @@
     {% set modalIdShelf=unique_id('shelf-', false) %}
 
     <div class="dropend">
-        <button type="button" class="btn btn-sm btn-outline-secondary {{ buttonWithText?'w-100':'' }}" data-bs-toggle="dropdown"
+        <button type="button" class="btn btn-outline-secondary {{ buttonWithText?'w-100':'btn-sm' }}" data-bs-toggle="dropdown"
                 data-bs-auto-close="outside" aria-expanded="false">
 
                 {% if buttonWithText %}
