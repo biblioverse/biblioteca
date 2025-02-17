@@ -1,3 +1,7 @@
+:root {
+  --hero__image--padding: 1rem;
+}
+
 .hero {
   display: grid;
   grid-template-areas: "cover" "title" "progress" "stats";
@@ -7,6 +11,10 @@
 }
 
 @media (min-width: 600px) {
+  :root {
+    --hero__image--padding: 2rem;
+  }
+
   .hero {
     grid-template-areas:
       "cover ."
@@ -14,11 +22,7 @@
       "progress progress"
       "stats stats";
     grid-template-columns: 300px auto;
-    grid-template-rows: 2em auto 2em 6em;
-  }
-
-  .hero__image {
-    padding: 2rem;
+    grid-template-rows: 2em auto 0 6em;
   }
 
   .hero__background {
@@ -29,6 +33,10 @@
 }
 
 @media (min-width: 1000px) {
+  :root {
+    --hero__image--padding: 3rem;
+  }
+
   .hero {
     grid-template-areas:
       "cover . ."
@@ -38,25 +46,17 @@
     grid-template-columns: 300px auto 2rem;
     grid-template-rows: 2em auto 2em 6em;
   }
-
-  .hero__image {
-    padding: 3rem;
-  }
 }
 
 .hero__image {
   grid-area: cover;
-  padding: 1rem;
+  padding: var(--hero__image--padding);
   min-height: 5rem;
 }
 
 .hero__image__image {
   width: 100%;
   border-radius: 0 var(--border-radius--md) var(--border-radius--md) 0;
-}
-
-.hero__image:hover .hero__image__actions {
-  opacity: 1;
 }
 
 .hero__image__actions {
@@ -80,6 +80,10 @@
   gap: 0.5rem;
 
   background: rgba(255,255,255, 0.5)
+}
+
+.hero__image:hover .hero__image__actions {
+  opacity: 1;
 }
 
 .hero__title {
