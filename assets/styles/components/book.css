@@ -1,0 +1,79 @@
+.book {
+  width: 100%;
+  aspect-ratio: 7 / 10; /* ↔️ is double the ↕️ */
+  position: relative;
+  transition: 0.4s ease-in-out;
+  border-radius: 0 var(--border-radius--md) var(--border-radius--md) 0;
+  transform-origin: left center 0px;
+  display: inline-block;
+  perspective: 800px;
+}
+
+.book:hover .book__cover {
+  transform: rotateY(-20deg);
+  z-index: 999;
+  box-shadow: 20px 10px 50px rgba(0, 0, 0, 0.2);
+}
+
+.book__cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 0 var(--border-radius--md) var(--border-radius--md) 0;
+  box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.15);
+  background-size: cover;
+  z-index: 10;
+  transition: 0.5s linear;
+  transform-style: preserve-3d;
+  transform-origin: left center 0px;
+}
+
+.book__cover img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0 var(--border-radius--md) var(--border-radius--md) 0;
+}
+
+.book__cover--read {
+  position: absolute;
+  bottom: 0.1em;
+  right: 0.25em;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.book__page {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: #fbfae8;
+  z-index: 0;
+  box-shadow: 0 0 5px 1.5px rgba(0, 0, 0, 0.15);
+  border-radius: 0 var(--border-radius--md) var(--border-radius--md) 0;
+  overflow: hidden;
+}
+
+.book__progress {
+  position: absolute;
+  bottom: 0.5em;
+  left: 0.5em;
+  right: 0.5em;
+}
+
+.book__progress__link {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space--sm);
+}
+
+.book__progress__track {
+  background: var(--progress__track--background);
+  border-radius: var(--progress__track--border-radius);
+  height: var(--progress__track--height);
+  overflow: hidden;
+}
+
+.book__progress__bar {
+  background: var(--progress__bar--background);
+  height: 100%;
+}

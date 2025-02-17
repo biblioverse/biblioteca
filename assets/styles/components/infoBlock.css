@@ -1,0 +1,4 @@
+.infoBlock {
+  background: rgba(var(--bs-body-color-rgb), 0.03);
+  padding: var(--space--xl);
+}

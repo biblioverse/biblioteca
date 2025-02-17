@@ -1,0 +1,11 @@
+.vue-book-reader {
+  width: 100%;
+}
+
+.vue-book-reader .flex {
+  display: flex;
+}
+
+.vue-book-reader .flex button {
+  display: block;
+}

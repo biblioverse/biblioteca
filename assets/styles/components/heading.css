@@ -1,0 +1,22 @@
+.Heading {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2em;
+}
+
+.Heading--sm {
+    font-size: 1rem;
+}
+
+.Heading--lg {
+    font-size: 1.5rem;
+}
+
+.Heading--xl {
+    font-size: 1.75rem;
+}
+
+.Heading--2xl {
+    font-size: 2.5rem;
+}

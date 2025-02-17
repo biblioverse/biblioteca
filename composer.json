@@ -73,6 +73,7 @@
     "symfony/webpack-encore-bundle": "^2.0",
     "symfony/yaml": "^7.1",
     "twig/extra-bundle": "^2.12|^3.0",
+    "twig/intl-extra": "^3.20",
     "twig/markdown-extra": "^3.19",
     "twig/twig": "^2.12|^3.0"
   },
