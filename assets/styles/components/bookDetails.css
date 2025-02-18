@@ -1,10 +1,21 @@
 .BookDetails {
     display: grid;
     gap: var(--space--md);
+    grid-template-areas: "actions" "summary";
+}
+
+.BookDetails--withInfo {
     grid-template-areas: "actions" "summary" "info";
 }
 
 @media (min-width: 768px) {
+    .BookDetails--withInfo {
+        grid-template-areas: "summary summary" "info actions";
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1000px) {
     .BookDetails {
         grid-template-areas: "summary actions";
         grid-template-columns: 4fr 2fr;
