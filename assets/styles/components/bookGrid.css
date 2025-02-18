@@ -1,0 +1,10 @@
+.bookGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space--lg);
+}
+
+.bookGrid--large {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space--xl);
+}

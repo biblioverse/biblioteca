@@ -1,0 +1,17 @@
+.Card {
+    background: rgba(var(--bs-body-color-rgb), 0.03);
+    border-radius: var(--border-radius--sm);
+}
+
+.Card__title {
+    padding: var(--space--xl);
+    padding-bottom: var(--space--sm);
+}
+
+.Card__content {
+    padding: var(--space--xl);
+}
+
+* + .Card__content {
+    padding-top: var(--space--sm);
+}

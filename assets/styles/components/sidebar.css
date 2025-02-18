@@ -1,0 +1,30 @@
+@media (min-width: 768px) {
+  .sidebar .offcanvas-lg {
+    position: sticky;
+    top: 48px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .modal-xl {
+    --bs-modal-width: 90%;
+  }
+}
+
+.sidebar .nav-link {
+  font-size: var(--font-size--sm);
+  font-weight: 500;
+}
+
+.sidebar .nav-item.active > .nav-link {
+  font-weight: bold;
+  color: brown;
+}
+.sidebar .icon-link .bi {
+  height: auto;
+}
+
+.sidebar-heading {
+  font-size: var(--font-size--xs);
+  color: brown;
+}

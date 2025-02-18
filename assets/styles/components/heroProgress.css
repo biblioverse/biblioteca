@@ -1,0 +1,23 @@
+:root {
+  --progress__track--background: #e9ecef;
+  --progress__track--height: 1em;
+  --progress__track--border-radius: 4px;
+  --progress__bar--background: #333;
+}
+
+.heroProgress {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+}
+
+.heroProgress__bar {
+  background: var(--progress__track--background);
+  height: 4px;
+}
+
+.heroProgress__bar__progress {
+  background: var(--progress__bar--background);
+  height: 4px;
+}

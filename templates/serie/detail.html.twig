@@ -50,8 +50,8 @@
         </div>
     </div>
 
-    <div class="booksWithDetails">
-        <div class="booksWithDetails__content">
+    <div class="BooksWithDetails">
+        <div class="BooksWithDetails__content">
             {% if serieMax>=1 %}
             <h3>{{ 'books.in-serie'|trans }}</h3>
             <table class="table">
@@ -84,45 +84,51 @@
         {% set showAgeCategories=(ageCategories|length > 0) %}
         {% set showPublishers=(publishers|length > 0) and app.user.isDisplayPublishers %}
         {% if showTags or showAgeCategories or showPublishers  %}
-        <div class="booksWithDetails__info">
+        <div class="BooksWithDetails__info">
             <div class="infoBlock">
                 {% if showTags  %}
-                <h4>{{ 'author.tags'|trans }}</h4>
-                <ul style="list-style-type: none; padding-left: 1rem;">
-                {% for tag, books in tags %}
-                    <li>
-                        <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none text-secondary">
-                            <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
-                        </a>
-                    </li>
-                {% endfor %}
-                </ul>
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'author.tags'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for tag, books in tags %}
+                        <li>
+                            <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
 
                 {% if showAgeCategories  %}
-                <h4>{{ 'book.age-category'|trans }}</h4>
-                <ul style="list-style-type: none; padding-left: 1rem;">
-                {% for ageCategory, books in ageCategories %}
-                    <li>
-                        <a href="{{ filter_book_url({'age':ageCategory}) }}" class="text-decoration-none text-secondary">
-                            {{ ageCategory|trans }}
-                        </a>
-                    </li>
-                {% endfor %}
-                </ul>
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'book.age-category'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for ageCategory, books in ageCategories %}
+                        <li>
+                            <a href="{{ filter_book_url({'age':ageCategory}) }}" class="text-decoration-none text-secondary">
+                                {{ ageCategory|trans }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
 
                 {% if showPublishers  %}
-                <h4>{{ 'book.publisher'|trans }}</h4>
-                <ul style="list-style-type: none; padding-left: 1rem;">
-                {% for publisher, books in publishers %}
-                    <li>
-                        <a href="{{ filter_book_url({'publisher':publisher}) }}" class="text-decoration-none text-secondary">
-                            {{ publisher }}
-                        </a>
-                    </li>
-                {% endfor %}
-                </ul>
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'book.publisher'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for publisher, books in publishers %}
+                        <li>
+                            <a href="{{ filter_book_url({'publisher':publisher}) }}" class="text-decoration-none text-secondary">
+                                {{ publisher }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
             </div>
         </div>

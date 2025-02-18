@@ -1,0 +1,25 @@
+.facets {
+  display: grid;
+  gap: var(--space--xs);
+  margin-bottom: var(--space--lg);
+}
+
+.facets__item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space--sm);
+  font-size: var(--font-size--sm);
+
+  border-width: 0;
+  background: transparent;
+  border-radius: var(--border-radius--sm);
+  padding: var(--space--xs);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.facets__item--active {
+  background: var(--bs-list-group-active-bg);
+  color: var(--bs-list-group-active-color);
+}
