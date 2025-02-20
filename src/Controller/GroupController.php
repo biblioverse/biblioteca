@@ -14,16 +14,12 @@ class GroupController extends AbstractController
     {
     }
 
-    #[Route('/{type}/{letter}/{page}', name: 'app_groups', defaults: ['page' => 1], requirements: ['page' => '\d+', 'letter' => '[a-zA-Z]|alpha|$^'])]
+    #[Route('/{type}/{letter}/{page}', name: 'app_groups', defaults: ['page' => 1], requirements: ['page' => '\d+', 'letter' => '[a-zA-Z0-9]|alpha|$^'])]
     public function groups(Request $request, string $type, int $page, ?string $letter = null): Response
     {
         $group = [];
         $count = 0;
         $letter = trim((string) $letter) === '' ? null : strtolower((string) $letter);
-
-        if ($letter !== null && preg_match('/^[a-z0-9]|alpha$/', $letter) !== 1) {
-            return $this->redirectToRoute('app_groups', ['type' => $type, 'letter' => null]);
-        }
         $page = $letter === null ? $page : null; // Paginate except if filtered
         $perPage = 50;
 
