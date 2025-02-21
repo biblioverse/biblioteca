@@ -4,9 +4,15 @@
 
 {% block body %}
     <div class="hero">
-        <div class="hero__background"></div>
+        {% if books|length > 0 and books[0].imageFilename is not null %}
+            {% set image = asset('covers/'~books[0].imagePath~books[0].imageFilename)|imagine_filter('big') %}
+        {% else %}
+            {% set image = asset('images/blank.jpg')|imagine_filter('big') %}
+        {% endif %}
+
+        <div class="hero__background" style="--hero-background-image: url('{{ image }}')"></div>
         <div class="hero__image">
-           {% include themedTemplate('book/_cover.html.twig') with {book: books[0], interaction: null} %}
+           {% include themedTemplate('book/_cover.html.twig') with {book: books[0], thumb_size: 'big', interaction: null} %}
         </div>
         <div class="hero__title">
             <h1>{{ author }}</h1>

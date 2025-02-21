@@ -27,8 +27,32 @@
 
   .hero__background {
     background: rgba(var(--bs-body-color-rgb), 0.03);
+
+    overflow: hidden;
+    position: relative;
+    z-index: -1;
+
     grid-row: 1 / 4;
     grid-column: 1 / -1;
+  }
+
+  .hero__background::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0.3;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-image: var(--hero-background-image);
+
+    filter: blur(12px);
   }
 }
 
