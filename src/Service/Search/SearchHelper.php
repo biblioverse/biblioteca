@@ -15,9 +15,11 @@ use Biblioverse\TypesenseBundle\Search\SearchCollectionInterface;
 
 class SearchHelper
 {
-    /** @var ?SearchResultsHydrated<Book> */
+    /** @var SearchResultsHydrated<Book>[] */
+    public array $responses = [];
     public ?SearchResultsHydrated $response = null;
-    public ?SearchQuery $query = null;
+    /** @var SearchQuery[] */
+    public array $queries = [];
     public int $maxFacetValues = 10;
 
     /**
@@ -42,9 +44,12 @@ class SearchHelper
         return array_filter($fieldsName, fn (string $field) => !in_array($field, ['id', 'created_at', 'updated_at', 'sortable_id'], true));
     }
 
-    public function prepareQuery(string $q, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchHelper
+    public function prepareMultiQuery(string $q, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchHelper
     {
-        $this->query = new SearchQuery(
+        $this->response = null;
+        $this->responses = [];
+
+        $this->queries[] = new SearchQuery(
             q: $q,
             queryBy: 'title,serie,extension,authors,tags,summary',
             filterBy: $filterBy,
@@ -60,12 +65,54 @@ class SearchHelper
         return $this;
     }
 
+    private function getQuery(string $q, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchQuery
+    {
+        return new SearchQuery(
+            q: $q,
+            queryBy: 'title,serie,extension,authors,tags,summary',
+            filterBy: $filterBy,
+            sortBy: $sortBy,
+            maxFacetValues: $this->maxFacetValues,
+            numTypos: 2,
+            page: $page,
+            perPage: $perPage,
+            facetBy: 'authors,serie,tags,age',
+            facetStrategy: 'exhaustive',
+        );
+    }
+
+    public function prepareQuery(string $q, ?string $filterBy = null, ?string $sortBy = null, int $perPage = 16, int $page = 1): SearchHelper
+    {
+        $this->queries = [$this->getQuery($q, $filterBy, $sortBy, $perPage, $page)];
+
+        return $this;
+    }
+
     public function execute(): SearchHelper
     {
-        if (!$this->query instanceof SearchQuery) {
+        if ($this->queries === []) {
+            $this->responses = [];
+            $this->response = null;
+
             return $this;
         }
-        $this->response = $this->searchBooks->search($this->query);
+        $this->response = $this->searchBooks->search($this->queries[0]);
+        $this->responses = [$this->response];
+
+        return $this;
+    }
+
+    public function executeMultiSearch(): SearchHelper
+    {
+        if ($this->queries === []) {
+            return $this;
+        }
+        $this->responses = $this->searchBooks->multisearch($this->queries);
+        $this->response = null;
+        foreach ($this->responses as $result) {
+            $this->response = $result;
+            break;
+        }
 
         return $this;
     }
@@ -75,11 +122,15 @@ class SearchHelper
      */
     public function getBooks(): array
     {
-        if (!$this->response instanceof SearchResultsHydrated) {
+        if ($this->responses === []) {
             return [];
         }
+        $result = [];
+        foreach ($this->responses as $response) {
+            $result = array_merge($result, $response->getResults());
+        }
 
-        return $this->response->getResults();
+        return $result;
     }
 
     public function getFacets(): array
@@ -88,7 +139,7 @@ class SearchHelper
             return [];
         }
 
-        return $this->response->getFacetCounts();
+        return $this->response->getFacetCounts(); // TODO Add support for multi-search
     }
 
     public function getPagination(): array
@@ -120,11 +171,11 @@ class SearchHelper
     public function getQueryHints(): ?array
     {
         $communicator = $this->communicatorDefiner->getCommunicator(AiAction::Search);
-        if (!$communicator instanceof AiCommunicatorInterface || !$this->query instanceof SearchQuery) {
+        if (!$communicator instanceof AiCommunicatorInterface || $this->queries === []) {
             return null;
         }
 
-        $q = $this->query->getQ();
+        $q = $this->queries[0]->getQ(); // TODO: All results
         if ($q === '') {
             return null;
         }
