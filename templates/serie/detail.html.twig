@@ -56,32 +56,43 @@
 
     <div class="BooksWithDetails">
         <div class="BooksWithDetails__content">
+            <div class="Card">
             {% if serieMax>=1 %}
-            <h3>{{ 'books.in-serie'|trans }}</h3>
-            <table class="table">
-                <tbody>
-                {% for index in 1..serieMax %}
-                    {% if books[index] is defined %}
-                        {% for book in books[index] %}
-                            {% include themedTemplate('book/_book-row.html.twig') with { book: book } %}
-                        {% endfor %}
-                    {% else %}
-                        {% include themedTemplate('book/_book-row-empty.html.twig') with { serie: serie, index: index } %}
-                    {% endif %}
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="Card__title">
+                <h3 class="Heading Heading--lg">{{ 'books.in-serie'|trans }}</h3>
+            </div>
+            <div class="Card__content">
+                <table class="Table">
+                    <tbody>
+                    {% for index in 1..serieMax %}
+                        {% if books[index] is defined %}
+                            {% for book in books[index] %}
+                                {% include themedTemplate('book/_book-row.html.twig') with { book: book } %}
+                            {% endfor %}
+                        {% else %}
+                            {% include themedTemplate('book/_book-row-empty.html.twig') with { serie: serie, index: index } %}
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
             {% if books['?'] is defined %}
-                <h5>{{ 'books.other-books'|trans }}</h5>
-                <table class="table">
+            <div class="Card__title">
+                <h5 class="Heading">{{ 'books.other-books'|trans }}</h5>
+            </div>
+            <div class="Card__content">
+                <table class="Table">
                 <tbody>
                     {% for book in books['?'] %}
                         {% include themedTemplate('book/_book-row.html.twig') with { book: book, index: "?" } %}
                     {% endfor %}
                 </tbody>
                 </table>
+            </div>
             {% endif %}
+
+            </div>
         </div>
 
         {% set showTags=(tags|length > 0) and app.user.isDisplayTags %}
@@ -89,7 +100,8 @@
         {% set showPublishers=(publishers|length > 0) and app.user.isDisplayPublishers %}
         {% if showTags or showAgeCategories or showPublishers  %}
         <div class="BooksWithDetails__info">
-            <div class="infoBlock">
+            <div class="Card">
+                <div class="Card__content">
                 {% if showTags  %}
                 <div class="BookDetails__item">
                     <h4 class="Heading BookDetails__item__title">{{ 'author.tags'|trans }}</h4>
@@ -134,6 +146,7 @@
                     </ul>
                 </div>
                 {% endif %}
+                </div>
             </div>
         </div>
         {% endif %}
