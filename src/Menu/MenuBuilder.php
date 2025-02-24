@@ -16,7 +16,7 @@ final class MenuBuilder
      */
     private array $defaultAttr = [
         'attributes' => ['class' => 'MenuItem'],
-        'linkAttributes' => ['class' => 'MenuLink']
+        'linkAttributes' => ['class' => 'MenuLink'],
     ];
 
     /**
