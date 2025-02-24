@@ -1,0 +1,50 @@
+.Menu {
+    padding-inline: var(--space--sm);
+    margin-block-end: var(--space--md);
+}
+
+.MenuLink {
+    display: grid;
+    grid-template-columns: 1rem auto;
+    gap: var(--space--sm);
+    margin-left: 0.5rem;
+
+    transition:
+        color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out;
+
+    text-decoration: none;
+    align-items: center;
+    color: var(--bs-nav-link-color);
+    font-size: var(--font-size--sm);
+    padding: var(--space--xs) var(--space--sm);
+    border-radius: var(--border-radius--sm);
+}
+
+.MenuLink i {
+    justify-self: end;
+    transition: inherit;
+}
+
+a.MenuLink:hover,
+.Menu--active > .MenuLink,
+.Menu--childActive > .MenuLink {
+    background-color: var(--color-main-02);
+}
+
+a.MenuLink:hover i,
+.Menu--active > .MenuLink i,
+.Menu--childActive > .MenuLink i {
+    color: var(--color-main-01);
+}
+
+.MenuLink--big {
+    font-size: var(--font-size--lg);
+    grid-template-columns: 1.5rem auto;
+    margin-left: 0;
+}
+
+.MenuLink--big i {
+    font-size: 1.1em;
+}

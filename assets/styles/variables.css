@@ -13,4 +13,18 @@
   --font-size--sm: 0.875rem;
   --font-size--md: 1rem;
   --font-size--lg: 1.25rem;
+  --font-size--xl: 1.5rem;
+
+  --body-background-color: #f2f2f2;
+
+  --color-main-01: #de9779; /* cover background, icon color, progress bar progress */
+  --color-main-02: #eddcd5; /* nav background, progress bar background, block emphasis  */
+  --color-main-03: #f1edeb; /* block background */
+}
+
+[data-bs-theme=dark] {
+  --body-background-color: #0d0d0d;
+  --color-main-01: #bf4f20;
+  --color-main-02: #4f2311;
+  --color-main-03: #241e1b;
 }

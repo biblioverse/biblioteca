@@ -1,0 +1,12 @@
+body {
+  background-color: var(--body-background-color) !important;
+}
+
+.Title {  
+  margin: 0;
+  padding-left: var(--space--md);
+
+  font-size: var(--font-size--lg);
+  font-weight: 500;
+  line-height: 4rem;
+}

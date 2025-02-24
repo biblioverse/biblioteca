@@ -1,21 +1,5 @@
 {% extends themedTemplate('bare.html.twig') %}
 {% block content %}
-<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-    <div class="navbar-brand col-12 me-0 px-3 fs-6 text-white overflow-auto">
-        <i class="bi bi-house-fill"></i> <a class="text-white d-inline-block mx-2" href="{{ path('app_dashboard') }}">Biblioteca</a>
-        <i class="bi bi-chevron-right"></i><h1 class="h6 m-2 d-inline-block">{% block title %}{{ 'generic.page'|trans }}{% endblock %}</h1>
-    </div>
-
-    <ul class="navbar-nav flex-row d-md-none">
-        <li class="nav-item text-nowrap">
-            <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <i class="bi bi-list"></i>
-            </button>
-        </li>
-    </ul>
-</header>
 
 <nav class="container-fluid">
     <div class="row">
@@ -24,7 +8,16 @@
                  aria-labelledby="sidebarMenuLabel">
                 <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
 
-                    {{ knp_menu_render('main',{'currentClass':'active','ancestorClass':'active'}) }}
+                    <div class="Menu">
+                        <a class="MenuLink MenuLink--big" href="{{ path('app_dashboard') }}">
+                            <i class="bi bi-book"></i>
+                            <span>Biblioteca</span>
+                        </a>
+                    </div>
+
+                    <ul class="list-unstyled">
+                    {{ knp_menu_render('main',{'currentClass':'Menu--active','ancestorClass':'Menu--childActive'}) }}
+                    </ul>
 
                 </div>
                 <div class="offcanvas-header">
@@ -38,8 +31,8 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-md-4">
             {{ component('Search') }}
 
-            <div id="js-main" class="mt-3">
-                <h1 class="h3">{{ block('title') }}</h1>
+            <div id="js-main">
+                <h1 class="Title">{{ block('title') }}</h1>
                 {% block body %}{% endblock %}
             </div>
 

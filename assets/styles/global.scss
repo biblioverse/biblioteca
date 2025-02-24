@@ -4,6 +4,9 @@
 @import "./overrides.css";
 
 @import "./variables.css";
+
+@import "./layout.css";
+
 @import "./components/book.css";
 @import "./components/bookDetails.css";
 @import "./components/bookGrid.css";
@@ -14,6 +17,7 @@
 @import "./components/heading.css";
 @import "./components/hero.css";
 @import "./components/heroProgress.css";
-@import "./components/infoBlock.css";
+@import "./components/menuBlock.css";
 @import "./components/rating.css";
 @import "./components/sidebar.css";
+@import "./components/table.css";
