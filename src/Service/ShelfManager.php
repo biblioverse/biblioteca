@@ -30,12 +30,22 @@ class ShelfManager
     public function getBooksInShelves(array $shelves): array
     {
         $books = [];
+        $this->searchHelper->queries = [];
         foreach ($shelves as $shelf) {
-            // TODO: Use multi-search (when ready) to avoid many queries
-            $shelfBooks = $this->getBooksInShelf($shelf);
-            foreach ($shelfBooks as $book) {
-                $books[$book->getId()] = $book;
+            if ($shelf->getQueryString() === null && $shelf->getQueryFilter() === null) {
+                continue;
             }
+            $this->searchHelper->prepareMultiQuery(
+                $shelf->getQueryString() ?? '*',
+                $shelf->getQueryFilter() ?? '',
+                $shelf->getQueryOrder() ?? '',
+                200
+            );
+        }
+
+        $this->searchHelper->executeMultiSearch();
+        foreach ($this->searchHelper->getBooks() as $book) {
+            $books[$book->getId()] = $book;
         }
 
         return $books;

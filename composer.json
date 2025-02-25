@@ -12,7 +12,7 @@
     "ext-imagick": "*",
     "ext-zip": "*",
     "beberlei/doctrineextensions": "^1.3",
-    "biblioverse/typesense-bundle": "^0.0.4",
+    "biblioverse/typesense-bundle": "dev-multisearch",
     "devdot/monolog-parser": "^1.6",
     "doctrine/annotations": "^2.0.2",
     "doctrine/doctrine-bundle": "^2.13.2",
