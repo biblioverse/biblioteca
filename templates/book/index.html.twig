@@ -187,7 +187,7 @@
                         <ul class="BookDetails__item__content">
                         {% for tag in book.tags %}
                         <li>
-                            <a href="{{ filter_book_url({'tag': tag}) }}" class="text-decoration-none text-secondary">
+                            <a href="{{ filter_book_url({'tags': tag}) }}" class="text-decoration-none text-secondary">
                                 <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
                             </a>
                         </li>
