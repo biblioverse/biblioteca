@@ -103,7 +103,7 @@
 
     <div style="display: flex; gap: var(--space--md); flex-direction: column;">
 
-        {% set showInfo = (book.publisher or book.ageCategory is not null or book.language) %}
+        {% set showInfo = (book.tags or book.publisher or book.ageCategory is not null or book.language) %}
 
         <div class="BookDetails {{ showInfo ? 'BookDetails--withInfo' : '' }}">
 
