@@ -275,32 +275,16 @@
             {% endif %}
         </div>
         {% endif %}
-        {% if sameAuthor is not empty %}
-        <div class="Card">
-            <div class="Card__title">
-                <h5 class="Heading">{{ 'books.same-author'|trans }}</h5>
-            </div>
-            <div class="Card__content">
-                <div class="bookGrid">
-                    {% for indexBook in sameAuthor %}
-                        <div class="bookGrid__item">
-                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        {% if sameTags is not empty %}
 
-            {% for tag,bookTags in sameTags %}
+        {% if similar is not empty %}
+
             <div class="Card">
                 <div class="Card__title">
-                    <h5 class="Heading">{{ tag }}</h5>
+                    <h5 class="Heading">{{ "book.similar"|trans }}</h5>
                 </div>
                 <div class="Card__content">
                     <div class="bookGrid">
-                        {% for indexBook in bookTags %}
+                        {% for indexBook in similar %}
                             <div class="bookGrid__item">
                                 {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                             </div>
@@ -308,7 +292,6 @@
                     </div>
                 </div>
             </div>
-            {%endfor%}
         {% endif %}
     </div>
 {% endblock %}

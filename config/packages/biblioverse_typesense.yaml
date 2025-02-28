@@ -86,9 +86,9 @@ biblioverse_typesense:
             embed:
               from: ["tags", "summary"]
               model_config:
-                model_name: "openai/nomic-embed-text"
-                api_key: ''
-                url: "http://10.10.10.55:11434/"
+                model_name: '%TYPESENSE_EMBED_MODEL%'
+                api_key: '%TYPESENSE_EMBED_KEY%'
+                url: '%TYPESENSE_EMBED_URL%'
 
         default_sorting_field: sortable_id
         symbols_to_index: ['+', '#', '@', '_']

@@ -13,8 +13,8 @@ use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
+use Biblioverse\TypesenseBundle\Exception\SearchException;
 use Biblioverse\TypesenseBundle\Query\SearchQuery;
-use Biblioverse\TypesenseBundle\Query\SimilarVectorQuery;
 use Biblioverse\TypesenseBundle\Search\SearchCollectionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -89,20 +89,22 @@ class BookController extends AbstractController
         }
 
         $filter = null;
-        if($book->getSerie()!==null){
+        if ($book->getSerie() !== null) {
             $filter = 'serie:!'.$book->getSerie();
         }
 
         $querySimilar = new SearchQuery(
             q: '*',
             queryBy: 'title',
-            vectorQuery: 'embedding:([], id: '.$book->getId().')',
             filterBy: $filter,
+            vectorQuery: 'embedding:([], id: '.$book->getId().')',
             limit: 12
         );
-
-        $similar = $searchBooks->search($querySimilar);
-
+        try {
+            $similar = $searchBooks->search($querySimilar);
+        } catch (SearchException) {
+            $similar = [];
+        }
 
         $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
         $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
