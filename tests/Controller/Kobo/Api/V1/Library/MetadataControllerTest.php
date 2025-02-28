@@ -4,7 +4,6 @@ namespace App\Tests\Controller\Kobo\Api\V1\Library;
 
 use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
-use App\Entity\KoboSyncedBook;
 use App\Kobo\Response\MetadataResponseService;
 use App\Tests\Contraints\AssertHasDownloadWithFormat;
 use App\Tests\Controller\Kobo\KoboControllerTestCase;
@@ -22,8 +21,6 @@ class MetadataControllerTest extends KoboControllerTestCase
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
         self::assertThat($response, new AssertHasDownloadWithFormat(MetadataResponseService::EPUB3_FORMAT), 'Response is not a valid download response');
-
-        $this->getEntityManager()->getRepository(KoboSyncedBook::class)->deleteAllSyncedBooks(1);
     }
 
     /**

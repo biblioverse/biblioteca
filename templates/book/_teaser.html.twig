@@ -1,5 +1,6 @@
 {# @var book App\Entity\Book #}
 {# @var interaction App\Entity\BookInteraction #}
+{% set progress = progress|default(null) %}
 {% if withDetail is not defined %}
 {% set withDetail = true %}
 {% endif %}
@@ -15,9 +16,9 @@
 {% else %}
     {% set icon='bi-file-binary-fill' %}
 {% endif %}
-<div class=" m-1 {{ withDetail?'mb-4' }}">
+<div>
     <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
-        {% include 'book/_cover.html.twig' with {book: book, interaction: interaction} %}
+        {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: interaction, progress: progress} %}
     </a>
     {% if withDetail %}
         <small>
@@ -35,9 +36,7 @@
                 </a>
             {% endfor %}
             {% if interaction is not null and interaction.rating > 0 %}
-                {% for current in 1..interaction.rating %}
-                    <i class="bi bi-star-fill"></i>
-                {% endfor %}
+                {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
             {% endif %}
         </small>
     {% endif %}

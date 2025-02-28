@@ -73,12 +73,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?AgeCategory $maxAgeCategory = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $bookSummaryPrompt = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $bookKeywordPrompt = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $theme = null;
 
@@ -355,30 +349,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMaxAgeCategory(?AgeCategory $maxAgeCategory): static
     {
         $this->maxAgeCategory = $maxAgeCategory;
-
-        return $this;
-    }
-
-    public function getBookSummaryPrompt(): ?string
-    {
-        return $this->bookSummaryPrompt;
-    }
-
-    public function setBookSummaryPrompt(?string $bookSummaryPrompt): static
-    {
-        $this->bookSummaryPrompt = $bookSummaryPrompt;
-
-        return $this;
-    }
-
-    public function getBookKeywordPrompt(): ?string
-    {
-        return $this->bookKeywordPrompt;
-    }
-
-    public function setBookKeywordPrompt(?string $bookKeywordPrompt): static
-    {
-        $this->bookKeywordPrompt = $bookKeywordPrompt;
 
         return $this;
     }

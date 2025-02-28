@@ -43,14 +43,6 @@ class ProfileType extends AbstractType
                 'first_options' => [],
                 'second_options' => [],
             ])
-            ->add('bookKeywordPrompt', null, [
-                'help_html' => true,
-                'help' => 'ai.bookprompt.form-help',
-            ])
-            ->add('bookSummaryPrompt', null, [
-                'help_html' => true,
-                'help' => 'ai.summaryprompt.form-help',
-            ])
             ->add('theme', ChoiceType::class, [
                 'choices' => [
                     'profile.form.theme.default' => 'default',

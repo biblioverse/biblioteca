@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Book;
-use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\User;
 use App\Enum\ReadingList;
@@ -12,8 +11,10 @@ use App\Kobo\SyncToken;
 use App\Service\ShelfManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -25,8 +26,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly Security $security, private readonly ShelfManager $shelfManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly Security $security,
+        private readonly ShelfManager $shelfManager,
+        private readonly LoggerInterface $koboSyncLogger,
+    ) {
         parent::__construct($registry, Book::class);
     }
 
@@ -495,6 +500,9 @@ class BookRepository extends ServiceEntityRepository
         $query = $qb->getQuery();
         /** @var Book[] $result */
         $result = $query->getResult();
+        $sql = $query->getSQL();
+        $params = $query->getParameters();
+        $this->koboSyncLogger->debug('Query: {query}', ['query' => $sql, 'params' => $params, 'result' => $result]);
 
         return $result;
     }
@@ -513,40 +521,39 @@ class BookRepository extends ServiceEntityRepository
 
     private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
     {
-        $books = [];
-        foreach ($koboDevice->getShelves() as $shelf) {
-            $shelfBooks = $this->shelfManager->getBooksInShelf($shelf);
-            foreach ($shelfBooks as $book) {
-                $books[$book->getId()] = $book;
-            }
-        }
-
-        if ($koboDevice->isSyncReadingList()) {
-            $readingList = $this->getEntityManager()->getRepository(BookInteraction::class)->getFavourite();
-            foreach ($readingList as $bookInteraction) {
-                $book = $bookInteraction->getBook();
-                $books[$book->getId()] = $book;
-            }
-        }
-
         $qb = $this->createQueryBuilder('book')
             ->select('book', 'bookInteractions')
             ->leftJoin('book.bookInteractions', 'bookInteractions')
-            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.koboDevice = :id')
+            ->leftJoin('book.koboSyncedBooks', 'koboSyncedBooks', 'WITH', 'koboSyncedBooks.koboDevice = :koboDeviceId')
+            ->leftJoin('book.shelves', 'shelves')
+            ->leftJoin('shelves.koboDevices', 'koboDeviceShelf')
             ->where('book.extension = :extension')
-            ->andWhere('book in (:books)')
-            ->setParameter('books', array_keys($books))
-            ->setParameter('id', $koboDevice->getId())
+            ->setParameter('koboDeviceId', $koboDevice->getId())
             ->setParameter('extension', 'epub') // Pdf is not supported by kobo sync
             ->groupBy('book.id');
-        $bigOr = $qb->expr()->orX();
 
+        // We sync
+        // - Book already synced with the bigOr Condition
+        // - Book never synced but in a shelf, reading list or dynamic shelf
+        // We start by building the bigOr condition
+        $bigOr = $qb->expr()->orX();
         if ($syncToken->lastCreated instanceof \DateTimeInterface) {
             $bigOr->addMultiple([
                 $qb->expr()->isNull('koboSyncedBooks.created'),
                 $qb->expr()->gte('book.created', ':lastCreated'),
+                $qb->expr()->gte('bookInteractions.created', ':lastCreated'),
             ]);
             $qb->setParameter('lastCreated', $syncToken->lastCreated);
+        }
+
+        if ($syncToken->archiveLastModified instanceof \DateTimeInterface) {
+            $bigOr->add(
+                $qb->expr()->andX(
+                    $qb->expr()->gte('koboSyncedBooks.archived', ':archiveLastModified'),
+                    $qb->expr()->isNotNull('koboSyncedBooks.archived'),
+                ),
+            );
+            $qb->setParameter('archiveLastModified', $syncToken->archiveLastModified);
         }
 
         if ($syncToken->lastModified instanceof \DateTimeInterface) {
@@ -554,12 +561,11 @@ class BookRepository extends ServiceEntityRepository
                 'book.updated > :lastModified',
                 'book.created  > :lastModified',
                 'koboSyncedBooks.updated > :lastModified',
+                'bookInteractions.updated > :lastModified',
                 $qb->expr()->isNull('koboSyncedBooks.updated'),
             ]);
             $qb->setParameter('lastModified', $syncToken->lastModified);
         }
-
-        $qb->andWhere($bigOr);
 
         $qb->orderBy('book.updated');
         if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
@@ -567,7 +573,43 @@ class BookRepository extends ServiceEntityRepository
             $qb->addOrderBy('bookInteractions.readStatus', 'ASC');
         }
 
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->andX($qb->expr()->isNotNull('koboSyncedBooks.koboDevice'), $bigOr),
+                $qb->expr()->andX($qb->expr()->isNull('koboSyncedBooks.koboDevice'), $this->getExpressionInShelf($koboDevice, $qb)),
+            )
+        );
+
         return $qb;
+    }
+
+    /**
+     * Expression to fetch only the books from a shelf, reading list or dynamic shelf
+     */
+    private function getExpressionInShelf(KoboDevice $koboDevice, QueryBuilder $qb): Orx
+    {
+        $expressionInShelf = $qb->expr()->orX();
+
+        // In a synced shelf
+        $expressionInShelf->add($qb->expr()->eq('koboDeviceShelf.id', ':koboDeviceId2'));
+        $qb->setParameter('koboDeviceId2', $koboDevice->getId());
+        // In a dynamic shelf
+        $expressionInShelf->add($qb->expr()->in('book.id', ':dynamicBooksIds'));
+        $qb->setParameter('dynamicBooksIds', $this->getDynamicBooksIdsForKoboDevice($koboDevice));
+
+        // In the reading list
+        if ($koboDevice->isSyncReadingList()) {
+            $expressionInShelf->add($qb->expr()->andX(
+                $qb->expr()->eq('bookInteractions.readingList', ':to_read'),
+                $qb->expr()->neq('bookInteractions.readStatus', ':finished'),
+                $qb->expr()->eq('bookInteractions.user', ':userInteraction'),
+            ));
+            $qb->setParameter('to_read', ReadingList::ToRead);
+            $qb->setParameter('userInteraction', $koboDevice->getUser());
+            $qb->setParameter('finished', ReadStatus::Finished);
+        }
+
+        return $expressionInShelf;
     }
 
     public function findByIdAndKoboDevice(int $bookId, KoboDevice $koboDevice): ?Book
@@ -603,6 +645,57 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('bookUuid', $bookUuid)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $result;
+    }
+
+    public function inHowManyStaticKoboShelves(Book $book, ?User $user): int
+    {
+        $qb = $this->createQueryBuilder('book')
+            ->select('count(shelves.id)')
+            ->join('book.shelves', 'shelves')
+            ->join('shelves.koboDevices', 'koboDevice')
+            ->where('koboDevice.user = :user')
+            ->andWhere('book.id = :bookId')
+            ->setParameter('user', $user)
+            ->setParameter('bookId', $book->getId())
+        ;
+
+        /** @var array{0: int} $result */
+        $result = $qb->getQuery()->getSingleColumnResult();
+
+        return $result[0];
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getDynamicBooksIdsForKoboDevice(KoboDevice $koboDevice): array
+    {
+        $dynamicBooksIds = [];
+        foreach ($koboDevice->getShelves() as $shelf) {
+            if (!$shelf->isDynamic()) {
+                continue;
+            }
+
+            // TODO: Use multi-search (when ready) to avoid many queries
+            $shelfBooks = $this->shelfManager->getBooksInShelf($shelf);
+            foreach ($shelfBooks as $book) {
+                $dynamicBooksIds[] = $book->getId();
+            }
+        }
+
+        return $dynamicBooksIds;
+    }
+
+    public function deleteByTitle(string $title): int
+    {
+        /** @var int $result */
+        $result = $this->createQueryBuilder('b')
+            ->delete()
+            ->where('b.title = :title')
+            ->setParameter('title', $title)
+            ->getQuery()->execute();
 
         return $result;
     }

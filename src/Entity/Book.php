@@ -460,6 +460,30 @@ class Book
         return $this;
     }
 
+    public function getTagsString(): ?string
+    {
+        return implode(',', $this->tags ?? []);
+    }
+
+    public function setTagsString(?string $tags): static
+    {
+        $this->tags = explode(',', (string) $tags);
+
+        return $this;
+    }
+
+    public function getAuthorsString(): ?string
+    {
+        return implode(',', $this->authors ?? ['unknown']);
+    }
+
+    public function setAuthorsString(?string $authors): static
+    {
+        $this->authors = explode(',', (string) $authors);
+
+        return $this;
+    }
+
     public function isVerified(): bool
     {
         return $this->verified;
@@ -617,5 +641,11 @@ class Book
         }
 
         return (object) $return;
+    }
+
+    public function __clone(): void
+    {
+        $this->id = null;
+        $this->uuid = $this->generateUuid();
     }
 }

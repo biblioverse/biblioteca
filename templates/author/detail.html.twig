@@ -4,13 +4,21 @@
 
 {% block body %}
     <div class="hero">
-        <div class="hero__background"></div>
+        {% if books|length > 0 and books[0].imageFilename is not null %}
+            {% set image = asset('covers/'~books[0].imagePath~books[0].imageFilename)|imagine_filter('big') %}
+        {% else %}
+            {% set image = asset('images/blank.jpg')|imagine_filter('big') %}
+        {% endif %}
+
+        <div class="hero__background" style="--hero-background-image: url('{{ image }}')"></div>
         <div class="hero__image">
-           {% include 'book/_cover.html.twig' with {book: books[0], interaction: null} %}
+           {% include themedTemplate('book/_cover.html.twig') with {book: books[0], thumb_size: 'big', interaction: null} %}
         </div>
         <div class="hero__title">
             <h1>{{ author }}</h1>
+            <div class="hero__subtitle">
             {{ 'author.books'|trans({"%books%": books|length, "%books_count%": books|length, "%series%": booksInSeries|length}) }}
+            </div>
         </div>
         <div class="hero__stats">
             <div>
@@ -32,22 +40,22 @@
                 {{ 'books.reading.progress'|trans({"%read%": readBooks+hiddenBooks, "%total%": books|length }) }}
                 </div>
                 <div class="heroProgress__bar">
-                    <div class="heroProgress__bar__progress" style="width: {{ (readBooks+hiddenBooks/books|length) *100 }}%">
+                    <div class="heroProgress__bar__progress" style="width: {{ ((readBooks+hiddenBooks)/books|length) *100 }}%">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="booksWithDetails">
-        <div class="booksWithDetails__content">
+    <div class="BooksWithDetails">
+        <div class="BooksWithDetails__content">
             {% if booksInSeries|length > 0 %}
             <h3>{{ 'author.in-series'|trans }}</h3>
             <div class="bookGrid">
                 {% for serie, book in booksInSeries %}
                     <div class="bookGrid__item">
-                        <a href="{{ path('app_serie_detail',{'name':book.serie}) }}" class=" small">
-                            {% include 'book/_cover.html.twig' with {book: book, interaction: null} %}
+                        <a href="{{ path('app_serie_detail',{'name':serie}) }}">
+                            {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: null} %}
                         </a>
                         <strong>{{ serie }}</strong><br />
                         {% for author in book.authors %}
@@ -65,25 +73,63 @@
             <div class="bookGrid">
                 {% for book in otherBooks %}
                     <div class="bookGrid__item">
-                        {% include 'book/_teaser.html.twig' with {book: book} %}
+                        {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
                     </div>
                 {% endfor %}
             </div>
             {% endif %}
         </div>
-        {% if tags|length > 0 %}
-        <div class="booksWithDetails__info">
+
+        {% set showTags=(tags|length > 0) and app.user.isDisplayTags %}
+        {% set showAgeCategories=(ageCategories|length > 0) %}
+        {% set showPublishers=(publishers|length > 0) and app.user.isDisplayPublishers %}
+        {% if showTags or showAgeCategories or showPublishers  %}
+        <div class="BooksWithDetails__info">
             <div class="infoBlock">
-                <h3>{{ 'author.tags'|trans }}</h3>
-                <ul style="list-style-type: none; padding-left: 1rem;">
-                {% for tag, books in tags %}
-                    <li>
-                        <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none p-1">
-                            <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
-                        </a>
-                    </li>
-                {% endfor %}
-                </ul>
+                {% if showTags  %}
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'author.tags'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for tag, books in tags %}
+                        <li>
+                            <a href="{{ filter_book_url({'tags':[tag]}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if showAgeCategories  %}
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'book.age-category'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for ageCategory, books in ageCategories %}
+                        <li>
+                            <a href="{{ filter_book_url({'age':ageCategory}) }}" class="text-decoration-none text-secondary">
+                                {{ ageCategory|trans }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if showPublishers  %}
+                <div class="BookDetails__item">
+                    <h4 class="Heading BookDetails__item__title">{{ 'book.publisher'|trans }}</h4>
+                    <ul class="BookDetails__item__content">
+                    {% for publisher, books in publishers %}
+                        <li>
+                            <a href="{{ filter_book_url({'publisher':publisher}) }}" class="text-decoration-none text-secondary">
+                                {{ publisher }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endif %}

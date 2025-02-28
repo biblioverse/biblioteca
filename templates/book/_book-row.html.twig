@@ -5,7 +5,7 @@
     
     <td style="width: 100px">
         <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
-            {% include 'book/_cover.html.twig' with { book: book } %}
+            {% include themedTemplate('book/_cover.html.twig') with { book: book } %}
         </a>
     </td>
     <td style="vertical-align: middle;">
@@ -21,9 +21,7 @@
         {% endif %}
         {% set interaction = book.lastInteraction(app.user) %}
         {% if interaction is not null and interaction.rating > 0 %}
-            {% for current in 1..interaction.rating %}
-                <i class="bi bi-star-fill"></i>
-            {% endfor %}
+            {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
         {% endif %}
     </td>
     <td style="vertical-align: middle; width: 100px;">

@@ -8,6 +8,8 @@ interface BookPromptInterface
 {
     public function getPrompt(): string;
 
+    public function getPromptWithoutInstructions(): string;
+
     public function getBook(): Book;
 
     public function initialisePrompt(): void;

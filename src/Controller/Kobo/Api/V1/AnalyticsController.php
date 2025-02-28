@@ -40,11 +40,14 @@ class AnalyticsController extends AbstractKoboController
 
         $testKey = $json['TestKey'] ?? $request->headers->get('TestKey');
 
-        return new JsonResponse([
+        $response = new JsonResponse([
             'Result' => 'Success',
             'TestKey' => $testKey,
             'Tests' => new \stdClass(),
         ]);
+        $response->headers->set('x-kobo-api-token', 'e30=');
+
+        return $response;
     }
 
     /**

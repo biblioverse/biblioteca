@@ -1,14 +1,16 @@
 services:
   biblioteca:
-    image: ghcr.io/biblioverse/biblioteca-docker:2.0.2
     build:
-      target: prod
+      target: dev
     command: ["/bin/sh", "-c" , "apache2-foreground" ]
     ports:
       - "48480:8080" # Web
       - "48181:8181" # NPM
     depends_on:
-      - db
+      db:  
+        condition: service_started  
+      typesense:
+        condition: service_started
     volumes:
       - .:/var/www/html
       - .composer:/home/.composer:cached
@@ -33,7 +35,7 @@ services:
       - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
 
   db:
-    image: mariadb:11.6
+    image: mariadb:11.7
     environment:
       - MYSQL_ROOT_PASSWORD=biblioteca
       - MYSQL_DATABASE=biblioteca
@@ -47,7 +49,7 @@ services:
       - default
 
   typesense:
-      image: typesense/typesense:27.1
+      image: typesense/typesense:28.0
       restart: on-failure
       ports:
         - 8983

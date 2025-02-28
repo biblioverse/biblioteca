@@ -1,7 +1,8 @@
 {# @var book App\Entity\Book #}
 {# @var interaction App\Entity\BookInteraction #}
-
+{% set progress = progress|default(null) %}
 {% set interaction = book.lastInteraction(app.user) %}
+{% set thumb_size = thumb_size|default('thumb') %}
 
 {% set read = false %}
 {% if interaction is not null and interaction.readStatus.value == enum('App\\Enum\\ReadStatus').Finished.value %}
@@ -19,9 +20,21 @@
             <i class="bi bi-check-circle-fill book__cover--read" style=""></i>
         {% endif %}
         {% if book.imageFilename is not null %}
-            <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" alt="{{ book.title }}"/>
+            <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter(thumb_size) }}" alt="{{ book.title }}"/>
         {% else %}
-            <img src="{{ asset('images/blank.jpg')|imagine_filter('thumb') }}" alt="{{ book.title }}" />
+            <img src="{{ asset('images/blank.jpg')|imagine_filter(thumb_size) }}" alt="{{ book.title }}" />
+        {% endif %}
+
+        {% if progress is not null %}
+            <div class="book__progress">
+                <div class="book__progress__link">
+                    <a href="{{ progress.readUrl }}" class="mt-2 btn btn-sm btn-secondary">{{ "dashboard.continue-reading"|trans }}</a>
+                </div>
+
+                <div class="book__progress__track" title="{{ progress.read }}/{{ progress.total }}">
+                    <div class="book__progress__bar" style="width: {{ (progress.read/progress.total) *100 }}%"></div>
+                </div>
+            </div>
         {% endif %}
     </div>
     <div class="book__page"></div>

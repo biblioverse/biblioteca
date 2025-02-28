@@ -5,7 +5,7 @@ namespace App\Ai\Communicator;
 use App\Entity\AiModel;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class OllamaCommunicator extends AbstractCommunicator
+class OllamaCommunicator extends AbstractCommunicator implements AiChatInterface
 {
     public function __construct(
         private HttpClientInterface $client,
@@ -36,11 +36,12 @@ class OllamaCommunicator extends AbstractCommunicator
             } catch (\JsonException) {
                 continue;
             }
-            if (!is_array($data) || !array_key_exists('response', $data)) {
+            if (!is_array($data) || (!array_key_exists('response', $data) && !array_key_exists('message', $data))) {
                 continue;
             }
 
-            $content[] = $data['response'];
+            // @phpstan-ignore-next-line
+            $content[] = $data['response'] ?? $data['message']['content'];
         }
 
         return implode('', $content);
@@ -48,6 +49,10 @@ class OllamaCommunicator extends AbstractCommunicator
 
     private function getOllamaUrl(string $path): string
     {
+        if (!str_ends_with((string) $this->aiModel->getUrl(), '/')) {
+            $this->aiModel->setUrl($this->aiModel->getUrl().'/');
+        }
+
         return "{$this->aiModel->getUrl()}{$path}";
     }
 
@@ -55,10 +60,6 @@ class OllamaCommunicator extends AbstractCommunicator
     public function initialise(AiModel $model): void
     {
         parent::initialise($model);
-
-        $this->sendRequest($this->getOllamaUrl('pull'), [
-            'model' => $this->aiModel->getModel(),
-        ], 'POST');
     }
 
     #[\Override]
@@ -74,5 +75,20 @@ class OllamaCommunicator extends AbstractCommunicator
         ];
 
         return $this->sendRequest($this->getOllamaUrl('generate'), $params, 'POST');
+    }
+
+    public function chat(array $messages): string
+    {
+        $processedMessages = [];
+        foreach ($messages as $message) {
+            $processedMessages[] = $message->toOpenAI();
+        }
+
+        $params = [
+            'model' => $this->aiModel->getModel(),
+            'messages' => $processedMessages,
+        ];
+
+        return $this->sendRequest($this->getOllamaUrl('chat'), $params, 'POST');
     }
 }

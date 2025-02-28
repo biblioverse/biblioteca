@@ -3,227 +3,312 @@
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %} <i class="bi bi-chevron-right mx-2"></i> {{ book.serie }} #{{ book.serieIndex }} {% endif %} <i class="bi bi-chevron-right mx-2"></i> {{ book.title }}{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-md-3 col-xs-6 col-sm-6">
-            <div class="d-grid gap-2">
-                {% if book.imageFilename is not null %}
-                    <img src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" class="border rounded card-img-top w-100" alt="{{ 'book.picture-for-book'|trans }} {{ book.title }}">
-                {% else %}
-                    <img src="{{ asset('images/blank.jpg')|imagine_filter('big') }}" class="card-img-top w-100" alt="{{ 'book.no-picture-for'|trans }} {{ book.title }}">
+    <div class="hero">
+        {% if book.imageFilename is not null %}
+            {% set image = asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') %}
+            {% set altText = 'book.picture-for-book'|trans %}
+        {% else %}
+            {% set image = asset('images/blank.jpg')|imagine_filter('big') %}
+            {% set altText = 'book.no-picture-for'|trans %}
+        {% endif %}
+
+        <div class="hero__background" style="--hero-background-image: url('{{ image }}')"></div>
+
+        <div class="hero__image">
+            <div style="position: relative;">
+                <img src="{{ image }}" class="hero__image__image" alt="{{ altText }} {{ book.title }}">
+
+                {% if not book.verified and is_granted('EDIT', book) %}
+                <div class="hero__image__actions">
+                    <div>
+                        <a target="_blank" class="btn btn-sm btn-primary" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">
+                        <i class="bi bi-search"></i><br />
+                        {{ 'book.search-google-images'|trans }}
+                        </a>
+                    </div>
+                    <div>
+                        <a class="btn btn-sm btn-primary" href="{{ path('app_extractCover', {'id':book.id}) }}">
+                            <i class="bi bi-image"></i><br />
+                            {{ 'book.extract-cover-from-file'|trans }}
+                        </a>
+                    </div>
+                    <div>
+                        {{ component('UploadBookPicture',{'book':book}) }}
+                    </div>
+                </div>
                 {% endif %}
-
-                {{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
-
-                <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
-                    <i class="bi bi-book"></i>
-                    {{ 'book.read-in-browser'|trans }}
-                </a>
-
-                <a class="btn btn-block btn-secondary" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">
-                    <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
-                </a>
             </div>
         </div>
-        <div class="col-md-9">
-            <table class="table w-100  mb-5">
-                <tr>
-                    <th style="width:15%;">{{ 'book.title'|trans }}</th>
-                    <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'title'}) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.read-state'|trans }}</th>
-                    <td>
-                        {{ enum('App\\Enum\\ReadStatus').getLabel(interaction.readStatus|default( enum('App\\Enum\\ReadStatus').NotStarted))|trans }}
-
-                        {% if interaction is not null and interaction.readPages >0 %}
-                            <div class="progress">
-                                <div class="progress-bar" style="width: {{ (interaction.readPages/book.pageNumber) *100 }}%">
-                                    {{ 'interaction.status.progress'|trans({"%read%": interaction.readPages, "%total%": book.pageNumber }) }}
-                                </div>
-                            </div>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.rating'|trans }}</th>
-                    <td>
-                        {% if interaction is not null and interaction.rating >0 %}
-                            {% for current in 1..interaction.rating %}
-                            <i class="bi bi-star-fill"></i>
-                            {% endfor %}
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.readinglist-state'|trans }}</th>
-                    <td>
-                        {{ enum('App\\Enum\\ReadingList').getLabel(interaction.readingList|default( enum('App\\Enum\\ReadingList').NotDefined))|trans }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.authors'|trans }}</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'authors'}) }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.summary'|trans }}</th><td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'summary'}) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.serie'|trans }}</th><td>
-                        <div>
-                            {{ component('InlineEditBook', {'book':book, 'field':'serie'}) }}
-                        </div>
-                        {% if book.serie is not null %}
-                            <div class="w-25 d-inline-block">
-                                {{ component('InlineEditBook', {'book':book, 'field':'serieIndex'}) }}
-                            </div>
-                        {% endif %}
-
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.publisher'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'publisher'}) }}</td>
-                </tr>
-
-                <tr>
-                    <th>{{ 'book.age-category'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'ageCategory'}) }}</td>
-                </tr>
-
-                <tr>
-                    <th>{{ 'book.tags'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'tags'}) }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.language'|trans }}</th><td>{{ component('InlineEditBook', {'book':book, 'field':'language'}) }}</td>
-                </tr>
-                {% if not book.verified %}
-
-                    <tr>
-                        <th>Utilities</th>
-                        <td>
-                            <ul class="small m-0">
-                                <li>
-                                    <a target="_blank" href="https://www.google.com/search?q={{ book.title~" "~book.serie~" "~book.authors|join(" ")|url_encode }}&tbm=isch&source=lnms&sa=X&dpr=1">{{ 'book.search-google-images'|trans }}</a>
-                                </li>
-                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Tags ) %}
-                                <li>
-                                    {{ component('AiSuggestion', {book: book, field:'tags'}) }}
-                                </li>
-                                {% endif %}
-                                {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Summary ) %}
-                                <li>
-                                    {{ component('AiSuggestion', {book: book, field:'summary'}) }}
-                                </li>
-                                {% endif %}
-                                <li>
-                                    <a href="{{ path('app_extractCover', {'id':book.id}) }}">{{ 'book.extract-cover-from-file'|trans }}</a>
-                                </li>
-                                <li>
-                                    {{ component('UploadBookPicture',{'book':book}) }}
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Paths</th>
-                        <td>
-                            <ul class="small m-0">
-                                <li>{{ 'book.book-path'|trans }}: <code>{{ book.bookPath }}{{ book.bookFilename }}</code></li>
-                                <li>{{ 'book.image-path'|trans }}: <code>{{ book.imagePath }}{{ book.imageFilename }}</code></li>
-                                {% if not book.verified and needsRelocation %}
-                                    <li class="text-danger">Calculated path: <br><code>{{ calculatedPath }}</code>
-                                        {% if is_granted('RELOCATE', book) %}
-                                        <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
-                                        {% endif %}
-
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </td>
-                    </tr>
+        <div class="hero__title">
+            <h1>{{ book.title }}</h1>
+            {% if book.serie %}
+            <div class="hero__subtitle">
+                <a href="{{ filter_book_url({'serie': book.serie}) }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-list-ol"></i>&nbsp;{{ book.serie }}
+                </a>
+                {% if book.serie is not null %}
+                <span class="text-secondary">#{{ book.serieIndex }}<span>
                 {% endif %}
-
-                {% if app.debug %}
-                <tr>
-                    <th>{{ 'book.number-of-pages'|trans }}</th>
-                    <td>
-                        {{ component('InlineEditBook', {'book':book, 'field':'pageNumber'}) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>{{ 'book.uuid'|trans }}</th>
-                    <td>{{ book.uuid }}</td>
-                </tr>
-                {% endif %}
-
-                <tr>
-                    <th>{{ 'book.verified'|trans }}</th>
-                    <td>{{ component('InlineEditBook', {'book':book, 'field':'verified'}) }}</td>
-                </tr>
-
-
-
-            </table>
-
-            {% if serie|length > 0 %}
-                {% if serieMax>=1 %}
-                    <h5>{{ 'books.in-serie'|trans }}</h5>
-                    <div class="bookGrid">
-                        {% for index in 1..serieMax %}
-                            <div class="bookGrid__item">
-                                {% if serie[index] is defined %}
-                                    {% for indexBook in serie[index] %}
-                                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
-                                    {% endfor %}
-                                {% else %}
-                                        {% include themedTemplate('book/_empty.html.twig') with {serie:book.serie, index:index} %}
-                                {% endif %}
-                                {% if (serie[index] is defined and serie[index]|length>1) %}
-                                    <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
-                                    {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same-index'|trans }}{% endif %}
-                                    </span>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% if serie['?'] is defined %}
-                    <h5>{{ 'books.other-books'|trans }}</h5>
-                    <div class="bookGrid">
-                        {% for indexBook in serie['?'] %}
-                            <div class="bookGrid__item">
-                                {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+            </div>
             {% endif %}
-            {% if similar is not empty %}
-                <h5>{{ 'books.similar'|trans }}</h5>
+
+            <div class="hero__subtitle">
+                {% for author in book.authors %}
+                    <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                        <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="hero__stats">
+            <div>
+                {% set readStatus = interaction.readStatus|default( enum('App\\Enum\\ReadStatus').NotStarted)  %}
+                <i class="bi bi-{{ enum('App\\Enum\\ReadStatus').getIcon(readStatus)  }}"></i>
+                {{ enum('App\\Enum\\ReadStatus').getLabel(readStatus)|trans }}
+            </div>
+
+            <div>
+                {% set listStatus = interaction.readingList|default( enum('App\\Enum\\ReadingList').NotDefined)  %}
+                <i class="bi bi-{{ enum('App\\Enum\\ReadingList').getIcon(listStatus)  }}"></i>
+                {{ enum('App\\Enum\\ReadingList').getLabel(listStatus)|trans }}
+            </div>
+
+             {% if interaction is not null and interaction.rating >0 %}
+            <div>
+                {% include themedTemplate('components/_rating.html.twig') with {rating: interaction.rating} %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="hero__progress">
+            <div class="heroProgress">
+                {% set width = 0 %}
+                {% if interaction is not null and interaction.readPages >0 %}
+                    {% set width = ((interaction.readPages/book.pageNumber) *100) %}
+
+                    {% if interaction.readPages > 0 %}
+                    <div class="heroProgress__text">
+                    {{ 'books.reading.progress'|trans({"%read%": interaction.readPages, "%total%": book.pageNumber }) }}
+                    </div>
+                    {% endif %}
+                {% endif %}
+                <div class="heroProgress__bar">
+                    <div class="heroProgress__bar__progress" style="width: {{ width }}%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: var(--space--md); flex-direction: column;">
+
+        {% set showInfo = (book.publisher or book.ageCategory is not null or book.language) %}
+
+        <div class="BookDetails {{ showInfo ? 'BookDetails--withInfo' : '' }}">
+
+            <div class="BookDetails__actions Card Card--emphasis">
+                <div class="Card__content">
+                    <div style="display: grid; gap: var(--space--sm); margin-bottom: var(--space--md);">
+                        {{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
+
+                        <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
+                            <i class="bi bi-book"></i>
+                            {{ 'book.read-in-browser'|trans }}
+                        </a>
+
+                        <a class="btn btn-block btn-secondary" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">
+                            <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
+                        </a>
+
+                        {% if is_granted('EDIT',book) %}
+                        <div style="display: flex; gap: var(--space--md); align-items: center;">
+                            {{ component('Assistant', {book: book}) }}
+                            {{ component('InlineEditVerified',{'book':book}) }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <div class="row">
+                        <details>
+                            <summary>{{ "book.delete-book"|trans }}</summary>
+                            <div class="alert alert-danger">
+                                {{ "book.this-action-is-irreversible"|trans }}
+                            </div>
+                            {{ form(form) }}
+
+                        </details>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="BookDetails__summary Card">
+                <div class="Card__content">
+
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ 'book.summary'|trans }}</h4>
+                        {% if book.summary %}
+                            {{ book.summary|default('')|markdown_to_html }}
+                        {% endif %}
+                    </div>
+
+                    {% if not book.verified and is_granted('EDIT', book) %}
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ "book.paths"|trans }}</h4>
+                        <ul class="list-unstyled m-0">
+                            <li style="font-size: var(--font-size--sm);">
+                                {{ 'book.book-path'|trans }}:<br />
+                                <code>{{ book.bookPath }}{{ book.bookFilename }}</code>
+                            </li>
+                            {% if not book.verified and needsRelocation %}
+                                <li style="font-size: var(--font-size--sm);" class="text-danger">
+                                    Calculated path: <br />
+                                    <code>{{ calculatedPath }}</code><br />
+                                    {% if is_granted('RELOCATE', book) %}
+                                    <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">Relocate</a>
+                                    {% endif %}
+
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if showInfo %}
+            <div class="BookDetails__info Card">
+                <div class="Card__content">
+                    {% if book.tags %}
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ 'book.tags'|trans }}</h4>
+                        <ul class="BookDetails__item__content">
+                        {% for tag in book.tags %}
+                        <li>
+                            <a href="{{ filter_book_url({'tag': tag}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if book.publisher %}
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ 'book.publisher'|trans }}</h4>
+                        <div class="BookDetails__item__content">
+                            <a href="{{ filter_book_url({'publisher':book.publisher}) }}" class="text-decoration-none text-secondary">
+                                {{ book.publisher }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if book.ageCategory is not null %}
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ 'book.age-category'|trans }}</h4>
+
+                        <div class="BookDetails__item__content">
+                            {% set ageCategory = enum("App\\Enum\\AgeCategory").getLabel(book.ageCategory)|default("enum.agecategories.notset") %}
+                            <a href="{{ filter_book_url({'age':ageCategory}) }}" class="text-decoration-none text-secondary">
+                                {{ ageCategory|trans }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if book.language %}
+                    <div class="BookDetails__item">
+                        <h4 class="Heading BookDetails__item__title">{{ 'book.language'|trans }}</h4>
+                        <div class="BookDetails__item__content">
+                            {{ book.language|locale_name }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if serie|length > 0 %}
+        <div class="Card">
+            {% if serieMax>=1 %}
+            <div class="Card__title">
+                <h5 class="Heading">{{ 'books.in-serie'|trans }}</h5>
+            </div>
+            <div class="Card__content">
                 <div class="bookGrid">
-                    {% for indexBook in similar %}
+                    {% for index in 1..serieMax %}
+                        <div class="bookGrid__item">
+                            {% if serie[index] is defined %}
+                                {% for indexBook in serie[index] %}
+                                        {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
+                                {% endfor %}
+                            {% else %}
+                                {% include themedTemplate('book/_empty.html.twig') with {serie:book.serie, index:index} %}
+                            {% endif %}
+                            {% if (serie[index] is defined and serie[index]|length>1) %}
+                                <span class="badge text-bg-warning"><i class="bi bi-exclamation-diamond-fill"></i>
+                                {% if (serie[index] is defined and serie[index]|length>1) %}{{ 'books.same-index'|trans }}{% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if serie['?'] is defined %}
+            <div class="Card__title">
+                <h5 class="Heading">{{ 'books.other-books'|trans }}</h5>
+            </div>
+            <div class="Card__content">
+                <div class="bookGrid">
+                    {% for indexBook in serie['?'] %}
                         <div class="bookGrid__item">
                             {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                         </div>
                     {% endfor %}
                 </div>
+            </div>
             {% endif %}
         </div>
-    </div>
-
-    {% if is_granted('ROLE_ADMIN') %}
-    <div class="row">
-        <details>
-            <summary>{{ "book.delete-book"|trans }}</summary>
-            <div class="alert alert-danger">
-                {{ "book.this-action-is-irreversible"|trans }}
+        {% endif %}
+        {% if sameAuthor is not empty %}
+        <div class="Card">
+            <div class="Card__title">
+                <h5 class="Heading">{{ 'books.same-author'|trans }}</h5>
             </div>
-            {{ form(form) }}
+            <div class="Card__content">
+                <div class="bookGrid">
+                    {% for indexBook in sameAuthor %}
+                        <div class="bookGrid__item">
+                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if sameTags is not empty %}
 
-        </details>
+            {% for tag,bookTags in sameTags %}
+            <div class="Card">
+                <div class="Card__title">
+                    <h5 class="Heading">{{ tag }}</h5>
+                </div>
+                <div class="Card__content">
+                    <div class="bookGrid">
+                        {% for indexBook in bookTags %}
+                            <div class="bookGrid__item">
+                                {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+        {% endif %}
     </div>
-    {% endif %}
-
 {% endblock %}

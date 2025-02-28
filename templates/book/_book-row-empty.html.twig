@@ -3,9 +3,10 @@
         <span class="text-secondary">{{ index }}</span>
     </td>
     <td>
-        {% include 'book/_cover_empty.html.twig' %}
+        {% include themedTemplate('book/_cover_empty.html.twig') %}
     </td>
-    <td>
+    <td style="vertical-align: middle;">
+        <h4 class="text-muted">{{ "book.missing"|trans }}</h4>
     </td>
     <td>
     </td>

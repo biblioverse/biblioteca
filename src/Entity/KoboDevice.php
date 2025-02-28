@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Kobo\SyncToken;
 use App\Repository\KoboDeviceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +22,7 @@ class KoboDevice
     public const KOBO_DEVICE_MODEL_HEADER = 'X-Kobo-Devicemodel';
     public const KOBO_SYNC_TOKEN_HEADER = 'kobo-synctoken';
     public const KOBO_SYNC_SHOULD_CONTINUE_HEADER = 'x-kobo-sync';
+    public const KOBO_SYNC_MODE = 'X-Kobo-Sync-Mode';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -67,6 +69,9 @@ class KoboDevice
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $upstreamSync = false;
+
+    #[ORM\Column(type: 'json', nullable: true, options: ['default' => null])]
+    private ?array $lastSyncToken = null;
 
     public function __construct()
     {
@@ -154,6 +159,9 @@ class KoboDevice
         return $this;
     }
 
+    /**
+     * You can also set "archived" on the syncedBook instead of removing it.
+     */
     public function removeKoboSyncedBook(KoboSyncedBook $koboSyncedBook): static
     {
         // set the owning side to null (unless already changed)
@@ -223,5 +231,21 @@ class KoboDevice
     public function setSyncReadingList(bool $syncReadingList): void
     {
         $this->syncReadingList = $syncReadingList;
+    }
+
+    public function setLastSyncToken(?SyncToken $lastSyncToken): KoboDevice
+    {
+        $this->lastSyncToken = $lastSyncToken?->toArray();
+
+        return $this;
+    }
+
+    public function getLastSyncToken(): ?SyncToken
+    {
+        if ($this->lastSyncToken === null) {
+            return null;
+        }
+
+        return SyncToken::fromArray($this->lastSyncToken);
     }
 }

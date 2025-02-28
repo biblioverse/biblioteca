@@ -2,8 +2,6 @@
 
 namespace App\Ai\Prompt;
 
-use App\Entity\User;
-
 class TagPrompt extends AbstractBookPrompt
 {
     #[\Override]
@@ -11,14 +9,20 @@ class TagPrompt extends AbstractBookPrompt
     {
         $prompt = $this->config->resolve('AI_TAG_PROMPT');
 
-        if ($this->user instanceof User) {
-            $prompt = $this->user->getBookKeywordPrompt() ?? $prompt;
-        }
-        $prompt .= '
+        $this->prompt = $this->replaceBookOccurrence($prompt ?? '');
+    }
 
-The output must be only valid JSON format. It must be an object with one key named "genres" containing an array of genres and tags for this book in strings. Do not add anything else than json. Do not add any other text or comment.';
+    #[\Override]
+    public function getPrompt(): string
+    {
+        return $this->getPromptWithoutInstructions().'
+The output must be only valid JSON format. It must be an object with one key named "tags" containing an array of genres and tags for this book in strings. 
+Do not add anything else than json. Do not add any other text or comment.';
+    }
 
-        $this->prompt = $this->replaceBookOccurrence($prompt);
+    public function getPromptWithoutInstructions(): string
+    {
+        return $this->prompt;
     }
 
     #[\Override]
@@ -37,10 +41,10 @@ The output must be only valid JSON format. It must be an object with one key nam
             return [];
         }
 
-        if (!is_array($items) || !isset($items['genres']) || !is_array($items['genres'])) {
+        if (!is_array($items) || !isset($items['tags']) || !is_array($items['tags'])) {
             return [$result];
         }
 
-        return array_filter($items['genres'], fn ($item) => $item !== null);
+        return array_filter($items['tags'], fn ($item) => $item !== null);
     }
 }

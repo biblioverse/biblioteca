@@ -18,6 +18,11 @@ biblioverse_typesense:
             entity_attribute: id             # Entity attribute name forced
             name: sortable_id                # Typesense field name
             type: int32
+          publisher:
+            name: publisher
+            type: string
+            optional: true
+            facet: true
           serie:
             name: serie
             type: string
