@@ -6,7 +6,6 @@
 
 .BooksWithDetails__content {
   grid-area: content;
-  padding-top: var(--space--xl);
 }
 
 .BooksWithDetails__info {

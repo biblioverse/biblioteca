@@ -14,7 +14,10 @@ final class MenuBuilder
     /**
      * @var array<string|mixed>
      */
-    private array $defaultAttr = ['attributes' => ['class' => 'nav-item'], 'linkAttributes' => ['class' => 'nav-link icon-link'], 'icon' => 'fa-book'];
+    private array $defaultAttr = [
+        'attributes' => ['class' => 'MenuItem'],
+        'linkAttributes' => ['class' => 'MenuLink'],
+    ];
 
     /**
      * Add any other dependency you need...
@@ -25,24 +28,35 @@ final class MenuBuilder
 
     public function isBookRoute(): bool
     {
-        // Get the current request
         $currentRequest = $this->requestStack->getCurrentRequest();
 
         return $currentRequest?->attributes->get('_route') === 'app_book';
-
-        // Continue with the process to extract the route name
     }
 
-    public function getBookRouteParams(): array
+    public function isSerieRoute(): bool
     {
-        // Get the current request
         $currentRequest = $this->requestStack->getCurrentRequest();
 
-        return [
-            'slug' => $currentRequest?->attributes->get('slug'),
-            'book' => $currentRequest?->attributes->get('book'),
-        ];
-        // Continue with the process to extract the route name
+        return $currentRequest?->attributes->get('_route') === 'app_serie_detail';
+    }
+
+    public function isAuthorRoute(): bool
+    {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+
+        return $currentRequest?->attributes->get('_route') === 'app_author_detail';
+    }
+
+    public function getRouteParams(array $params): array
+    {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+
+        $extractedParams = [];
+        foreach ($params as $param) {
+            $extractedParams[$param] = $currentRequest?->attributes->get($param);
+        }
+
+        return $extractedParams;
     }
 
     public function createMainMenu(): ItemInterface
@@ -52,23 +66,34 @@ final class MenuBuilder
         if (!$user instanceof User) {
             return $menu;
         }
-        $menu->setChildrenAttribute('class', 'nav flex-column');
-        $books = $menu->addChild('books_divider', ['label' => 'menu.books'])->setExtra('divider', true);
+        $books = $menu->addChild('books_divider', ['label' => 'menu.books'])
+            ->setExtra('header', true)
+            ->setExtra('icon', 'clipboard-data');
 
         $books->addChild('menu.home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
         if ($user->isDisplayAllBooks()) {
             $allBooks = $books->addChild('menu.allbooks', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
 
             if ($this->isBookRoute()) {
-                $params = $this->getBookRouteParams();
-                $allBooks->addChild('book', ['route' => 'app_book', ...$this->defaultAttr, 'routeParameters' => $params])->setDisplay(false);
+                $params = $this->getRouteParams(['slug', 'book']);
+                $allBooks->addChild('book', ['route' => 'app_book', 'routeParameters' => $params])->setDisplay(false);
             }
         }
         if ($user->isDisplaySeries()) {
-            $books->addChild('menu.series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
+            $series = $books->addChild('menu.series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
+
+            if ($this->isSerieRoute()) {
+                $params = $this->getRouteParams(['name']);
+                $series->addChild('serie', ['route' => 'app_serie_detail', 'routeParameters' => $params])->setDisplay(false);
+            }
         }
         if ($user->isDisplayAuthors()) {
-            $books->addChild('menu.authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'people-fill');
+            $author = $books->addChild('menu.authors', ['route' => 'app_groups', 'routeParameters' => ['type' => 'authors'], ...$this->defaultAttr])->setExtra('icon', 'feather');
+
+            if ($this->isAuthorRoute()) {
+                $params = $this->getRouteParams(['name']);
+                $author->addChild('serie', ['route' => 'app_author_detail', 'routeParameters' => $params])->setDisplay(false);
+            }
         }
         if ($user->isDisplayTags()) {
             $books->addChild('menu.tags', ['route' => 'app_groups', 'routeParameters' => ['type' => 'tags'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
@@ -76,7 +101,11 @@ final class MenuBuilder
         if ($user->isDisplayPublishers()) {
             $books->addChild('menu.publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
         }
-        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])->setExtra('divider', true)->setExtra('translation_domain', false);
+
+        $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])
+            ->setExtra('header', true)
+            ->setExtra('translation_domain', false)
+            ->setExtra('icon', 'person-circle');
         $profile->addChild('menu.readinglist', ['route' => 'app_readinglist', ...$this->defaultAttr])->setExtra('icon', 'list-task');
         if ($user->isDisplayTimeline()) {
             $profile->addChild('menu.timeline', ['route' => 'app_timeline', ...$this->defaultAttr])->setExtra('icon', 'calendar2-week');
@@ -85,7 +114,9 @@ final class MenuBuilder
         $profile->addChild('menu.profile', ['route' => 'app_user_profile', ...$this->defaultAttr])->setExtra('icon', 'person-circle');
         $profile->addChild('menu.logout', ['route' => 'app_logout', ...$this->defaultAttr])->setExtra('icon', 'door-closed');
 
-        $shelves = $menu->addChild('shelves_divider', ['label' => 'menu.shelves'])->setExtra('divider', true);
+        $shelves = $menu->addChild('shelves_divider', ['label' => 'menu.shelves'])
+            ->setExtra('header', true)
+            ->setExtra('icon', 'bookshelf');
         if ($user->getShelves()->count() > 0) {
             foreach ($user->getShelves() as $shelf) {
                 /** @var Shelf $shelf */
@@ -101,7 +132,9 @@ final class MenuBuilder
         $shelves->addChild('menu.editshelves', ['route' => 'app_shelf_crud_index', ...$this->defaultAttr])->setExtra('icon', 'building-fill-gear');
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
-            $admin = $menu->addChild('admin_divider', ['label' => 'menu.admin'])->setExtra('divider', true);
+            $admin = $menu->addChild('admin_divider', ['label' => 'menu.admin'])
+                ->setExtra('header', true)
+                ->setExtra('icon', 'gear-fill');
 
             $admin->addChild('menu.useradmin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
