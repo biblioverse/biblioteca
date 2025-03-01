@@ -1,0 +1,7 @@
+.Table {
+    width: 100%;
+}
+
+.Table > :not(caption) > * > * {
+    padding: 0.5rem;
+}

@@ -1,8 +1,8 @@
 :root {
-  --progress__track--background: #e9ecef;
+  --progress__track--background: var(--color-main-02);
   --progress__track--height: 1em;
   --progress__track--border-radius: 4px;
-  --progress__bar--background: #333;
+  --progress__bar--background: var(--color-main-01);
 }
 
 .heroProgress {

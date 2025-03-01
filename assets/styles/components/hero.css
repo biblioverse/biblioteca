@@ -140,5 +140,6 @@
 }
 
 .hero__stats i {
+  color: var(--color-main-01);
   font-size: 1.25em;
 }
