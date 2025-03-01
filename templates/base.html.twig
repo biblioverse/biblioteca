@@ -1,34 +1,44 @@
 {% extends themedTemplate('bare.html.twig') %}
 {% block content %}
+    <header class="Navbar">
+        <div class="Navbar__brand">
+            <i class="bi bi-book"></i>
+            <a href="{{ path('app_dashboard') }}">Biblioteca</a>
+        </div>
 
-<nav class="container-fluid">
-    <div class="row">
-        <div class="sidebar col-md-3 col-lg-2 p-0">
-            <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu"
-                 aria-labelledby="sidebarMenuLabel">
-                <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+        <button class="Navbar__menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+    </header>
+
+    <div class="Layout">
+        <div class="sidebar Layout__sidebar">
+            <div class="offcanvas-md offcanvas-end" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+                <div class="Offcanvas__body">
 
                     <div class="Menu">
-                        <a class="MenuLink MenuLink--big" href="{{ path('app_dashboard') }}">
-                            <i class="bi bi-book"></i>
-                            <span>Biblioteca</span>
-                        </a>
+                        <div style="display: grid; grid-gap: var(--space--md); grid-template-columns: auto min-content;">
+                            <a class="MenuLink MenuLink--big" href="{{ path('app_dashboard') }}">
+                                <i class="bi bi-book"></i>
+                                <span id="sidebarMenuLabel">Biblioteca</span>
+                            </a>
+                            <div class="Offcanvas__close">
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+                            </div>
+                        </div>
+
                     </div>
 
                     <ul class="list-unstyled">
-                    {{ knp_menu_render('main',{'currentClass':'Menu--active','ancestorClass':'Menu--childActive'}) }}
+                        {{ knp_menu_render('main',{'currentClass':'Menu--active','ancestorClass':'Menu--childActive'}) }}
                     </ul>
 
                 </div>
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="sidebarMenuLabel">Biblioteca</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
-                            aria-label="Close"></button>
-                </div>
+
             </div>
         </div>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-md-4">
+        <main class="Layout__content">
             {{ component('Search') }}
 
             <div id="js-main">
@@ -42,8 +52,7 @@
     <div class="toast-container position-fixed top-0 end-0 p-3">
         {% for type, messages in app.flashes %}
             {% for message in messages %}
-                <div class="toast" role="alert" aria-live="assertive"
-                     data-bs-autohide="{{ type!='danger'?'true':'false' }}" aria-atomic="true">
+                <div class="toast" role="alert" aria-live="assertive" data-bs-autohide="{{ type!='danger'?'true':'false' }}" aria-atomic="true">
                     <div class="toast-header">
                         <strong class="me-auto">{{ type|capitalize }}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -55,5 +64,4 @@
             {% endfor %}
         {% endfor %}
     </div>
-</nav>
 {% endblock %}

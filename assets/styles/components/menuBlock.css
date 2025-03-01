@@ -10,9 +10,9 @@
     margin-left: 0.5rem;
 
     transition:
-        color 0.15s ease-in-out,
-        background-color 0.15s ease-in-out,
-        border-color 0.15s ease-in-out;
+        color 0.3s ease-in-out,
+        background-color 0.3s ease-in-out,
+        border-color 0.3s ease-in-out;
 
     text-decoration: none;
     align-items: center;
