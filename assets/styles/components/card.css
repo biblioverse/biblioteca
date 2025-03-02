@@ -1,5 +1,5 @@
 .Card {
-    background: rgba(var(--bs-body-color-rgb), 0.03);
+    background: var(--color-main-03);
     border-radius: var(--border-radius--sm);
 }
 

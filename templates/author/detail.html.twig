@@ -49,35 +49,45 @@
 
     <div class="BooksWithDetails">
         <div class="BooksWithDetails__content">
+            <div class="Card">
             {% if booksInSeries|length > 0 %}
-            <h3>{{ 'author.in-series'|trans }}</h3>
-            <div class="bookGrid">
-                {% for serie, book in booksInSeries %}
-                    <div class="bookGrid__item">
-                        <a href="{{ path('app_serie_detail',{'name':serie}) }}">
-                            {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: null} %}
-                        </a>
-                        <strong>{{ serie }}</strong><br />
-                        {% for author in book.authors %}
-                        <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
-                            <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
-                        </a><br />
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+            <div class="Card__title">
+                <h3 class="Heading Heading--lg">{{ 'author.in-series'|trans }}</h3>
+            </div>
+            <div class="Card__content">
+                <div class="bookGrid">
+                    {% for serie, book in booksInSeries %}
+                        <div class="bookGrid__item">
+                            <a href="{{ path('app_serie_detail',{'name':serie}) }}">
+                                {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: null} %}
+                            </a>
+                            <strong>{{ serie }}</strong><br />
+                            {% for author in book.authors %}
+                            <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
+                                <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
+                            </a><br />
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
 
             {% if otherBooks|length > 0 %}
-            <h3>{{ 'author.standalone-books'|trans }}</h3>
-            <div class="bookGrid">
-                {% for book in otherBooks %}
-                    <div class="bookGrid__item">
-                        {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
-                    </div>
-                {% endfor %}
+            <div class="Card__title">
+                <h5 class="Heading">{{ 'author.standalone-books'|trans }}</h5>
+            </div>
+            <div class="Card__content">
+                <div class="bookGrid">
+                    {% for book in otherBooks %}
+                        <div class="bookGrid__item">
+                            {% include themedTemplate('book/_teaser.html.twig') with {book: book} %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
+            </div>
         </div>
 
         {% set showTags=(tags|length > 0) and app.user.isDisplayTags %}
@@ -85,7 +95,8 @@
         {% set showPublishers=(publishers|length > 0) and app.user.isDisplayPublishers %}
         {% if showTags or showAgeCategories or showPublishers  %}
         <div class="BooksWithDetails__info">
-            <div class="infoBlock">
+            <div class="Card">
+                <div class="Card__content">
                 {% if showTags  %}
                 <div class="BookDetails__item">
                     <h4 class="Heading BookDetails__item__title">{{ 'author.tags'|trans }}</h4>
@@ -130,6 +141,7 @@
                     </ul>
                 </div>
                 {% endif %}
+                </div>
             </div>
         </div>
         {% endif %}

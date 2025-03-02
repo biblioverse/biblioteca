@@ -1,0 +1,82 @@
+body {
+  background-color: var(--body-background-color) !important;
+}
+
+.Title {  
+  margin: 0;
+  padding-left: var(--space--md);
+
+  font-size: var(--font-size--lg);
+  font-weight: 500;
+  line-height: 4rem;
+}
+
+.Navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  box-shadow: var(--bs-box-shadow) !important;
+  background-color: rgba(var(--bs-dark-rgb), 1) !important;
+  color: rgba(var(--bs-white-rgb), 1) !important;
+  font-size: var(--font-size--md);
+}
+
+.Navbar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.Navbar__brand {
+  display: inline-block;
+  padding: var(--space--sm) var(--space--md);
+}
+
+.Navbar__menu {
+  display: block;
+  padding: 0 var(--space--md);
+  color: inherit;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.Layout__content {
+  padding: var(--space--lg);
+}
+
+.Offcanvas__body {
+  padding-top: var(--space--sm);
+  overflow-y: auto !important;
+}
+
+@media (min-width: 768px) {
+  .Offcanvas__body {
+    padding-top: var(--space--md);
+  }
+
+  .Offcanvas__close,
+  .Navbar {
+    display: none;
+  }
+
+  .Layout {
+    display: grid;
+    grid-template-columns: minmax(20%, 300px) auto;
+    /*height: 100vh;*/
+  }
+
+  .Layout__sidebar {
+
+  }
+  
+  .Layout__content {
+
+  }
+}
