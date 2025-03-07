@@ -84,7 +84,7 @@ biblioverse_typesense:
             mapped: false
             numDim: 768
             embed:
-              from: ["tags", "summary"]
+              from: ["extension", "tags", "summary"]
               model_config:
                 model_name: '%TYPESENSE_EMBED_MODEL%'
                 api_key: '%TYPESENSE_EMBED_KEY%'
