@@ -18,7 +18,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/kobo/{accessKey}/v1/library/tags', name: 'kobo_')]
 class TagController extends AbstractKoboController
 {
     public function __construct(
@@ -33,7 +32,7 @@ class TagController extends AbstractKoboController
      * @throws GuzzleException
      *                         Yep, a POST for a DELETE, it's how Kobo does it
      */
-    #[Route('/{shelfId}/items/delete', methods: ['POST'])]
+    #[Route('/kobo/{accessKey}/v1/library/tags/{shelfId}/items/delete', methods: ['POST'])]
     public function delete(Request $request, KoboDevice $koboDevice, string $shelfId): Response
     {
         $shelf = $this->shelfRepository->findByKoboAndUuid($koboDevice, $shelfId);
@@ -70,8 +69,8 @@ class TagController extends AbstractKoboController
         return new JsonResponse($shelfId, Response::HTTP_CREATED);
     }
 
-    #[Route('/')]
-    #[Route('/{tagId}')]
+    #[Route('/kobo/{accessKey}/v1/library/tags/')]
+    #[Route('/kobo/{accessKey}/v1/library/tags/{tagId}')]
     public function tags(Request $request, KoboDevice $koboDevice, ?string $tagId = null): Response
     {
         try {

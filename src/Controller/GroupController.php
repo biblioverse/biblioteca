@@ -8,14 +8,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/groups')]
 class GroupController extends AbstractController
 {
     public function __construct(private readonly BookRepository $bookRepository)
     {
     }
 
-    #[Route('/{type}/{letter}', name: 'app_groups')]
+    #[Route('/groups/{type}/{letter}', name: 'app_groups')]
     public function groups(Request $request, string $type, string $letter = 'a'): Response
     {
         $group = [];

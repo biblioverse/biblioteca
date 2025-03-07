@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}/v1/analytics', name: 'kobo_')]
 class AnalyticsController extends AbstractKoboController
 {
     public function __construct(
@@ -31,7 +30,7 @@ class AnalyticsController extends AbstractKoboController
      * @throws GuzzleException
      * @throws \JsonException
      */
-    #[Route('/gettests', methods: ['POST', 'GET'])]
+    #[Route('/kobo/{accessKey}/v1/analytics/gettests', methods: ['POST', 'GET'])]
     public function analyticsTests(Request $request): Response
     {
         $content = $request->getContent();
@@ -54,7 +53,7 @@ class AnalyticsController extends AbstractKoboController
      * @throws \JsonException
      * @throws GuzzleException
      */
-    #[Route('/event', methods: ['POST'])]
+    #[Route('/kobo/{accessKey}/v1/analytics/event', methods: ['POST'])]
     public function analyticsEvent(Request $request, KoboDevice $koboDevice): Response
     {
         // Save the device_id and model

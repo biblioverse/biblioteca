@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}/v1/library', name: 'kobo_')]
 class LibraryController extends AbstractKoboController
 {
     private const int MAX_BOOKS_PER_SYNC = 100;
@@ -44,7 +43,7 @@ class LibraryController extends AbstractKoboController
      * @param KoboDevice $koboDevice The kobo entity is retrieved via the accessKey in the url
      * @param ?SyncToken $urlToken It's provided from an HTTP Headers on old firmware. See SyncTokenParamConverter.
      **/
-    #[Route('/sync', name: 'api_endpoint_v1_library_sync')]
+    #[Route('/kobo/{accessKey}/v1/library/sync', name: 'api_endpoint_v1_library_sync')]
     public function apiEndpoint(KoboDevice $koboDevice, ?SyncToken $urlToken, Request $request): Response
     {
         $maxBookPerSync = $request->query->getInt('per_page', self::MAX_BOOKS_PER_SYNC);

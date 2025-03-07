@@ -9,10 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/authors')]
 class AuthorController extends AbstractController
 {
-    #[Route('/{name}', name: 'app_author_detail')]
+    #[Route('/authors/{name}', name: 'app_author_detail')]
     public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService): Response
     {
         $books = $bookRepository->findByAuthor($name);

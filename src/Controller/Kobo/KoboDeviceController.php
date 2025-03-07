@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[Route('/user/kobo')]
 class KoboDeviceController extends AbstractController
 {
     public function __construct(
@@ -26,7 +25,7 @@ class KoboDeviceController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'app_kobodevice_user_index', methods: ['GET'])]
+    #[Route('/user/kobo/', name: 'app_kobodevice_user_index', methods: ['GET'])]
     public function index(KoboDeviceRepository $koboDeviceRepository): Response
     {
         if (!$this->getUser() instanceof UserInterface) {
@@ -38,7 +37,7 @@ class KoboDeviceController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_kobodevice_user_new', methods: ['GET', 'POST'])]
+    #[Route('/user/kobo/new', name: 'app_kobodevice_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
@@ -68,7 +67,7 @@ class KoboDeviceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_kobodevice_user_edit', methods: ['GET', 'POST'])]
+    #[Route('/user/kobo/{id}/edit', name: 'app_kobodevice_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isGranted('EDIT', $koboDevice)) {
@@ -90,7 +89,7 @@ class KoboDeviceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_kobodevice_user_delete', methods: ['POST'])]
+    #[Route('/user/kobo/{id}', name: 'app_kobodevice_user_delete', methods: ['POST'])]
     public function delete(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isGranted('DELETE', $koboDevice)) {
@@ -105,7 +104,7 @@ class KoboDeviceController extends AbstractController
         return $this->redirectToRoute('app_dashboard', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
+    #[Route('/user/kobo/logs', name: 'app_kobodevice_user_logs', methods: ['GET'])]
     public function logs(): Response
     {
         if (!$this->getUser() instanceof UserInterface) {

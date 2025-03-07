@@ -28,14 +28,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/books')]
 class BookController extends AbstractController
 {
     public function __construct(private readonly BookProgressionService $bookProgressionService)
     {
     }
 
-    #[Route('/{book}/{slug}', name: 'app_book')]
+    #[Route('/books/{book}/{slug}', name: 'app_book')]
     public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
     {
         if ($slug !== $book->getSlug()) {
@@ -124,7 +123,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/{book}/{slug}/read', name: 'app_book_read')]
+    #[Route('/books/{book}/{slug}/read', name: 'app_book_read')]
     public function read(
         Request $request,
         Book $book,
@@ -247,7 +246,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
+    #[Route('/books/extract-cover/{id}/fromFile', name: 'app_extractCover')]
     public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted(BookVoter::EDIT, $book)) {
@@ -275,7 +274,7 @@ class BookController extends AbstractController
         ], 301);
     }
 
-    #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
+    #[Route('/books/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
     public function deleteBook(int $id, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         /** @var Book $book */
@@ -301,7 +300,7 @@ class BookController extends AbstractController
         return $this->redirectToRoute('app_allbooks');
     }
 
-    #[Route('/new/consume/upload', name: 'app_book_upload_consume')]
+    #[Route('/books/new/consume/upload', name: 'app_book_upload_consume')]
     public function upload(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -344,7 +343,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/new/consume/files', name: 'app_book_consume')]
+    #[Route('/books/new/consume/files', name: 'app_book_consume')]
     public function consume(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -394,7 +393,7 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
+    #[Route('/books/relocate/{id}/files', name: 'app_book_relocate')]
     public function relocate(Request $request, Book $book, BookFileSystemManagerInterface $fileSystemManager, EntityManagerInterface $entityManager): Response
     {
         try {
