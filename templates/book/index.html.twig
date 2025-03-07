@@ -64,13 +64,13 @@
         <div class="hero__stats">
             <div>
                 {% set readStatus = interaction.readStatus|default( enum('App\\Enum\\ReadStatus').NotStarted)  %}
-                <i class="bi bi-{{ enum('App\\Enum\\ReadStatus').getIcon(readStatus)  }}"></i> 
+                <i class="bi bi-{{ enum('App\\Enum\\ReadStatus').getIcon(readStatus)  }}"></i>
                 {{ enum('App\\Enum\\ReadStatus').getLabel(readStatus)|trans }}
             </div>
 
             <div>
                 {% set listStatus = interaction.readingList|default( enum('App\\Enum\\ReadingList').NotDefined)  %}
-                <i class="bi bi-{{ enum('App\\Enum\\ReadingList').getIcon(listStatus)  }}"></i> 
+                <i class="bi bi-{{ enum('App\\Enum\\ReadingList').getIcon(listStatus)  }}"></i>
                 {{ enum('App\\Enum\\ReadingList').getLabel(listStatus)|trans }}
             </div>
 
@@ -103,10 +103,10 @@
 
     <div style="display: flex; gap: var(--space--md); flex-direction: column;">
 
-        {% set showInfo = (book.publisher or book.ageCategory is not null or book.language) %}
-    
+        {% set showInfo = (book.tags or book.publisher or book.ageCategory is not null or book.language) %}
+
         <div class="BookDetails {{ showInfo ? 'BookDetails--withInfo' : '' }}">
-            
+
             <div class="BookDetails__actions Card Card--emphasis">
                 <div class="Card__content">
                     <div style="display: grid; gap: var(--space--sm); margin-bottom: var(--space--md);">
@@ -143,7 +143,7 @@
                     {% endif %}
                 </div>
             </div>
-            
+
             <div class="BookDetails__summary Card">
                 <div class="Card__content">
 
@@ -177,7 +177,7 @@
                     {% endif %}
                 </div>
             </div>
-            
+
             {% if showInfo %}
             <div class="BookDetails__info Card">
                 <div class="Card__content">
@@ -187,7 +187,7 @@
                         <ul class="BookDetails__item__content">
                         {% for tag in book.tags %}
                         <li>
-                            <a href="{{ filter_book_url({'tag': tag}) }}" class="text-decoration-none text-secondary">
+                            <a href="{{ filter_book_url({'tags': tag}) }}" class="text-decoration-none text-secondary">
                                 <i class="bi bi-tag-fill"></i>&nbsp;{{ tag }}
                             </a>
                         </li>
@@ -195,7 +195,7 @@
                         </ul>
                     </div>
                     {% endif %}
-                    
+
                     {% if book.publisher %}
                     <div class="BookDetails__item">
                         <h4 class="Heading BookDetails__item__title">{{ 'book.publisher'|trans }}</h4>
@@ -275,32 +275,16 @@
             {% endif %}
         </div>
         {% endif %}
-        {% if sameAuthor is not empty %}
-        <div class="Card">
-            <div class="Card__title">
-                <h5 class="Heading">{{ 'books.same-author'|trans }}</h5>
-            </div>
-            <div class="Card__content">
-                <div class="bookGrid">
-                    {% for indexBook in sameAuthor %}
-                        <div class="bookGrid__item">
-                            {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        {% if sameTags is not empty %}
-        
-            {% for tag,bookTags in sameTags %}
+
+        {% if similar is not empty %}
+
             <div class="Card">
                 <div class="Card__title">
-                    <h5 class="Heading">{{ tag }}</h5>
+                    <h5 class="Heading">{{ "book.similar"|trans }}</h5>
                 </div>
                 <div class="Card__content">
                     <div class="bookGrid">
-                        {% for indexBook in bookTags %}
+                        {% for indexBook in similar %}
                             <div class="bookGrid__item">
                                 {% include themedTemplate('book/_teaser.html.twig') with {book:indexBook} %}
                             </div>
@@ -308,7 +292,6 @@
                     </div>
                 </div>
             </div>
-            {%endfor%}
         {% endif %}
     </div>
 {% endblock %}

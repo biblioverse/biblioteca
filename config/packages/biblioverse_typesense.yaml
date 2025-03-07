@@ -77,6 +77,18 @@ biblioverse_typesense:
             optional: true
             type: int32[]
             entity_attribute: users.favorite
+          embedding:
+            name: embedding
+            type: float[]
+            index: true
+            mapped: false
+            numDim: 768
+            embed:
+              from: ["extension", "tags", "summary"]
+              model_config:
+                model_name: '%TYPESENSE_EMBED_MODEL%'
+                api_key: '%TYPESENSE_EMBED_KEY%'
+                url: '%TYPESENSE_EMBED_URL%'
 
         default_sorting_field: sortable_id
         symbols_to_index: ['+', '#', '@', '_']
