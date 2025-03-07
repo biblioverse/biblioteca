@@ -12,9 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/configuration')]
 final class InstanceConfigurationController extends AbstractController
 {
-    #[Route('/configuration', name: 'app_instance_configuration_index', methods: ['GET'])]
+    #[Route('', name: 'app_instance_configuration_index', methods: ['GET'])]
     public function index(ParameterBagInterface $parameterBagInterface, ConfigValue $configValue): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -53,7 +54,7 @@ final class InstanceConfigurationController extends AbstractController
         ]);
     }
 
-    #[Route('/configuration/{name}/edit', name: 'app_instance_configuration_edit', methods: ['GET', 'POST'])]
+    #[Route('/{name}/edit', name: 'app_instance_configuration_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, string $name, EntityManagerInterface $entityManager): Response
     {
         $instanceConfiguration = $entityManager->getRepository(InstanceConfiguration::class)->findOneBy(['name' => $name]);

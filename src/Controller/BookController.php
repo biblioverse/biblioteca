@@ -13,6 +13,9 @@ use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
+use Biblioverse\TypesenseBundle\Exception\SearchException;
+use Biblioverse\TypesenseBundle\Query\SearchQuery;
+use Biblioverse\TypesenseBundle\Search\SearchCollectionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -33,7 +36,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, EntityManagerInterface $manager, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -130,7 +133,6 @@ class BookController extends AbstractController
         PaginatorInterface $paginator,
         ThemeSelector $themeSelector,
         EntityManagerInterface $manager,
-        BookProgressionService $bookProgressionService,
     ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {

@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[Route('/opds/{accessKey}', name: 'opds_')]
 class OpdsController extends AbstractController
 {
     public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SearchHelper $searchHelper)
@@ -48,7 +49,7 @@ class OpdsController extends AbstractController
         return $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
-    #[Route('/opds/{accessKey}/', name: 'start')]
+    #[Route('/', name: 'start')]
     public function index(): Response
     {
         $opds = $this->opds->getOpdsConfig();
@@ -63,7 +64,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/search', name: 'search')]
+    #[Route('/search', name: 'search')]
     public function search(Request $request): Response
     {
         $opds = $this->opds->getOpdsConfig()->isSearch();
@@ -85,7 +86,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/group/{type}', name: 'group')]
+    #[Route('/group/{type}', name: 'group')]
     public function group(string $type): Response
     {
         $group = match ($type) {
@@ -106,7 +107,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/shelves/', name: 'shelves')]
+    #[Route('/shelves/', name: 'shelves')]
     public function shelves(ShelfRepository $shelfRepository): Response
     {
         $opds = $this->opds->getOpdsConfig();
@@ -123,7 +124,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/shelves/{item}', name: 'shelf_item')]
+    #[Route('/shelves/{item}', name: 'shelf_item')]
     public function shelfItem(Shelf $item, ShelfManager $manager): Response
     {
         $opds = $this->opds->getOpdsConfig();
@@ -140,7 +141,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/reading-list', name: 'readinglist')]
+    #[Route('/reading-list', name: 'readinglist')]
     public function readinglist(BookInteractionRepository $bookInteractionRepository): Response
     {
         $opds = $this->opds->getOpdsConfig();
@@ -157,7 +158,7 @@ class OpdsController extends AbstractController
         return $this->opds->convertOpdsResponse($opds->get()->getResponse());
     }
 
-    #[Route('/opds/{accessKey}/group/{type}/{item}', name: 'group_item', requirements: ['item' => '.+'])]
+    #[Route('/group/{type}/{item}', name: 'group_item', requirements: ['item' => '.+'])]
     public function groupItem(string $type, string $item): Response
     {
         $group = match ($type) {

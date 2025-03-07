@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+#[Route('/kobo/{accessKey}/v1/library', name: 'kobo_')]
 class StateController extends AbstractKoboController
 {
     public function __construct(
@@ -39,7 +40,7 @@ class StateController extends AbstractKoboController
     /**
      * Update reading state.
      **/
-    #[Route('/kobo/{accessKey}/v1/library/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
+    #[Route('/{uuid}/state', name: 'api_endpoint_state_put', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['PUT'])]
     public function putState(KoboDevice $koboDevice, string $uuid, Request $request): Response|JsonResponse
     {
         $book = $this->bookRepository->findByUuid($uuid);
@@ -87,7 +88,7 @@ class StateController extends AbstractKoboController
     /**
      * @throws GuzzleException
      */
-    #[Route('/kobo/{accessKey}/v1/library/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
+    #[Route('/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
     public function getState(KoboDevice $koboDevice, string $uuid, Request $request, SyncToken $syncToken): Response|JsonResponse
     {
         // Get State returns an empty response

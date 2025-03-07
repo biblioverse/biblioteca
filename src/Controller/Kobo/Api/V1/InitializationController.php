@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[Route('/kobo/{accessKey}/v1', name: 'kobo_')]
 class InitializationController extends AbstractKoboController
 {
     public function __construct(
@@ -26,7 +27,7 @@ class InitializationController extends AbstractKoboController
     /**
      * @throws GuzzleException
      */
-    #[Route('/kobo/{accessKey}/v1/initialization')]
+    #[Route('/initialization')]
     public function initialization(Request $request, KoboDevice $koboDevice): Response
     {
         $this->koboSyncLogger->info('Initialization request');

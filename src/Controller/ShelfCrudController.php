@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/shelves/crud')]
 class ShelfCrudController extends AbstractController
 {
-    #[Route('/shelves/crud/', name: 'app_shelf_crud_index', methods: ['GET'])]
+    #[Route('/', name: 'app_shelf_crud_index', methods: ['GET'])]
     public function index(ShelfRepository $shelfRepository): Response
     {
         return $this->render('shelf_crud/index.html.twig', [
@@ -21,7 +22,7 @@ class ShelfCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/shelves/crud/{id}/edit', name: 'app_shelf_crud_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_shelf_crud_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Shelf $shelf, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ShelfType::class, $shelf);
@@ -39,7 +40,7 @@ class ShelfCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/shelves/crud/{id}', name: 'app_shelf_crud_delete')]
+    #[Route('/{id}', name: 'app_shelf_crud_delete')]
     public function delete(Shelf $shelf, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($shelf);

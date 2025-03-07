@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/ai/model')]
 final class AiModelController extends AbstractController
 {
     #[Route(name: 'app_ai_model_index')]
@@ -61,7 +62,7 @@ final class AiModelController extends AbstractController
         ]);
     }
 
-    #[Route('/ai/model/test/{id}', name: 'app_ai_model_test', methods: ['GET', 'POST'])]
+    #[Route('/test/{id}', name: 'app_ai_model_test', methods: ['GET', 'POST'])]
     public function test(Request $request, AiModel $aiModel, PromptFactory $promptFactory, CommunicatorDefiner $communicatorDefiner, ContextBuilder $contextBuilder, BookRepository $bookRepository): Response
     {
         $book = $bookRepository->findOneBy([]);
@@ -114,7 +115,7 @@ final class AiModelController extends AbstractController
         ]);
     }
 
-    #[Route('/ai/model/new', name: 'app_ai_model_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_ai_model_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ConfigValue $configValue): Response
     {
         $aiModel = new AiModel();
@@ -135,7 +136,7 @@ final class AiModelController extends AbstractController
         ]);
     }
 
-    #[Route('/ai/model/{id}/edit', name: 'app_ai_model_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_ai_model_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, AiModel $aiModel, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AiModelType::class, $aiModel);
@@ -153,7 +154,7 @@ final class AiModelController extends AbstractController
         ]);
     }
 
-    #[Route('/ai/model/{id}', name: 'app_ai_model_delete')]
+    #[Route('/{id}', name: 'app_ai_model_delete')]
     public function delete(AiModel $aiModel, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($aiModel);

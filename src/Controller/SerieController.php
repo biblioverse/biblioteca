@@ -10,9 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/series')]
 class SerieController extends AbstractController
 {
-    #[Route('/series/{name}', name: 'app_serie_detail', requirements: ['name' => '.+'])]
+    #[Route('/{name}', name: 'app_serie_detail', requirements: ['name' => '.+'])]
     public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService, ShelfRepository $shelfRepository): Response
     {
         $books = $bookRepository->findBySerie($name);
