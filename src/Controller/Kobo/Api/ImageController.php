@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey}', name: 'kobo_')]
 class ImageController extends AbstractKoboController
 {
     public function __construct(
@@ -39,10 +38,10 @@ class ImageController extends AbstractKoboController
     /**
      * @throws GuzzleException
      */
-    #[Route('/{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality', defaults: ['isGreyscale' => false])]
-    #[Route('//{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality_bad', defaults: ['isGreyscale' => false])]
-    #[Route('/{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.{extension}', name: 'image', defaults: ['extension' => 'jpg'])]
-    #[Route('//{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image_bad')]
+    #[Route('/kobo/{accessKey}/{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality', defaults: ['isGreyscale' => false])]
+    #[Route('/kobo/{accessKey}//{uuid}/{width}/{height}/false/image.jpg', name: 'image_quality_bad', defaults: ['isGreyscale' => false])]
+    #[Route('/kobo/{accessKey}/{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.{extension}', name: 'image', defaults: ['extension' => 'jpg'])]
+    #[Route('/kobo/{accessKey}//{uuid}/{width}/{height}/{Quality}/{isGreyscale}/image.jpg', name: 'image_bad')]
     public function imageQuality(Request $request, KoboDevice $koboDevice, string $uuid, int $width, int $height, string $isGreyscale, string $extension = 'jpg'): Response
     {
         $isGreyscale = in_array($isGreyscale, ['true', 'True', '1'], true);

@@ -10,7 +10,6 @@ use App\Security\Voter\BookVoter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/kobo/{accessKey:koboDevice}/v1/download', name: 'kobo_')]
 class DownloadController extends AbstractKoboController
 {
     public function __construct(
@@ -19,7 +18,7 @@ class DownloadController extends AbstractKoboController
     ) {
     }
 
-    #[Route('/{id:book}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
+    #[Route('/kobo/{accessKey:koboDevice}/v1/download/{id:book}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
     public function download(Book $book, string $extension): Response
     {
         $this->denyAccessUnlessGranted(BookVoter::DOWNLOAD, $book, 'You are not allowed to download this book');

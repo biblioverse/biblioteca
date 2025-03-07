@@ -10,14 +10,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/v3/content', name: 'kobo_')]
 class ContentController extends AbstractKoboController
 {
     public function __construct(private readonly KoboStoreProxy $koboStoreProxy)
     {
     }
 
-    #[Route('/checkforchanges', name: 'check_for_changes', methods: ['POST'])]
+    #[Route('/api/v3/content/checkforchanges', name: 'check_for_changes', methods: ['POST'])]
     public function checkForChanges(): Response
     {
         // If you set "reading_services_host" on your Kobo's config you should point here.
@@ -30,7 +29,7 @@ class ContentController extends AbstractKoboController
     /**
      * @throws GuzzleException
      */
-    #[Route('/{uuid}/annotations', name: 'check_for_annotations', methods: ['GET'])]
+    #[Route('/api/v3/content/{uuid}/annotations', name: 'check_for_annotations', methods: ['GET'])]
     public function getAnnotations(Request $request): Response
     {
         if ($this->koboStoreProxy->isEnabled()) {
