@@ -131,6 +131,7 @@ book.relocate: Relocation
 book.search-google-images: 'Chercher une couverture sur Google Images'
 book.serie: série
 book.serieIndex: 'Index dans la série'
+book.similar: Livres similaires
 book.size: Taille
 book.summary: Résumé
 book.tags: Catégories
