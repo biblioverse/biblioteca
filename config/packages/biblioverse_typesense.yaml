@@ -53,6 +53,14 @@ biblioverse_typesense:
             type: string[]
             facet: true
             optional: true
+          tags_empty:
+            name: tags_empty
+            type: bool
+            entity_attribute: isTagsEmpty
+          summary_empty:
+            name: summary_empty
+            type: bool
+            entity_attribute: isSummaryEmpty
           updated:
             name: updated
             type: int64

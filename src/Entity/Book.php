@@ -648,4 +648,14 @@ class Book
         $this->id = null;
         $this->uuid = $this->generateUuid();
     }
+
+    public function isSummaryEmpty(): bool
+    {
+        return $this->summary === null || $this->summary === '';
+    }
+
+    public function isTagsEmpty(): bool
+    {
+        return $this->tags === null || $this->tags === [];
+    }
 }
