@@ -74,11 +74,21 @@ class BookManager
     public function updateBookLocation(Book $book, \SplFileInfo $file): Book
     {
         $path = $this->fileSystemManager->getFolderName($file);
-        if ($path !== $book->getBookPath()) {
-            $book->setBookPath($path);
-        }
+
         if ($file->getFilename() !== $book->getBookFilename()) {
             $book->setBookFilename($file->getFilename());
+        }
+
+        $consumePath = $this->fileSystemManager->getBooksDirectory().'consume';
+        if (str_starts_with($file->getRealPath(), $consumePath)) {
+            $book->setBookPath('consume/');
+            $this->fileSystemManager->renameFiles($book);
+
+            return $book;
+        }
+
+        if ($path !== $book->getBookPath()) {
+            $book->setBookPath($path);
         }
 
         return $book;
@@ -194,5 +204,11 @@ class BookManager
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
         return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
+    }
+
+    public function save(Book $book): void
+    {
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
     }
 }

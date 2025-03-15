@@ -11,6 +11,7 @@ use App\Repository\ShelfRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
+use App\Service\BookManager;
 use App\Service\BookProgressionService;
 use App\Service\ThemeSelector;
 use Biblioverse\TypesenseBundle\Exception\SearchException;
@@ -25,14 +26,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/books')]
 class BookController extends AbstractController
 {
-    public function __construct(private readonly BookProgressionService $bookProgressionService)
-    {
+    public function __construct(
+        private readonly BookProgressionService $bookProgressionService,
+        private readonly BookManager $bookManager,
+    ) {
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
@@ -363,11 +365,9 @@ class BookController extends AbstractController
                 if ($bookFile->getRealPath() !== $consume) {
                     continue;
                 }
-                $childProcess = new Process(['/var/www/html/bin/console', 'books:scan', '--book-path', $bookFile->getRealPath()]);
 
-                $childProcess->start();
-
-                $childProcess->wait();
+                $book = $this->bookManager->consumeBook(new \SplFileInfo($bookFile->getRealPath()));
+                $this->bookManager->save($book);
 
                 $this->addFlash('success', 'Book '.$bookFile->getFilename().' consumed');
 
