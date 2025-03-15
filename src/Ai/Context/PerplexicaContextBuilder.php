@@ -31,6 +31,6 @@ class PerplexicaContextBuilder implements ContextBuildingInterface
             return '';
         }
 
-        return $this->communicator->interrogate($prompt->getPromptWithoutInstructions());
+        return $this->communicator->interrogate($prompt->replaceBookOccurrence("Get me all the information you have on the book {book}"));
     }
 }
