@@ -90,7 +90,7 @@ biblioverse_typesense:
             type: float[]
             index: true
             mapped: false
-            numDim: 768
+            numDim: "%TYPESENSE_EMBED_NUM_DIM%"
             embed:
               from: ["extension", "tags", "summary"]
               model_config:

@@ -26,6 +26,9 @@ ALLOW_BOOK_RELOCATION=1
 - `MAILER_DSN`: Currently not used.
 - `TYPESENSE_URL`: The URL to the typesense server. You should not need to change this unless you are using a different server.
 - `TYPESENSE_KEY`: The key to access the typesense server. Needs to correspond to the one you set in your docker-compose file.
+- `TYPESENSE_EMBED_MODEL`: Embed model, default is the built-in `ts/all-MiniLM-L12-v2` model. You can use an OpenAi/Palm/Vertex model. Example: `openai/text-embedding-3-small`.
+- `TYPESENSE_EMBED_NUM_DIM`: Dimension of the embed model. `all-MiniLM-L12-v2` is 384, `text-embedding-3-small` is 1536. Read your model documentation to know the dimension.
+- `TYPESENSE_EMBED_KEY`: Authentication for the embed model. Default is `~`, but you can set a token if you use an external model.
 - `BOOK_FOLDER_NAMING_FORMAT`: The format to use to name the folders where the books are stored. You can use the following placeholders: `{authorFirst}`, `{author}`, `{title}`, `{serie}`.
 - `BOOK_FILE_NAMING_FORMAT`: The format to use to name the files where the books are stored. You can use the following placeholders: `{serie}`, `{serieIndex}`, `{title}`.
 - `KOBO_PROXY_USE_DEV`: If set to `1`, the kobo proxy will be used in development.
