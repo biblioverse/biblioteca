@@ -8,6 +8,8 @@ use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\Prompt\BookPromptInterface;
 use App\Entity\AiModel;
 use App\Entity\Book;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class PerplexicaContextBuilder implements ContextBuildingInterface
 {
@@ -30,7 +32,12 @@ class PerplexicaContextBuilder implements ContextBuildingInterface
         if (!$this->communicator instanceof AiCommunicatorInterface) {
             return '';
         }
+        $cache = new FilesystemAdapter();
 
-        return $this->communicator->interrogate($prompt->replaceBookOccurrence("Get me all the information you have on the book {book}"));
+        return $cache->get('perplexica-'.$prompt->getBook()->getId(), function (ItemInterface $item) use($prompt): string {
+            $item->expiresAfter(3600);
+
+            return $this->communicator->interrogate($prompt->replaceBookOccurrence("Get me a very detailed summary of the content of the book {book}"));
+        });
     }
 }
