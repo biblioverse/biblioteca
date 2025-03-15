@@ -34,10 +34,10 @@ class PerplexicaContextBuilder implements ContextBuildingInterface
         }
         $cache = new FilesystemAdapter();
 
-        return $cache->get('perplexica-'.$prompt->getBook()->getId(), function (ItemInterface $item) use($prompt): string {
+        return $cache->get('perplexica-'.$prompt->getBook()->getId(), function (ItemInterface $item) use ($prompt): string {
             $item->expiresAfter(3600);
 
-            return $this->communicator->interrogate($prompt->replaceBookOccurrence("Get me a very detailed summary of the content of the book {book}"));
+            return $this->communicator->interrogate($prompt->replaceBookOccurrence("Get me a detailed summary of the content of the book {book}"));
         });
     }
 }
