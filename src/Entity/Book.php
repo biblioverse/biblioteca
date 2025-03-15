@@ -333,7 +333,10 @@ class Book
      */
     public function setAuthors(array $authors): static
     {
-        $this->authors = $authors;
+        $this->authors = [];
+        foreach ($authors as $author) {
+            $this->addAuthor($author);
+        }
 
         return $this;
     }
@@ -455,7 +458,13 @@ class Book
      */
     public function setTags(?array $tags): static
     {
-        $this->tags = $tags;
+        $this->tags = [];
+        if (null === $tags) {
+            return $this;
+        }
+        foreach ($tags as $tag) {
+            $this->addTag($tag);
+        }
 
         return $this;
     }
