@@ -286,6 +286,9 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
 
             if ($book->getBookPath().'/' !== $this->getCalculatedFilePath($book, false)) {
                 $filesystem->mkdir($this->getCalculatedFilePath($book, true));
+                if ($book->getBookPath() === '' || $book->getBookFilename() === '') {
+                    throw new \InvalidArgumentException('Book path or filename is empty');
+                }
                 $filesystem->rename(
                     $this->getBooksDirectory().$book->getBookPath().$book->getBookFilename(),
                     $this->getCalculatedFilePath($book, true).$this->getCalculatedFileName($book),
@@ -305,8 +308,8 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                 $book->setImagePath($this->getCalculatedImagePath($book, false));
                 $book->setImageFilename($this->getCalculatedImageName($book));
             }
-        } catch (\Exception) {
-            throw new AccessDeniedException('Relocating this book will overwite another book with the same file name.');
+        } catch (\Exception $e) {
+            throw new AccessDeniedException('Relocating this book will overwite another book with the same file name.', 0, $e);
         }
 
         return $book;
