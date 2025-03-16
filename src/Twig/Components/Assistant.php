@@ -116,6 +116,7 @@ If you don\'t know the answer to the user question, mention it in your answer.
         if ($convert !== null) {
             $message->suggestions = $convert['suggestions'];
             $message->text = $convert['text'];
+            $message->error = $convert['error'] ?? null;
         }
 
         $this->messages[] = $message;
@@ -194,14 +195,14 @@ If you don\'t know the answer to the user question, mention it in your answer.
     private function getMarkdownJson(string $text): ?array
     {
         // Check for markdown code block with json
-        if (preg_match('/```json\s*({[\s\S]*?})\s*```/', $text, $matches) >= 1) {
+        if (preg_match('/```(json|markdown)\s*({[\s\S]*?})\s*```/', $text, $matches) >= 1) {
             // Validate JSON
             try {
-                $suggestions = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR);
+                $suggestions = json_decode($matches[2], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException) {
-                return null;
+                return ['suggestions' => [], 'error' => 'Invalid json', 'text' => $text];
             }
-            $text = preg_replace('/```json\s*({[\s\S]*?})\s*```/', '', $text, 1);
+            $text = preg_replace('/```(json|markdown)\s*({[\s\S]*?})\s*```/', '', $text, 1);
 
             return ['suggestions' => $suggestions, 'text' => $text];
         }
