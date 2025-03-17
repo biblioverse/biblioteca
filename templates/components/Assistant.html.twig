@@ -82,7 +82,7 @@
 
                 </div>
                 {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Assistant ) %}
-                <div class="col-md-4">
+                <div class="col-md-4" style="max-height: 70vh; overflow-y: scroll;">
 
                     {% for message in messages %}
 
@@ -102,7 +102,12 @@
                             {% else %}
                                 <small class="text-muted">{{ message.date|date('m.d H:i') }}: {{ message.role.value }}</small><br>
                                 {{ message.text|markdown_to_html }}
+                            {% endif %}
 
+                            {% if message.error is not null %}
+                                <span class="badge text-bg-danger">
+                                    {{ message.error }}
+                                </span>
                             {% endif %}
 
                             {% if message.suggestions is not null %}
@@ -137,7 +142,7 @@
                     <div class="form-group">
                         <textarea data-model="message" class="form-control" id="message" rows="3" placeholder="{{ "book.form.ask-assistant"|trans }}"></textarea>
                     </div>
-                    <button  data-loading="addAttribute(disabled)" data-action="live#action" data-live-action-param="sendMessage" type="button" class="mt-2 btn btn-primary">{{ "book.form.send-message"|trans }}</button>
+                    <button style="scroll-snap-align: end;" data-loading="addAttribute(disabled)" data-action="live#action" data-live-action-param="sendMessage" type="button" class="mt-2 btn btn-primary">{{ "book.form.send-message"|trans }}</button>
 
                 </div>
                 {% endif %}

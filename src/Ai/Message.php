@@ -9,7 +9,7 @@ class Message
     public ?array $suggestions = null;
     public \DateTimeImmutable $date;
 
-    public function __construct(public string $text, public AiMessageRole $role)
+    public function __construct(public string $text, public AiMessageRole $role, public ?string $error = null)
     {
         $this->date = new \DateTimeImmutable();
     }
