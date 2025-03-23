@@ -8,7 +8,7 @@ The following properties can be set in a `.env.local` file in the root of the pr
 APP_ENV=prod
 APP_SECRET=9653a6c476d291323d2db7417c13a814
 DATABASE_URL="mysql://db:db@db:3306/db?serverVersion=mariadb-10.3.39&charset=utf8"
-MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+MESSENGER_TRANSPORT_DSN=redis://v-01:6379
 MAILER_DSN=native://default
 TYPESENSE_URL=http://typesense:8108
 TYPESENSE_KEY=xyz

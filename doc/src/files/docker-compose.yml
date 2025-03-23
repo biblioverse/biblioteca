@@ -13,6 +13,21 @@ services:
       - <books_folder>:/var/www/html/public/books
       - <image_cache_folder>:/var/www/html/public/media
       - .env:/var/www/html/.env
+  valkey:
+    image: valkey/valkey:8.0
+    environment:
+      VALKEY_EXTRA_FLAGS: '--save 60 1 --loglevel warning'
+  biblioteca_worker:
+    image: ghcr.io/biblioverse/biblioteca:main
+    command: [ "php", "bin/console" , "messenger:consume","async", "--limit=50" ]
+    depends_on:
+      - db
+      - valkey
+    volumes:
+      - <cover_folder>:/var/www/html/public/covers
+      - <books_folder>:/var/www/html/public/books
+      - <image_cache_folder>:/var/www/html/public/media
+      - .env:/var/www/html/.env
   db:
     image: mariadb:11.7
     environment:

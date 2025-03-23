@@ -4,6 +4,7 @@ FROM ghcr.io/biblioverse/biblioteca-docker:2.0.2 AS base
 WORKDIR /var/www/html
 
 USER root
+RUN /usr/local/bin/install-php-extensions redis # TODO Remove after merging https://github.com/biblioverse/biblioteca-docker/pull/25
 RUN mkdir -p /tmp && chown -R www-data:www-data /tmp && chmod -R 777 /tmp
 RUN mkdir -p /var/run/ && chown -R www-data:www-data /var/run && chmod -R 777 /var/run
 USER www-data

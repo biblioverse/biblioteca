@@ -2,6 +2,8 @@
 
 namespace App\Kobo\Kepubify;
 
+use App\Entity\Book;
+use App\Service\BookFileSystemManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -21,11 +23,42 @@ class KepubifyMessageHandler
         private readonly string $cacheDir,
         private readonly LoggerInterface $koboKepubifyLogger,
         private readonly KepubifyEnabler $kepubifyEnabler,
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
         private readonly CacheItemPoolInterface $kepubifyCachePool,
     ) {
     }
 
-    public function __invoke(KepubifyMessage $message): void
+    private function getCacheKey(Book $book): string
+    {
+        $source = $this->fileSystemManager->getBookFilename($book);
+
+        return 'kepubify_object_'.md5($source);
+    }
+
+    public function getCachedSize(KepubifyMessageInterface $message): ?int
+    {
+        try {
+            $item = $this->kepubifyCachePool->getItem($this->getCacheKey($message->getBook()));
+            if (!$item->isHit()) {
+                return null;
+            }
+            $data = $item->get();
+            if ($data instanceof KebpubifyCachedData) {
+                return $data->getSize();
+            }
+
+            return null;
+        } catch (InvalidArgumentException $e) {
+            $this->koboKepubifyLogger->debug('Error while fetching cached kepubify size: {error}', [
+                'error' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+    }
+
+    public function __invoke(KepubifyMessageInterface $message): void
     {
         // Disable kepubify if the path is not set
         if (false === $this->kepubifyEnabler->isEnabled()) {
@@ -44,7 +77,7 @@ class KepubifyMessageHandler
 
         // Fetch the conversion result from cache
         try {
-            $item = $this->kepubifyCachePool->getItem('kepubify_object_'.md5($message->source));
+            $item = $this->kepubifyCachePool->getItem($this->getCacheKey($message->getBook()));
         } catch (InvalidArgumentException $e) {
             $this->koboKepubifyLogger->error('Error while caching kepubify: {error}', [
                 'error' => $e->getMessage(),
@@ -58,8 +91,8 @@ class KepubifyMessageHandler
         if (false === $item->isHit()) {
             $temporaryFile = $this->convert($message, $temporaryFile);
             if ($temporaryFile === null) {
-                $message->destination = null;
-                $message->size = null;
+                $message->setDestination(null);
+                $message->setSize(null);
 
                 return;
             }
@@ -69,8 +102,8 @@ class KepubifyMessageHandler
             $item->expiresAfter(self::CACHE_TIME_SECONDS);
             $this->kepubifyCachePool->save($item);
 
-            $message->size = $data->getSize();
-            $message->destination = $temporaryFile;
+            $message->setSize($data->getSize());
+            $message->setDestination($temporaryFile);
 
             return;
         }
@@ -95,8 +128,8 @@ class KepubifyMessageHandler
             $this->koboKepubifyLogger->error('Error while restoring cached kepubify data');
             $temporaryFile = null;
         }
-        $message->destination = $temporaryFile;
-        $message->size = $data->getSize();
+        $message->setDestination($temporaryFile);
+        $message->setSize($data->getSize());
     }
 
     /**
@@ -116,16 +149,18 @@ class KepubifyMessageHandler
         return tempnam($dir, self::TEMP_NAME_SUFFIX);
     }
 
-    private function convert(KepubifyMessage $message, string $temporaryFile): ?string
+    private function convert(KepubifyMessageInterface $message, string $temporaryFile): ?string
     {
-        $filename = basename($message->source);
+        $source = $this->fileSystemManager->getBookFilename($message->getBook());
+        $filename = basename($source);
 
         $temporaryFolder = dirname($temporaryFile);
 
         $convertedFilename = str_replace('.epub', '.kepub.epub', $filename);
 
         // Run the conversion
-        $process = new Process([$this->kepubifyEnabler->getKepubifyBinary(), '--inplace', '--output', $temporaryFolder, $message->source]);
+        $source = $this->fileSystemManager->getBookFilename($message->getBook());
+        $process = new Process([$this->kepubifyEnabler->getKepubifyBinary(), '--inplace', '--output', $temporaryFolder, $source]);
         $this->koboKepubifyLogger->debug('Run kepubify command: {command}', ['command' => $process->getCommandLine()]);
         $process->run();
 

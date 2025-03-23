@@ -8,6 +8,8 @@ use App\Exception\BookFileNotFound;
 use App\Kobo\ImageProcessor\CoverTransformer;
 use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyMessage;
+use App\Kobo\Kepubify\KepubifyMessageAsync;
+use App\Kobo\Kepubify\KepubifyMessageInterface;
 use App\Kobo\Response\MetadataResponseService;
 use App\Service\BookFileSystemManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -106,17 +108,17 @@ class DownloadHelper
 
         if ($format === MetadataResponseService::KEPUB_FORMAT) {
             try {
-                $message = $this->runKepubify($bookPath);
+                $message = $this->runKepubify($book);
             } catch (KepubifyConversionFailed $e) {
                 throw new NotFoundHttpException('Book conversion failed', $e);
             }
         }
 
-        $fileToStream = $message->destination ?? $bookPath;
-        $fileSize = $message->size ?? filesize($fileToStream);
+        $fileToStream = $message->getDestination() ?? $bookPath;
+        $fileSize = $message->getSize() ?? filesize($fileToStream);
 
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
-            ->deleteFileAfterSend($message?->destination !== null);
+            ->deleteFileAfterSend($message?->getDestination() !== null);
 
         $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
         $encodedFilename = rawurlencode($filename);
@@ -143,13 +145,13 @@ class DownloadHelper
     /**
      * @throws KepubifyConversionFailed
      */
-    private function runKepubify(string $bookPath): KepubifyMessage
+    private function runKepubify(Book $book, bool $async = false): KepubifyMessageInterface
     {
-        $message = new KepubifyMessage($bookPath);
+        $message = $async ? new KepubifyMessageAsync($book) : new KepubifyMessage($book);
         $this->messageBus->dispatch($message);
 
-        if ($message->destination === null || $message->size === null) {
-            throw new KepubifyConversionFailed($bookPath);
+        if (!$async && ($message->getDestination() === null || $message->getSize() === null)) {
+            throw new KepubifyConversionFailed($book);
         }
 
         return $message;
@@ -172,14 +174,18 @@ class DownloadHelper
             return new BookDownloadInfo($this->getSize($book), $url);
         }
 
-        // Convert the book to fetch the final size
-        $message = $this->runKepubify($bookPath);
+        // Convert the book to fetch the final size, asynchronously
+        $message = $this->runKepubify($bookPath, true);
 
-        $info = new BookDownloadInfo((int) $message->size, $url);
-        if ($message->destination !== null) {
-            unlink($message->destination);
+        $info = new BookDownloadInfo((int) $message->getSize(), $url);
+        if ($message->getDestination() !== null) {
+            unlink($message->getDestination());
         }
 
         return $info;
+    }
+
+    public function getKoboFileSize(Book $book)
+    {
     }
 }

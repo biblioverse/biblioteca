@@ -33,10 +33,11 @@ class MetadataResponseService
         if ($this->kepubifyEnabler->isEnabled()) {
             try {
                 $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_FORMAT);
+                $size = $downloadInfo->getSize();
 
                 return [0 => [
                     'Format' => self::KEPUB_FORMAT,
-                    'Size' => $downloadInfo->getSize(),
+                    'Size' => $size !== 0 ? $size : $this->downloadHelper->getKoboFileSize($book),
                     'Url' => $downloadInfo->getUrl(),
                     'Platform' => $platform,
                 ]];
