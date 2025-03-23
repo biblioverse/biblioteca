@@ -42,6 +42,11 @@ class DownloadHelper
 
     private function getUrlForKoboDevice(Book $book, KoboDevice $koboDevice, string $extension): string
     {
+        // Make sure the extension is "kepub.epub" for Kobo devices
+        if ($extension === MetadataResponseService::KEPUB_FORMAT) {
+            $extension = '.kepub.epub';
+        }
+
         return $this->urlGenerator->generate('kobo_download', [
             'id' => $book->getId(),
             'accessKey' => $koboDevice->getAccessKey(),
