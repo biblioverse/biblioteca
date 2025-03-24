@@ -117,7 +117,6 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
             'focusMode' => 'webSearch',
             'optimizationMode' => 'speed',
             'query' => $lastMessage->getText(),
-            'messages' => $processedMessages,
         ];
 
         return $this->sendRequest($this->getPerplexicaUrl('search'), $params, 'POST');
