@@ -16,7 +16,7 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
 
     private function sendRequest(string $url, array $data = [], string $method = 'GET'): string
     {
-        $this->client = $this->client->withOptions(['headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '.$this->aiModel->getToken()]]);
+        $this->client = $this->client->withOptions(['headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json']]);
 
         $response = $this->client->request(
             $method,
@@ -77,22 +77,16 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
     {
         // https://github.com/ItzCrazyKns/Perplexica/blob/master/docs/API/SEARCH.md
 
-        $processedMessages = [];
-
         $lastMessage = array_pop($messages);
 
         if ($lastMessage === null) {
             return '';
         }
 
-        foreach ($messages as $message) {
-            $processedMessages[] = $message->toPerplexica();
-        }
-
         $model = $this->aiModel->getModel();
         $modelInfo = [
             'chatModel' => [
-                'model' => $model,
+                'name' => $model,
                 'provider' => 'ollama',
             ],
         ];
@@ -102,7 +96,7 @@ class PerplexicaCommunicator extends AbstractCommunicator implements AiChatInter
             $model = $exp[1];
             $modelInfo = [
                 'chatModel' => [
-                    'model' => $model,
+                    'name' => $model,
                     'provider' => $provider,
                 ],
             ];
