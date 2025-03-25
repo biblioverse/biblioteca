@@ -63,7 +63,7 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/test/{id}', name: 'app_ai_model_test', methods: ['GET', 'POST'])]
-    public function test(Request $request, AiModel $aiModel, PromptFactory $promptFactory, CommunicatorDefiner $communicatorDefiner, ContextBuilder $contextBuilder, BookRepository $bookRepository): Response
+    public function test(Request $request, AiModel $aiModel, PromptFactory $promptFactory, CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository): Response
     {
         $book = $bookRepository->findOneBy([]);
         if (!$book instanceof Book) {
@@ -84,11 +84,6 @@ final class AiModelController extends AbstractController
             $tagPrompt = $promptFactory->getPrompt(TagPrompt::class, $book);
             $summaryPrompt = $promptFactory->getPrompt(SummaryPrompt::class, $book);
 
-            $initialTagPrompt = clone $tagPrompt;
-            $initialSummaryPrompt = clone $summaryPrompt;
-
-            $tagPrompt = $contextBuilder->getContext($aiModel, $tagPrompt);
-            $summaryPrompt = $contextBuilder->getContext($aiModel, $summaryPrompt);
             $tagPromptResponse = '';
             $summaryPromptResponse = '';
             if ($request->isMethod('POST')) {
@@ -106,10 +101,8 @@ final class AiModelController extends AbstractController
         return $this->render('ai_model/show.html.twig', [
             'ai_model' => $aiModel,
             'book' => $book,
-            'initialTagPrompt' => $initialTagPrompt,
             'tagPrompt' => $tagPrompt,
             'tagPromptResponse' => $tagPromptResponse,
-            'initialSummaryPrompt' => $initialSummaryPrompt,
             'summaryPrompt' => $summaryPrompt,
             'summaryPromptResponse' => $summaryPromptResponse,
         ]);
