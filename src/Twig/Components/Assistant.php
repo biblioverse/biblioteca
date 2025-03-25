@@ -78,7 +78,7 @@ final class Assistant extends AbstractController
     public function getInitialMessage(): Message
     {
         return new Message('
-You are a librarian expert in retrieving information about books. Currently we are talking about '.$this->getBookString($this->book).'
+You are a librarian expert in retrieving information about books. Currently we are talking about '.$this->book->getPromptString().'
 The user may ask you questions about the book, you can answer how you need but 
 - if the user asks for a summary, you should provide a markdown formatted json with only the "summary" key in addition.
 - if the user asks for genres, categories or theme, you should provide a markdown formatted json with only the "tags" key in addition.
@@ -164,7 +164,7 @@ If you don\'t know the answer to the user question, mention it in your answer.
         $prompt = match ($field) {
             'summary' => $this->promptFactory->getPrompt(SummaryPrompt::class, $this->book),
             'categories' => $this->promptFactory->getPrompt(TagPrompt::class, $this->book),
-            default => 'Can you generate a '.$field.' for me for '.$this->getBookString($this->book).' in '.$language.'?',
+            default => 'Can you generate a '.$field.' for me for '.$this->book->getPromptString().' in '.$language.'?',
         };
 
         $contextModel = $this->communicatorDefiner->getCommunicator(AiAction::Context);
@@ -217,21 +217,5 @@ If you don\'t know the answer to the user question, mention it in your answer.
         } catch (\JsonException) {
             return null;
         }
-    }
-
-    public function getBookString(Book $book): string
-    {
-        $title = $book->getTitle();
-        if (preg_match('/T\d+/', $title) === false || preg_match('/T\d+/', $title) === 0) {
-            $bookString = '"'.$book->getTitle().'" by '.implode(' and ', $book->getAuthors());
-        } else {
-            $bookString = 'a book by '.implode(' and ', $book->getAuthors());
-        }
-
-        if ($book->getSerie() !== null) {
-            $bookString .= ' number '.$book->getSerieIndex().' in the series "'.$book->getSerie().'"';
-        }
-
-        return $bookString;
     }
 }
