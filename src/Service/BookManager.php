@@ -81,7 +81,7 @@ class BookManager
 
         $consumePath = $this->fileSystemManager->getBooksDirectory().'consume';
         if (str_starts_with($file->getRealPath(), $consumePath)) {
-            $book->setBookPath('consume/');
+            $book->setBookPath($path);
             $this->fileSystemManager->renameFiles($book);
 
             return $book;
