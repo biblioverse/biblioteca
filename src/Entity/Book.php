@@ -672,7 +672,7 @@ class Book
     {
         $title = $this->getTitle();
 
-        if (preg_match('/T\d+/', $title) >0) {
+        if (preg_match('/T\d+/', $title) > 0) {
             $bookString = 'a book by '.implode(' and ', $this->getAuthors());
         } else {
             $bookString = '"'.$this->getTitle().'" by '.implode(' and ', $this->getAuthors());
@@ -684,5 +684,4 @@ class Book
 
         return $bookString;
     }
-
 }

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Ai\Communicator\CommunicatorDefiner;
-use App\Ai\Context\ContextBuilder;
 use App\Ai\Prompt\PromptFactory;
 use App\Ai\Prompt\SummaryPrompt;
 use App\Ai\Prompt\TagPrompt;
