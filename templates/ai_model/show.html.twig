@@ -45,22 +45,7 @@
                 <a href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">{{ "generic.edit"|trans }}</a>
             </td>
         </tr>
-        <tr>
-            <th style="width: 20%;">{{ "ai.initial-tag-prompt"|trans }}</th>
-            <td>
-                {{ initialTagPrompt.prompt|nl2br }}
-                <a href="{{ path('app_user_profile') }}">{{ "ai.edit-prompt"|trans }}</a>
 
-            </td>
-        </tr>
-        <tr>
-            <th>{{ "ai.initial-summary-prompt"|trans }}</th>
-            <td>{{ initialSummaryPrompt.prompt|nl2br }}
-                <a href="{{ path('app_user_profile') }}">{{ "ai.edit-prompt"|trans }}</a>
-
-            </td>
-        </tr>
-        {% if tagPrompt.prompt!=initialTagPrompt.prompt %}
         <tr>
             <th style="width: 20%;">{{ "ai.tag-prompt-with-context"|trans }}</th>
             <td>
@@ -70,8 +55,6 @@
                 </details>
             </td>
         </tr>
-        {% endif %}
-        {% if tagPrompt.prompt!=initialTagPrompt.prompt %}
 
         <tr>
             <th style="width: 20%;">{{ "ai.summary-prompt-with-context"|trans }}</th>
@@ -82,7 +65,6 @@
                 </details>
             </td>
         </tr>
-        {% endif %}
     </table>
 
     {% if tagPromptResponse!='' or summaryPromptResponse!='' %}

@@ -37,16 +37,7 @@ abstract class AbstractBookPrompt implements BookPromptInterface
     #[\Override]
     public function replaceBookOccurrence(string $prompt): string
     {
-        $title = $this->book->getTitle();
-        if (preg_match('/T\d+/', $title) !== false) {
-            $bookString = '"'.$this->book->getTitle().'" by '.implode(' and ', $this->book->getAuthors());
-        } else {
-            $bookString = ' by '.implode(' and ', $this->book->getAuthors());
-        }
-
-        if ($this->book->getSerie() !== null) {
-            $bookString .= ' number '.$this->book->getSerieIndex().' in the series "'.$this->book->getSerie().'"';
-        }
+        $bookString = $this->book->getPromptString();
 
         $language = $this->book->getLanguage() ?? $this->language;
 

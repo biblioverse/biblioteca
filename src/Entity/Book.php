@@ -667,4 +667,21 @@ class Book
     {
         return $this->tags === null || $this->tags === [];
     }
+
+    public function getPromptString(): string
+    {
+        $title = $this->getTitle();
+
+        if (preg_match('/T\d+/', $title) > 0) {
+            $bookString = 'a book by '.implode(' and ', $this->getAuthors());
+        } else {
+            $bookString = '"'.$this->getTitle().'" by '.implode(' and ', $this->getAuthors());
+        }
+
+        if ($this->getSerie() !== null) {
+            $bookString .= ' number '.$this->getSerieIndex().' in the series "'.$this->getSerie().'"';
+        }
+
+        return $bookString;
+    }
 }
