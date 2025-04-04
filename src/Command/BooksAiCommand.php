@@ -10,6 +10,7 @@ use App\Ai\Prompt\PromptFactory;
 use App\Ai\Prompt\SummaryPrompt;
 use App\Ai\Prompt\TagPrompt;
 use App\Entity\Book;
+use App\Entity\Suggestion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -83,9 +84,12 @@ class BooksAiCommand extends Command
             $qb = $this->em->getRepository(Book::class)->createQueryBuilder('book');
             if ($type === 'tags' || $type === 'both') {
                 $qb->orWhere('book.tags = \'[]\'');
+                $qb->orWhere('book.tags = \'[""]\'');
+                $qb->orWhere('book.tags is null');
             }
             if ($type === 'summary' || $type === 'both') {
                 $qb->orWhere('book.summary is null');
+                $qb->orWhere('book.summary =\'\'');
             }
             /** @var Book[] $books */
             $books = $qb->getQuery()->getResult();
@@ -108,30 +112,51 @@ class BooksAiCommand extends Command
 
             $io->section($currentPad.'/'.$total.': '.$book->getSerie().' '.$book->getTitle().' ('.implode(' and ', $book->getAuthors()).')');
 
+            $currentSuggestions = $book->getSuggestions()->toArray();
             if (($type === 'summary' || $type === 'both') && (trim((string) $book->getSummary()) === '' || $overwrite === true)) {
+                $summarySuggestions = array_filter($currentSuggestions, fn (Suggestion $suggestion) => $suggestion->getField() === 'summary');
                 $io->comment('Generating Summary');
-                $summaryPrompt = $this->promptFactory->getPrompt(SummaryPrompt::class, $book, $language);
-                $summaryPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $summaryPrompt, $output);
-                $summary = $communicator->interrogate($summaryPrompt->getPrompt());
-                $summary = $summaryPrompt->convertResult($summary);
-                $io->block($summary);
-                if (is_string($summary)) {
-                    $book->setSummary($summary);
+                if (count($summarySuggestions) === 0 || $overwrite === true) {
+                    $summaryPrompt = $this->promptFactory->getPrompt(SummaryPrompt::class, $book, $language);
+                    $summaryPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $summaryPrompt, $output);
+                    $summary = $communicator->interrogate($summaryPrompt->getPrompt());
+                    $summary = $summaryPrompt->convertResult($summary);
+                    $io->block($summary);
+                    if (is_string($summary)) {
+                        $suggestion = new Suggestion();
+                        $suggestion->setBook($book);
+                        $suggestion->setField('summary');
+                        $suggestion->setSuggestion($summary);
+
+                        $this->em->persist($suggestion);
+                    }
+                } else {
+                    $io->comment('Summary suggestion already present');
                 }
             }
 
             if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $overwrite === true)) {
                 $io->comment('Generating Tags');
-                $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book, $language);
-                $tagPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $tagPrompt);
+                $tagSuggestions = array_filter($currentSuggestions, fn (Suggestion $suggestion) => $suggestion->getField() === 'tags');
+                if (count($tagSuggestions) === 0 || $overwrite === true) {
+                    $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book, $language);
+                    $tagPrompt = $this->contextBuilder->getContext($communicator->getAiModel(), $tagPrompt);
 
-                $array = $communicator->interrogate($tagPrompt->getPrompt());
+                    $array = $communicator->interrogate($tagPrompt->getPrompt());
 
-                $array = $tagPrompt->convertResult($array);
+                    $array = $tagPrompt->convertResult($array);
 
-                if (is_array($array)) {
-                    $io->block(implode(' 🏷️ ', $array));
-                    $book->setTags($array);
+                    if (is_array($array)) {
+                        $io->block(implode(' 🏷️ ', $array));
+                        $suggestion = new Suggestion();
+                        $suggestion->setBook($book);
+                        $suggestion->setField('tags');
+                        $suggestion->setSuggestion(json_encode($array, JSON_THROW_ON_ERROR));
+
+                        $this->em->persist($suggestion);
+                    }
+                } else {
+                    $io->comment('Tag suggestion already present');
                 }
             }
 

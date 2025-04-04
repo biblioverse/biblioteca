@@ -4,6 +4,7 @@ namespace App\Menu;
 
 use App\Entity\Shelf;
 use App\Entity\User;
+use App\Repository\SuggestionRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,7 +23,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly SuggestionRepository $suggestionRepository, private readonly RequestStack $requestStack)
     {
     }
 
@@ -142,6 +143,12 @@ final class MenuBuilder
             $admin->addChild('menu.instanceconfig', ['route' => 'app_instance_configuration_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.aimodels', ['route' => 'app_ai_model_index', ...$this->defaultAttr])->setExtra('icon', 'magic');
             $admin->addChild('menu.notverified', ['route' => 'app_notverified', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
+
+            $suggestions = $this->suggestionRepository->findAll();
+
+            if (count($suggestions) > 0) {
+                $admin->addChild('menu.suggestions', ['route' => 'app_suggestion', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill')->setExtra('badge', count($suggestions));
+            }
         }
 
         return $menu;

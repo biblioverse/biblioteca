@@ -1,0 +1,37 @@
+{% extends themedTemplate('base.html.twig') %}
+
+{% block title %}Suggestions{% endblock %}
+
+{% block body %}
+
+    <table class="table table-bordered table-striped">
+        {% for suggestion in suggestions %}
+            <tr>
+                <td style="width: 15%">
+                    {% include themedTemplate('book/_teaser.html.twig') with {book: suggestion.book} %}
+                </td>
+                <td>
+                    {{ suggestion.field }}
+                </td>
+                <td>
+                    {{ suggestion.suggestion }}
+                    <div class="">
+                        <a href="{{ path('app_suggestion_accept', {'id': suggestion.id}) }}" class="btn btn-sm btn-success">
+                            {{ 'generic.accept'|trans }}
+                        </a>
+                        <a href="{{ path('app_suggestion_delete', {'id': suggestion.id}) }}" class="btn btn-sm btn-danger">
+                            {{ 'generic.delete'|trans }}
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>
+                    No suggestions. Run <code>bin/console books:ai both</code> to generate.
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
