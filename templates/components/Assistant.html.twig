@@ -23,24 +23,30 @@
         {% endblock %}
         {% block modal_body %}
 
-            <div class="row">
-                <div class="col-md-2">
+            <div class="Assistant">
+                <div>
                     {% if book.imageFilename is not null %}
                         <a href="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('big') }}" target="_blank">
                             <img class="w-100" src="{{ asset('covers/'~book.imagePath~book.imageFilename)|imagine_filter('thumb') }}" />
                         </a>
                     {% endif %}
                 </div>
-                <div class="col-md-6">
+                <div class="Assistant__form">
 
                     {{ form_errors(form) }}
                     {{ form_row(form.title) }}
+
+                    <div style="position: relative;">
                     {{ form_row(form.summary) }}
+                    {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Assistant ) %}
                     <button type="button" class="btn btn-bar m-0 p-0 mb-3 btn-sm text-muted"
+                            style="position: absolute; right: 0; top: .5rem;"
                             data-action="live#action"
                             data-live-action-param="generate"
                             data-live-field-param="summary"
-                    >{{ "book.form.generate-summary"|trans }}</button>
+                    ><i class="bi bi-magic"></i>{{ "book.form.generate-summary"|trans }}</button>
+                    {% endif %}
+                    </div>
 
                     {{ form_row(form.authorsString) }}
                     <div class="row">
@@ -51,13 +57,19 @@
                             {{ form_row(form.serieIndex) }}
                         </div>
                     </div>
-                    {{ form_row(form.tagsString) }}
-                    <button type="button" class="btn btn-bar m-0 p-0 mb-3 btn-sm text-muted"
-                            data-action="live#action"
-                            data-live-action-param="generate"
-                            data-live-field-param="categories"
-                    >{{ "book.form.generate-categories"|trans }}</button>
-<hr>
+                    <div style="position: relative;">
+                        {{ form_row(form.tagsString) }}
+                        {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Assistant ) %}
+                        <button type="button" class="btn btn-bar m-0 p-0 mb-3 btn-sm text-muted"
+                                style="position: absolute; right: 0; top: .5rem;"
+                                data-action="live#action"
+                                data-live-action-param="generate"
+                                data-live-field-param="categories"
+                        ><i class="bi bi-magic"></i> {{ "book.form.generate-categories"|trans }}</button>
+                        {% endif %}
+                    </div>
+                    
+                    <hr>
                     <div class="row">
                         <div class="col-md-8">
                             {{ form_row(form.publisher) }}
@@ -82,7 +94,7 @@
 
                 </div>
                 {% if is_granted('USE_AI_FEATURES',enum('App\\Ai\\Communicator\\AiAction').Assistant ) %}
-                <div class="col-md-4" style="max-height: 70vh; overflow-y: scroll;">
+                <div class="Assistant__chat">
 
                     {% for message in messages %}
 

@@ -18,6 +18,7 @@ ai.edit-prompt: 'Modifier le prompt'
 ai.form.model: 'Nom du modèle'
 ai.form.systemprompt: 'Prompt système'
 ai.form.token: 'Token API'
+ai.form.type: "Fournisseur"
 ai.form.url: 'URL API'
 ai.form.useamazoncontext: 'Utiliser le contexte Amazon'
 ai.form.useepubcontext: 'Utiliser le contexte EPUB'
@@ -33,16 +34,15 @@ ai.new-aimodel: 'Nouveau connecteur'
 ai.prompts-and-context: 'Prompts et contexte'
 ai.querying-for-context-and-building-a-response-please-wait: 'Construction du contexte et génération de la réponse, merci de patienter.'
 ai.responses-to-prompt-with-context: 'Réponses aux prompt avec contexte'
+ai.contextmodel.form-placeholder: "Choisir un modèle pour la recherche de contexte"
 ai.searchmodel.form-placeholder: 'Choisir un modèle pour la conversion des requêtes de recherche'
-ai.summarizationmodel.form-placeholder: 'Choisir un modèle pour résumer'
 ai.summary-prompt-with-context: 'Prompt de résumé avec contexte'
 ai.summary-prompt: 'Prompt de résumé'
-ai.contextmodel.form-help: "Select a model that is able to perform web research to provide context, like Perplexica or Perplexity"
+ai.contextmodel.form-help: "Sélectionnez un modèle capable de faire des recherches sur le web pour fournir du contexte, comme Perplexica ou Perplexity"
 ai.summaryprompt.form-help: "Vous pouvez utiliser {book} pour insérer le titre du livre ainsi que {language} pour insérer la langue du livre. Ce prompt ne sera utilisé que si l'utilisateur courant n'a pas rempli de prompt personnalisé dans son profil"
 ai.system-prompt: 'Prompt système'
 ai.tag-prompt-with-context: 'Prompt de catégorie avec contexte'
 ai.tag-prompt: 'Prompt de catégorie'
-ai.tagmodel.form-placeholder: 'Choisir un modèle de catégorisation'
 ai.test-book: 'Livre de test'
 ai.test-model: 'Tester le connecteur'
 ai.token: "Clé d'identification"
@@ -222,7 +222,7 @@ instance-configuration.form.name: Nom
 instance-configuration.form.value: Valeur
 instance-configuration.parameter: Paramètre
 instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: 'This value can be set from .env file or from this page'
-instance-configuration.title: Titre
+instance-configuration.title: Configuration
 interaction.form.favorite: 'Liste de lecture'
 interaction.form.finished: Fini
 interaction.form.finisheddate: 'Date de lecture'
@@ -290,6 +290,7 @@ notverified.only-the-first-100-books-are-displayed: 'Seuls les 100 premiers livr
 notverified.relocate-all-books: 'Repositionner tous les livres'
 opds.access-settings: 'Accès OPDS'
 opds.catalog: 'Catalogue OPDS'
+profile.customize: 'Personnaliser'
 profile.form.bookkeywordprompt: 'Prompt de génération de catégories'
 profile.form.booksummaryprompt: 'Prompt de génération de résumé'
 profile.form.displayallbooks: 'Afficher le lien "Tous les livres" dans le menu'
@@ -307,6 +308,7 @@ profile.form.submit: 'Enregistrer les préférences'
 profile.form.theme.dark: Sombre
 profile.form.theme.default: 'Par défaut'
 profile.form.theme: Apparence
+profile.kobo: Paramètres de Liseuse Kobo
 profile.my-profile: 'Mon profil'
 profile.user-information: "Informations de l'utilisateur"
 reading-list.add-to-favorites: 'Ajouter aux favoris'
@@ -335,6 +337,8 @@ shelf.shelves: Etagères
 timeline.timeline-for: 'Historique pour'
 timeline.title: Titre
 user.edit-user: "Modifier l'utilisateur"
+upload.form.file: Fichier
+upload.form.submit: Téléverser
 user.form.language.english: English
 user.form.language.french: Français
 user.form.language: Langue

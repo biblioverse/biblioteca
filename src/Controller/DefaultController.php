@@ -126,7 +126,7 @@ class DefaultController extends AbstractController
     #[Route('/not-verified', name: 'app_notverified')]
     public function notverified(Request $request, BookRepository $bookRepository, BookFileSystemManagerInterface $bookFileSystemManager, EntityManagerInterface $entityManager): Response
     {
-        $books = $bookRepository->findBy(['verified' => false], ['serieIndex' => 'asc'], 100);
+        $books = $bookRepository->findBy(['verified' => false], ['bookPath' => 'asc', 'serieIndex' => 'asc'], 100);
 
         $action = $request->get('action');
         if ($action !== null) {

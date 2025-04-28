@@ -3,7 +3,9 @@
 {% block title %}{{ "ai.new-aimodel"|trans }}{% endblock %}
 
 {% block body %}
+    <a href="{{ path('app_ai_model_index') }}" class="btn btn-text">
+        <i class="bi bi-arrow-left"></i>
+        {{ "generic.back-to-list"|trans }}
+    </a>
     {{ include('ai_model/_form.html.twig') }}
-
-    <a href="{{ path('app_ai_model_index') }}">{{ "generic.back-to-list"|trans }}</a>
 {% endblock %}

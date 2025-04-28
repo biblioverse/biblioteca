@@ -15,8 +15,8 @@ class SummaryPrompt extends AbstractBookPrompt
     #[\Override]
     public function getPrompt(): string
     {
-        return $this->getPromptWithoutInstructions().'Remember to keep it short and concise. Do not add any comment or opinion. Avoid vague language. Avoid spoilers.
-The output must be only valid markdwon containing and the result must be the JSON of an object with one key named "summary" containing the summary for this book in strings. 
+        return $this->getPromptWithoutInstructions().' Remember to keep it short and concise. Do not add any comment or opinion. Avoid vague language. Avoid spoilers.
+The output must be only valid markdown containing and the result must be the JSON of an object with one key named "summary" containing the summary for this book in strings. 
 ';
     }
 

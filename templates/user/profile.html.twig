@@ -6,27 +6,26 @@
 
 {% block body %}
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-pills">
   <li class="nav-item">
-    <a class="nav-link {{ tab=='profile'?'active' }}"  href="{{ path('app_user_profile') }}">My Profile</a>
+    <a class="nav-link {{ tab=='profile'?'active' }}"  href="{{ path('app_user_profile') }}">{{ "profile.my-profile"|trans }}</a>
   </li>
   <li class="nav-item">
     <a class="nav-link  {{ tab=='kobo'?'active' }}" href="{{ path('app_user_profile', {'tab':'kobo'}) }}">Kobo Reader Settings</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link  {{ tab=='opds'?'active' }}" href="{{ path('app_user_profile', {'tab':'opds'}) }}">OPDS Settings</a>
+    <a class="nav-link  {{ tab=='opds'?'active' }}" href="{{ path('app_user_profile', {'tab':'opds'}) }}">{{'opds.access-settings'|trans}}</a>
   </li>
 </ul>
 
     <div class="row">
         <div class="col-md-8 offset-md-2">
             {% if tab == 'kobo' %}
-
-                <div class="card m-2">
-                    <div class="card-header">
-                        {{ "kobo.device.reader-settings"|trans }}
+                <div class="Card my-3">
+                    <div class="Card__title">
+                        <h3 class="Heading">{{ "kobo.device.reader-settings"|trans }}</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="Card__content">
                         <table class="table table-bordered table-striped">
                         {% for device in user.kobos %}
                             <tr>
@@ -45,11 +44,11 @@
                     </div>
                 </div>
             {% elseif tab == 'opds' %}
-                <div class="card m-2">
-                    <div class="card-header">
-                        {{ "opds.access-settings"|trans }}
+                <div class="Card my-3">
+                    <div class="Card__title">
+                        <h3 class="Heading">{{ "opds.access-settings"|trans }}</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="Card__content">
                         {% if opds_access is not null %}
                             <strong>{{ opds_access.token }}</strong><br>
                             <small>{{ 'opds.catalog'|trans }}: {{ url('opds_start',{'accessKey':opds_access.token}) }}</small>
@@ -62,20 +61,20 @@
                 </div>
             {%else%}
                 {{ form_start(form) }}
-                <div class="card m-2">
-                    <div class="card-header">
-                        {{ 'profile.user-information'|trans }}
+                <div class="Card my-3">
+                    <div class="Card__title">
+                        <h3 class="Heading">{{ 'profile.user-information'|trans }}</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="Card__content">
                         {{ form_row(form.plainPassword) }}
                         {{ form_row(form.language) }}
                     </div>
                 </div>
-                <div class="card m-2">
-                    <div class="card-header">
-                        Customize
+                <div class="Card my-3">
+                    <div class="Card__title">
+                        <h3 class="Heading">{{ 'profile.customize'|trans }}</h3>
                     </div>
-                    <div class="card-body">
+                    <div class="Card__content">
                         {{ form_row(form.displaySeries) }}
                         {{ form_row(form.displayAuthors) }}
                         {{ form_row(form.displayTags) }}
@@ -90,10 +89,5 @@
                 {{ form_end(form) }}
             {%endif%}
         </div>
-
-
     </div>
-
-
-
 {% endblock %}
