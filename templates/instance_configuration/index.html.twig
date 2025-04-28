@@ -8,18 +8,18 @@
     <tr>
         <th>{{ "instance-configuration.parameter"|trans }}</th>
         <th>{{ "instance-configuration.description"|trans }}</th>
-        <th>{{ "instance-configuration.current-value"|trans }}</th>>
+        <th>{{ "instance-configuration.current-value"|trans }}</th>
     </tr>
     {%for key, param in documentedParams%}
         <tr>
-            <td>{{key}}</td>
+            <td><code>{{key}}</code></td>
             <td>{{param.description}}</td>
             <td style="word-break: break-all; ">{{param.value}}</td>
         </tr>
     {%endfor%}
     {%for key, param in editableParams%}
         <tr>
-            <td class="bg-success-subtle">{{key}}</td>
+            <td class="bg-success-subtle"><code>{{key}}</code></td>
             <td class="bg-success-subtle">{{ "instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page"|trans }}</td>
             <td class="bg-success-subtle" style=" word-break: break-all;">
                 {{param}}

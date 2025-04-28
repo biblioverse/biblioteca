@@ -2,58 +2,52 @@
 
 
 {% block title %}
-    {{ "book.consume-books"|trans }}
+    {{ "book.books-in-consume-folder"|trans }}
 {% endblock %}
 
 {% block body %}
-
-    <h1 class="mb-0">{{ "book.books-in-consume-folder"|trans }}</h1>
     <div class="text-muted small mb-3">{{ "book.books_placed_in_public_books_consume_folder_will_be_listed_here"|trans }}</div>
-    <a href="{{ path('app_book_upload_consume') }}" class="btn btn-secondary">Upload</a>
-    <div class="row">
-        <div class="col-12">
 
-            <table class="table table-bordered table-striped table-hover">
-                <tr>
-                    <th>{{ "book.book"|trans }}</th>
-                    <th>{{ "book.size"|trans }}</th>
-                    <th>
-                        {{ "book.actions"|trans }}
-                    </th>
-                </tr>
-                {% set previousPath='' %}
-                {% for path,book in books %}
-                    {% set parts = path|split('/consume/') %}
-                    {% set folders = parts[1]|split('/') %}
-                    {% set folderPath ='' %}
-                    {% for path in folders %}
-                        {% if not loop.last %}
-                            {% set folderPath = folderPath~((not loop.first)?"-":'')~path %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if folderPath!=previousPath %}
-                    <tr>
-                        <td colspan="3" class="bg-dark text-light"><i class="bi bi-folder-fill"></i> {{ folderPath }}</td>
-                    </tr>
-                        {% set previousPath = folderPath %}
-                    {% endif %}
-                    <tr>
-                        <td>{{ book.relativePathname }}</td>
-                        <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="{{ path('app_book_consume', {'consume': book.realPath}) }}" class="btn btn-primary">Consume</a>
-                                <a href="{{ path('app_book_consume', {'delete': book.realPath}) }}" class="btn btn-primary">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3">{{ "book.no-books-in-consume-folder"|trans }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+    <a href="{{ path('app_book_upload_consume') }}" class="btn btn-secondary">Upload</a>
+    <br /><br />
+
+    <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>{{ "book.book"|trans }}</th>
+            <th>{{ "book.size"|trans }}</th>
+            <th>{{ "book.actions"|trans }}</th>
+        </tr>
+        {% set previousPath='' %}
+        {% for path,book in books %}
+            {% set parts = path|split('/consume/') %}
+            {% set folders = parts[1]|split('/') %}
+            {% set folderPath ='' %}
+            {% for path in folders %}
+                {% if not loop.last %}
+                    {% set folderPath = folderPath~((not loop.first)?"-":'')~path %}
+                {% endif %}
+            {% endfor %}
+            {% if folderPath!=previousPath %}
+            <tr>
+                <td colspan="3" class="bg-dark text-light"><i class="bi bi-folder-fill"></i> {{ folderPath }}</td>
+            </tr>
+                {% set previousPath = folderPath %}
+            {% endif %}
+            <tr>
+                <td>{{ book.relativePathname }}</td>
+                <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ path('app_book_consume', {'consume': book.realPath}) }}" class="btn btn-primary">Consume</a>
+                        <a href="{{ path('app_book_consume', {'delete': book.realPath}) }}" class="btn btn-primary">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">{{ "book.no-books-in-consume-folder"|trans }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
 

@@ -22,9 +22,18 @@
                 <td>{{ ai_model.model }}</td>
                 <td>
                     <div class="btn-group">
-                    <a class="btn btn-primary" href="{{ path('app_ai_model_test', {'id': ai_model.id}) }}">Test</a>
-                    <a class="btn btn-primary" href="{{ path('app_ai_model_edit', {'id': ai_model.id}) }}">{{ "generic.edit"|trans }}</a>
-                    <a class="btn btn-danger" onclick="return confirm('Are you sure?')" href="{{ path('app_ai_model_delete', {'id': ai_model.id}) }}">{{ "generic.delete"|trans }}</a>
+                    <a class="btn btn-secondary btn-sm" href="{{ path('app_ai_model_test', {'id': ai_model.id}) }}">
+                        <i class="bi bi-check-circle"></i>
+                        Test
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="{{ path('app_ai_model_edit', {'id': ai_model.id}) }}">
+                        <i class="bi bi-pencil-fill"></i>
+                        {{ "generic.edit"|trans }}
+                    </a>
+                    <a class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')" href="{{ path('app_ai_model_delete', {'id': ai_model.id}) }}">
+                        <i class="bi bi-trash-fill"></i>
+                        {{ "generic.delete"|trans }}
+                    </a>
                     </div>
                 </td>
             </tr>
@@ -37,10 +46,13 @@
     </table>
     <a href="{{ path('app_ai_model_new') }}" class="btn btn-primary">{{ "ai.create-new-model"|trans }}</a>
 
-    <h2 class="mt-3">{{ "ai.usage-configuration"|trans }}</h2>
-
-    {{ form(form) }}
-
-
+    <div class="Card my-3">
+        <div class="Card__title">
+            <h3 class="Heading">{{ "ai.usage-configuration"|trans }}</h3>
+        </div>
+        <div class="Card__content">
+            {{ form(form) }}
+        </div>
+    </div>
 
 {% endblock %}

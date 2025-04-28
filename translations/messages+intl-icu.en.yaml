@@ -18,6 +18,7 @@ ai.edit-prompt: Edit prompt
 ai.form.model: "Model name"
 ai.form.systemprompt: "AI system prompt"
 ai.form.token: "API token"
+ai.form.type: "Provider"
 ai.form.url: "API URL"
 ai.form.useamazoncontext: "Use Amazon context"
 ai.form.useepubcontext: "Use EPUB context"
@@ -34,6 +35,7 @@ ai.prompts-and-context: Prompts and context
 ai.querying-for-context-and-building-a-response-please-wait: Querying for context and building a response... Please wait.
 ai.responses-to-prompt-with-context: Responses to prompt with context
 ai.contextmodel.form-placeholder: "Select a model for for providing context"
+ai.searchmodel.form-placeholder: "Select a model for search hints or leave it empty to disable"
 ai.summary-prompt-with-context: Summary prompt with context
 ai.summary-prompt: Summary prompt
 ai.contextmodel.form-help: "Select a model that is able to perform web research to provide context, like Perplexica or Perplexity"
@@ -41,7 +43,6 @@ ai.summaryprompt.form-help: "Use {book} to insert the title of the book. Use {la
 ai.system-prompt: System prompt
 ai.tag-prompt-with-context: Tags prompt with context
 ai.tag-prompt: Tag prompt
-ai.tagmodel.form-placeholder: "Select a model for tagging books or leave it empty to disable"
 ai.test-book: Test book
 ai.test-model: Test model
 ai.token: Token
@@ -236,7 +237,7 @@ instance-configuration.form.name: Name
 instance-configuration.form.value: Value
 instance-configuration.parameter: Parameter
 instance-configuration.this-value-can-be-set-from-dotenv-or-from-this-page: This value can be set from .env file or from this page
-instance-configuration.title: Title
+instance-configuration.title: Configuration
 interaction.form.favorite: Reading list
 interaction.form.finished: Finished
 interaction.form.finisheddate: Finished date
@@ -305,6 +306,7 @@ notverified.only-the-first-100-books-are-displayed: Only the first 100 books are
 notverified.relocate-all-books: Relocate all books
 opds.access-settings: OPDS access settings
 opds.catalog: OPDS catalog
+profile.customize: Customize
 profile.form.bookkeywordprompt: Prompt to generate tags
 profile.form.booksummaryprompt: Prompt to generate summary
 profile.form.displayallbooks: Display "All books" Link in menu
@@ -322,6 +324,7 @@ profile.form.submit: Save preferences
 profile.form.theme.dark: Dark
 profile.form.theme.default: Default
 profile.form.theme: Appearance
+profile.kobo: Kobo Reader Settings
 profile.my-profile: My profile
 profile.user-information: User information
 reading-list.add-to-favorites: Add to favorites
@@ -349,6 +352,8 @@ shelf.query: Query
 shelf.shelves: Shelves
 timeline.timeline-for: Timeline for
 timeline.title: Title
+upload.form.file: File
+upload.form.submit: Upload
 user.edit-user: Edit user
 user.form.language.english: English
 user.form.language.french: Français
