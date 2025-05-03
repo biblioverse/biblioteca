@@ -14,6 +14,7 @@ use App\Repository\KoboSyncedBookRepository;
 use App\Repository\ShelfRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -84,13 +85,19 @@ class LibraryController extends AbstractKoboController
             ->addShelves($this->shelfRepository->getShelvesToSync($koboDevice, $syncToken));
 
         // Fetch the books upstream and merge the answer
-        $shouldContinue = $this->upstreamSyncMerger->merge($koboDevice, $response, $request);
+        $httpResponse = new JsonResponse();
+        [$shouldContinue, $upstreamSyncToken] = $this->upstreamSyncMerger->merge($koboDevice, $response, $request, $httpResponse);
+        if ($upstreamSyncToken !== null) {
+            $upstreamSyncToken->setPage($syncToken->page);
+            $syncToken->override($upstreamSyncToken);
+        }
         $shouldContinue = $shouldContinue || count($books) < $count;
 
-        $httpResponse = $response->toJsonResponse($shouldContinue);
+        $httpResponse = $response->toJsonResponse($shouldContinue, $httpResponse);
         $this->koboSyncLogger->debug('Synced response', [
             'data' => $response->getData(),
             'continue' => $shouldContinue,
+            'upstream-sync-token' => $upstreamSyncToken,
             'page' => $syncToken->page,
             'books' => (new ArrayCollection($books))->map(fn (Book $book) => $book->getTitle())->toArray(),
         ]);

@@ -21,12 +21,19 @@ abstract class KoboControllerTestCase extends WebTestCase
         self::createClient();
     }
 
-    protected static function getJsonResponse(): array
+    protected static function getRawResponse(): Response
     {
         self::assertInstanceOf(AbstractBrowser::class, self::getClient());
 
         /** @var Response $response */
         $response = self::getClient()->getResponse();
+
+        return $response;
+    }
+
+    protected static function getJsonResponse(): array
+    {
+        $response = self::getRawResponse();
         self::assertResponseIsSuccessful();
         $content = $response->getContent();
 

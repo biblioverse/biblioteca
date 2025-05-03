@@ -20,19 +20,28 @@ class SyncToken implements \Stringable
 
     public static function fromArray(array $lastSyncToken): SyncToken
     {
-        $fromAtom = fn (?string $date): ?\DateTimeImmutable => $date !== null ? new \DateTimeImmutable($date) : null;
-        $token = new self();
-        $token->version = $lastSyncToken['version'] ?? $token->version;
-        $token->lastModified = $fromAtom($lastSyncToken['lastModified'] ?? null);
-        $token->lastCreated = $fromAtom($lastSyncToken['lastCreated'] ?? null);
-        $token->archiveLastModified = $fromAtom($lastSyncToken['archiveLastModified'] ?? null);
-        $token->readingStateLastModified = $fromAtom($lastSyncToken['readingStateLastModified'] ?? null);
-        $token->tagLastModified = $fromAtom($lastSyncToken['tagLastModified'] ?? null);
-        $token->rawKoboStoreToken = $lastSyncToken['rawKoboStoreToken'] ?? $token->rawKoboStoreToken;
-        $token->filters = $lastSyncToken['filters'] ?? $token->filters;
-        $token->page = $lastSyncToken['page'] ?? 1;
+        return self::copy($lastSyncToken, new self());
+    }
 
-        return $token;
+    private static function copy(array $lastSyncToken, SyncToken $destination): SyncToken
+    {
+        $fromAtom = fn (?string $date): ?\DateTimeImmutable => $date !== null ? new \DateTimeImmutable($date) : null;
+        $destination->version = $lastSyncToken['version'] ?? $destination->version;
+        $destination->lastModified = $fromAtom($lastSyncToken['lastModified'] ?? null);
+        $destination->lastCreated = $fromAtom($lastSyncToken['lastCreated'] ?? null);
+        $destination->archiveLastModified = $fromAtom($lastSyncToken['archiveLastModified'] ?? null);
+        $destination->readingStateLastModified = $fromAtom($lastSyncToken['readingStateLastModified'] ?? null);
+        $destination->tagLastModified = $fromAtom($lastSyncToken['tagLastModified'] ?? null);
+        $destination->rawKoboStoreToken = $lastSyncToken['rawKoboStoreToken'] ?? $destination->rawKoboStoreToken;
+        $destination->filters = $lastSyncToken['filters'] ?? $destination->filters;
+        $destination->page = $lastSyncToken['page'] ?? 1;
+
+        return $destination;
+    }
+
+    public function override(SyncToken $lastSyncToken): self
+    {
+        return self::copy($lastSyncToken->toArray(), $this);
     }
 
     public function getFilterResolver(): OptionsResolver
