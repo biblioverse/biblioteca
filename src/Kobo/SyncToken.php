@@ -5,7 +5,7 @@ namespace App\Kobo;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SyncToken
+class SyncToken implements \Stringable
 {
     public string $version = '1-1-0';
     public ?\DateTimeImmutable $lastModified = null;
@@ -107,6 +107,11 @@ class SyncToken
             'tagLastModified' => $this->tagLastModified?->format($format),
             'version' => $this->version,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
     public function markLastSyncDateAndResetPage(): self

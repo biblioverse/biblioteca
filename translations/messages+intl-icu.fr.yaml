@@ -243,11 +243,16 @@ kobo.device.title: Titre
 kobo.form.accesskey: "Clé d'accès"
 kobo.form.deviceid: Identifiant
 kobo.form.forcesync: 'Forcer la prochaine synchronisation'
+kobo.form.force_sync_help: Tous vos livres seront synchronisés à nouveau la prochaine fois que vous synchroniserez votre appareil Kobo.
 kobo.form.model: "Modèle de l'appareil Kobo"
 kobo.form.name: Nom
 kobo.form.shelves: 'Etagères synchronisées'
-kobo.form.syncReadingList: 'Synchroniser la liste de lecture'
-kobo.form.upstreamSync: 'Synchroniser avec le store officiel'
+kobo.form.syncreadinglist: 'Synchroniser la liste de lecture'
+kobo.form.syncreadinglist_help: Les livres de votre liste de lecture seront synchronisés sur votre appareil Kobo.
+kobo.form.upstreamsync: 'Synchroniser avec le store officiel'
+kobo.form.upstreamsync_help: Les livres achetés dans le store officiel seront synchronisés dans votre bibliothèque (expérimental).
+kobo.form.reset-sync-token: "Réinitialiser le jeton de synchronisation"
+kobo.form.lastsynctoken: Dernier jeton de synchronisation
 kobo.logs.channel: 'Log Channel'
 kobo.logs.date: Date
 kobo.logs.device: Appareil
