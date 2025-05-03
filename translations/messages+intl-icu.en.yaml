@@ -254,14 +254,20 @@ kobo.device.owner: Owner
 kobo.device.reader-settings: Kobo device settings
 kobo.device.shelves: Shelves
 kobo.device.title: Title
-kobo.form.accessKey: Access Key
-kobo.form.deviceId: Device Id
-kobo.form.forceSync: Force next synchronisation
+kobo.form.accesskey: Access Key
+kobo.form.deviceid: Device Id
+kobo.form.forcesync: Force next synchronisation
+kobo.form.force_sync_help: All your books will be synced again next time you sync your Kobo device.
 kobo.form.model: Kobo device model
 kobo.form.name: Name
 kobo.form.shelves: Synchronized Shelves
-kobo.form.syncReadingList: Synchronize reading list
-kobo.form.upstreamSync: Sync with official store
+kobo.form.syncreadinglist: Synchronize reading list
+kobo.form.syncreadinglist_help: Books in your reading list will be synced to your Kobo device.
+kobo.form.upstreamsync: Sync with official store
+kobo.form.upstreamsync_help: Books purchased from the official store will be synced to your library (experimental).
+kobo.form.reset-sync-token: Reset sync token
+kobo.form.lastsynctoken: Last sync token
+kobo.form.shelvessync_help: Books in the selected shelves will be synced to your Kobo device.
 kobo.logs.channel: Log Channel
 kobo.logs.date: Date
 kobo.logs.device: Device

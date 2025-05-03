@@ -34,18 +34,28 @@ class KoboType extends AbstractType
             ->add('model', null, [
                 'disabled' => true,
                 'required' => false,
-            ])
-            ->add('forceSync', null, [
-                'required' => false,
-            ])
+            ]);
+
+        if (is_bool($options['show_last_sync_token']) && $options['show_last_sync_token']) {
+            $builder->add('lastSyncToken', KoboLastSyncTokenType::class);
+        }
+
+        $builder->add('forceSync', null, [
+            'required' => false,
+            'help' => 'kobo.form.force_sync_help',
+        ])
             ->add('upstreamSync', null, [
                 'required' => false,
+                'help' => 'kobo.form.upstreamsync_help',
                 'disabled' => !$this->koboProxyConfiguration->useProxy(),
             ])->add('syncReadingList', null, [
                 'required' => false,
+                'help' => 'kobo.form.syncreadinglist_help',
             ]);
+
         $builder->add('shelves', EntityType::class, [
             'class' => Shelf::class,
+            'help' => 'kobo.form.shelvessync_help',
             'query_builder' => fn (EntityRepository $er): QueryBuilder => $er->createQueryBuilder('u')
                 ->setParameter('user', $this->security->getUser())
                 ->andWhere('u.user = :user'),
@@ -60,6 +70,7 @@ class KoboType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'show_last_sync_token' => false,
             'data_class' => KoboDevice::class,
             'label_translation_prefix' => 'kobo.form.',
         ]);

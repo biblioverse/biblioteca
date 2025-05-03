@@ -1,0 +1,9 @@
+{% block _kobo_lastSyncToken_widget %}
+    {{ block('form_widget_simple') }}
+
+    {%  if form.parent.vars.data.id|default(false) and data is not null %}
+    <a href="{{ path('app_kobodevice_reset_sync_token', {'id': form.parent.vars.data.id}) }}" class="btn btn-secondary mt-2">
+        {{ 'kobo.form.reset-sync-token'|trans }}
+    </a>
+    {%  endif %}
+{% endblock %}
