@@ -68,10 +68,10 @@ class SyncResponse
         return array_filter($list, fn ($item) => $item !== []);
     }
 
-    public function toJsonResponse(bool $shouldContinue): JsonResponse
+    public function toJsonResponse(bool $shouldContinue, ?JsonResponse $response = null): JsonResponse
     {
         $list = $this->getData();
-        $response = new JsonResponse();
+        $response ??= new JsonResponse();
         $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
 
         $response->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue ? 'continue' : 'done');

@@ -31,7 +31,7 @@ class KoboSyncTokenExtractor
     }
 
     /**
-     * @return array{'HTTP_kobo-synctoken': string}
+     * @return array{'HTTP_X-Kobo-Synctoken': string}
      * @throws \JsonException
      */
     public function getTestHeader(SyncToken $token): array
