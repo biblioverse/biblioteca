@@ -1,0 +1,59 @@
+.LoginMasonry {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.LoginMasonry__inner {
+  width: 100%;
+  height: 100%;
+  transform: skew(-0.06turn, 18deg) scale(1.5); /**/
+  display: flex;
+}
+
+.LoginMasonry__column {
+  width: 100%;
+  flex: 1 1 0%;
+}
+
+.LoginMasonry__column__content {
+  transition-duration: 100ms;
+  transition-timing-function: linear;
+  transition-property: transform;
+  width: 100%;
+}
+
+.LoginMasonry__item {
+  width: 100%;
+  aspect-ratio: 0.75;
+  overflow: hidden;
+}
+
+.LoginMasonry__item canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.LoginOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.LoginCardContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.LoginCard {
+  background-color: rgb(255 255 255 / 0.9);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
