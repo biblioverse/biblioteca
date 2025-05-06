@@ -64,14 +64,14 @@
 
         {% if books|length >0 or query!='' or filterQuery!=''  %}
 
-            <div class="results mt-4">
-                <div class="row">
+            <div class="results">
+                <div class="row my-4">
                     <div class="col">
                         {% set route='app_allbooks' %}
                         {% set params={'page':page, 'query': query, 'filterQuery':filterQuery, 'orderQuery':orderQuery} %}
                         {% set current= pagination.page %}
                         <nav aria-label="Navigate through results">
-                            <ul class="pagination">
+                            <ul class="pagination" style="margin:0">
                                 {% if pagination.previousPage is not null %}
                                     <li class="page-item">
                                         <a class="page-link" href="{{ path(route, params|merge({'page':pagination.previousPage})) }}">{{ "generic.previous"|trans }}</a>
@@ -120,7 +120,7 @@
                             </ul>
                         </nav>
                     </div>
-                    <div class="col text-end">
+                    <div class="col text-end d-flex justify-content-end" style="gap: var(--space--sm);">
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-arrow-down-up"></i> {{ "search.sort-results"|trans }}
@@ -141,6 +141,22 @@
                                     {% endfor %}
                                 {% endfor %}
                             </ul>
+                        </div>
+
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-primary {{ perPage == 20 ?'active':''}} "
+                                data-action="live#action click->search#focus"
+                                data-live-action-param="replacePerPage"
+                                data-live-value-param='20'
+                            >20</button>
+                            <button type="button" class="btn btn-outline-primary {{ perPage == 50 ?'active':''}}"
+                                data-action="live#action click->search#focus"
+                                data-live-action-param="replacePerPage"
+                                data-live-value-param='50'>50</button>
+                            <button type="button" class="btn btn-outline-primary {{ perPage == 100 ?'active':''}}"
+                                data-action="live#action click->search#focus"
+                                data-live-action-param="replacePerPage"
+                                data-live-value-param='100'>100</button>
                         </div>
                     </div>
                 </div>
