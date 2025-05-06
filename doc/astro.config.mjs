@@ -10,9 +10,9 @@ export default defineConfig({
 		starlight({
 			title: 'Biblioteca Docs',
 			description: 'Documentation for Biblioteca, a modern, open-source, and privacy-focused eBook reader.',
-			social: {
-				github: 'https://github.com/biblioverse/biblioteca',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/biblioverse/biblioteca' },
+			],
 			editLink: {
 				baseUrl: 'https://github.com/biblioverse/biblioteca/edit/main/',
 			},
