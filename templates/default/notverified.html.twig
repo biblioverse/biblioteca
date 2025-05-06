@@ -8,18 +8,25 @@
             {{ "notverified.all-books-have-been-verified"|trans }}
         </div>
     {% else %}
-    <h2>{{ "notverified.batch-edit-all-books-in-the-list"|trans }}</h2>
-    {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
-    {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
-    {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
-    {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
-    {% if books|length>0 and is_granted('RELOCATE', books|first) %}
-    <a href="{{ path('app_notverified', {'action':'relocate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.relocate-all-books"|trans }}</a>
-    {% endif %}
-    <a href="{{ path('app_notverified', {'action':'extract'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.extract-all-covers"|trans }}</a>
-    <a href="{{ path('app_notverified', {'action':'validate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.mark-all-as-validated"|trans }}</a>
+    <div class="Card mb-3">
+        <div class="Card__title">
+            <h2 class="Heading Heading--sm">{{ "notverified.batch-edit-all-books-in-the-list"|trans }}</h2>
+        </div>
+        <div class="Card__content">
+            {{ component('InlineEditMultiple', {books: books, field:'authors', fieldValue:[]}) }}
+            {{ component('InlineEditMultiple', {books: books, field:'serie', fieldValue:[]}) }}
+            {{ component('InlineEditMultiple', {books: books, field:'tags', fieldValue:[]}) }}
+            {{ component('InlineEditMultiple', {books: books, field:'ageCategory', fieldValue:[]}) }}
+    
+            {% if books|length>0 and is_granted('RELOCATE', books|first) %}
+            <a href="{{ path('app_notverified', {'action':'relocate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.relocate-all-books"|trans }}</a>
+            {% endif %}
+            <a href="{{ path('app_notverified', {'action':'extract'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.extract-all-covers"|trans }}</a>
+            <a href="{{ path('app_notverified', {'action':'validate'}) }}" class="btn btn-sm btn-outline-danger">{{ "notverified.mark-all-as-validated"|trans }}</a>
+        </div>
+    </div>
 
-    <h2 class="mt-5">
+    <h2 class="Heading Heading--lg mb-3">
         {{ "notverified.books"|trans }}
     </h2>
     {% if books|length>=100 %}
@@ -53,6 +60,8 @@
                     <td>
                         <div>
                         <a class="h4" href="{{ path('app_book', {'book':book.id, 'slug':book.slug}) }}">{{ book.title }}</a>
+                        </div>
+                        <div>
                         {% for author in book.authors %}
                         <a href="{{ filter_book_url({'authors': author}) }}" class="text-decoration-none text-secondary">
                             <i class="bi bi-person-fill"></i>&nbsp;{{ author }}
@@ -73,15 +82,13 @@
                             {% endif %}
                         </div>
 
-
-                        <div class="my-1">
-
-                        {{ component('Assistant', {book: book}) }}
-                        </div>
-
+                        <code>{{ book.bookPath }}{{ book.bookFilename }}</code>
                     </td>
                     <td>
                         {% if not book.verified and is_granted('RELOCATE', book) %}
+                            <div class="my-1">
+                                {{ component('Assistant', {book: book}) }}
+                            </div>
                             {{ component('InlineEditVerified',{'book':book}) }}
                             <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">{{ "book.relocate"|trans }}</a>
                         {% endif %}

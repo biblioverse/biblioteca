@@ -74,7 +74,7 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
         $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
         self::assertResponseIsSuccessful();
 
-        self::assertSelectorExists('.card-body > strong', 'Check that no key is present');
+        self::assertSelectorExists('.Card__content > strong', 'Check that no key is present');
 
         $client->clickLink('Remove token');
 
@@ -88,6 +88,6 @@ class OpdsAccessControllerTest extends AbstractOpdsTestController
         $client->request(Request::METHOD_GET, '/user/profile?tab=opds');
         self::assertResponseIsSuccessful();
 
-        self::assertSelectorExists('.card-body > strong', 'Check that a key was generated');
+        self::assertSelectorExists('.Card__content > strong', 'Check that a key was generated');
     }
 }

@@ -73,10 +73,13 @@ trait TestCaseHelperTrait
         return $service;
     }
 
-    protected function getMockClient(string $returnValue, int $code = 200): ClientInterface
+    /**
+     * @param array<string,string> $headers
+     */
+    protected function getMockClient(string $returnValue, int $code = 200, array $headers = []): ClientInterface
     {
         $mock = new MockHandler([
-            new Response($code, ['Content-Type' => 'application/json'], $returnValue),
+            new Response($code, $headers + ['Content-Type' => 'application/json'], $returnValue),
         ]);
 
         $handlerStack = HandlerStack::create($mock);

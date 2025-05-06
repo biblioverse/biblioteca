@@ -75,7 +75,7 @@ class KoboDeviceController extends AbstractController
             throw $this->createAccessDeniedException('You don\'t have permission to edit this koboDevice');
         }
 
-        $form = $this->createForm(KoboType::class, $koboDevice);
+        $form = $this->createForm(KoboType::class, $koboDevice, ['show_last_sync_token' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -88,6 +88,19 @@ class KoboDeviceController extends AbstractController
             'kobo' => $koboDevice,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/{id}/reset-sync-token', name: 'app_kobodevice_reset_sync_token')]
+    public function resetSyncToken(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isGranted('EDIT', $koboDevice)) {
+            throw $this->createAccessDeniedException('You don\'t have permission to edit this koboDevice');
+        }
+
+        $koboDevice->setLastSyncToken(null);
+        $entityManager->flush();
+
+        return $this->redirect($request->headers->get('referer') ?? '/');
     }
 
     #[Route('/{id}', name: 'app_kobodevice_user_delete', methods: ['POST'])]

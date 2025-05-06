@@ -311,7 +311,7 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
 
-        $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder(options: ['label_translation_prefix' => 'upload.form.'])
             ->setMethod(Request::METHOD_POST)
             ->add('file', FileType::class, [
                 'label' => 'Book',

@@ -70,6 +70,11 @@ biblioverse_typesense:
             facet: true
             optional: true
             entity_attribute: ageCategoryLabel
+          book_path:
+            name: book_path
+            type: string
+            optional: true
+            entity_attribute: bookPath
           user.read:
             name: read
             optional: true

@@ -248,6 +248,8 @@ class SyncControllerTest extends KoboControllerTestCase
 
         $this->enableRemoteSync();
 
+        $upstreamToken = base64_encode('{"data":{"books_last_modified":null,"books_last_created":null,"archive_last_modified":null,"reading_state_last_modified":null,"tags_last_modified":null,"raw_kobo_store_token":"2222"},"version":"1-1-0"}');
+
         $this->getKoboStoreProxy()->setClient($this->getMockClient('[{
                 "DeletedTag": {
                     "Tag": {
@@ -255,10 +257,9 @@ class SyncControllerTest extends KoboControllerTestCase
                         "LastModified": "2024-02-02T13:35:31.0000000Z"
                     }
                 }
-            }]'));
+            }]', 200, [KoboDevice::KOBO_SYNC_TOKEN_HEADER => $upstreamToken]));
 
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync');
-
         $response = self::getJsonResponse();
         self::assertResponseIsSuccessful();
         self::assertThat($response, new JSONIsValidSyncResponse([
@@ -266,7 +267,8 @@ class SyncControllerTest extends KoboControllerTestCase
             'NewTag' => 1,
             'DeletedTag' => 1,
         ]), 'Response is not a valid sync response');
-
+        $token = self::getRawResponse()->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER, null);
+        self::assertSame(base64_decode($upstreamToken, true), $token !== null ? base64_decode($token, true) : null);
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();
     }

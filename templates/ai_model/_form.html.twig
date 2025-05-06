@@ -1,4 +1,12 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('generic.save')|trans }}</button>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="Card">
+            <div class="Card__content">
+                {{ form_widget(form) }}
+                <button class="btn btn-primary">{{ button_label|default('generic.save')|trans }}</button>
+            </div>
+        </div>
+    </div>
+</div>
 {{ form_end(form) }}

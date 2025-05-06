@@ -20,8 +20,8 @@ class KoboDevice
     use RandomGeneratorTrait;
     public const KOBO_DEVICE_ID_HEADER = 'X-Kobo-Deviceid';
     public const KOBO_DEVICE_MODEL_HEADER = 'X-Kobo-Devicemodel';
-    public const KOBO_SYNC_TOKEN_HEADER = 'kobo-synctoken';
-    public const KOBO_SYNC_SHOULD_CONTINUE_HEADER = 'x-kobo-sync';
+    public const KOBO_SYNC_TOKEN_HEADER = 'X-Kobo-Synctoken';
+    public const KOBO_SYNC_SHOULD_CONTINUE_HEADER = 'X-Kobo-Sync';
     public const KOBO_SYNC_MODE = 'X-Kobo-Sync-Mode';
 
     #[ORM\Id]
