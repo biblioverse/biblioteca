@@ -144,19 +144,13 @@
                         </div>
 
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-outline-primary {{ perPage == 20 ?'active':''}} "
-                                data-action="live#action click->search#focus"
-                                data-live-action-param="replacePerPage"
-                                data-live-value-param='20'
-                            >20</button>
-                            <button type="button" class="btn btn-outline-primary {{ perPage == 50 ?'active':''}}"
-                                data-action="live#action click->search#focus"
-                                data-live-action-param="replacePerPage"
-                                data-live-value-param='50'>50</button>
-                            <button type="button" class="btn btn-outline-primary {{ perPage == 100 ?'active':''}}"
-                                data-action="live#action click->search#focus"
-                                data-live-action-param="replacePerPage"
-                                data-live-value-param='100'>100</button>
+                            {% for pageIncrement in [10,50,100] %}
+                            <button type="button" class="btn btn-outline-primary {{ perPage == pageIncrement ?'active':''}} "
+                                    data-action="live#action click->search#focus"
+                                    data-live-action-param="replacePerPage"
+                                    data-live-value-param='{{pageIncrement}}'
+                                >{{pageIncrement}}</button>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
