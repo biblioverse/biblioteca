@@ -35,6 +35,9 @@ class Search
     #[LiveProp(writable: true, url: true)]
     public string $orderQuery = 'updated:desc';
 
+    #[LiveProp(writable: true, url: true)]
+    public int $perPage = 20;
+
     public array $books = [];
     public array $facets = [];
 
@@ -113,9 +116,17 @@ class Search
         $this->getResults();
     }
 
+    #[LiveAction]
+    public function replacePerPage(#[LiveArg] int $value): void
+    {
+        $this->perPage = $value;
+        $this->page = 1;
+        $this->getResults();
+    }
+
     protected function getResults(): void
     {
-        $this->searchHelper->prepareQuery($this->query, $this->filterQuery, $this->orderQuery, page: $this->page);
+        $this->searchHelper->prepareQuery($this->query, $this->filterQuery, $this->orderQuery, $this->perPage, $this->page);
 
         try {
             $this->searchHelper->execute();
@@ -125,7 +136,7 @@ class Search
             // In case of filter-query error, remove "filterBy" and try again
             if ($e instanceof SearchException && $e->getPrevious() instanceof RequestMalformed) {
                 $this->filterQueryError = $e->getMessage();
-                $this->searchHelper->prepareQuery($this->query, '', $this->orderQuery, page: $this->page);
+                $this->searchHelper->prepareQuery($this->query, '', $this->orderQuery, $this->perPage, $this->page);
                 $this->searchHelper->execute();
             }
             $this->searchHelper->execute();
