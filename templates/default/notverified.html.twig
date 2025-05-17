@@ -85,11 +85,11 @@
                         <code>{{ book.bookPath }}{{ book.bookFilename }}</code>
                     </td>
                     <td>
+                        <div class="my-1">
+                            {{ component('Assistant', {book: book}) }}
+                        </div>
+                        {{ component('InlineEditVerified',{'book':book}) }}
                         {% if not book.verified and is_granted('RELOCATE', book) %}
-                            <div class="my-1">
-                                {{ component('Assistant', {book: book}) }}
-                            </div>
-                            {{ component('InlineEditVerified',{'book':book}) }}
                             <a href="{{ path('app_book_relocate', {'id':book.id}) }}" class="btn btn-sm btn-outline-danger">{{ "book.relocate"|trans }}</a>
                         {% endif %}
                     </td>
