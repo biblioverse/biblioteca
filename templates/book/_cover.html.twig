@@ -31,8 +31,11 @@
                     <a href="{{ progress.readUrl }}" class="mt-2 btn btn-sm btn-secondary">{{ "dashboard.continue-reading"|trans }}</a>
                 </div>
 
-                <div class="book__progress__track" title="{{ progress.read }}/{{ progress.total }}">
-                    <div class="book__progress__bar" style="width: {{ (progress.read/progress.total) *100 }}%"></div>
+                {% set items = progress.read %}
+                {% set total = max(progress.total, 1) %}
+                {% set width = ((items/total) *100) %}
+                <div class="book__progress__track" title="{{ items }}/{{ total }}">
+                    <div class="book__progress__bar" style="width: {{ width }}%"></div>
                 </div>
             </div>
         {% endif %}

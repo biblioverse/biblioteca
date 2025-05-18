@@ -43,11 +43,14 @@
         </div>
         <div class="hero__progress">
             <div class="heroProgress">
+                {% set items = readBooks+hiddenBooks %}
+                {% set total = max(books|length, 1) %}
+                {% set width = ((items/total) *100) %}
                 <div class="heroProgress__text">
-                {{ 'books.reading.progress'|trans({"%read%": readBooks+hiddenBooks, "%total%": books|length }) }}
+                {{ 'books.reading.progress'|trans({"%read%": items, "%total%": total }) }}
                 </div>
                 <div class="heroProgress__bar">
-                    <div class="heroProgress__bar__progress" style="width: {{ ((readBooks+hiddenBooks)/books|length) *100 }}%">
+                    <div class="heroProgress__bar__progress" style="width: {{ width }}%">
                     </div>
                 </div>
             </div>
