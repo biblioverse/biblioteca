@@ -85,12 +85,14 @@
             <div class="heroProgress">
                 {% set width = 0 %}
                 {% if interaction is not null and interaction.readPages >0 %}
-                    {% set pages = max(book.pageNumber, 1) %}
-                    {% set width = ((interaction.readPages/pages) *100) %}
 
-                    {% if interaction.readPages > 0 %}
+                    {% set items = interaction.readPages %}
+                    {% set total = max(book.pageNumber, 1) %}
+                    {% set width = ((items/total) *100) %}
+
+                    {% if items > 0 %}
                     <div class="heroProgress__text">
-                    {{ 'books.reading.progress'|trans({"%read%": interaction.readPages, "%total%": pages }) }}
+                    {{ 'books.reading.progress'|trans({"%read%": items, "%total%": total }) }}
                     </div>
                     {% endif %}
                 {% endif %}
