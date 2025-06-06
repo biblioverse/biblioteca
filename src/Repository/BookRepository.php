@@ -341,27 +341,12 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('serie.bookInteractions', 'bookInteraction', 'WITH', '(bookInteraction.readStatus = :finished or bookInteraction.readingList=:ignored) and bookInteraction.user= :user')
             ->setParameter('ignored', ReadingList::Ignored)
             ->setParameter('user', $this->security->getUser())
-            ->addGroupBy('serie.serie')->getQuery();
+            ->addGroupBy('serie.serie')
+            ->addOrderBy('serie.serie')
+            ->getQuery();
 
         // @phpstan-ignore-next-line
         return $this->convertResults($result->getResult());
-    }
-
-    public function getIncompleteSeries(): Query
-    {
-        $qb = $this->createQueryBuilder('serie')
-            ->select('serie.serie as item')
-            ->addSelect('COUNT(serie.id) as bookCount')
-            ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
-            ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished')
-            ->setParameter('finished', ReadStatus::Finished);
-
-        $qb = $this->joinInteractions($qb, 'serie');
-
-        return $qb->where('serie.serie IS NOT NULL')
-            ->addGroupBy('serie.serie')
-            ->having('count(serie.id) != max(serie.serieIndex)')
-            ->getQuery();
     }
 
     public function getStartedSeries(): Query
@@ -391,7 +376,9 @@ class BookRepository extends ServiceEntityRepository
             ->where('publisher.publisher IS NOT NULL');
         $qb = $this->joinInteractions($qb, 'publisher');
 
-        $results = $qb->addGroupBy('publisher.publisher')->getQuery();
+        $results = $qb->addGroupBy('publisher.publisher')
+            ->addOrderBy('publisher.publisher')
+            ->getQuery();
 
         // @phpstan-ignore-next-line
         return $this->convertResults($results->getResult());
@@ -417,7 +404,9 @@ class BookRepository extends ServiceEntityRepository
             ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished');
         $qb = $this->joinInteractions($qb, 'author');
 
-        $qb->addGroupBy('author.authors');
+        $qb->addGroupBy('author.authors')
+            ->addOrderBy('author.authors')
+        ;
 
         // @phpstan-ignore-next-line
         return $this->convertResults($qb->getQuery()->getResult());
@@ -434,7 +423,9 @@ class BookRepository extends ServiceEntityRepository
             ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished');
         $qb = $this->joinInteractions($qb, 'tag');
 
-        $qb->addGroupBy('tag.tags');
+        $qb->addGroupBy('tag.tags')
+            ->addOrderBy('tag.tags')
+        ;
 
         // @phpstan-ignore-next-line
         return $this->convertResults($qb->getQuery()->getResult());
