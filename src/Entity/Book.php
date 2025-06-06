@@ -121,6 +121,12 @@ class Book
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: KoboSyncedBook::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
+    /**
+     * @var Collection<int, Suggestion>
+     */
+    #[ORM\OneToMany(targetEntity: Suggestion::class, mappedBy: 'book', orphanRemoval: true)]
+    private Collection $suggestions;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -128,6 +134,7 @@ class Book
         $this->uuid = $this->generateUuid();
         $this->koboSyncedBooks = new ArrayCollection();
         $this->bookmarkUsers = new ArrayCollection();
+        $this->suggestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -683,5 +690,31 @@ class Book
         }
 
         return $bookString;
+    }
+
+    /**
+     * @return Collection<int, Suggestion>
+     */
+    public function getSuggestions(): Collection
+    {
+        return $this->suggestions;
+    }
+
+    public function addSuggestion(Suggestion $suggestion): static
+    {
+        if (!$this->suggestions->contains($suggestion)) {
+            $this->suggestions->add($suggestion);
+            $suggestion->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuggestion(Suggestion $suggestion): static
+    {
+        // set the owning side to null (unless already changed)
+        $this->suggestions->removeElement($suggestion);
+
+        return $this;
     }
 }
