@@ -7,7 +7,7 @@ use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyEnabler;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use Psr\Log\LoggerInterface;
 
 class MetadataResponseService
@@ -59,7 +59,7 @@ class MetadataResponseService
         ]];
     }
 
-    public function fromBook(Book $book, KoboDevice $koboDevice, ?SyncToken $syncToken = null): array
+    public function fromBook(Book $book, KoboDevice $koboDevice, ?SyncTokenInterface $syncToken = null): array
     {
         $data = [
             'Categories' => ['00000000-0000-0000-0000-000000000001'],
@@ -68,7 +68,7 @@ class MetadataResponseService
             'CurrentDisplayPrice' => ['CurrencyCode' => 'USD', 'TotalAmount' => 0],
             'CurrentLoveDisplayPrice' => ['TotalAmount' => 0],
             'Description' => $book->getSummary(),
-            'DownloadUrls' => $this->getDownloadUrls($book, $koboDevice, $syncToken?->filters),
+            'DownloadUrls' => $this->getDownloadUrls($book, $koboDevice, $syncToken?->getFilters()),
             'EntitlementId' => $book->getUuid(),
             'ExternalIds' => [],
             'Genre' => '00000000-0000-0000-0000-000000000001',

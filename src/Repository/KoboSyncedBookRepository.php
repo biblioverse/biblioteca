@@ -6,7 +6,7 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Entity\User;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,14 +25,14 @@ class KoboSyncedBookRepository extends ServiceEntityRepository
         parent::__construct($registry, KoboSyncedBook::class);
     }
 
-    public function updateSyncedBooks(KoboDevice $koboDevice, array $books, SyncToken $syncToken): void
+    public function updateSyncedBooks(KoboDevice $koboDevice, array $books, SyncTokenInterface $syncToken): void
     {
         if ($books === []) {
             return;
         }
 
-        $updatedAt = $syncToken->lastModified ?? new \DateTimeImmutable();
-        $createdAt = $syncToken->lastCreated ?? new \DateTimeImmutable();
+        $updatedAt = $syncToken->getLastModified() ?? new \DateTimeImmutable();
+        $createdAt = $syncToken->getLastCreated() ?? new \DateTimeImmutable();
 
         // Query for all the book to be synced (modified/or new)
         $syncedBooksQuery = $this->createQueryBuilder('koboSyncedBook')

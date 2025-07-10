@@ -5,17 +5,19 @@ namespace App\Kobo\Response;
 use App\Entity\Book;
 use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use App\Service\BookProgressionService;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ReadingStateResponse implements \Stringable
 {
+    use TokenMaxDateTrait;
+
     public function __construct(
         protected BookProgressionService $bookProgressionService,
         protected SerializerInterface $serializer,
-        protected SyncToken $syncToken,
+        protected SyncTokenInterface $syncToken,
         protected KoboDevice $koboDevice,
         protected Book $book,
     ) {
@@ -29,11 +31,11 @@ class ReadingStateResponse implements \Stringable
         $book = $this->book;
         $uuid = $book->getUuid();
 
-        $lastModified = $this->syncToken->maxLastModified($this->koboDevice->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $book->getLastInteraction($this->koboDevice->getUser())?->getUpdated());
+        $lastModified = $this->maxLastModified($this->syncToken, $this->koboDevice->getUser()->getBookmarkForBook($book)?->getUpdated(), $book->getUpdated(), $book->getLastInteraction($this->koboDevice->getUser())?->getUpdated());
 
         return [[
             'EntitlementId' => $uuid,
-            'Created' => $this->syncToken->maxLastCreated($book->getCreated(), $book->getLastInteraction($this->koboDevice->getUser())?->getCreated()),
+            'Created' => $this->maxLastCreated($this->syncToken, $book->getCreated(), $book->getLastInteraction($this->koboDevice->getUser())?->getCreated()),
             'LastModified' => $lastModified,
             'PriorityTimestamp' => $lastModified,
             'StatusInfo' => [

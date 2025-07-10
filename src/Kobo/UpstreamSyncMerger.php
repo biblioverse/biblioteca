@@ -5,6 +5,8 @@ namespace App\Kobo;
 use App\Entity\KoboDevice;
 use App\Kobo\Proxy\KoboStoreProxy;
 use App\Kobo\Response\SyncResponse;
+use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenParser;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -23,7 +25,7 @@ class UpstreamSyncMerger
     }
 
     /**
-     * @return array{bool, SyncToken|null} Should continue + Upstream SyncToken
+     * @return array{bool, SyncTokenInterface|null} Should continue + Upstream SyncToken
      */
     public function merge(KoboDevice $device, SyncResponse $syncResponse, Request $request, ?Response $httpResponse = null): array
     {

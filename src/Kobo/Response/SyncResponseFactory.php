@@ -4,8 +4,8 @@ namespace App\Kobo\Response;
 
 use App\Entity\Book;
 use App\Entity\KoboDevice;
-use App\Kobo\SyncToken;
-use App\Kobo\SyncTokenParser;
+use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenParser;
 use App\Service\BookProgressionService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +27,7 @@ readonly class SyncResponseFactory
     ) {
     }
 
-    public function create(SyncToken $syncToken, KoboDevice $koboDevice): SyncResponse
+    public function create(SyncTokenInterface $syncToken, KoboDevice $koboDevice): SyncResponse
     {
         return new SyncResponse(
             $this->metadataResponseService,

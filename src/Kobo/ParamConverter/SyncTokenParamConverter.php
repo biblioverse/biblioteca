@@ -2,7 +2,7 @@
 
 namespace App\Kobo\ParamConverter;
 
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use App\Service\KoboSyncTokenExtractor;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,17 +18,17 @@ class SyncTokenParamConverter implements ValueResolverInterface
 
     public function supports(ArgumentMetadata $configuration): bool
     {
-        return $configuration->getType() === SyncToken::class;
+        return $configuration->getType() === SyncTokenInterface::class;
     }
 
-    public function apply(Request $request): SyncToken
+    public function apply(Request $request): SyncTokenInterface
     {
         // Fetch SyncToken from HTTP headers
         return $this->koboSyncTokenExtractor->get($request);
     }
 
     /**
-     * @return iterable<?SyncToken>
+     * @return iterable<?SyncTokenInterface>
      */
     #[\Override]
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
