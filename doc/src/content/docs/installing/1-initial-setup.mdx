@@ -40,7 +40,7 @@ import { Aside } from '@astrojs/starlight/components';
     ```bash
     docker compose exec biblioteca bin/console doctrine:migration:migrate --no-interaction
     docker compose exec biblioteca bin/console app:create-admin-user [name] [password]
-    docker compose exec biblioteca bin/console typesense:create
+    docker compose exec biblioteca bin/console biblioverse:typesense:populate
     ```
 5. Access the application at `http://localhost:8080`
 
