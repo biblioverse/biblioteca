@@ -174,6 +174,7 @@ enum.readstatus.not-started: 'Pas commencé'
 enum.readstatus.started: Commencé
 error.error-happened: 'Une erreur est survenue'
 error.stack-trace: 'Stack trace'
+generic.accept: 'Accepter'
 generic.are-you-sure-you-want-to-delete-this-item: 'Etes-vous sûr(e) de vouloir supprimer cet élément?'
 generic.are-you-sure: 'Etes-vous sûr(e)?'
 generic.back-to-list: 'Retour à la liste'
@@ -277,6 +278,7 @@ menu.publishers: Editeurs
 menu.readinglist: 'Liste de lecture'
 menu.series: Séries
 menu.shelves: Etagères
+menu.suggestions: Suggestions
 menu.tags: Catégories
 menu.timeline: 'Historique de lectures'
 menu.useradmin: 'Gestion des utilisateurs'
