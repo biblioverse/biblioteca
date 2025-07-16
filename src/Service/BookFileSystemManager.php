@@ -220,9 +220,15 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
 
         return [
             '{author}' => $author,
+            '{author-uc}' => ucwords($author, " \t\r\n\f\v-"),
+            '{author-raw}' => current($book->getAuthors()),
             '{authorFirst}' => $letter,
             '{title}' => $title,
+            '{title-uc}' => ucwords($title, " \t\r\n\f\v-"),
+            '{title-raw}' => $book->getTitle(),
             '{serie}' => $serie,
+            '{serie-uc}' => (null !== $serie) ? ucwords($serie, " \t\r\n\f\v-") : null,
+            '{serie-raw}' => $book->getSerie(),
             '{serieIndex}' => $book->getSerieIndex(),
             '{language}' => $book->getLanguage() ?? 'not-set',
             '{extension}' => $book->getExtension(),
