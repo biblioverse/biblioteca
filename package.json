@@ -13,7 +13,7 @@
     "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
     "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
     "@symfony/webpack-encore": "^5.0",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^6.0.0",
     "@vue/eslint-config-prettier": "^10.1.0",
     "autoprefixer": "^10.4.20",
     "bootstrap": "^5.3.3",
