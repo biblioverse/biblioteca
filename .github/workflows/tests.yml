@@ -34,7 +34,7 @@ jobs:
         run: docker compose  -f docker-compose.yml -f docker-compose.test.yml up -d --build
 
       - name: Install Composer Dependencies
-        run: docker compose exec biblioteca composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: docker compose exec biblioteca composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-cache
 
       - name: Install NPM Dependencies
         run: docker compose exec biblioteca npm i
