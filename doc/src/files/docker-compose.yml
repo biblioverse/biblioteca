@@ -24,7 +24,7 @@ services:
       - mariadb:/var/lib/mysql
 
   typesense:
-    image: typesense/typesense:28.0
+    image: typesense/typesense:29.0
     restart: on-failure
     ports:
       - 8983
