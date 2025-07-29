@@ -10,6 +10,7 @@ use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyMessage;
 use App\Kobo\Response\MetadataResponseService;
 use App\Service\BookFileSystemManagerInterface;
+use App\Service\EpubMetadataService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -27,6 +28,7 @@ class DownloadHelper
         protected UrlGeneratorInterface $urlGenerator,
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
+        private readonly EpubMetadataService $epubMetadataService,
     ) {
     }
 
@@ -98,6 +100,7 @@ class DownloadHelper
         }
 
         $message = null;
+        $deleteAfterSend = false;
 
         if ($format === MetadataResponseService::KEPUB_FORMAT) {
             try {
@@ -105,13 +108,28 @@ class DownloadHelper
             } catch (KepubifyConversionFailed $e) {
                 throw new NotFoundHttpException('Book conversion failed', $e);
             }
+            $fileToStream = $message->destination ?? $bookPath;
+            $deleteAfterSend = $message->destination !== null;
+        } elseif (strtolower($book->getExtension()) === 'epub' && in_array(strtoupper($format), [MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT], true)) {
+            // For EPUB downloads, embed metadata from database
+            try {
+                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $deleteAfterSend = true;
+            } catch (\Exception $e) {
+                $this->logger->warning('Failed to embed metadata in EPUB, using original file', [
+                    'book_id' => $book->getId(),
+                    'error' => $e->getMessage(),
+                ]);
+                $fileToStream = $bookPath;
+            }
+        } else {
+            $fileToStream = $bookPath;
         }
 
-        $fileToStream = $message->destination ?? $bookPath;
-        $fileSize = $message->size ?? filesize($fileToStream);
+        $fileSize = ($message instanceof KepubifyMessage ? $message->size : null) ?? filesize($fileToStream);
 
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
-            ->deleteFileAfterSend($message?->destination !== null);
+            ->deleteFileAfterSend($deleteAfterSend);
 
         $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
         $encodedFilename = rawurlencode($filename);
