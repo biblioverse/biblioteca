@@ -13,6 +13,7 @@ use App\Security\Voter\RelocationVoter;
 use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookManager;
 use App\Service\BookProgressionService;
+use App\Service\EpubMetadataService;
 use App\Service\ThemeSelector;
 use Biblioverse\TypesenseBundle\Exception\SearchException;
 use Biblioverse\TypesenseBundle\Query\SearchQuery;
@@ -21,8 +22,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +37,7 @@ class BookController extends AbstractController
     public function __construct(
         private readonly BookProgressionService $bookProgressionService,
         private readonly BookManager $bookManager,
+        private readonly EpubMetadataService $epubMetadataService,
     ) {
     }
 
@@ -446,5 +450,63 @@ class BookController extends AbstractController
             ]);
         }
         throw new BadRequestException('Invalid percent in json: '.json_encode($json));
+    }
+
+    #[Route('/{book}/{slug}/download', name: 'app_book_download')]
+    public function download(Request $request, Book $book, string $slug, BookFileSystemManagerInterface $fileSystemManager): Response
+    {
+        if ($slug !== $book->getSlug()) {
+            return $this->redirectToRoute('app_book_download', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        if (!$this->isGranted(BookVoter::VIEW, $book)) {
+            $this->addFlash('danger', 'You are not allowed to download this book');
+
+            return $this->redirectToRoute('app_dashboard', [], 301);
+        }
+
+        $bookPath = $fileSystemManager->getBookFilename($book);
+        if (!$fileSystemManager->fileExist($book)) {
+            $this->addFlash('danger', 'Book file not found');
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ]);
+        }
+
+        $deleteAfterSend = false;
+        $fileToStream = $bookPath;
+
+        // For EPUB files, embed metadata from database
+        if (strtolower($book->getExtension()) === 'epub') {
+            try {
+                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $deleteAfterSend = true;
+            } catch (\Exception) {
+                // If metadata embedding fails, fall back to original file
+                $fileToStream = $bookPath;
+            }
+        }
+
+        $response = new BinaryFileResponse($fileToStream, Response::HTTP_OK);
+        $response->deleteFileAfterSend($deleteAfterSend);
+
+        $filename = basename($book->getBookFilename());
+        $encodedFilename = rawurlencode($filename);
+        $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
+
+        $response->headers->set('Content-Type', match (strtolower($book->getExtension())) {
+            'epub' => 'application/epub+zip',
+            'pdf' => 'application/pdf',
+            'mobi' => 'application/x-mobipocket-ebook',
+            default => 'application/octet-stream',
+        });
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $encodedFilename, $simpleName));
+
+        return $response;
     }
 }
