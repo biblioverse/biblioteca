@@ -38,8 +38,8 @@
                 <td>{{ (book.size/1024/1024)|round(2) }}Mb</td>
                 <td>
                     <div class="btn-group">
-                        <a href="{{ path('app_book_consume', {'consume': book.realPath}) }}" class="btn btn-primary">Consume</a>
-                        <a href="{{ path('app_book_consume', {'delete': book.realPath}) }}" class="btn btn-primary">Delete</a>
+                        <a href="{{ path('app_book_consume', {'consume': book.realPath}) }}" class="btn btn-sm btn-primary">Consume</a>
+                        <a href="{{ path('app_book_consume', {'delete': book.realPath}) }}" class="btn btn-sm btn-primary">Delete</a>
                     </div>
                 </td>
             </tr>

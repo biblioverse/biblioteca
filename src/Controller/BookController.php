@@ -358,6 +358,21 @@ class BookController extends AbstractController
 
         $bookFiles = iterator_to_array($bookFiles);
 
+        // Sort book files by folder path first, then by filename
+        uasort($bookFiles, function (\SplFileInfo $a, \SplFileInfo $b) {
+            $pathA = dirname($a->getRealPath());
+            $pathB = dirname($b->getRealPath());
+
+            // First compare by directory
+            $dirCompare = strcmp($pathA, $pathB);
+            if ($dirCompare !== 0) {
+                return $dirCompare;
+            }
+
+            // If same directory, compare by filename
+            return strcmp($a->getFilename(), $b->getFilename());
+        });
+
         $consume = $request->get('consume');
         if ($consume !== null) {
             set_time_limit(240);
