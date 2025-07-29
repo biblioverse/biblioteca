@@ -133,9 +133,11 @@ class BooksAiCommand extends Command
                 } else {
                     $io->comment('Summary suggestion already present');
                 }
+            } else {
+                $io->comment('Summary already present');
             }
 
-            if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $overwrite === true)) {
+            if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $book->getTags() === [''] || $overwrite === true)) {
                 $io->comment('Generating Tags');
                 $tagSuggestions = array_filter($currentSuggestions, fn (Suggestion $suggestion) => $suggestion->getField() === 'tags');
                 if (count($tagSuggestions) === 0 || $overwrite === true) {
@@ -158,11 +160,15 @@ class BooksAiCommand extends Command
                 } else {
                     $io->comment('Tag suggestion already present');
                 }
+            } else {
+                $io->comment('Tags already present:'.json_encode($book->getTags()));
             }
 
             $this->em->flush();
             $current++;
         }
+
+        $io->success('Done! Head to /suggestion to see and validate the suggestions.');
 
         return Command::SUCCESS;
     }

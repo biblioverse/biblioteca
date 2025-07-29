@@ -11,7 +11,10 @@
             {% if item.extra('icon') %}
             <i class="bi bi-{{ item.extra('icon') }}"></i>
             {% endif %}
-            <span>{{ block('label') }}</span>
+            <span>{{ block('label') }}
+            {% if item.extra('badge') %}
+                <span class="badge bg-primary">{{ item.extra('badge') }}</span>
+            {% endif %}</span>
         </a>
     {% endif %}
 {% endblock %}

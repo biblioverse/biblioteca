@@ -148,6 +148,8 @@ final class MenuBuilder
 
             if (count($suggestions) > 0) {
                 $admin->addChild('menu.suggestions', ['route' => 'app_suggestion', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill')->setExtra('badge', count($suggestions));
+            } else {
+                $admin->addChild('menu.suggestions', ['route' => 'app_suggestion', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
             }
         }
 
