@@ -7,6 +7,7 @@ use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -126,7 +127,34 @@ class DefaultController extends AbstractController
     #[Route('/not-verified', name: 'app_notverified')]
     public function notverified(Request $request, BookRepository $bookRepository, BookFileSystemManagerInterface $bookFileSystemManager, EntityManagerInterface $entityManager): Response
     {
-        $books = $bookRepository->findBy(['verified' => false], ['bookPath' => 'asc', 'serieIndex' => 'asc'], 100);
+        // Check if sort parameters are provided in the request
+        $sortBy = $request->get('sort');
+        $sortOrder = $request->get('order');
+
+        // If no sort parameters in request, try to get from cookies
+        if ($sortBy === null) {
+            $sortBy = $request->cookies->get('notverified_sort', 'path');
+        }
+        if ($sortOrder === null) {
+            $sortOrder = $request->cookies->get('notverified_order', 'asc');
+        }
+
+        // Validate sort order
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'asc';
+        }
+
+        // Validate sort by
+        if (!in_array($sortBy, ['title', 'serie', 'path'], true)) {
+            $sortBy = 'path';
+        }
+        $orderBy = match ($sortBy) {
+            'title' => ['title' => $sortOrder],
+            'serie' => ['serie' => $sortOrder, 'serieIndex' => $sortOrder],
+            default => ['bookPath' => $sortOrder, 'bookFilename' => $sortOrder],
+        };
+
+        $books = $bookRepository->findBy(['verified' => false], $orderBy, 100);
 
         $action = $request->get('action');
         if ($action !== null) {
@@ -188,8 +216,25 @@ class DefaultController extends AbstractController
             }
         }
 
-        return $this->render('default/notverified.html.twig', [
+        $response = $this->render('default/notverified.html.twig', [
             'books' => $books,
+            'currentSort' => $sortBy,
+            'currentOrder' => $sortOrder,
         ]);
+
+        // Set cookies if sort parameters were provided in the request
+        if ($request->get('sort') !== null || $request->get('order') !== null) {
+            $farAway = strtotime('+1 year');
+
+            $farAway = (string) $farAway;
+            $response->headers->setCookie(
+                new Cookie('notverified_sort', $sortBy, $farAway, '/', null, false, false)
+            );
+            $response->headers->setCookie(
+                new Cookie('notverified_order', $sortOrder, $farAway, '/', null, false, false)
+            );
+        }
+
+        return $response;
     }
 }
