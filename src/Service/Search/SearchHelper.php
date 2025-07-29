@@ -47,13 +47,13 @@ class SearchHelper
         $this->query = new SearchQuery(
             q: $q,
             queryBy: 'title,serie,extension,authors,tags,summary',
-            excludeFields: 'embedding',
             filterBy: $filterBy,
             sortBy: $sortBy,
             maxFacetValues: $this->maxFacetValues,
             numTypos: 2,
             page: $page,
             perPage: $perPage,
+            excludeFields: 'embedding',
             facetBy: 'authors,serie,tags,age',
             facetStrategy: 'exhaustive',
         );
