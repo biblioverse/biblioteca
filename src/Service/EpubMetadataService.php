@@ -21,7 +21,8 @@ class EpubMetadataService
      * @param Book $book The book entity with metadata
      * @param string $originalPath Path to the original EPUB file
      * @return string Path to the temporary file with embedded metadata
-     * @throws \Exception
+     * @throws \RuntimeException If the original EPUB file is not found, cannot be opened, or the OPF file is missing.
+     * @throws \Exception If any other error occurs during the process.
      */
     public function embedMetadata(Book $book, string $originalPath): string
     {
