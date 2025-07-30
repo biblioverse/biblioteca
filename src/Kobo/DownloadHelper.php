@@ -104,24 +104,13 @@ class DownloadHelper
 
         if ($format === MetadataResponseService::KEPUB_FORMAT) {
             try {
-                $message = $this->runKepubify($bookPath);
+                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $message = $this->runKepubify($fileToStream);
             } catch (KepubifyConversionFailed $e) {
                 throw new NotFoundHttpException('Book conversion failed', $e);
             }
             $fileToStream = $message->destination ?? $bookPath;
             $deleteAfterSend = $message->destination !== null;
-        } elseif (strtolower($book->getExtension()) === 'epub' && in_array(strtoupper($format), [MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT], true)) {
-            // For EPUB downloads, embed metadata from database
-            try {
-                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
-                $deleteAfterSend = true;
-            } catch (\Exception $e) {
-                $this->logger->warning('Failed to embed metadata in EPUB, using original file', [
-                    'book_id' => $book->getId(),
-                    'error' => $e->getMessage(),
-                ]);
-                $fileToStream = $bookPath;
-            }
         } else {
             $fileToStream = $bookPath;
         }
