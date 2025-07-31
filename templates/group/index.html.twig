@@ -3,43 +3,42 @@
 {% block title %}{{ type }} - {{ letter }}{% endblock %}
 
 {% block body %}
+    <div class="row">
+        <div class="col-md-3">
+            <nav class="list-group">
+                {% for facet in facets %}
 
-    <div class="count">
-        {{ type }} - {{ letter|upper }}
-    </div>
-
-    <form method="get" class="form-inline my-2">
-        <div class="input-group">
-            <input type="text" name="search" id="search" class="form-control" placeholder="{{ "group.filter-placeholder"|trans }}" value="{{ search }}">
-            <button type="submit" class="btn btn-primary">{{ 'group.search'|trans }}</button>
-        </div>
-    </form>
-
-    <div class="btn-group btn-group-sm">
-    {% for other_letter in "a".."z" %}
-        <a href="{{ path('app_groups', {'type':type, 'letter': other_letter}) }}" class="btn {{ other_letter==letter?'btn-primary':'btn-outline-primary' }}">{{ other_letter|upper }}</a>
-    {% endfor %}
-    </div>
-        <ul class="list-unstyled my-3">
-            {% for item in group %}
-                {% set status = ((item.booksFinished/(item.bookCount+0.00001))*100)|round %}
-                {% set class = status==100?'success':(status>0?'warning':'') %}
-                <li class="px-3">
-                    {% set params = { (type): item.item } %}
-                    <a href="{{ filter_book_url(params) }}" class="text-decoration-none">
-                        {% if type=='author' %}
-                            {% set icon='person-fill' %}
-                        {% elseif type=='serie' %}
-                            {% set icon='list-ol' %}
-                        {% else %}
-                            {% set icon='tag-fill' %}
+                    <a href="{{ path('app_groups', {'type':type, 'letter': facet.value}) }}" class="list-group-item list-group-item-action {{ facet.count<1?'disabled' }} {{ facet.value==letter?'active':'' }}">
+                        {{ facet.value }}
+                        {% if facet.count>0 %}
+                        <span class="badge text-bg-secondary rounded-pill">{{ facet.count }}</span>
                         {% endif %}
-                        <i class="bi bi-{{ icon }}"></i> {{ item.item }}
-                        <span class="text-{{ class }} px-2">{{ item.booksFinished }}/{{ item.bookCount }}</span>
                     </a>
-                    {{ component('InlineEditGroup', {'existingValue':item.item,'fieldValue':item.item, 'field':type}) }}
-                </li>
-            {% endfor %}
-        </ul>
+                {% endfor %}
+            </nav>
+        </div>
+        <div class="col-md-9">
+            <ul class="list-group">
+                {% for item in results %}
+                    <li class="list-group-item">
+                        {% set params = { (type): item.name } %}
+                        <a href="{{ filter_book_url(params) }}">
+                            {% if type=='authors' %}
+                                {% set icon='person-fill' %}
+                            {% elseif type=='serie' %}
+                                {% set icon='list-ol' %}
+                            {% else %}
+                                {% set icon='tag-fill' %}
+                            {% endif %}
+                            <i class="bi bi-{{ icon }}"></i> {{ item.name }}
+                            <span class="badge text-bg-primary rounded-pill">{{ item.book_count }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+
 
 {% endblock %}
