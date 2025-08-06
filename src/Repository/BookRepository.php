@@ -364,14 +364,17 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
-    public function getStartedSeries(): Query
+    public function getStartedSeries(int $limit = 100): Query
     {
         $qb = $this->createQueryBuilder('serie')
             ->select('serie.serie as item')
             ->addSelect('COUNT(serie.id) as bookCount')
             ->addSelect('MAX(serie.serieIndex) as lastBookIndex')
             ->addSelect('COUNT(bookInteraction.readStatus) as booksFinished')
-            ->where('serie.serie IS NOT NULL');
+            ->addSelect('MAX(bookInteraction.finishedDate) as dateFinished')
+            ->where('serie.serie IS NOT NULL')
+            ->orderBy('MAX(bookInteraction.finishedDate)', 'DESC')
+            ->setMaxResults($limit);
         $qb = $this->joinInteractions($qb, 'serie');
 
         return $qb->addGroupBy('serie.serie')

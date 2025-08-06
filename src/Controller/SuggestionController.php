@@ -5,19 +5,36 @@ namespace App\Controller;
 use App\Entity\Suggestion;
 use App\Repository\SuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class SuggestionController extends AbstractController
 {
     #[Route('/suggestion', name: 'app_suggestion')]
-    public function index(SuggestionRepository $suggestionRepository): Response
-    {
-        $suggestions = $suggestionRepository->findAll();
+    public function index(
+        Request $request,
+        SuggestionRepository $suggestionRepository,
+        PaginatorInterface $paginator,
+    ): Response {
+        $page = $request->query->getInt('page', 1);
+
+        $query = $suggestionRepository->createQueryBuilder('s')
+            ->leftJoin('s.book', 'b')
+            ->addSelect('b')
+            ->orderBy('s.id', 'DESC')
+            ->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query,
+            $page,
+            10
+        );
 
         return $this->render('suggestion/index.html.twig', [
-            'suggestions' => $suggestions,
+            'pagination' => $pagination,
         ]);
     }
 
