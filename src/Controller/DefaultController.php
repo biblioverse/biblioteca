@@ -6,6 +6,7 @@ use App\Enum\ReadStatus;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManagerInterface;
+use App\Service\Search\SearchHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'app_dashboard')]
-    public function index(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository): Response
+    public function index(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository, SearchHelper $helper): Response
     {
         $exts = $bookRepository->countBooks(false);
         $types = $bookRepository->countBooks(true);
@@ -26,7 +27,7 @@ class DefaultController extends AbstractController
         /**
          * @var array<string, array{booksFinished: int, bookCount: int, item: string}> $startedSeries
          */
-        $startedSeries = $bookRepository->getStartedSeries()->getResult();
+        $startedSeries = $bookRepository->getStartedSeries(12)->getResult();
         $booksInSeries = [];
         foreach ($startedSeries as $serie) {
             if ($serie['booksFinished'] === $serie['bookCount']) {
@@ -41,7 +42,7 @@ class DefaultController extends AbstractController
 
         $tags = $bookRepository->getAllTags();
 
-        $keys = $tags === [] ? [] : array_rand($tags, min(count($tags), 4));
+        $keys = $tags === [] ? [] : array_rand($tags, min(count($tags), 2));
 
         if (!is_array($keys)) {
             $keys = [];
@@ -49,7 +50,7 @@ class DefaultController extends AbstractController
 
         $inspiration = [];
         foreach ($keys as $key) {
-            $randomBooks = [];
+            $randomBooks = $helper->prepareQuery('', 'tags:=`'.$key.'`', perPage: 2)->execute()->getBooks();
 
             $inspiration[] = [
                 ...$tags[$key],

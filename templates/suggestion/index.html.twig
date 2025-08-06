@@ -4,8 +4,16 @@
 
 {% block body %}
 
+    <div class="row mb-3">
+        <div class="col">
+            <div class="float-end">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </div>
+    </div>
+
     <table class="table table-bordered table-striped">
-        {% for suggestion in suggestions %}
+        {% for suggestion in pagination %}
             <tr>
                 <td style="width: 15%">
                     {% include themedTemplate('book/_teaser.html.twig') with {book: suggestion.book} %}
@@ -27,11 +35,19 @@
             </tr>
         {% else %}
             <tr>
-                <td>
+                <td colspan="3">
                     No suggestions. Run <code>bin/console books:ai both</code> to generate.
                 </td>
             </tr>
         {% endfor %}
     </table>
+
+    <div class="row mt-3">
+        <div class="col">
+            <div class="float-end">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
