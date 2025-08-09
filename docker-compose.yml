@@ -2,7 +2,6 @@ services:
   biblioteca:
     build:
       target: dev
-    command: ["/bin/sh", "-c" , "apache2-foreground" ]
     ports:
       - "48480:8080" # Web
       - "48181:8181" # NPM
@@ -13,12 +12,18 @@ services:
         condition: service_started
     volumes:
       - .:/var/www/html
-      - .composer:/home/.composer:cached
+      - .composer:/root/.composer:cached
     stdin_open: true
     tty: true
     networks:
       - default
       - pontsun
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
     labels:
       - 'traefik.port=8080'
