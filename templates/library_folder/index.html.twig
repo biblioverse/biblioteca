@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Library Folders{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Folder</th>
+                <th>Default</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for library_folder in library_folders %}
+            <tr>
+                <td><i class="bi bi-{{ library_folder.icon }}"></i> <a href="{{ path('app_library_folder_edit', {'id': library_folder.id}) }}">{{ library_folder.name }}</a></td>
+                <td>{{ library_folder.folder }}</td>
+                <td>{{ library_folder.defaultLibrary ? 'Yes' : 'No' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_library_folder_new') }}" class="btn btn-primary">{{ "library_folder.new"|trans}}</a>
+{% endblock %}

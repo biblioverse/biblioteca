@@ -3,7 +3,8 @@ twig:
 
 
     form_themes: ['bootstrap_5_layout.html.twig']
-
+    globals:
+      default_library_folder: '@App\Service\DefaultLibrary'
 when@test:
     twig:
         strict_variables: true

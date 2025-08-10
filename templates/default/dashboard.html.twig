@@ -14,7 +14,7 @@
                 {% include themedTemplate('book/_teaser.html.twig') with {book: bookInteraction.book, progress: {
                     read: bookInteraction.readPages,
                     total: bookInteraction.book.pageNumber,
-                    readUrl: path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages})
+                    readUrl: path('app_book_read',{'book':bookInteraction.book.id,'slug':bookInteraction.book.slug, page:bookInteraction.readPages, libraryFolder: bookInteraction.book.libraryFolder|default(default_library_folder.folderData.slug)})
                 }} %}
             </div>
         {% endfor %}
@@ -53,7 +53,7 @@
                         progress: {
                             read: book.progress.booksFinished,
                             total: book.progress.bookCount,
-                            readUrl: path('app_book_read',{'book':book.book.id,'slug':book.book.slug})
+                            readUrl: path('app_book_read',{'book':book.book.id,'slug':book.book.slug, libraryFolder: bookInteraction.book.libraryFolder|default(default_library_folder.folderData.slug)})
                         }
                     } %}
                 </a>
@@ -86,6 +86,3 @@
     </div>
 
 {% endblock %}
-
-
-

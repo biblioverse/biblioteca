@@ -4,6 +4,7 @@ namespace App\Menu;
 
 use App\Entity\Shelf;
 use App\Entity\User;
+use App\Repository\LibraryFolderRepository;
 use App\Repository\SuggestionRepository;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
@@ -23,7 +24,7 @@ final class MenuBuilder
     /**
      * Add any other dependency you need...
      */
-    public function __construct(private readonly FactoryInterface $factory, private readonly Security $security, private readonly SuggestionRepository $suggestionRepository, private readonly RequestStack $requestStack)
+    public function __construct(private readonly FactoryInterface $factory, private readonly LibraryFolderRepository $folderRepository, private readonly Security $security, private readonly SuggestionRepository $suggestionRepository, private readonly RequestStack $requestStack)
     {
     }
 
@@ -67,19 +68,12 @@ final class MenuBuilder
         if (!$user instanceof User) {
             return $menu;
         }
+
         $books = $menu->addChild('books_divider', ['label' => 'menu.books'])
             ->setExtra('header', true)
             ->setExtra('icon', 'clipboard-data');
-
         $books->addChild('menu.home', ['route' => 'app_dashboard', ...$this->defaultAttr])->setExtra('icon', 'house-fill');
-        if ($user->isDisplayAllBooks()) {
-            $allBooks = $books->addChild('menu.allbooks', ['route' => 'app_allbooks', ...$this->defaultAttr])->setExtra('icon', 'book-fill');
 
-            if ($this->isBookRoute()) {
-                $params = $this->getRouteParams(['slug', 'book']);
-                $allBooks->addChild('book', ['route' => 'app_book', 'routeParameters' => $params])->setDisplay(false);
-            }
-        }
         if ($user->isDisplaySeries()) {
             $series = $books->addChild('menu.series', ['route' => 'app_groups', 'routeParameters' => ['type' => 'serie'], ...$this->defaultAttr])->setExtra('icon', 'list');
 
@@ -101,6 +95,25 @@ final class MenuBuilder
         }
         if ($user->isDisplayPublishers()) {
             $books->addChild('menu.publishers', ['route' => 'app_groups', 'routeParameters' => ['type' => 'publisher'], ...$this->defaultAttr])->setExtra('icon', 'tags-fill');
+        }
+
+        $libFolders = $menu->addChild('folders_divider', ['label' => 'menu.libFolders'])
+            ->setExtra('header', true)
+            ->setExtra('icon', 'folder-fill');
+
+        if ($user->isDisplayAllBooks()) {
+            $folders = $this->folderRepository->findAll();
+            foreach ($folders as $folder) {
+                $allBooks = $libFolders->addChild($folder->getName(), ['route' => 'app_allbooks', 'routeParameters' => ['slug' => $folder->getSlug()], ...$this->defaultAttr])
+                    ->setExtra('icon', $folder->getIcon() ?? 'book-fill');
+
+                if ($this->isBookRoute()) {
+                    $params = $this->getRouteParams(['slug', 'book', 'libraryFolder']);
+                    if ($params['libraryFolder'] === $folder->getSlug()) {
+                        $allBooks->addChild('book', ['route' => 'app_book', 'routeParameters' => $params])->setDisplay(false);
+                    }
+                }
+            }
         }
 
         $profile = $menu->addChild('profile_divider', ['label' => $user->getUsername()])
@@ -138,10 +151,11 @@ final class MenuBuilder
                 ->setExtra('icon', 'gear-fill');
 
             $admin->addChild('menu.useradmin', ['route' => 'app_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
-            $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.kobodevices', ['route' => 'app_kobodevice_user_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
             $admin->addChild('menu.instanceconfig', ['route' => 'app_instance_configuration_index', ...$this->defaultAttr])->setExtra('icon', 'gear-fill');
+            $admin->addChild('menu.folders', ['route' => 'app_library_folder_index', ...$this->defaultAttr])->setExtra('icon', 'folder');
             $admin->addChild('menu.aimodels', ['route' => 'app_ai_model_index', ...$this->defaultAttr])->setExtra('icon', 'magic');
+            $admin->addChild('menu.addbooks', ['route' => 'app_book_consume', ...$this->defaultAttr])->setExtra('icon', 'bookmark-plus-fill');
             $admin->addChild('menu.notverified', ['route' => 'app_notverified', ...$this->defaultAttr])->setExtra('icon', 'question-circle-fill');
 
             $suggestions = $this->suggestionRepository->findAll();

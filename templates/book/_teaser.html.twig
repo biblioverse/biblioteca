@@ -17,11 +17,13 @@
     {% set icon='bi-file-binary-fill' %}
 {% endif %}
 <div>
-    <a href="{{ path('app_book',{'slug':book.slug,'book':book.id}) }}" class=" small">
+
+    <a href="{{ path('app_book',{'slug':book.slug,'book':book.id, 'libraryFolder': book.libraryFolder.slug|default(default_library_folder.folderData.slug)}) }}" class=" small">
         {% include themedTemplate('book/_cover.html.twig') with {book: book, interaction: interaction, progress: progress} %}
     </a>
     {% if withDetail %}
         <small>
+            <i class="bi bi-{{ book.libraryFolder.icon|default(default_library_folder.folderData.icon) }}"></i>&nbsp;
             <strong>{{ book.title }}</strong><br />
             {% if book.serie %}
                 <a href="{{ filter_book_url({'serie': book.serie}) }}" class="text-decoration-none text-secondary">
