@@ -103,6 +103,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: OpdsAccess::class, orphanRemoval: true)]
     private Collection $opdsAccesses;
 
+    /**
+     * @var Collection<int, LibraryFolder>
+     */
+    #[ORM\ManyToMany(targetEntity: LibraryFolder::class, mappedBy: 'allowedUsers')]
+    private Collection $libraryFolders;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -110,6 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->kobos = new ArrayCollection();
         $this->bookmarkUsers = new ArrayCollection();
         $this->opdsAccesses = new ArrayCollection();
+        $this->libraryFolders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -478,6 +485,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // set the owning side to null (unless already changed)
         if ($this->opdsAccesses->removeElement($opdsAccess) && $opdsAccess->getUser() === $this) {
             $opdsAccess->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LibraryFolder>
+     */
+    public function getLibraryFolders(): Collection
+    {
+        return $this->libraryFolders;
+    }
+
+    public function addLibraryFolder(LibraryFolder $libraryFolder): static
+    {
+        if (!$this->libraryFolders->contains($libraryFolder)) {
+            $this->libraryFolders->add($libraryFolder);
+            $libraryFolder->addAllowedUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLibraryFolder(LibraryFolder $libraryFolder): static
+    {
+        if ($this->libraryFolders->removeElement($libraryFolder)) {
+            $libraryFolder->removeAllowedUser($this);
         }
 
         return $this;

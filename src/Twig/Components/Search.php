@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components;
 
+use App\Entity\LibraryFolder;
 use App\Entity\Shelf;
 use App\Entity\User;
 use App\Service\Search\SearchHelper;
@@ -71,7 +72,22 @@ class Search
         if (!$currentRequest instanceof Request) {
             return;
         }
-        if ($currentRequest->getPathInfo() === '/all') {
+        if (str_starts_with($currentRequest->getPathInfo(), '/all')) {
+            $slug = $currentRequest->attributes->get('slug');
+            $folder = $this->manager->getRepository(LibraryFolder::class)->findOneBy(['slug' => $slug]);
+            if (!$folder instanceof LibraryFolder) {
+                $folder = $this->manager->getRepository(LibraryFolder::class)->findOneBy(['defaultLibrary' => true]);
+            }
+            if (!$folder instanceof LibraryFolder) {
+                throw new \Exception('No default library folder found');
+            }
+            if ($currentRequest->getPathInfo() !== '/all/'.$folder->getSlug()) {
+                return;
+            }
+            $this->filterQuery = 'libraryFolder:=`'.$folder->getName().'`';
+            if ($folder->isDefaultLibrary() === true) {
+                $this->filterQuery .= ' || isDefaultLibraryFolder:true';
+            }
             $this->getResults();
         }
     }

@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\LibraryFolder;
 use App\Enum\ReadStatus;
 use App\Repository\BookInteractionRepository;
 use App\Repository\BookRepository;
+use App\Repository\LibraryFolderRepository;
 use App\Service\BookFileSystemManagerInterface;
 use App\Service\Search\SearchHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -90,10 +92,19 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/all', name: 'app_allbooks')]
-    public function allbooks(): Response
+    #[Route('/all/{slug}', name: 'app_allbooks', requirements: ['page' => '\w+'])]
+    public function allbooks(LibraryFolderRepository $folderRepository, ?string $slug = null): Response
     {
-        return $this->render('default/index.html.twig');
+        if ($slug === null) {
+            $folder = $folderRepository->findOneBy(['defaultLibrary' => true]);
+        } else {
+            $folder = $folderRepository->findOneBy(['slug' => $slug]);
+        }
+        if (!$folder instanceof LibraryFolder) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('default/index.html.twig', ['folder' => $folder]);
     }
 
     #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]

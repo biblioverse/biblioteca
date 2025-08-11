@@ -115,7 +115,7 @@
                     <div style="display: grid; gap: var(--space--sm); margin-bottom: var(--space--md);">
                         {{ component('InlineEditInteraction',{'book':book, 'buttonWithText': true}) }}
 
-                        <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug}) }}">
+                        <a class="btn btn-block btn-primary" href="{{ path('app_book_read',{'book':book.id,'slug':book.slug, 'libraryFolder': book.libraryFolder.slug|default(default_library_folder.folderData.slug)}) }}">
                             <i class="bi bi-book"></i>
                             {{ 'book.read-in-browser'|trans }}
                         </a>
