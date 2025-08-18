@@ -90,6 +90,16 @@ biblioverse_typesense:
             optional: true
             type: int32[]
             entity_attribute: users.favorite
+          libraryFolder.name:
+            name: libraryFolder
+            optional: true
+            type: string
+            entity_attribute: libraryFolder.name
+          libraryFolder.default:
+            name: isDefaultLibraryFolder
+            optional: false
+            type: bool
+            entity_attribute: isDefaultLibraryFolder
           embedding:
             name: embedding
             type: float[]

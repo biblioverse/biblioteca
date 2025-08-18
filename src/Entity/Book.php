@@ -127,6 +127,9 @@ class Book
     #[ORM\OneToMany(targetEntity: Suggestion::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $suggestions;
 
+    #[ORM\ManyToOne(inversedBy: 'books')]
+    private ?LibraryFolder $libraryFolder = null;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -716,5 +719,22 @@ class Book
         $this->suggestions->removeElement($suggestion);
 
         return $this;
+    }
+
+    public function getLibraryFolder(): ?LibraryFolder
+    {
+        return $this->libraryFolder;
+    }
+
+    public function setLibraryFolder(?LibraryFolder $libraryFolder): static
+    {
+        $this->libraryFolder = $libraryFolder;
+
+        return $this;
+    }
+
+    public function isDefaultLibraryFolder(): bool
+    {
+        return !$this->libraryFolder instanceof LibraryFolder;
     }
 }
