@@ -6653,16 +6653,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v2.8.1",
+            "version": "v2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "423c36e369361003dc31ef11c5f15fb589e52c01"
+                "reference": "f356aa35f3cf3d2f46c31d344c1098eb2d260426"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/423c36e369361003dc31ef11c5f15fb589e52c01",
-                "reference": "423c36e369361003dc31ef11c5f15fb589e52c01",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/f356aa35f3cf3d2f46c31d344c1098eb2d260426",
+                "reference": "f356aa35f3cf3d2f46c31d344c1098eb2d260426",
                 "shasum": ""
             },
             "require": {
@@ -6701,7 +6701,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v2.8.1"
+                "source": "https://github.com/symfony/flex/tree/v2.8.2"
             },
             "funding": [
                 {
@@ -6713,11 +6713,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-05T07:45:19+00:00"
+            "time": "2025-08-22T07:17:23+00:00"
         },
         {
             "name": "symfony/form",
@@ -9674,16 +9678,16 @@
         },
         {
             "name": "symfony/stimulus-bundle",
-            "version": "v2.29.1",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stimulus-bundle.git",
-                "reference": "fedf396824a29f9c3bcf475b148aaf2db79521c9"
+                "reference": "7788eaec422c0d606e042e947faff9ed793954c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/fedf396824a29f9c3bcf475b148aaf2db79521c9",
-                "reference": "fedf396824a29f9c3bcf475b148aaf2db79521c9",
+                "url": "https://api.github.com/repos/symfony/stimulus-bundle/zipball/7788eaec422c0d606e042e947faff9ed793954c6",
+                "reference": "7788eaec422c0d606e042e947faff9ed793954c6",
                 "shasum": ""
             },
             "require": {
@@ -9723,7 +9727,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.29.1"
+                "source": "https://github.com/symfony/stimulus-bundle/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -9743,7 +9747,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-08T11:38:41+00:00"
+            "time": "2025-08-18T09:13:24+00:00"
         },
         {
             "name": "symfony/stopwatch",
@@ -10364,16 +10368,16 @@
         },
         {
             "name": "symfony/ux-autocomplete",
-            "version": "v2.29.1",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-autocomplete.git",
-                "reference": "852ca8b7434c8e4ba2ceeb90ef69ab49d51a84fd"
+                "reference": "9e2372ea6858cd21447ce4327094d7dd66a16712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/852ca8b7434c8e4ba2ceeb90ef69ab49d51a84fd",
-                "reference": "852ca8b7434c8e4ba2ceeb90ef69ab49d51a84fd",
+                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/9e2372ea6858cd21447ce4327094d7dd66a16712",
+                "reference": "9e2372ea6858cd21447ce4327094d7dd66a16712",
                 "shasum": ""
             },
             "require": {
@@ -10434,7 +10438,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.29.1"
+                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -10454,20 +10458,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-08T11:38:41+00:00"
+            "time": "2025-08-18T20:25:45+00:00"
         },
         {
             "name": "symfony/ux-live-component",
-            "version": "v2.29.1",
+            "version": "v2.29.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-live-component.git",
-                "reference": "be9aed778681bd496a5ebbc039aef313a48ec7f4"
+                "reference": "5d5e52071c392630aef852c7b7bf94ecd4fa8b99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/be9aed778681bd496a5ebbc039aef313a48ec7f4",
-                "reference": "be9aed778681bd496a5ebbc039aef313a48ec7f4",
+                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/5d5e52071c392630aef852c7b7bf94ecd4fa8b99",
+                "reference": "5d5e52071c392630aef852c7b7bf94ecd4fa8b99",
                 "shasum": ""
             },
             "require": {
@@ -10535,7 +10539,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-live-component/tree/v2.29.1"
+                "source": "https://github.com/symfony/ux-live-component/tree/v2.29.2"
             },
             "funding": [
                 {
@@ -10555,7 +10559,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-08T11:38:41+00:00"
+            "time": "2025-08-18T20:25:45+00:00"
         },
         {
             "name": "symfony/ux-twig-component",
@@ -13228,16 +13232,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.33",
+            "version": "11.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5965e9ff57546cb9137c0ff6aa78cb7442b05cf6"
+                "reference": "3e4c6ef395f7cb61a6206c23e0e04b31724174f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5965e9ff57546cb9137c0ff6aa78cb7442b05cf6",
-                "reference": "5965e9ff57546cb9137c0ff6aa78cb7442b05cf6",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3e4c6ef395f7cb61a6206c23e0e04b31724174f2",
+                "reference": "3e4c6ef395f7cb61a6206c23e0e04b31724174f2",
                 "shasum": ""
             },
             "require": {
@@ -13309,7 +13313,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.33"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.34"
             },
             "funding": [
                 {
@@ -13333,7 +13337,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-16T05:19:02+00:00"
+            "time": "2025-08-20T14:41:45+00:00"
         },
         {
             "name": "react/cache",
