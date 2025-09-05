@@ -33,4 +33,12 @@ class SyncTokenSerializerTest extends TestCase
         $data = ['someKey' => 'value'];
         self::assertInstanceOf(SyncTokenV1::class, SyncTokenSerializer::fromArray($data));
     }
+
+    public function testPagePersisted(): void
+    {
+        foreach ([(new SyncTokenV1())->withPage(42), (new SyncTokenV2([]))->withPage(42)] as $token) {
+            $newToken = SyncTokenSerializer::fromArray(SyncTokenSerializer::toArray($token));
+            self::assertEquals(42, $newToken->getPage());
+        }
+    }
 }

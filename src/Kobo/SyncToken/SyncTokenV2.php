@@ -52,12 +52,14 @@ class SyncTokenV2 extends AbstractSyncToken
 
     public function toArray(): array
     {
-        return ['data' => $this->data, 'isContinuation' => $this->isContinuation, 'filters' => $this->filters];
+        return ['data' => $this->data, 'isContinuation' => $this->isContinuation, 'filters' => $this->filters, 'page' => $this->page];
     }
 
     public static function fromArray(array $lastSyncToken): SyncTokenInterface
     {
-        return (new self($lastSyncToken['data'], $lastSyncToken['isContinuation'] ?? null))->setFilters($lastSyncToken['filters'] ?? null);
+        return (new self($lastSyncToken['data'], $lastSyncToken['isContinuation'] ?? null))
+            ->setFilters($lastSyncToken['filters'] ?? null)
+            ->setPage($lastSyncToken['page'] ?? 1);
     }
 
     public function isContinuation(): bool

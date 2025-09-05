@@ -79,6 +79,17 @@ class SyncTokenV2Test extends TestCase
         self::assertSame($this->getExpected(), $syncToken->toArray());
     }
 
+    public function testPage(): void
+    {
+        $syncToken = $this->createToken()
+            ->setPage(42);
+
+        $expected = $this->getExpected();
+        $expected['page'] = 42;
+
+        self::assertSame($expected, $syncToken->toArray());
+    }
+
     private function createToken(): SyncTokenV2
     {
         return new SyncTokenV2(self::TOKEN_DATA, true);
@@ -90,6 +101,7 @@ class SyncTokenV2Test extends TestCase
             'data' => self::TOKEN_DATA,
             'isContinuation' => true,
             'filters' => [],
+            'page' => 1,
         ];
     }
 }
