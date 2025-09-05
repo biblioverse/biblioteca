@@ -31,4 +31,12 @@ abstract class AbstractSyncToken implements SyncTokenInterface
     {
         return $this->filters;
     }
+
+    /**
+     * @throws \JsonException
+     */
+    public function __toString(): string
+    {
+        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+    }
 }

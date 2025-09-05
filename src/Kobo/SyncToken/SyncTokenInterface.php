@@ -12,7 +12,7 @@ namespace App\Kobo\SyncToken;
  * Example: a book is placed in ChangedEntitlement or NewEntitlement
  * depending on its creation date relative to the token.
  */
-interface SyncTokenInterface
+interface SyncTokenInterface extends \Stringable
 {
     public function getLastCreated(): ?\DateTimeImmutable;
 

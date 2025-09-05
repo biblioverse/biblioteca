@@ -5,7 +5,7 @@ namespace App\Kobo\SyncToken;
 /**
  * This is the default token class used internally for synchronizing book based on dates.
  */
-class SyncTokenV1 extends AbstractSyncToken implements \Stringable
+class SyncTokenV1 extends AbstractSyncToken
 {
     public const string VERSION = '1-1-0';
 
@@ -79,11 +79,6 @@ class SyncTokenV1 extends AbstractSyncToken implements \Stringable
         }
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
     public function markLastSyncDateAndResetPage(): self
