@@ -118,7 +118,7 @@ class DownloadHelper
         $simpleName = rawurlencode(sprintf('book-%s-%s', $book->getId(), preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $filename)));
 
         $response->headers->set('Content-Type', match (strtoupper($format)) {
-            MetadataResponseService::KEPUB_FORMAT, MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT => 'application/epub+zip',
+            MetadataResponseService::EPUB3_SAMPLE_FORMAT, MetadataResponseService::EPUB3_WEB_FORMAT, MetadataResponseService::KEPUB_FORMAT, MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT => 'application/epub+zip',
             default => 'application/octet-stream',
         });
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $encodedFilename, $simpleName));

@@ -14,7 +14,9 @@ class MetadataResponseService
 {
     public const KEPUB_FORMAT = 'KEPUB';
     public const EPUB3_FORMAT = 'EPUB3';
+    public const EPUB3_WEB_FORMAT = 'EPUB3WEB';
     public const EPUB_FORMAT = 'EPUB';
+    public const EPUB3_SAMPLE_FORMAT = 'EPUB3_SAMPLE';
 
     public function __construct(
         protected DownloadHelper $downloadHelper,
@@ -35,6 +37,7 @@ class MetadataResponseService
                 $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_FORMAT);
 
                 return [0 => [
+                    'DrmType' => 'None', // KDRM, AdobeDrm
                     'Format' => self::KEPUB_FORMAT,
                     'Size' => $downloadInfo->getSize(),
                     'Url' => $downloadInfo->getUrl(),
