@@ -120,7 +120,7 @@
                             {{ 'book.read-in-browser'|trans }}
                         </a>
 
-                        <a class="btn btn-block btn-secondary" href="{{ asset('books/'~book.bookPath~book.bookFilename) }}">
+                        <a class="btn btn-block btn-secondary" href="{{ path('app_book_download', {'book': book.id, 'slug': book.slug}) }}">
                             <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
                         </a>
 

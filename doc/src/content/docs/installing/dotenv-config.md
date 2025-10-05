@@ -17,6 +17,7 @@ BOOK_FILE_NAMING_FORMAT="{serie}-{serieIndex}-{title}"
 KOBO_PROXY_USE_EVERYWHERE=0
 KOBO_PROXY_ENABLED=1
 ALLOW_BOOK_RELOCATION=1
+EPUB_METADATA_EMBED_ENABLED=1
 ```
 
 - `APP_ENV`: The environment the application is running in. This can be `dev` or `prod`. You should always use `prod` unless you need to debug the application.
@@ -35,5 +36,6 @@ ALLOW_BOOK_RELOCATION=1
 - `KOBO_PROXY_USE_EVERYWHERE`: If set to `1`, the kobo proxy will be used everywhere and all request will be forwarded to the original store.
 - `KOBO_PROXY_ENABLED`: If set to `0`, the kobo proxy will be disabled.
 - `ALLOW_BOOK_RELOCATION`: If set to `0`, the books will not be moved to the correct folder when added to the library. This is useful if you want to manage the folder structure yourself.
+- `EPUB_METADATA_EMBED_ENABLED`: If set to `0`, EPUB downloads will use the original file without embedding library metadata.
 
 

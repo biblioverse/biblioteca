@@ -10,6 +10,7 @@ use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyMessage;
 use App\Kobo\Response\MetadataResponseService;
 use App\Service\BookFileSystemManagerInterface;
+use App\Service\EpubMetadataService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -27,6 +28,7 @@ class DownloadHelper
         protected UrlGeneratorInterface $urlGenerator,
         protected LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
+        private readonly EpubMetadataService $epubMetadataService,
     ) {
     }
 
@@ -98,20 +100,29 @@ class DownloadHelper
         }
 
         $message = null;
+        $deleteAfterSend = false;
 
         if ($format === MetadataResponseService::KEPUB_FORMAT) {
             try {
-                $message = $this->runKepubify($bookPath);
+                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $message = $this->runKepubify($embeddedPath);
             } catch (KepubifyConversionFailed $e) {
                 throw new NotFoundHttpException('Book conversion failed', $e);
             }
+            $fileToStream = $message->destination ?? $bookPath;
+            $deleteAfterSend = $message->destination !== null;
+        } else {
+            $fileToStream = $bookPath;
+            if (strtoupper($format) === MetadataResponseService::EPUB_FORMAT && strtolower($book->getExtension()) === 'epub') {
+                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $deleteAfterSend = $fileToStream !== $bookPath;
+            }
         }
 
-        $fileToStream = $message->destination ?? $bookPath;
-        $fileSize = $message->size ?? filesize($fileToStream);
+        $fileSize = ($message instanceof KepubifyMessage ? $message->size : null) ?? filesize($fileToStream);
 
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
-            ->deleteFileAfterSend($message?->destination !== null);
+            ->deleteFileAfterSend($deleteAfterSend);
 
         $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
         $encodedFilename = rawurlencode($filename);
