@@ -481,11 +481,12 @@ class BookController extends AbstractController
         $deleteAfterSend = false;
         $fileToStream = $bookPath;
 
-        // For EPUB files, embed metadata from database
+        // For EPUB files, embed metadata from database when enabled
         if (strtolower($book->getExtension()) === 'epub') {
             try {
-                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
-                $deleteAfterSend = true;
+                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $fileToStream = $embeddedPath;
+                $deleteAfterSend = $embeddedPath !== $bookPath;
             } catch (\Exception) {
                 // If metadata embedding fails, fall back to original file
                 $fileToStream = $bookPath;

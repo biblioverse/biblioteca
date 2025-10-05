@@ -20,6 +20,8 @@ parameters:
     env(KOBO_READINGSERVICES_URL): 'https://readingservices.kobo.com'
     ALLOW_BOOK_RELOCATION: '%env(bool:ALLOW_BOOK_RELOCATION)%'
     env(ALLOW_BOOK_RELOCATION): true
+    EPUB_METADATA_EMBED_ENABLED: '%env(bool:EPUB_METADATA_EMBED_ENABLED)%'
+    env(EPUB_METADATA_EMBED_ENABLED): true
 
     TYPESENSE_KEY: '%env(TYPESENSE_KEY)%'
     TYPESENSE_URL: '%env(TYPESENSE_URL)%'
@@ -113,6 +115,10 @@ services:
             '$bookFileNamingFormat': '%BOOK_FILE_NAMING_FORMAT%'
 
     App\Service\BookFileSystemManagerInterface: '@App\Service\BookFileSystemManager'
+
+    App\Service\EpubMetadataService:
+        arguments:
+            $metadataEmbeddingEnabled: '%EPUB_METADATA_EMBED_ENABLED%'
 
     App\Kobo\ParamConverter\SyncTokenParamConverter:
       tags:

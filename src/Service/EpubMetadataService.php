@@ -12,7 +12,7 @@ class EpubMetadataService
 
     private readonly Filesystem $filesystem;
 
-    public function __construct()
+    public function __construct(private readonly bool $metadataEmbeddingEnabled = true)
     {
         $this->filesystem = new Filesystem();
     }
@@ -30,6 +30,10 @@ class EpubMetadataService
     {
         if (!file_exists($originalPath)) {
             throw new \RuntimeException('Original EPUB file not found: '.$originalPath);
+        }
+
+        if ($this->metadataEmbeddingEnabled === false) {
+            return $originalPath;
         }
 
         // Create temporary directories
