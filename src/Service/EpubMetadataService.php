@@ -7,8 +7,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class EpubMetadataService
 {
-    private const NS_DC = 'http://purl.org/dc/elements/1.1/';
-    private const NS_OPF = 'http://www.idpf.org/2007/opf';
+    private const string NS_DC = 'http://purl.org/dc/elements/1.1/';
+    private const string NS_OPF = 'http://www.idpf.org/2007/opf';
 
     private readonly Filesystem $filesystem;
 
@@ -196,12 +196,12 @@ class EpubMetadataService
             if ($firstElement instanceof \DOMNode) {
                 $firstElement->nodeValue = htmlspecialchars($value);
             }
-        } else {
-            $namespace = self::NS_DC;
-            $localName = str_replace('dc:', '', $elementName);
-            $node = $dom->createElementNS($namespace, $elementName, htmlspecialchars($value));
-            $metadata->appendChild($node);
+
+            return;
         }
+        $namespace = self::NS_DC;
+        $node = $dom->createElementNS($namespace, $elementName, htmlspecialchars($value));
+        $metadata->appendChild($node);
     }
 
     /**
@@ -230,11 +230,13 @@ class EpubMetadataService
     private function removeElements(\DOMXPath $xpath, string $query): void
     {
         $elements = $xpath->query($query);
-        if ($elements !== false) {
-            foreach ($elements as $element) {
-                if ($element->parentNode instanceof \DOMNode) {
-                    $element->parentNode->removeChild($element);
-                }
+        if ($elements === false) {
+            return;
+        }
+
+        foreach ($elements as $element) {
+            if ($element->parentNode instanceof \DOMNode) {
+                $element->parentNode->removeChild($element);
             }
         }
     }
