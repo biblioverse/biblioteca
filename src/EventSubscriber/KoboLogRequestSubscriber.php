@@ -17,7 +17,7 @@ class KoboLogRequestSubscriber implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (false === (bool) $event->getRequest()->attributes->get('isKoboRequest', false)) {
+        if (false === $event->getRequest()->attributes->getBoolean('isKoboRequest')) {
             return;
         }
 

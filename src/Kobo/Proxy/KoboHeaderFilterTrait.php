@@ -13,10 +13,10 @@ trait KoboHeaderFilterTrait
     {
         $result = [];
         foreach ($headers as $key => $value) {
-            if (str_starts_with(strtolower($key), 'x-kobo-')) {
+            if (str_starts_with(strtolower((string) $key), 'x-kobo-')) {
                 $result[$key] = $value;
             }
-            if (in_array(strtolower($key), ['authorization', 'host'], true)) {
+            if (in_array(strtolower((string) $key), ['authorization', 'host'], true)) {
                 $result[$key] = $value;
             }
         }
