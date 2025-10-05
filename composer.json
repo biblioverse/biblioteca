@@ -12,6 +12,7 @@
     "ext-imagick": "*",
     "ext-zip": "*",
     "beberlei/doctrineextensions": "^1.3",
+    "behat/transliterator": "^1.5",
     "biblioverse/typesense-bundle": "^0.0.8",
     "devdot/monolog-parser": "^1.6",
     "doctrine/annotations": "^2.0.2",

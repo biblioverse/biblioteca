@@ -39,21 +39,21 @@ abstract class AbstractOpdsTestController extends WebTestCase
         $content = $response->getContent();
 
         if ($content === false) {
-            static::fail('Unable to read response content');
+            self::fail('Unable to read response content');
         }
         $getXML = simplexml_load_string($content);
         if ($getXML === false) {
-            static::fail('Unable to parse response XML');
+            self::fail('Unable to parse response XML');
         }
         $encoded = json_encode($getXML);
 
         if ($encoded === false) {
-            static::fail('Unable to encode response XML');
+            self::fail('Unable to encode response XML');
         }
 
         $decoded = json_decode($encoded, true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($decoded)) {
-            static::fail('Unable to decode response content');
+            self::fail('Unable to decode response content');
         }
 
         return $decoded;

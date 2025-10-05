@@ -38,7 +38,7 @@ abstract class KoboControllerTestCase extends WebTestCase
         $content = $response->getContent();
 
         if ($content === false) {
-            static::fail('Unable to read response content');
+            self::fail('Unable to read response content');
         }
 
         try {
