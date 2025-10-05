@@ -1,8 +1,10 @@
 {% block _kobo_lastSyncToken_widget %}
-    {{ block('form_widget_simple') }}
-
+    {# Rendering the block('form_widget_simple') crash with this error: #}
+    {# An exception has been thrown during the rendering of a template ("ReflectionObject::__construct(): Argument #1 ($object) must be of type object, null given") #}
+    {# So we hack it by using "toArray" as SyncTokenV2 could not be converted to string.. WTF #}
+    <textarea disabled class="form-control">{% if data %}{{ data.toArray|json_encode(constant('JSON_PRETTY_PRINT')) }}{% else %}{% endif %}</textarea>
     {%  if form.parent.vars.data.id|default(false) and data is not null %}
-    <a href="{{ path('app_kobodevice_reset_sync_token', {'id': form.parent.vars.data.id}) }}" class="btn btn-secondary mt-2">
+       <a href="{{ path('app_kobodevice_reset_sync_token', {'id': form.parent.vars.data.id}) }}" class="btn btn-secondary mt-2">
         {{ 'kobo.form.reset-sync-token'|trans }}
     </a>
     {%  endif %}

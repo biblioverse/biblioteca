@@ -6,7 +6,7 @@ use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenV1;
 use App\Repository\BookRepository;
 use App\Service\KoboSyncTokenExtractor;
 use App\Tests\Contraints\JSONIsValidSyncResponse;
@@ -78,7 +78,7 @@ class SyncControllerTest extends KoboControllerTestCase
         $perPage = 7;
         $numberOfPages = (int) ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
 
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->lastCreated = new \DateTimeImmutable('now');
         // Build the sync-token header
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
@@ -125,7 +125,7 @@ class SyncControllerTest extends KoboControllerTestCase
         $perPage = 7;
         $numberOfPages = (int) ceil(BookFixture::NUMBER_OF_OWNED_YAML_BOOKS / $perPage);
 
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->lastCreated = new \DateTimeImmutable('now');
         $syncToken->lastModified = null;
         $this->getKoboDevice()->setLastSyncToken($syncToken);
@@ -181,7 +181,7 @@ class SyncControllerTest extends KoboControllerTestCase
         self::assertSame(0, $count, 'Number of synced book is invalid');
 
         $client = static::getClient();
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->lastModified = new \DateTimeImmutable('now');
 
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
@@ -219,7 +219,7 @@ class SyncControllerTest extends KoboControllerTestCase
         $clock->alter('+ 10 seconds');
 
         // Create a sync token
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->lastCreated = $clock->now();
         $syncToken->lastModified = $clock->now();
         $syncToken->tagLastModified = $clock->now();
@@ -294,7 +294,7 @@ class SyncControllerTest extends KoboControllerTestCase
         $this->getEntityManager()->flush();
 
         // Make sure the book is there with the archived flag
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->archiveLastModified = new \DateTimeImmutable('2025-01-31 19:00:00');
         $headers = $this->getService(KoboSyncTokenExtractor::class)->getTestHeader($syncToken);
         $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);

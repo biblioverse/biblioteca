@@ -5,8 +5,8 @@ namespace App\Kobo\Response;
 use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
-use App\Kobo\SyncToken;
-use App\Kobo\SyncTokenParser;
+use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenParser;
 use App\Service\BookProgressionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class SyncResponse
 {
+    use TokenMaxDateTrait;
     public const DATE_FORMAT = "Y-m-d\TH:i:s\Z";
 
     /** @var array<int, Book> */
@@ -44,7 +45,7 @@ class SyncResponse
     public function __construct(
         protected MetadataResponseService $metadataResponse,
         protected BookProgressionService $bookProgressionService,
-        protected SyncToken $syncToken,
+        protected SyncTokenInterface $syncToken,
         protected KoboDevice $koboDevice,
         protected SerializerInterface $serializer,
         protected ReadingStateResponseFactory $readingStateResponseFactory,
@@ -68,17 +69,21 @@ class SyncResponse
         return array_filter($list, fn ($item) => $item !== []);
     }
 
-    public function toJsonResponse(bool $shouldContinue, ?JsonResponse $response = null): JsonResponse
+    /**
+     * @throws \JsonException
+     */
+    public function toJsonResponse(bool $shouldContinue, ?JsonResponse $response = null, ?SyncTokenInterface $syncToken = null): JsonResponse
     {
         $list = $this->getData();
+        $syncToken ??= $this->syncToken;
         $response ??= new JsonResponse();
         $response->setContent($this->serializer->serialize($list, 'json', [DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT]));
 
         $response->headers->set(KoboDevice::KOBO_SYNC_SHOULD_CONTINUE_HEADER, $shouldContinue ? 'continue' : 'done');
         $response->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
-        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $this->syncTokenParser->encode($this->syncToken));
+        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $this->syncTokenParser->encode($syncToken));
         if ($this->kernelDebug) {
-            $response->headers->set('X-Debug-'.KoboDevice::KOBO_SYNC_TOKEN_HEADER, (string) json_encode($this->syncToken->toArray()));
+            $response->headers->set('X-Debug-'.KoboDevice::KOBO_SYNC_TOKEN_HEADER, json_encode($syncToken->toArray(), JSON_THROW_ON_ERROR));
         }
 
         return $response;
@@ -130,7 +135,7 @@ class SyncResponse
             'IsRemoved' => $removed,
             'IsHiddenFromArchive' => false,
             'IsLocked' => false,
-            'LastModified' => $this->syncToken->maxLastModified($book->getUpdated(), $this->syncToken->lastModified),
+            'LastModified' => $this->maxLastModified($this->syncToken, $book->getUpdated(), $this->syncToken->getLastModified()),
             'OriginCategory' => 'Imported',
             'RevisionId' => $uuid,
             'Status' => 'Active',
@@ -217,13 +222,13 @@ class SyncResponse
     {
         return [
             'Tag' => [
-                'Created' => $this->syncToken->maxLastCreated($shelf->getCreated()),
+                'Created' => $this->maxLastCreated($this->syncToken, $shelf->getCreated()),
                 'Id' => $shelf->getUuid(),
                 'Items' => array_map(fn (Book $book) => [
                     'RevisionId' => $book->getUuid(),
                     'Type' => 'ProductRevisionTagItem',
                 ], $this->books),
-                'LastModified' => $this->syncToken->maxLastModified($shelf->getUpdated()),
+                'LastModified' => $this->maxLastModified($this->syncToken, $shelf->getUpdated()),
                 'Name' => $shelf->getName(),
                 'Type' => 'UserTag',
             ],

@@ -4,7 +4,7 @@ namespace App\Kobo\Response;
 
 use App\Entity\Book;
 use App\Entity\KoboDevice;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use App\Service\BookProgressionService;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -20,7 +20,7 @@ class ReadingStateResponseFactory
     ) {
     }
 
-    public function create(SyncToken $syncToken, KoboDevice $koboDevice, Book $book): ReadingStateResponse
+    public function create(SyncTokenInterface $syncToken, KoboDevice $koboDevice, Book $book): ReadingStateResponse
     {
         return new ReadingStateResponse(
             $this->bookProgressionService,

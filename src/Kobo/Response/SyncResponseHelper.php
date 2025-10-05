@@ -6,7 +6,7 @@ use App\Entity\Book;
 use App\Entity\BookInteraction;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 
 // Inspired by https://github.com/janeczku/calibre-web/blob/master/cps/kobo.py
 
@@ -16,9 +16,9 @@ use App\Kobo\SyncToken;
  * @phpstan-type BookReadingState array<string, mixed>
  * @phpstan-type BookTag array<string, mixed>
  */
-class SyncResponseHelper
+readonly class SyncResponseHelper
 {
-    public function __construct(private readonly SyncToken $syncToken, private readonly KoboDevice $koboDevice)
+    public function __construct(private SyncTokenInterface $syncToken, private KoboDevice $koboDevice)
     {
     }
 
@@ -33,11 +33,11 @@ class SyncResponseHelper
             return true;
         }
 
-        if (!$this->syncToken->lastModified instanceof \DateTimeInterface) {
+        if (!$this->syncToken->getLastModified() instanceof \DateTimeInterface) {
             return false;
         }
 
-        return $book->getUpdated() >= $this->syncToken->lastModified;
+        return $book->getUpdated() >= $this->syncToken->getLastModified();
     }
 
     public function isNewEntitlement(Book $book): bool
@@ -46,7 +46,7 @@ class SyncResponseHelper
             return true;
         }
 
-        return $this->syncToken->lastCreated instanceof \DateTimeInterface && $book->getCreated() > $this->syncToken->lastCreated;
+        return $this->syncToken->getLastCreated() instanceof \DateTimeInterface && $book->getCreated() > $this->syncToken->getLastCreated();
     }
 
     public function isChangedReadingState(Book $book): bool
@@ -55,22 +55,22 @@ class SyncResponseHelper
             return false;
         }
 
-        if (!$this->syncToken->readingStateLastModified instanceof \DateTimeInterface) {
+        if (!$this->syncToken->getReadingStateLastModified() instanceof \DateTimeInterface) {
             return false;
         }
 
         $lastInteraction = $book->getLastInteraction($this->koboDevice->getUser());
 
-        return ($lastInteraction instanceof BookInteraction) && $lastInteraction->getUpdated() >= $this->syncToken->readingStateLastModified;
+        return ($lastInteraction instanceof BookInteraction) && $lastInteraction->getUpdated() >= $this->syncToken->getReadingStateLastModified();
     }
 
     public function isNewTag(Shelf $shelf): bool
     {
-        if (!$this->syncToken->tagLastModified instanceof \DateTimeInterface) {
+        if (!$this->syncToken->getTagLastModified() instanceof \DateTimeInterface) {
             return true;
         }
 
-        return $shelf->getCreated() >= $this->syncToken->tagLastModified;
+        return $shelf->getCreated() >= $this->syncToken->getTagLastModified();
     }
 
     public function isChangedTag(Shelf $shelf): bool
@@ -79,7 +79,7 @@ class SyncResponseHelper
             return false;
         }
 
-        return $shelf->getUpdated() >= $this->syncToken->tagLastModified;
+        return $shelf->getUpdated() >= $this->syncToken->getTagLastModified();
     }
 
     public function isArchivedEntitlement(Book $book): bool

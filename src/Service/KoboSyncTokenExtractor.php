@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Entity\KoboDevice;
-use App\Kobo\SyncToken;
-use App\Kobo\SyncTokenParser;
+use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenParser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +14,7 @@ class KoboSyncTokenExtractor
     {
     }
 
-    public function get(Request $request): SyncToken
+    public function get(Request $request): SyncTokenInterface
     {
         $syncToken = $this->syncTokenParser->decode($this->extract($request));
         $this->syncTokenParser->decodeFiltersFromGetParameters($request, $syncToken);
@@ -22,10 +22,10 @@ class KoboSyncTokenExtractor
         return $syncToken;
     }
 
-    public function set(Response $response, SyncToken $token): Response
+    public function set(Response $response, SyncTokenInterface $token): Response
     {
-        $token = $this->syncTokenParser->encode($token);
-        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $token);
+        $tokenValue = $this->syncTokenParser->encode($token);
+        $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $tokenValue);
 
         return $response;
     }
@@ -34,7 +34,7 @@ class KoboSyncTokenExtractor
      * @return array{'HTTP_X-Kobo-Synctoken': string}
      * @throws \JsonException
      */
-    public function getTestHeader(SyncToken $token): array
+    public function getTestHeader(SyncTokenInterface $token): array
     {
         $token = $this->syncTokenParser->encode($token);
 

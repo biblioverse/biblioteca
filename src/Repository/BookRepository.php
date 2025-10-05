@@ -7,7 +7,7 @@ use App\Entity\KoboDevice;
 use App\Entity\User;
 use App\Enum\ReadingList;
 use App\Enum\ReadStatus;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use App\Service\ShelfManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -493,7 +493,7 @@ class BookRepository extends ServiceEntityRepository
     /**
      * @return array<int, Book>
      */
-    public function getChangedBooks(KoboDevice $koboDevice, SyncToken $syncToken, int $firstResult, int $maxResults): array
+    public function getChangedBooks(KoboDevice $koboDevice, SyncTokenInterface $syncToken, int $firstResult, int $maxResults): array
     {
         $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
         $qb->setFirstResult($firstResult)
@@ -510,7 +510,7 @@ class BookRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function getChangedBooksCount(KoboDevice $koboDevice, SyncToken $syncToken): int
+    public function getChangedBooksCount(KoboDevice $koboDevice, SyncTokenInterface $syncToken): int
     {
         $qb = $this->getChangedBooksQueryBuilder($koboDevice, $syncToken);
         $qb->select('count(distinct book.id) as nb');
@@ -522,7 +522,7 @@ class BookRepository extends ServiceEntityRepository
         return $result[0];
     }
 
-    private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncToken $syncToken): QueryBuilder
+    private function getChangedBooksQueryBuilder(KoboDevice $koboDevice, SyncTokenInterface $syncToken): QueryBuilder
     {
         $qb = $this->createQueryBuilder('book')
             ->select('book', 'bookInteractions')
@@ -540,26 +540,26 @@ class BookRepository extends ServiceEntityRepository
         // - Book never synced but in a shelf, reading list or dynamic shelf
         // We start by building the bigOr condition
         $bigOr = $qb->expr()->orX();
-        if ($syncToken->lastCreated instanceof \DateTimeInterface) {
+        if ($syncToken->getLastCreated() instanceof \DateTimeInterface) {
             $bigOr->addMultiple([
                 $qb->expr()->isNull('koboSyncedBooks.created'),
                 $qb->expr()->gte('book.created', ':lastCreated'),
                 $qb->expr()->gte('bookInteractions.created', ':lastCreated'),
             ]);
-            $qb->setParameter('lastCreated', $syncToken->lastCreated);
+            $qb->setParameter('lastCreated', $syncToken->getLastCreated());
         }
 
-        if ($syncToken->archiveLastModified instanceof \DateTimeInterface) {
+        if ($syncToken->getArchiveLastModified() instanceof \DateTimeInterface) {
             $bigOr->add(
                 $qb->expr()->andX(
                     $qb->expr()->gte('koboSyncedBooks.archived', ':archiveLastModified'),
                     $qb->expr()->isNotNull('koboSyncedBooks.archived'),
                 ),
             );
-            $qb->setParameter('archiveLastModified', $syncToken->archiveLastModified);
+            $qb->setParameter('archiveLastModified', $syncToken->getArchiveLastModified());
         }
 
-        if ($syncToken->lastModified instanceof \DateTimeInterface) {
+        if ($syncToken->getLastModified() instanceof \DateTimeInterface) {
             $bigOr->addMultiple([
                 'book.updated > :lastModified',
                 'book.created  > :lastModified',
@@ -567,11 +567,11 @@ class BookRepository extends ServiceEntityRepository
                 'bookInteractions.updated > :lastModified',
                 $qb->expr()->isNull('koboSyncedBooks.updated'),
             ]);
-            $qb->setParameter('lastModified', $syncToken->lastModified);
+            $qb->setParameter('lastModified', $syncToken->getLastModified());
         }
 
         $qb->orderBy('book.updated');
-        if ($syncToken->filters['PrioritizeRecentReads'] ?? false) {
+        if ($syncToken->getFilters()['PrioritizeRecentReads'] ?? false) {
             $qb->orderBy('bookInteractions.updated', 'ASC');
             $qb->addOrderBy('bookInteractions.readStatus', 'ASC');
         }

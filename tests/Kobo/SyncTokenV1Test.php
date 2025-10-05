@@ -2,14 +2,14 @@
 
 namespace App\Tests\Kobo;
 
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenV1;
 use PHPUnit\Framework\TestCase;
 
-class SyncTokenTest extends TestCase
+class SyncTokenV1Test extends TestCase
 {
     public function testFromArray(): void
     {
-        $token = SyncToken::fromArray($this->createToken()->toArray());
+        $token = SyncTokenV1::fromArray($this->createToken()->toArray());
         self::assertSame($this->getExpected(), $token->toArray());
     }
 
@@ -19,16 +19,17 @@ class SyncTokenTest extends TestCase
         self::assertSame($this->getExpected(), $syncToken->toArray());
     }
 
-    private function createToken(): SyncToken
+    private function createToken(): SyncTokenV1
     {
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->archiveLastModified = new \DateTimeImmutable('2024-01-01');
-        $syncToken->filters = ['Filter' => 'ALL', 'DownloadUrlFilter' => 'Generic,Android', 'PrioritizeRecentReads' => true];
+        $syncToken->setFilters(['Filter' => 'ALL', 'DownloadUrlFilter' => 'Generic,Android', 'PrioritizeRecentReads' => true]);
         $syncToken->lastCreated = new \DateTimeImmutable('2022-01-01');
         $syncToken->lastModified = new \DateTimeImmutable('2021-01-02');
         $syncToken->rawKoboStoreToken = 'hello world';
         $syncToken->readingStateLastModified = new \DateTimeImmutable('2023-01-01');
         $syncToken->tagLastModified = new \DateTimeImmutable('2026-01-01');
+        $syncToken->deletedTagLastModified = new \DateTimeImmutable('2026-01-01');
         $syncToken->version = '1-1-0';
 
         return $syncToken;

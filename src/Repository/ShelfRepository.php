@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\KoboDevice;
 use App\Entity\Shelf;
 use App\Entity\User;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -78,7 +78,7 @@ class ShelfRepository extends ServiceEntityRepository
     /**
      * @return array<Shelf>
      */
-    public function getShelvesToSync(KoboDevice $koboDevice, SyncToken $syncToken): array
+    public function getShelvesToSync(KoboDevice $koboDevice, SyncTokenInterface $syncToken): array
     {
         $qb = $this->createQueryBuilder('shelf')
             ->select('shelf')
@@ -86,12 +86,12 @@ class ShelfRepository extends ServiceEntityRepository
             ->where('koboDevice.id = :id')
             ->setParameter('id', $koboDevice->getId());
 
-        if ($syncToken->tagLastModified instanceof \DateTimeInterface) {
+        if ($syncToken->getTagLastModified() instanceof \DateTimeInterface) {
             $qb->andWhere($qb->expr()->orX(
                 'shelf.updated > :tagLastModified',
                 'shelf.created > :tagLastModified'
             ))
-                ->setParameter('tagLastModified', $syncToken->tagLastModified);
+                ->setParameter('tagLastModified', $syncToken->getTagLastModified());
         }
 
         /** @var Shelf[] $result */

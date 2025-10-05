@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenSerializer;
 use App\Repository\KoboDeviceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -233,19 +234,19 @@ class KoboDevice
         $this->syncReadingList = $syncReadingList;
     }
 
-    public function setLastSyncToken(?SyncToken $lastSyncToken): KoboDevice
+    public function setLastSyncToken(?SyncTokenInterface $lastSyncToken): KoboDevice
     {
-        $this->lastSyncToken = $lastSyncToken?->toArray();
+        $this->lastSyncToken = $lastSyncToken instanceof SyncTokenInterface ? SyncTokenSerializer::toArray($lastSyncToken) : null;
 
         return $this;
     }
 
-    public function getLastSyncToken(): ?SyncToken
+    public function getLastSyncToken(): ?SyncTokenInterface
     {
         if ($this->lastSyncToken === null) {
             return null;
         }
 
-        return SyncToken::fromArray($this->lastSyncToken);
+        return SyncTokenSerializer::fromArray($this->lastSyncToken);
     }
 }

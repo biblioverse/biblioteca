@@ -7,14 +7,16 @@ use App\Entity\KoboDevice;
 use App\Kobo\DownloadHelper;
 use App\Kobo\Kepubify\KepubifyConversionFailed;
 use App\Kobo\Kepubify\KepubifyEnabler;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenInterface;
 use Psr\Log\LoggerInterface;
 
 class MetadataResponseService
 {
     public const KEPUB_FORMAT = 'KEPUB';
     public const EPUB3_FORMAT = 'EPUB3';
+    public const EPUB3_WEB_FORMAT = 'EPUB3WEB';
     public const EPUB_FORMAT = 'EPUB';
+    public const EPUB3_SAMPLE_FORMAT = 'EPUB3_SAMPLE';
 
     public function __construct(
         protected DownloadHelper $downloadHelper,
@@ -35,6 +37,7 @@ class MetadataResponseService
                 $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_FORMAT);
 
                 return [0 => [
+                    'DrmType' => 'None', // KDRM, AdobeDrm
                     'Format' => self::KEPUB_FORMAT,
                     'Size' => $downloadInfo->getSize(),
                     'Url' => $downloadInfo->getUrl(),
@@ -56,7 +59,7 @@ class MetadataResponseService
         ]];
     }
 
-    public function fromBook(Book $book, KoboDevice $koboDevice, ?SyncToken $syncToken = null): array
+    public function fromBook(Book $book, KoboDevice $koboDevice, ?SyncTokenInterface $syncToken = null): array
     {
         $data = [
             'Categories' => ['00000000-0000-0000-0000-000000000001'],
@@ -65,7 +68,7 @@ class MetadataResponseService
             'CurrentDisplayPrice' => ['CurrencyCode' => 'USD', 'TotalAmount' => 0],
             'CurrentLoveDisplayPrice' => ['TotalAmount' => 0],
             'Description' => $book->getSummary(),
-            'DownloadUrls' => $this->getDownloadUrls($book, $koboDevice, $syncToken?->filters),
+            'DownloadUrls' => $this->getDownloadUrls($book, $koboDevice, $syncToken?->getFilters()),
             'EntitlementId' => $book->getUuid(),
             'ExternalIds' => [],
             'Genre' => '00000000-0000-0000-0000-000000000001',

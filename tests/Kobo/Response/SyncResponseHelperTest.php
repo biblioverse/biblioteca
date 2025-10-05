@@ -6,7 +6,7 @@ use App\Entity\Book;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Kobo\Response\SyncResponseHelper;
-use App\Kobo\SyncToken;
+use App\Kobo\SyncToken\SyncTokenV1;
 use App\Tests\TestClock;
 use PHPUnit\Framework\TestCase;
 
@@ -101,10 +101,10 @@ class SyncResponseHelperTest extends TestCase
         return $book;
     }
 
-    private function createSyncToken(): SyncToken
+    private function createSyncToken(): SyncTokenV1
     {
         $clock = new TestClock();
-        $syncToken = new SyncToken();
+        $syncToken = new SyncTokenV1();
         $syncToken->lastCreated = $clock->now();
         $syncToken->lastModified = $clock->now();
         $syncToken->tagLastModified = $clock->now();
