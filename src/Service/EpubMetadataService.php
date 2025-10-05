@@ -7,6 +7,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class EpubMetadataService
 {
+    private const NS_DC = 'http://purl.org/dc/elements/1.1/';
+    private const NS_OPF = 'http://www.idpf.org/2007/opf';
+
     private readonly Filesystem $filesystem;
 
     public function __construct()
@@ -20,7 +23,6 @@ class EpubMetadataService
      *
      * @param Book $book The book entity with metadata
      * @param string $originalPath Path to the original EPUB file
-     * @return string Path to the temporary file with embedded metadata
      * @throws \RuntimeException if the original EPUB file is not found, cannot be opened, or the OPF file is missing
      * @throws \Exception if any other error occurs during the process
      */
@@ -97,7 +99,7 @@ class EpubMetadataService
         );
 
         foreach ($iterator as $file) {
-            if ($file instanceof \SplFileInfo && $file->isFile() && $file->getExtension() === 'opf') {
+            if ($file instanceof \SplFileInfo && $file->isFile() && strtolower($file->getExtension()) === 'opf') {
                 return $file->getPathname();
             }
         }
@@ -119,8 +121,8 @@ class EpubMetadataService
         }
 
         $xpath = new \DOMXPath($dom);
-        $xpath->registerNamespace('dc', 'http://purl.org/dc/elements/1.1/');
-        $xpath->registerNamespace('opf', 'http://www.idpf.org/2007/opf');
+        $xpath->registerNamespace('dc', self::NS_DC);
+        $xpath->registerNamespace('opf', self::NS_OPF);
 
         // Get metadata element
         $metadataNodes = $xpath->query('//opf:metadata');
@@ -138,7 +140,7 @@ class EpubMetadataService
         // Update authors
         $this->removeElements($xpath, '//dc:creator');
         foreach ($book->getAuthors() as $author) {
-            $creatorNode = $dom->createElementNS('http://purl.org/dc/elements/1.1/', 'dc:creator', htmlspecialchars($author));
+            $creatorNode = $dom->createElementNS(self::NS_DC, 'dc:creator', htmlspecialchars($author));
             $creatorNode->setAttribute('opf:role', 'aut');
             $metadata->appendChild($creatorNode);
         }
@@ -162,7 +164,7 @@ class EpubMetadataService
         if ($book->getTags() !== null) {
             $this->removeElements($xpath, '//dc:subject');
             foreach ($book->getTags() as $tag) {
-                $subjectNode = $dom->createElementNS('http://purl.org/dc/elements/1.1/', 'dc:subject', htmlspecialchars($tag));
+                $subjectNode = $dom->createElementNS(self::NS_DC, 'dc:subject', htmlspecialchars($tag));
                 $metadata->appendChild($subjectNode);
             }
         }
@@ -195,7 +197,7 @@ class EpubMetadataService
                 $firstElement->nodeValue = htmlspecialchars($value);
             }
         } else {
-            $namespace = 'http://purl.org/dc/elements/1.1/';
+            $namespace = self::NS_DC;
             $localName = str_replace('dc:', '', $elementName);
             $node = $dom->createElementNS($namespace, $elementName, htmlspecialchars($value));
             $metadata->appendChild($node);
