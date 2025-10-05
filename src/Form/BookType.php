@@ -71,7 +71,7 @@ class BookType extends AbstractType
             ->add('ageCategory', EnumType::class, [
                 'class' => AgeCategory::class,
                 'required' => false,
-            ])
+            ])->add('libraryFolder', null, ['required' => false, 'help' => 'book.form.libraryFolder.help'])
         ;
     }
 

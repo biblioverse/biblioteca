@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New LibraryFolder{% endblock %}
+
+{% block body %}
+    <h1>Create new LibraryFolder</h1>
+
+    {{ include('library_folder/_form.html.twig') }}
+
+    <a href="{{ path('app_library_folder_index') }}">back to list</a>
+{% endblock %}
