@@ -239,7 +239,7 @@ class EpubMetadataService
         }
 
         foreach ($elements as $element) {
-            if ($element->parentNode instanceof \DOMNode) {
+            if ($element->parentNode instanceof \DOMNode && $element instanceof \DOMNode) {
                 $element->parentNode->removeChild($element);
             }
         }

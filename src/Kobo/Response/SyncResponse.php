@@ -156,7 +156,7 @@ class SyncResponse
      */
     private function getChangedEntitlement(): array
     {
-        $books = array_filter($this->books, fn (Book $book) => $this->helper->isChangedEntitlement($book));
+        $books = array_filter($this->books, $this->helper->isChangedEntitlement(...));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();
@@ -171,9 +171,7 @@ class SyncResponse
      */
     private function getNewEntitlement(): array
     {
-        $books = array_filter($this->books, fn (Book $book) =>
-            // This book has never been synced before
-            $this->helper->isNewEntitlement($book));
+        $books = array_filter($this->books, $this->helper->isNewEntitlement(...));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();
@@ -189,7 +187,7 @@ class SyncResponse
      */
     private function getNewTags(): array
     {
-        $shelves = array_filter($this->shelves, fn (Shelf $shelf) => $this->helper->isNewTag($shelf));
+        $shelves = array_filter($this->shelves, $this->helper->isNewTag(...));
 
         return array_map(function (Shelf $shelf) {
             $response = new \stdClass();
@@ -205,7 +203,7 @@ class SyncResponse
      */
     private function getChangedTag(): array
     {
-        $shelves = array_filter($this->shelves, fn (Shelf $shelf) => $this->helper->isChangedTag($shelf));
+        $shelves = array_filter($this->shelves, $this->helper->isChangedTag(...));
 
         return array_map(function (Shelf $shelf) {
             $response = new \stdClass();
@@ -252,7 +250,7 @@ class SyncResponse
      */
     private function getChangedReadingState(): array
     {
-        $books = array_filter($this->books, fn (Book $book) => $this->helper->isChangedReadingState($book));
+        $books = array_filter($this->books, $this->helper->isChangedReadingState(...));
 
         return array_map(function (Book $book) {
             $response = new \stdClass();

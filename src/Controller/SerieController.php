@@ -62,11 +62,12 @@ class SerieController extends AbstractController
             if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
                 $index = '?';
             }
+            $index = (string) $index;
             $serie[$index] ??= [];
             $serie[$index][] = $book;
         }
 
-        $keys = array_filter(array_keys($serie), static fn ($key) => is_numeric($key));
+        $keys = array_filter(array_keys($serie), is_numeric(...));
         if ($keys !== []) {
             $serieMax = max($keys);
         }

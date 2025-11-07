@@ -87,7 +87,7 @@ class Opds
             download: $this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL).$this->bookFileSystemManager->getBookPublicPath($book),
             mediaThumbnail: $cover,
             categories: $book->getTags() ?? [],
-            authors: array_map(fn ($author) => $this->getOpdsAuthor($author), $book->getAuthors()),
+            authors: array_map($this->getOpdsAuthor(...), $book->getAuthors()),
             volume: $book->getSerieIndex(),
             serie: $book->getSerie(),
             language: $book->getLanguage() ?? ' ',

@@ -12,7 +12,7 @@ class AbstractApiMock extends MockHttpClient
 
     public function __construct()
     {
-        $callback = \Closure::fromCallable([$this, 'handleRequests']);
+        $callback = $this->handleRequests(...);
 
         parent::__construct($callback, $this->baseUri);
     }

@@ -77,7 +77,7 @@ class SyncTokenParser
         try {
             // Filter=ALL&DownloadUrlFilter=Generic,Android&PrioritizeRecentReads=true
             $resolver = $this->getFilterResolver();
-            $keysToKeepLowercase = array_map('strtolower', $resolver->getDefinedOptions());
+            $keysToKeepLowercase = array_map(strtolower(...), $resolver->getDefinedOptions());
 
             $params = $request->query->all();
             $options = array_filter($params, fn (string $key) => in_array(strtolower($key), $keysToKeepLowercase, true), ARRAY_FILTER_USE_KEY);
