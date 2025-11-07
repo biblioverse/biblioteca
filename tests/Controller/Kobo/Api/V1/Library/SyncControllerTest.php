@@ -267,7 +267,7 @@ class SyncControllerTest extends KoboControllerTestCase
             'NewTag' => 1,
             'DeletedTag' => 1,
         ]), 'Response is not a valid sync response');
-        $token = self::getRawResponse()->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER, null);
+        $token = self::getRawResponse()->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
         self::assertSame(base64_decode($upstreamToken, true), $token !== null ? base64_decode($token, true) : null);
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();

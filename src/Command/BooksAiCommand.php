@@ -137,7 +137,7 @@ class BooksAiCommand extends Command
                 $io->comment('Summary already present');
             }
 
-            if (($type === 'tags' || $type === 'both') && ($book->getTags() === [] || $book->getTags() === null || $book->getTags() === [''] || $overwrite === true)) {
+            if (($type === 'tags' || $type === 'both') && (in_array($book->getTags(), [[], null, ['']], true) || $overwrite === true)) {
                 $io->comment('Generating Tags');
                 $tagSuggestions = array_filter($currentSuggestions, fn (Suggestion $suggestion) => $suggestion->getField() === 'tags');
                 if (count($tagSuggestions) === 0 || $overwrite === true) {
