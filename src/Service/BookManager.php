@@ -15,13 +15,14 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @phpstan-type MetadataType array{ title:string, authors: BookAuthor[], main_author: ?BookAuthor, description: ?string, publisher: ?string, publish_date: ?\DateTime, language: ?string, tags: string[], serie:?string, serie_index: ?float, cover: ?EbookCover }
  */
 class BookManager
 {
-    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly EntityManagerInterface $entityManager, private readonly BookRepository $bookRepository)
+    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly EntityManagerInterface $entityManager, private readonly BookRepository $bookRepository, #[Autowire(param: 'ALLOW_BOOK_RELOCATION')] private readonly bool $allowBookRelocation)
     {
     }
 
@@ -80,7 +81,7 @@ class BookManager
         }
 
         $consumePath = $this->fileSystemManager->getBooksDirectory().'consume';
-        if (str_starts_with($file->getRealPath(), $consumePath)) {
+        if (str_starts_with($file->getRealPath(), $consumePath) && $this->allowBookRelocation) {
             $book->setBookPath($path);
             $this->fileSystemManager->renameFiles($book);
 
