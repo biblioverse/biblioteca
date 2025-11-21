@@ -28,7 +28,7 @@ SMTP_MAX_FILE_SIZE=25
 - `APP_SECRET`: A secret key used to secure the application. Make it unique!
 - `DATABASE_URL`: The URL to the database. You should not need to change this unless you are using a different database.
 - `MESSENGER_TRANSPORT_DSN`: Do not change it.
-- `MAILER_DSN`: Currently not used.
+- `MAILER_DSN`: Mailer DSN for sending ebooks to e-readers via email. See [Sending Books to E-readers](../guides/user/send-to-ereader) for user documentation.
 - `TYPESENSE_URL`: The URL to the typesense server. You should not need to change this unless you are using a different server.
 - `TYPESENSE_KEY`: The key to access the typesense server. Needs to correspond to the one you set in your docker-compose file.
 - `TYPESENSE_EMBED_MODEL`: Embed model, default is the built-in `ts/all-MiniLM-L12-v2` model. You can use an OpenAi/Palm/Vertex model. Example: `openai/text-embedding-3-small`.
