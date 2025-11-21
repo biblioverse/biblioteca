@@ -14,6 +14,9 @@
     <a class="nav-link  {{ tab=='kobo'?'active' }}" href="{{ path('app_user_profile', {'tab':'kobo'}) }}">Kobo Reader Settings</a>
   </li>
   <li class="nav-item">
+    <a class="nav-link  {{ tab=='ereader'?'active' }}" href="{{ path('app_user_profile', {'tab':'ereader'}) }}">{{'ereader_email.title'|trans|default('E-reader Emails')}}</a>
+  </li>
+  <li class="nav-item">
     <a class="nav-link  {{ tab=='opds'?'active' }}" href="{{ path('app_user_profile', {'tab':'opds'}) }}">{{'opds.access-settings'|trans}}</a>
   </li>
 </ul>
@@ -41,6 +44,45 @@
                         {% endfor %}
                         </table>
                         <a href="{{ path('app_kobodevice_user_new') }}">{{ "kobo.device.create-new"|trans }}</a>
+                    </div>
+                </div>
+            {% elseif tab == 'ereader' %}
+                <div class="Card my-3">
+                    <div class="Card__title">
+                        <h3 class="Heading">{{ "ereader_email.title"|trans|default("E-reader Email Settings") }}</h3>
+                    </div>
+                    <div class="Card__content">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{{ "ereader_email.name"|trans|default("Name") }}</th>
+                                    <th>{{ "ereader_email.email"|trans|default("Email") }}</th>
+                                    <th>{{ "generic.actions"|trans|default("Actions") }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for ereader_email in user.ereaderEmails %}
+                                <tr>
+                                    <td>{{ ereader_email.name }}</td>
+                                    <td>{{ ereader_email.email }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ path('app_ereader_email_edit', {'id': ereader_email.id}) }}" class="btn btn-sm btn-primary">{{ "generic.edit"|trans|default("Edit") }}</a>
+                                            <form method="post" action="{{ path('app_ereader_email_delete', {'id': ereader_email.id}) }}" onsubmit="return confirm('{{ "generic.confirm-delete"|trans|default("Are you sure you want to delete this item?") }}');" style="display: inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ereader_email.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">{{ "generic.delete"|trans|default("Delete") }}</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3">{{ "ereader_email.no-records"|trans|default("No e-reader email addresses configured.") }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <a href="{{ path('app_ereader_email_new') }}" class="btn btn-primary">{{ "ereader_email.create-new"|trans|default("Add E-reader Email") }}</a>
                     </div>
                 </div>
             {% elseif tab == 'opds' %}

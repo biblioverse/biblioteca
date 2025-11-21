@@ -103,6 +103,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: OpdsAccess::class, orphanRemoval: true)]
     private Collection $opdsAccesses;
 
+    /**
+     * @var Collection<int, EreaderEmail>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: EreaderEmail::class, orphanRemoval: true)]
+    private Collection $ereaderEmails;
+
     public function __construct()
     {
         $this->bookInteractions = new ArrayCollection();
@@ -110,6 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->kobos = new ArrayCollection();
         $this->bookmarkUsers = new ArrayCollection();
         $this->opdsAccesses = new ArrayCollection();
+        $this->ereaderEmails = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -478,6 +485,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // set the owning side to null (unless already changed)
         if ($this->opdsAccesses->removeElement($opdsAccess) && $opdsAccess->getUser() === $this) {
             $opdsAccess->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EreaderEmail>
+     */
+    public function getEreaderEmails(): Collection
+    {
+        return $this->ereaderEmails;
+    }
+
+    public function addEreaderEmail(EreaderEmail $ereaderEmail): static
+    {
+        if (!$this->ereaderEmails->contains($ereaderEmail)) {
+            $this->ereaderEmails->add($ereaderEmail);
+            $ereaderEmail->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEreaderEmail(EreaderEmail $ereaderEmail): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->ereaderEmails->removeElement($ereaderEmail) && $ereaderEmail->getUser() === $this) {
+            $ereaderEmail->setUser($this);
         }
 
         return $this;

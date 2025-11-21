@@ -18,6 +18,10 @@ KOBO_PROXY_USE_EVERYWHERE=0
 KOBO_PROXY_ENABLED=1
 ALLOW_BOOK_RELOCATION=1
 EPUB_METADATA_EMBED_ENABLED=1
+MAILER_DSN=smtp://user:pass@smtp.example.com:587
+SMTP_FROM_EMAIL=noreply@example.com
+SMTP_FROM_NAME=Biblioteca
+SMTP_MAX_FILE_SIZE=25
 ```
 
 - `APP_ENV`: The environment the application is running in. This can be `dev` or `prod`. You should always use `prod` unless you need to debug the application.
@@ -31,6 +35,14 @@ EPUB_METADATA_EMBED_ENABLED=1
 - `TYPESENSE_EMBED_NUM_DIM`: Dimension of the embed model. `all-MiniLM-L12-v2` is 384, `text-embedding-3-small` is 1536. Read your model documentation to know the dimension.
 - `TYPESENSE_EMBED_KEY`: Authentication for the embed model. Default is `~`, but you can set a token if you use an external model.
 - `BOOK_FOLDER_NAMING_FORMAT`: The format to use to name the folders where the books are stored. You can use the following placeholders: `{authorFirst}`, `{author}`, `{title}`, `{serie}`.
+- `MAILER_DSN`: Mailer DSN for sending ebooks to e-readers. This uses Symfony's Mailer component. Examples:
+  - SMTP: `smtp://user:pass@smtp.example.com:587`
+  - SMTP with TLS: `smtp://user:pass@smtp.example.com:587?encryption=tls`
+  - SMTP with SSL: `smtp://user:pass@smtp.example.com:465?encryption=ssl`
+  - For cloud services, you can use provider-specific DSNs (see [Symfony Mailer documentation](https://symfony.com/doc/current/mailer.html))
+- `SMTP_FROM_EMAIL`: Default "from" email address for sent emails.
+- `SMTP_FROM_NAME`: Default "from" name for sent emails (default: `Biblioteca`).
+- `SMTP_MAX_FILE_SIZE`: Maximum file size in MB for email attachments (default: 25).
 - `BOOK_FILE_NAMING_FORMAT`: The format to use to name the files where the books are stored. You can use the following placeholders: `{serie}`, `{serieIndex}`, `{title}`.
 - `KOBO_PROXY_USE_DEV`: If set to `1`, the kobo proxy will be used in development.
 - `KOBO_PROXY_USE_EVERYWHERE`: If set to `1`, the kobo proxy will be used everywhere and all request will be forwarded to the original store.

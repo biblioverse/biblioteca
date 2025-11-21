@@ -34,10 +34,20 @@ final class InstanceConfigurationController extends AbstractController
             'KOBO_READINGSERVICES_URL' => 'Url of the Kobo Reading Services. See the kbo instructions for more information',
             'TYPESENSE_KEY' => 'Typesense API key',
             'TYPESENSE_URL' => 'Typesense URL',
+            'MAILER_DSN' => 'Mailer DSN for sending ebooks to e-readers (e.g., smtp://user:pass@smtp.example.com:587)',
+            'SMTP_FROM_EMAIL' => 'Default "from" email address for sent emails',
+            'SMTP_FROM_NAME' => 'Default "from" name for sent emails',
+            'SMTP_MAX_FILE_SIZE' => 'Maximum file size in MB for email attachments (default: 25)',
         ];
         foreach ($documentedParams as $key => $value) {
+            $paramValue = $parameterBagInterface->has($key) ? $parameterBagInterface->get($key) : null;
+            // Hide sensitive parts of MAILER_DSN for security
+            if ($key === 'MAILER_DSN' && $paramValue !== null && is_string($paramValue)) {
+                // Hide password in DSN format: smtp://user:pass@host
+                $paramValue = preg_replace('/:\/\/[^:]+:([^@]+)@/', '://***:***@', $paramValue);
+            }
             $documentedParams[$key] = [
-                'value' => $parameterBagInterface->get($key),
+                'value' => $paramValue,
                 'description' => $value,
             ];
         }
