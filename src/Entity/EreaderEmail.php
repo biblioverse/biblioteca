@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EreaderEmailRepository::class)]
 #[ORM\UniqueConstraint(name: 'user_email_unique', columns: ['user_id', 'email'])]
-#[UniqueEntity(fields: ['user', 'email'], message: 'This email address is already registered for this user.')]
+#[UniqueEntity(fields: ['user', 'email'])]
 class EreaderEmail
 {
     #[ORM\Id]
