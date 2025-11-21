@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "ereader_email.create-new"|trans|default("Add E-reader Email") }}{% endblock %}
+
+{% block body %}
+    <h1>{{ "ereader_email.create-new"|trans|default("Add E-reader Email") }}</h1>
+
+    {{ include('ereader_email/_form.html.twig') }}
+
+    <a href="{{ path('app_user_profile', {'tab': 'ereader'}) }}" class="btn btn-secondary">{{ "generic.back"|trans|default("Back") }}</a>
+{% endblock %}
+

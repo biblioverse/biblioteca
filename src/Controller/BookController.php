@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Entity\BookInteraction;
+use App\Entity\EreaderEmail;
 use App\Entity\User;
 use App\Enum\ReadStatus;
 use App\Repository\BookRepository;
+use App\Repository\EreaderEmailRepository;
 use App\Repository\ShelfRepository;
 use App\Security\Voter\BookVoter;
 use App\Security\Voter\RelocationVoter;
@@ -14,6 +16,7 @@ use App\Service\BookFileSystemManagerInterface;
 use App\Service\BookManager;
 use App\Service\BookProgressionService;
 use App\Service\EpubMetadataService;
+use App\Service\EreaderEmailService;
 use App\Service\ThemeSelector;
 use Biblioverse\TypesenseBundle\Exception\SearchException;
 use Biblioverse\TypesenseBundle\Query\SearchQuery;
@@ -38,11 +41,12 @@ class BookController extends AbstractController
         private readonly BookProgressionService $bookProgressionService,
         private readonly BookManager $bookManager,
         private readonly EpubMetadataService $epubMetadataService,
+        private readonly EreaderEmailService $ereaderEmailService,
     ) {
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository): Response
+    public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository, EreaderEmailRepository $ereaderEmailRepository): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -118,6 +122,8 @@ class BookController extends AbstractController
 
         $interaction = $book->getLastInteraction($user);
 
+        $ereaderEmails = $ereaderEmailRepository->findAllByUser($user);
+
         return $this->render('book/index.html.twig', [
             'book' => $book,
             'shelves' => $shelfRepository->findManualShelvesForUser($user),
@@ -128,6 +134,7 @@ class BookController extends AbstractController
             'form' => $form->createView(),
             'calculatedPath' => $calculatedPath,
             'needsRelocation' => $needsRelocation,
+            'ereader_emails' => $ereaderEmails,
         ]);
     }
 
@@ -140,6 +147,7 @@ class BookController extends AbstractController
         PaginatorInterface $paginator,
         ThemeSelector $themeSelector,
         EntityManagerInterface $manager,
+        EreaderEmailRepository $ereaderEmailRepository,
     ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
@@ -510,5 +518,78 @@ class BookController extends AbstractController
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $encodedFilename, $simpleName));
 
         return $response;
+    }
+
+    #[Route('/{book}/{slug}/send-to-ereader/{ereaderEmail}', name: 'app_book_send_to_ereader', methods: ['POST'])]
+    public function sendToEreader(
+        Book $book,
+        string $slug,
+        EreaderEmail $ereaderEmail,
+        BookFileSystemManagerInterface $fileSystemManager,
+    ): Response {
+        if ($slug !== $book->getSlug()) {
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        if (!$this->isGranted(BookVoter::VIEW, $book)) {
+            $this->addFlash('danger', 'You are not allowed to send this book');
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        // Verify the ereader email belongs to the current user
+        if ($ereaderEmail->getUser() !== $this->getUser()) {
+            $this->addFlash('danger', 'You are not allowed to use this e-reader email');
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
+
+        // For EPUB files, embed metadata from database when enabled
+        $deleteAfterSend = false;
+        $fileToSend = $fileSystemManager->getBookFilename($book);
+        $bookPath = $fileSystemManager->getBookPublicPath($book);
+        try {
+            $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+            $fileToSend = $embeddedPath;
+            $deleteAfterSend = $embeddedPath !== $bookPath;
+        } catch (\Exception) {
+            // If metadata embedding fails, fall back to original file
+            $fileToSend = $bookPath;
+        }
+
+        try {
+            $this->ereaderEmailService->sendBook($book, $ereaderEmail, $fileToSend);
+
+            if ($deleteAfterSend && file_exists($fileToSend)) {
+                unlink($fileToSend);
+            }
+
+            $this->addFlash('success', sprintf('Book sent successfully to %s', $ereaderEmail->getName()));
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        } catch (\RuntimeException $e) {
+            if ($deleteAfterSend && file_exists($fileToSend)) {
+                unlink($fileToSend);
+            }
+
+            $this->addFlash('danger', $e->getMessage());
+
+            return $this->redirectToRoute('app_book', [
+                'book' => $book->getId(),
+                'slug' => $book->getSlug(),
+            ], 301);
+        }
     }
 }
