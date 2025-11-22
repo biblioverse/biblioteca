@@ -35,7 +35,7 @@ services:
       - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'
 
   db:
-    image: mariadb:12.0
+    image: mariadb:12.1
     environment:
       - MYSQL_ROOT_PASSWORD=biblioteca
       - MYSQL_DATABASE=biblioteca
