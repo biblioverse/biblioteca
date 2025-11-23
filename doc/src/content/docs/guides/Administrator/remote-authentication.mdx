@@ -1,0 +1,260 @@
+---
+title: Remote Authentication
+---
+import { Aside } from '@astrojs/starlight/components';
+
+Biblioteca supports remote authentication via HTTP headers, allowing you to integrate with authentication proxies like Authentik, Keycloak, or Pocket-ID. This feature enables single sign-on (SSO) capabilities where authentication is handled by an external service.
+
+## How It Works
+
+When remote authentication is enabled, Biblioteca reads the authenticated username from a configured HTTP header. The authentication proxy (Authentik, Keycloak, etc.) handles the login process and sets this header with the authenticated user's identifier. Biblioteca then automatically logs in the user if they exist in the database.
+
+<Aside type="warning">
+    The user must already exist in Biblioteca's database. Remote authentication does not create users automatically. You must create users manually or through another mechanism before they can authenticate via remote authentication.
+</Aside>
+
+## Configuration
+
+To enable remote authentication, set the `REMOTE_USER_LOGIN_HEADER_NAME` environment variable in your `.env.local` file:
+
+```dotenv
+REMOTE_USER_LOGIN_HEADER_NAME=HTTP_X_TOKEN_SUBJECT
+```
+
+The header name should be in the format `HTTP_<HEADER_NAME>` where `<HEADER_NAME>` is the actual HTTP header name in uppercase with hyphens replaced by underscores. For example:
+- Header `X-Token-Subject` becomes `HTTP_X_TOKEN_SUBJECT`
+- Header `X-Remote-User` becomes `HTTP_X_REMOTE_USER`
+- Header `X-Auth-Username` becomes `HTTP_X_AUTH_USERNAME`
+
+<Aside type="tip">
+    You can find the exact header name format by checking your proxy's documentation or inspecting the HTTP headers in your browser's developer tools.
+</Aside>
+
+## Setting Up Authentication Proxies
+
+### Authentik
+
+Authentik is an open-source identity provider that can act as a reverse proxy for authentication.
+
+#### 1. Configure Outpost
+
+In Authentik, you'll need to set up an Outpost (Proxy Provider) that will handle authentication and forward requests to Biblioteca.
+
+1. Go to **Applications** → **Outposts** in Authentik
+2. Create a new Outpost or edit an existing one
+3. Configure the **Forward auth** settings:
+   - Set the **External Host** to your Biblioteca URL
+   - Enable **Forward auth (single application)**
+
+#### 2. Configure Header Mapping
+
+In your Outpost configuration, set up header mapping to pass the authenticated user:
+
+1. In the Outpost settings, go to **Header Mapping**
+2. Add a header mapping:
+   - **Header Name**: `X-Remote-User` (or your preferred header name)
+   - **Expression**: `user.username` or `user.email` (depending on what identifier you use in Biblioteca)
+
+Alternatively, you can use Authentik's default headers:
+- `X-Remote-User` - contains the username
+- `X-Remote-Groups` - contains user groups (if needed)
+
+#### 3. Configure Biblioteca
+
+In your `.env.local` file:
+
+```dotenv
+REMOTE_USER_LOGIN_HEADER_NAME=HTTP_X_REMOTE_USER
+```
+
+#### 4. Reverse Proxy Configuration
+
+If you're using Nginx as a reverse proxy in front of Authentik:
+
+```nginx
+location / {
+    proxy_pass http://authentik-outpost:9000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # Forward Authentik headers to Biblioteca
+    proxy_set_header X-Remote-User $http_x_remote_user;
+}
+```
+
+### Keycloak
+
+Keycloak is another popular open-source identity and access management solution.
+
+#### 1. Configure Keycloak Gatekeeper
+
+Keycloak uses a Gatekeeper (or newer Keycloak Gatekeeper) to handle authentication as a reverse proxy.
+
+#### 2. Using Keycloak Gatekeeper
+
+1. Deploy Keycloak Gatekeeper in front of Biblioteca
+2. Configure it to authenticate users via Keycloak
+3. Set up header forwarding to pass the authenticated username
+
+Example configuration for Keycloak Gatekeeper:
+
+```yaml
+listen: 0.0.0.0:3000
+upstream-url: http://biblioteca:80
+enable-json-logging: true
+enable-request-logging: true
+preserve-host: true
+forwarding-username: X-Remote-User
+```
+
+#### 3. Configure Biblioteca
+
+In your `.env.local` file:
+
+```dotenv
+REMOTE_USER_LOGIN_HEADER_NAME=HTTP_X_REMOTE_USER
+```
+
+#### 4. Using Nginx with Keycloak
+
+If using Nginx with Keycloak's authentication module:
+
+```nginx
+location / {
+    auth_request /auth;
+    auth_request_set $user $upstream_http_x_remote_user;
+    proxy_set_header X-Remote-User $user;
+    proxy_pass http://biblioteca:80;
+}
+
+location = /auth {
+    internal;
+    proxy_pass https://keycloak.example.com/auth/realms/your-realm/protocol/openid-connect/userinfo;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header X-Original-URI $request_uri;
+}
+```
+
+### Pocket-ID
+
+Pocket-ID is a lightweight authentication proxy solution.
+
+#### 1. Configure Pocket-ID
+
+1. Set up Pocket-ID as a reverse proxy in front of Biblioteca
+2. Configure Pocket-ID to authenticate users
+3. Set the header that Pocket-ID will use to pass the authenticated username
+
+#### 2. Header Configuration
+
+Pocket-ID typically uses the `X-Remote-User` header by default, but this can be configured in your Pocket-ID settings.
+
+#### 3. Configure Biblioteca
+
+In your `.env.local` file:
+
+```dotenv
+REMOTE_USER_LOGIN_HEADER_NAME=HTTP_X_REMOTE_USER
+```
+
+#### 4. Example Nginx Configuration
+
+If using Nginx with Pocket-ID:
+
+```nginx
+location / {
+    proxy_pass http://pocket-id:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # Forward Pocket-ID authentication header
+    proxy_set_header X-Remote-User $http_x_remote_user;
+}
+```
+
+## General Reverse Proxy Setup
+
+If you're using a different authentication proxy or setting up a custom solution, here's a general guide:
+
+### 1. Authentication Flow
+
+The typical flow is:
+1. User accesses Biblioteca
+2. Reverse proxy intercepts the request
+3. If not authenticated, proxy redirects to authentication service
+4. After authentication, proxy forwards request to Biblioteca with authentication header
+5. Biblioteca reads the header and logs in the user
+
+### 2. Required Headers
+
+Your authentication proxy must set an HTTP header containing the authenticated username. Common header names include:
+- `X-Remote-User`
+- `X-Auth-Username`
+- `X-Token-Subject`
+- `Remote-User`
+
+### 3. Nginx Example
+
+Here's a general Nginx configuration that can work with various authentication proxies:
+
+```nginx
+server {
+    listen 80;
+    server_name biblioteca.example.com;
+
+    location / {
+        # Forward to authentication proxy
+        proxy_pass http://auth-proxy:8080;
+        
+        # Preserve original headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Forward authentication header to Biblioteca
+        proxy_set_header X-Remote-User $http_x_remote_user;
+        
+        # If your proxy uses a different header, adjust accordingly
+        # proxy_set_header X-Remote-User $http_x_auth_username;
+    }
+}
+```
+
+## Troubleshooting
+
+### User Not Logging In
+
+1. **Check Header Name**: Verify that the header name in `REMOTE_USER_LOGIN_HEADER_NAME` matches what your proxy is sending. Remember the `HTTP_` prefix and underscore format.
+
+2. **Check User Exists**: Ensure the user exists in Biblioteca's database with a username that matches the value in the authentication header.
+
+3. **Check Proxy Headers**: Use browser developer tools or proxy logs to verify that the authentication header is being sent correctly.
+
+4. **Check Trusted Proxies**: Verify that your proxy's IP address is in the `TRUSTED_PROXIES` list.
+
+### Testing Configuration
+
+You can test the header configuration by manually setting the header in a request:
+
+```bash
+curl -H "X-Remote-User: testuser" http://biblioteca.example.com/
+```
+
+Replace `X-Remote-User` with your configured header name (without the `HTTP_` prefix).
+
+## Disabling Remote Authentication
+
+To disable remote authentication, simply remove or comment out the `REMOTE_USER_LOGIN_HEADER_NAME` environment variable, or set it to an empty string:
+
+```dotenv
+REMOTE_USER_LOGIN_HEADER_NAME=
+```
+
+When disabled, Biblioteca will fall back to its standard form-based authentication.
+

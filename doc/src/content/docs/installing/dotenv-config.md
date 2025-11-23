@@ -48,7 +48,7 @@ SMTP_MAX_FILE_SIZE=25
 - `KOBO_PROXY_USE_EVERYWHERE`: If set to `1`, the kobo proxy will be used everywhere and all request will be forwarded to the original store.
 - `KOBO_PROXY_ENABLED`: If set to `0`, the kobo proxy will be disabled.
 - `ALLOW_BOOK_RELOCATION`: If set to `0`, the books will not be moved to the correct folder when added to the library. This is useful if you want to manage the folder structure yourself.
-- `REMOTE_USER_LOGIN_HEADER_NAME`: You can handle authentication from your proxy and read the HTTP Header to authenticate the user. Default value is empty string, Example: `HTTP_X_TOKEN_SUBJECT`. User must exist on the database.
+- `REMOTE_USER_LOGIN_HEADER_NAME`: You can handle authentication from your proxy and read the HTTP Header to authenticate the user. Default value is empty string, Example: `HTTP_X_TOKEN_SUBJECT`. User must exist on the database. See [Remote Authentication](../guides/administrator/remote-authentication) for detailed setup instructions for Authentik, Keycloak, Pocket-ID, and other authentication proxies.
 - `EPUB_METADATA_EMBED_ENABLED`: If set to `0`, EPUB downloads will use the original file without embedding library metadata.
 
 
