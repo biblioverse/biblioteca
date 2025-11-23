@@ -1,3 +1,6 @@
+parameters:
+    remote_user_login_header_name: '%env(REMOTE_USER_LOGIN_HEADER_NAME)%'
+    env(REMOTE_USER_LOGIN_HEADER_NAME): '' # Example: HTTP_X_TOKEN_SUBJECT
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -44,6 +47,8 @@ security:
 
             check_path: app_login
             enable_csrf: true
+          remote_user:
+              user: "%remote_user_login_header_name%"
           # activate different ways to authenticate
           # https://symfony.com/doc/current/security.html#the-firewall
 
