@@ -9,7 +9,7 @@ Biblioteca supports remote authentication via HTTP headers, allowing you to inte
 
 When remote authentication is enabled, Biblioteca reads the authenticated username from a configured HTTP header. The authentication proxy (Authentik, Keycloak, etc.) handles the login process and sets this header with the authenticated user's identifier. Biblioteca then automatically logs in the user if they exist in the database.
 
-<Aside type="warning">
+<Aside type="caution">
     The user must already exist in Biblioteca's database. Remote authentication does not create users automatically. You must create users manually or through another mechanism before they can authenticate via remote authentication.
 </Aside>
 
