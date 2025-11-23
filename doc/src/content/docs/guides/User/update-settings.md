@@ -9,4 +9,9 @@ preferences.
 
 You can also change your theme.
 
+In the profile settings, you can also:
+- Configure [Kobo device sync](./sync-kobo)
+- Set up [e-reader email addresses](./send-to-ereader) for sending books via email
+- Manage [OPDS access](./OPDS)
+
 If you are an administrator, you can also configure your [AI settings](../../administrator/ai-features-configuration)

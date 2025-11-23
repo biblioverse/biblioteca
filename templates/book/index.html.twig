@@ -124,6 +124,17 @@
                             <i class="bi bi-file-earmark-arrow-down"></i> {{ 'book.download'|trans }} {{ book.extension }}
                         </a>
 
+                        {% if ereader_emails is defined and ereader_emails|length > 0 %}
+                            {% for ereader_email in ereader_emails %}
+                                <form method="post" action="{{ path('app_book_send_to_ereader', {'book': book.id, 'slug': book.slug, 'ereaderEmail': ereader_email.id}) }}" style="display: inline-block; width: 100%;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('send_to_ereader' ~ ereader_email.id) }}">
+                                    <button type="submit" class="btn btn-block btn-info">
+                                        <i class="bi bi-envelope"></i> {{ 'book.send-to'|trans|default('Send to') }} {{ ereader_email.name }}
+                                    </button>
+                                </form>
+                            {% endfor %}
+                        {% endif %}
+
                         {% if is_granted('EDIT',book) %}
                         <div style="display: flex; gap: var(--space--md); align-items: center;">
                             {{ component('Assistant', {book: book}) }}

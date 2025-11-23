@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "ereader_email.title"|trans|default("E-reader Emails") }}{% endblock %}
+
+{% block body %}
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{{ "ereader_email.name"|trans|default("Name") }}</th>
+                <th>{{ "ereader_email.email"|trans|default("Email") }}</th>
+                <th>{{ "generic.actions"|trans|default("Actions") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ereader_email in ereader_emails %}
+            <tr>
+                <td>{{ ereader_email.name }}</td>
+                <td>{{ ereader_email.email }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ path('app_ereader_email_edit', {'id': ereader_email.id}) }}" class="btn btn-sm btn-primary">{{ "generic.edit"|trans|default("Edit") }}</a>
+                        <form method="post" action="{{ path('app_ereader_email_delete', {'id': ereader_email.id}) }}" onsubmit="return confirm('{{ "generic.confirm-delete"|trans|default("Are you sure you want to delete this item?") }}');" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ereader_email.id) }}">
+                            <button type="submit" class="btn btn-sm btn-danger">{{ "generic.delete"|trans|default("Delete") }}</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">{{ "ereader_email.no-records"|trans|default("No e-reader email addresses configured.") }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="btn-group align-items-end">
+        <a href="{{ path('app_ereader_email_new') }}" class="btn btn-primary">{{ "ereader_email.create-new"|trans|default("Add E-reader Email") }}</a>
+    </div>
+{% endblock %}
+

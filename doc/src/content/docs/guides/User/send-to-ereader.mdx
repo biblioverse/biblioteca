@@ -1,0 +1,82 @@
+---
+title: Sending Books to E-readers via Email
+---
+
+Biblioteca allows you to send ebooks directly to your e-reader devices (such as Kindle, Kobo, or other devices that support email delivery) via email. This feature is similar to what Calibre-Web offers and makes it easy to transfer books to your devices.
+
+## Prerequisites
+
+Before you can use this feature, your administrator must configure the email settings. The feature requires:
+
+- A configured `MAILER_DSN` in the `.env.local` file (see [Instance Configuration](../../administrator/instance-configuration) for administrators)
+- Email sending capabilities enabled on the server
+
+## Setting Up Your E-reader Email Addresses
+
+1. Go to your profile by clicking on your username in the sidebar, then select "My Profile"
+2. Click on the **"E-reader Emails"** tab
+3. Click **"Add E-reader Email"** to add a new e-reader email address
+4. Fill in the form:
+   - **Name**: A friendly name for your device (e.g., "My Kindle", "Kobo Clara")
+   - **Email**: The email address associated with your e-reader device
+5. Click **"Save"**
+
+You can add multiple e-reader email addresses if you have multiple devices. Each device will appear as a separate option when sending books.
+
+### Finding Your E-reader Email Address
+
+Different e-reader manufacturers provide email addresses for sending books:
+
+- **Kindle**: Check your Amazon account settings under "Content and Devices" → "Preferences" → "Personal Document Settings". Your Kindle will have an email address like `yourname@kindle.com`
+- **Kobo**: Kobo devices don't typically support email delivery, but you can use the [Kobo sync feature](./sync-kobo) instead
+- **Other devices**: Check your device's documentation or settings for the email address used for receiving documents
+
+## Sending Books to Your E-reader
+
+Once you have configured at least one e-reader email address, you can send books directly from the book detail page:
+
+1. Navigate to any book in your library
+2. On the book detail page, you will see buttons for each of your configured e-reader devices (e.g., "Send to My Kindle", "Send to Kobo Clara")
+3. Click the button for the device you want to send the book to
+4. The book will be sent via email to that device's email address
+5. You will see a confirmation message when the book is successfully sent
+
+The book will arrive in your e-reader's email inbox, and most devices will automatically process and add it to your library.
+
+## File Size Limitations
+
+Email providers typically have file size limits for attachments (usually around 25 MB). If a book file exceeds this limit, you will see an error message and the book will not be sent. In this case, you may need to:
+
+- Use a different delivery method (such as downloading the book and transferring it manually)
+- Contact your administrator to increase the file size limit if supported
+
+## Troubleshooting
+
+### No buttons appear on the book page
+
+- Make sure you have added at least one e-reader email address in your profile settings
+- Check that you are logged in to your account
+
+### Email sending fails
+
+- Verify that your administrator has configured the `MAILER_DSN` setting correctly
+- Check that the email address you configured is correct for your device
+- Ensure the book file exists and is accessible
+- Check the file size - it may exceed the maximum allowed size
+
+### Book doesn't appear on my device
+
+- Check your e-reader's email inbox or document delivery settings
+- Verify that the email address you configured matches your device's email address
+- Some devices may require you to approve the sender email address in their settings
+- Check your device's documentation for any additional setup requirements
+
+## Managing Your E-reader Email Addresses
+
+You can manage your e-reader email addresses from your profile:
+
+- **Edit**: Click the "Edit" button next to any e-reader email to modify its name or email address
+- **Delete**: Click the "Delete" button to remove an e-reader email address you no longer use
+
+Remember that you need at least one configured e-reader email address to use the send feature.
+

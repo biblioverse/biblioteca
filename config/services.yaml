@@ -40,6 +40,13 @@ parameters:
     GENERIC_SYSTEM_PROMPT: '%env(GENERIC_SYSTEM_PROMPT)%'
     env(GENERIC_SYSTEM_PROMPT): "As a highly skilled and experienced librarian AI model, I'm here to help you tag and summarize books as close to the original as possible. I will never make up any information. I will only use the information you provide me. I will communicate with you primarily using your preferred language."
 
+    SMTP_FROM_EMAIL: '%env(SMTP_FROM_EMAIL)%'
+    env(SMTP_FROM_EMAIL): 'noreply@biblioteca.local'
+    SMTP_FROM_NAME: '%env(SMTP_FROM_NAME)%'
+    env(SMTP_FROM_NAME): 'Biblioteca'
+    SMTP_MAX_FILE_SIZE: '%env(int:SMTP_MAX_FILE_SIZE)%'
+    env(SMTP_MAX_FILE_SIZE): '25'
+
     AI_SUMMARY_PROMPT: '%env(AI_SUMMARY_PROMPT)%'
     env(AI_SUMMARY_PROMPT): "Can you make a factual summary of the book {book} in around 150 words in language {language}."
 
