@@ -63,7 +63,7 @@ class InitializationController extends AbstractKoboController
         }
 
         $response = new JsonResponse($jsonData);
-        $response->headers->set('kobo-api-token', 'e30=');
+        $response->headers->set(KoboDevice::KOBO_API_TOKEN, KoboDevice::KOBO_API_TOKEN_VALUE);
 
         return $response;
     }

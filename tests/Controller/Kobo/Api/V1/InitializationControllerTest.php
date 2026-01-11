@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Kobo\Api\V1;
 
 use App\DataFixtures\KoboFixture;
+use App\Entity\KoboDevice;
 use App\Tests\Contraints\JSONContainKeys;
 use App\Tests\Controller\Kobo\KoboControllerTestCase;
 use Symfony\Component\BrowserKit\Response;
@@ -61,7 +62,7 @@ class InitializationControllerTest extends KoboControllerTestCase
             self::markTestSkipped('Kobo initialized via Proxy without credentials');
         }
         self::assertResponseIsSuccessful();
-        self::assertResponseHasHeader('kobo-api-token');
+        self::assertResponseHasHeader(KoboDevice::KOBO_API_TOKEN);
 
         $content = file_get_contents(__DIR__.'/InitializationControllerTest.json');
         if ($content === false) {

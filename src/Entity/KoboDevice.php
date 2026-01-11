@@ -24,6 +24,8 @@ class KoboDevice
     public const KOBO_SYNC_TOKEN_HEADER = 'X-Kobo-Synctoken';
     public const KOBO_SYNC_SHOULD_CONTINUE_HEADER = 'X-Kobo-Sync';
     public const KOBO_SYNC_MODE = 'X-Kobo-Sync-Mode';
+    public const KOBO_API_TOKEN = 'X-Kobo-Apitoken';
+    public const KOBO_API_TOKEN_VALUE = 'e30=';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

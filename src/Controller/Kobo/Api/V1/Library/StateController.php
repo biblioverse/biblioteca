@@ -93,7 +93,7 @@ class StateController extends AbstractKoboController
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
-        $response->headers->set('x-kobo-api-token', 'e30=');
+        $response->headers->set(KoboDevice::KOBO_API_TOKEN, KoboDevice::KOBO_API_TOKEN_VALUE);
 
         $book = $this->bookRepository->findByUuid($uuid);
 
