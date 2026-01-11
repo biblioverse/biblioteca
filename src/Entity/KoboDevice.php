@@ -26,6 +26,7 @@ class KoboDevice
     public const KOBO_SYNC_MODE = 'X-Kobo-Sync-Mode';
     public const KOBO_API_TOKEN = 'X-Kobo-Apitoken';
     public const KOBO_API_TOKEN_VALUE = 'e30=';
+    public const KOBO_RECENT_READS = 'Kobo-Recent-Reads';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

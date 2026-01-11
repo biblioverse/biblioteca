@@ -83,6 +83,7 @@ class SyncResponse
         $response->headers->set(KoboDevice::KOBO_SYNC_MODE, 'delta');
         $response->headers->set(KoboDevice::KOBO_API_TOKEN, KoboDevice::KOBO_API_TOKEN_VALUE);
         $response->headers->set(KoboDevice::KOBO_SYNC_TOKEN_HEADER, $this->syncTokenParser->encode($syncToken));
+        $response->headers->set(KoboDevice::KOBO_RECENT_READS, '0'); // Determine how it works!
         if ($this->kernelDebug) {
             $response->headers->set('X-Debug-'.KoboDevice::KOBO_SYNC_TOKEN_HEADER, json_encode($syncToken->toArray(), JSON_THROW_ON_ERROR));
         }
