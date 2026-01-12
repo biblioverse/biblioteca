@@ -125,6 +125,8 @@ class StateController extends AbstractKoboController
         }
 
         $bookmark = $koboDevice->getUser()->getBookmarkForBook($book) ?? new BookmarkUser($book, $koboDevice->getUser());
+        $bookmark->setBook($book);
+        $koboDevice->getUser()->addBookmarkUser($bookmark);
         $this->em->persist($bookmark);
 
         $bookmark->setPercent($currentBookmark->progressPercent === null ? null : $currentBookmark->progressPercent / 100);

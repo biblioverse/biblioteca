@@ -33,6 +33,9 @@ class ReadingStateDeserializeTest extends KernelTestCase
         self::assertNotEmpty($result->readingStates, 'readingStates is empty');
         self::assertInstanceOf(Bookmark::class, $result->readingStates[0]->currentBookmark, 'currentBookmark is not a Bookmark');
         self::assertSame(34, $result->readingStates[0]->currentBookmark->progressPercent, 'Progress percent is not correct');
+        self::assertNotNull($result->readingStates[0]->currentBookmark->location, 'Location is null');
+        self::assertSame('kobo.409.3', $result->readingStates[0]->currentBookmark->location->value, 'Location value is not correct');
+        self::assertSame('KoboSpan', $result->readingStates[0]->currentBookmark->location->type, 'Location type is not correct');
         self::assertInstanceOf(ReadingStateStatusInfo::class, $result->readingStates[0]->statusInfo, 'statusInfo is not a ReadingStateStatusInfo');
         self::assertSame(ReadingStateStatusInfo::STATUS_READING, $result->readingStates[0]->statusInfo->status, 'statusInfo status is not correct');
     }

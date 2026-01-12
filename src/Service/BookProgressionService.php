@@ -42,10 +42,15 @@ class BookProgressionService
     {
         if ($progress === null) {
             $interaction = $book->getLastInteraction($user);
-            if ($interaction instanceof BookInteraction) {
-                $interaction->setReadPages(null);
-                $interaction->setReadStatus(ReadStatus::NotStarted);
+            if (!$interaction instanceof BookInteraction) {
+                $interaction = new BookInteraction();
+                $interaction->setBook($book);
+                $interaction->setUser($user);
+                $book->addBookInteraction($interaction);
+                $this->em->persist($interaction);
             }
+            $interaction->setReadPages(null);
+            $interaction->setReadStatus(ReadStatus::NotStarted);
 
             return $this;
         }
