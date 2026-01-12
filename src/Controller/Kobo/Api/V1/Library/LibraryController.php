@@ -103,6 +103,12 @@ class LibraryController extends AbstractKoboController
         }
         $shouldContinue = $shouldContinue || count($books) < $count;
 
+        // Calculate the new SyncToken value for next sync (will be sent to the response)
+        $shouldContinue
+            ? $syncToken->setPage($syncToken->getPage() + 1)->setTagLastModified(new \DateTimeImmutable('now'))
+            : $syncToken->markLastSyncDateAndResetPage();
+
+        // Sent the response, with the new token
         $httpResponse = $response->toJsonResponse($shouldContinue, $httpResponse, $syncToken);
         $this->koboSyncLogger->debug('Synced response', [
             'data' => $response->getData(),
@@ -114,11 +120,6 @@ class LibraryController extends AbstractKoboController
         // Once the response is generated, we update the list of synced books
         $this->koboSyncLogger->debug('Set synced data for {count} books', ['count' => count($books)]);
         $this->koboSyncedBookRepository->updateSyncedBooks($koboDevice, $books, $syncToken);
-
-        // Calculate the new SyncToken value
-        $shouldContinue
-            ? $syncToken->setPage($syncToken->getPage() + 1)->setTagLastModified(new \DateTimeImmutable('now'))
-            : $syncToken->markLastSyncDateAndResetPage();
 
         $koboDevice->setLastSyncToken($syncToken);
         $this->koboDeviceRepository->save($koboDevice);

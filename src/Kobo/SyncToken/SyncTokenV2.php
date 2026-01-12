@@ -83,6 +83,7 @@ class SyncTokenV2 extends AbstractSyncToken
         $this->data['ProductMetadata']['Timestamp'] = $now;
         $this->data['ReadingStates']['Timestamp'] = $now;
         $this->data['Tags']['Timestamp'] = $now;
+        $this->data['Entitlements']['Timestamp'] = $now;
         $this->page = 1;
 
         return $this;
