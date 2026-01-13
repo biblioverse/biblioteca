@@ -32,7 +32,7 @@ readonly class SyncResponseFactory
         return new SyncResponse(
             $this->metadataResponseService,
             $this->bookProgressionService,
-            $syncToken,
+            clone $syncToken, // Token is cloned because we need to process the same response even if the original token is altered later on.
             $koboDevice,
             $this->serializer,
             $this->readingStateResponseFactory,

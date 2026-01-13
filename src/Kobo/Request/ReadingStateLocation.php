@@ -4,10 +4,7 @@ namespace App\Kobo\Request;
 
 class ReadingStateLocation
 {
-    public const TYPE_KOBO_SPAN = 'KoboSpan';
-    public const TYPE_KOBO_VALUE = 'kobo.1.1';
-
     public ?string $source = null;
-    public ?string $type = self::TYPE_KOBO_SPAN;
-    public ?string $value = self::TYPE_KOBO_VALUE;
+    public ?string $type = null; // 'KoboSpan'
+    public ?string $value = null; // 'kobo.1.1' represent the book's location div
 }

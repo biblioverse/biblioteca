@@ -45,7 +45,7 @@ class AnalyticsController extends AbstractKoboController
             'TestKey' => $testKey,
             'Tests' => new \stdClass(),
         ]);
-        $response->headers->set('x-kobo-api-token', 'e30=');
+        $response->headers->set(KoboDevice::KOBO_API_TOKEN, KoboDevice::KOBO_API_TOKEN_VALUE);
 
         return $response;
     }

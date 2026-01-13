@@ -3,6 +3,7 @@
 namespace App\Kobo\Response;
 
 use App\Entity\Book;
+use App\Entity\KoboDevice;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,5 +28,7 @@ class StateResponse extends JsonResponse
                 ],
             ],
         ], Response::HTTP_OK);
+
+        $this->headers->set(KoboDevice::KOBO_API_TOKEN, KoboDevice::KOBO_API_TOKEN_VALUE);
     }
 }

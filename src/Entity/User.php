@@ -439,6 +439,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // set the owning side to null (unless already changed)
         if ($this->bookmarkUsers->removeElement($bookmarkUser) && $bookmarkUser->getUser() === $this) {
             $bookmarkUser->setUser(null);
+            $bookmarkUser->setBook(null);
         }
 
         return $this;
@@ -457,7 +458,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeBookmarkForBook(Book $book): self
     {
-        $this->getBookmarkForBook($book)?->setUser(null)->setBook(null);
+        $bk = $this->getBookmarkForBook($book);
+        if (!$bk instanceof BookmarkUser) {
+            return $this;
+        }
+
+        $this->removeBookmarkUser($bk);
+        $bk->setUser(null);
 
         return $this;
     }

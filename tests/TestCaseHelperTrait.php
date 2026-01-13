@@ -6,6 +6,7 @@ use App\DataFixtures\BookFixture;
 use App\DataFixtures\ShelfFixture;
 use App\Entity\Book;
 use App\Entity\BookInteraction;
+use App\Entity\BookmarkUser;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
 use App\Entity\Shelf;
@@ -137,6 +138,11 @@ trait TestCaseHelperTrait
     protected function deleteAllInteractions(): void
     {
         $this->getEntityManager()->getRepository(BookInteraction::class)->createQueryBuilder('i')->delete()->getQuery()->execute();
+    }
+
+    protected function deleteAllBookmarks(): void
+    {
+        $this->getEntityManager()->getRepository(BookmarkUser::class)->createQueryBuilder('i')->delete()->getQuery()->execute();
     }
 
     protected function loginViaTokenStorage(): void

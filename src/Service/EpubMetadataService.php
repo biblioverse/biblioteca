@@ -237,9 +237,9 @@ class EpubMetadataService
         if ($elements === false) {
             return;
         }
-
+        /** @var \DOMNode $element */
         foreach ($elements as $element) {
-            if ($element->parentNode instanceof \DOMNode && $element instanceof \DOMNode) {
+            if ($element->parentNode instanceof \DOMNode) {
                 $element->parentNode->removeChild($element);
             }
         }

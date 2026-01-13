@@ -10,10 +10,26 @@ use App\Kobo\DownloadHelper;
 use App\Kobo\Response\MetadataResponseService;
 use App\Repository\BookRepository;
 use App\Tests\Controller\Kobo\KoboControllerTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DownloadControllerTest extends KoboControllerTestCase
 {
-    public function testDownload(): void
+    public static function downloadProvider(): array
+    {
+        return [
+            [
+                'extension' => MetadataResponseService::EPUB_FORMAT,
+                'contentType' => 'application/epub+zip',
+            ],
+            [
+                'extension' => MetadataResponseService::KEPUB_EXTENSION,
+                'contentType' => 'application/x-kobo-epub+zip',
+            ],
+        ];
+    }
+
+    #[DataProvider('downloadProvider')]
+    public function testDownload(string $extension, string $contentType): void
     {
         $client = static::getClient();
 
@@ -25,13 +41,14 @@ class DownloadControllerTest extends KoboControllerTestCase
 
         self::assertTrue($downloadHelper->exists($book), 'The book file does not exist');
 
-        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, BookFixture::ID, 'epub'));
+        $client?->request('GET', sprintf('/kobo/%s/v1/download/%s.%s', KoboFixture::ACCESS_KEY, BookFixture::ID, $extension));
 
         self::assertResponseIsSuccessful();
-        self::assertResponseHeaderSame('Content-Type', 'application/epub+zip');
+        self::assertResponseHeaderSame('Content-Type', $contentType);
         self::assertResponseHasHeader('Content-Length');
 
         $expectedDisposition = 'attachment; filename=book-1-'.BookFixture::BOOK_ODYSSEY_FILENAME."; filename*=utf-8''".BookFixture::BOOK_ODYSSEY_FILENAME;
+        $expectedDisposition = str_replace('.epub', '.'.strtolower($extension), $expectedDisposition);
         self::assertResponseHeaderSame('Content-Disposition', $expectedDisposition, 'The Content-Disposition header is not as expected');
     }
 

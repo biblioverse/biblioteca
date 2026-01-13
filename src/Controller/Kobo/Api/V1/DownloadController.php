@@ -19,7 +19,7 @@ class DownloadController extends AbstractKoboController
     ) {
     }
 
-    #[Route('/{id:book}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9]+'], methods: ['GET'])]
+    #[Route('/{id:book}.{extension}', name: 'download', requirements: ['bookId' => '\d+', 'extension' => '[A-Za-z0-9.]+'], methods: ['GET'])]
     public function download(Book $book, string $extension): Response
     {
         $this->denyAccessUnlessGranted(BookVoter::DOWNLOAD, $book, 'You are not allowed to download this book');

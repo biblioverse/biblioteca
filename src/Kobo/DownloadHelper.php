@@ -102,7 +102,7 @@ class DownloadHelper
         $message = null;
         $deleteAfterSend = false;
 
-        if ($format === MetadataResponseService::KEPUB_FORMAT) {
+        if ($format === MetadataResponseService::KEPUB_FORMAT || strtoupper($format) === MetadataResponseService::KEPUB_EXTENSION) {
             try {
                 $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
                 $message = $this->runKepubify($embeddedPath);
@@ -130,6 +130,7 @@ class DownloadHelper
 
         $response->headers->set('Content-Type', match (strtoupper($format)) {
             MetadataResponseService::EPUB3_SAMPLE_FORMAT, MetadataResponseService::EPUB3_WEB_FORMAT, MetadataResponseService::KEPUB_FORMAT, MetadataResponseService::EPUB_FORMAT, MetadataResponseService::EPUB3_FORMAT => 'application/epub+zip',
+            MetadataResponseService::KEPUB_EXTENSION => 'application/x-kobo-epub+zip',
             default => 'application/octet-stream',
         });
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $encodedFilename, $simpleName));

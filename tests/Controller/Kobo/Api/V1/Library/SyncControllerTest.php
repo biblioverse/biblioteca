@@ -6,6 +6,7 @@ use App\DataFixtures\BookFixture;
 use App\DataFixtures\KoboFixture;
 use App\Entity\KoboDevice;
 use App\Entity\KoboSyncedBook;
+use App\Kobo\SyncToken\SyncTokenParser;
 use App\Kobo\SyncToken\SyncTokenV1;
 use App\Repository\BookRepository;
 use App\Service\KoboSyncTokenExtractor;
@@ -267,8 +268,14 @@ class SyncControllerTest extends KoboControllerTestCase
             'NewTag' => 1,
             'DeletedTag' => 1,
         ]), 'Response is not a valid sync response');
+
+        $tokenParser = $this->getService(SyncTokenParser::class);
+
         $token = self::getRawResponse()->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
-        self::assertSame(base64_decode($upstreamToken, true), $token !== null ? base64_decode($token, true) : null);
+
+        $syncTokenParsed = $tokenParser->decode($token);
+        $upstreamTokenParsed = $tokenParser->decode($upstreamToken);
+        self::assertSame($syncTokenParsed::class, $upstreamTokenParsed::class);
         $this->getKoboDevice()->setUpstreamSync(false);
         $this->getEntityManager()->flush();
     }
@@ -312,5 +319,69 @@ class SyncControllerTest extends KoboControllerTestCase
         $syncedBook = $this->getEntityManager()->getRepository(KoboSyncedBook::class)
             ->findOneBy(['koboDevice' => 1, 'book' => $this->getBook()]);
         self::assertNull($syncedBook, 'The syncedBook should be removed');
+    }
+
+    /**
+     * Test that books are not duplicated as NewEntitlement when syncing twice.
+     * This verifies that the sync token is properly updated in the response header.
+     *
+     * @throws \JsonException
+     */
+    public function testBookNotDuplicatedAsNewEntitlement(): void
+    {
+        $client = static::getClient();
+        $tokenExtractor = $this->getService(KoboSyncTokenExtractor::class);
+        $tokenParser = $this->getService(SyncTokenParser::class);
+
+        // First sync: all books should be NewEntitlement
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync');
+        self::assertResponseIsSuccessful();
+
+        $firstResponse = self::getJsonResponse();
+        self::assertThat($firstResponse, new JSONIsValidSyncResponse([
+            'NewEntitlement' => BookFixture::NUMBER_OF_OWNED_YAML_BOOKS,
+            'NewTag' => 1,
+        ]), 'First sync: all books should be NewEntitlement');
+
+        // Extract the sync token from the response header
+        $rawResponse = self::getRawResponse();
+        $syncTokenHeader = $rawResponse->headers->get(KoboDevice::KOBO_SYNC_TOKEN_HEADER);
+        self::assertNotNull($syncTokenHeader, 'Sync token header should be present');
+
+        $syncToken = $tokenParser->decode($syncTokenHeader);
+
+        // Verify the token has been updated with current timestamp
+        $lastCreated = $syncToken->getLastCreated();
+        self::assertNotNull($lastCreated, 'lastCreated should be set in response token');
+        self::assertEqualsWithDelta(
+            time(),
+            $lastCreated->getTimestamp(),
+            5,
+            'lastCreated should be updated to current time (within 5 seconds)'
+        );
+
+        // Second sync: using the token from the first response
+        $headers = $tokenExtractor->getTestHeader($syncToken);
+        $client?->request('GET', '/kobo/'.KoboFixture::ACCESS_KEY.'/v1/library/sync', [], [], $headers);
+        self::assertResponseIsSuccessful();
+
+        $secondResponse = self::getJsonResponse();
+        self::assertThat($secondResponse, new JSONIsValidSyncResponse([
+            // No NewEntitlement expected - all books were already synced
+        ]), 'Second sync: no books should be NewEntitlement');
+
+        // Verify database token matches response token
+        $this->getEntityManager()->refresh($this->getKoboDevice());
+        $dbToken = $this->getKoboDevice()->getLastSyncToken();
+        self::assertNotNull($dbToken, 'Database should have the updated token');
+
+        $dbLastCreated = $dbToken->getLastCreated();
+        self::assertNotNull($dbLastCreated, 'Database token should have lastCreated set');
+        self::assertEqualsWithDelta(
+            $lastCreated,
+            $dbLastCreated,
+            1,
+            'Database token should match response token'
+        );
     }
 }

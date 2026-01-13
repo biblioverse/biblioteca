@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 class MetadataResponseService
 {
     public const KEPUB_FORMAT = 'KEPUB';
+    public const KEPUB_EXTENSION = 'KEPUB.EPUB';
     public const EPUB3_FORMAT = 'EPUB3';
     public const EPUB3_WEB_FORMAT = 'EPUB3WEB';
     public const EPUB_FORMAT = 'EPUB';
@@ -34,7 +35,7 @@ class MetadataResponseService
         // If format conversion is enabled, we convert the book to KEPUB and return it
         if ($this->kepubifyEnabler->isEnabled()) {
             try {
-                $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_FORMAT);
+                $downloadInfo = $this->downloadHelper->getDownloadInfo($book, $koboDevice, self::KEPUB_EXTENSION);
 
                 return [0 => [
                     'DrmType' => 'None', // KDRM, AdobeDrm
