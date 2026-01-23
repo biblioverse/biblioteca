@@ -13,8 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KoboDeviceRepository::class)]
 #[ORM\UniqueConstraint(name: 'kobo_access_key', columns: ['access_key'])]
-#[ORM\Index(columns: ['device_id'], name: 'kobo_device_id')]
-#[ORM\Index(columns: ['access_key'], name: 'kobo_access_key')]
+#[ORM\Index(name: 'kobo_device_id', columns: ['device_id'])]
+#[ORM\Index(name: 'kobo_access_key', columns: ['access_key'])]
 #[UniqueEntity(fields: ['accessKey'])]
 class KoboDevice
 {
@@ -62,7 +62,7 @@ class KoboDevice
     /**
      * @var Collection<int, KoboSyncedBook>
      */
-    #[ORM\OneToMany(mappedBy: 'koboDevice', targetEntity: KoboSyncedBook::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: KoboSyncedBook::class, mappedBy: 'koboDevice', orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]

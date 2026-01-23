@@ -12,10 +12,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/authors')]
 class AuthorController extends AbstractController
 {
-    #[Route('/{name}', name: 'app_author_detail')]
-    public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService): Response
+    public function __construct(private readonly BookRepository $bookRepository, private readonly BookInteractionService $bookInteractionService)
     {
-        $books = $bookRepository->findByAuthor($name);
+    }
+
+    #[Route('/{name}', name: 'app_author_detail')]
+    public function detail(string $name): Response
+    {
+        $books = $this->bookRepository->findByAuthor($name);
 
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -54,10 +58,10 @@ class AuthorController extends AbstractController
 
         $booksInSeries = [];
         foreach ($series as $serie) {
-            $booksInSeries[$serie] = $bookRepository->getFirstUnreadBook($serie);
+            $booksInSeries[$serie] = $this->bookRepository->getFirstUnreadBook($serie);
         }
 
-        $stats = $bookInteractionService->getStats($books, $user);
+        $stats = $this->bookInteractionService->getStats($books, $user);
 
         return $this->render('author/detail.html.twig', [
             'author' => $name,

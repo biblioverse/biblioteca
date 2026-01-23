@@ -16,6 +16,7 @@ class GenericController extends AbstractKoboController
 {
     public function __construct(
         protected KoboStoreProxy $koboStoreProxy,
+        private readonly LoggerInterface $koboLogger,
     ) {
     }
 
@@ -61,9 +62,9 @@ class GenericController extends AbstractKoboController
     #[Route('/library/{uuid}', methods: ['DELETE'])]
     #[Route('/user/recommendations', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET', 'POST'])]
     #[Route('/user/wishlist')] // ?PageSize=100&PageIndex=0
-    public function proxy(Request $request, LoggerInterface $koboLogger): Response
+    public function proxy(Request $request): Response
     {
-        $koboLogger->info('Kobo API Proxy request on '.$request->getPathInfo(), ['request' => $request->getContent(), 'headers' => $request->headers->all()]);
+        $this->koboLogger->info('Kobo API Proxy request on '.$request->getPathInfo(), ['request' => $request->getContent(), 'headers' => $request->headers->all()]);
 
         return $this->koboStoreProxy->proxyOrRedirect($request);
     }

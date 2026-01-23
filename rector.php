@@ -8,7 +8,7 @@ use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\InlineClassRoutePrefixRector;
-
+use Rector\Symfony\CodeQuality\Rector\Class_\ControllerMethodInjectionToConstructorRector;
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/config',
@@ -34,4 +34,8 @@ return RectorConfig::configure()
     ->withSkip([
         '**/config/bundles.php',
         InlineClassRoutePrefixRector::class
+    ])->withSkip([
+        ControllerMethodInjectionToConstructorRector::class => [
+            __DIR__ . '/src/Controller/Kobo/Api/V1/Library/StateController.php', // KoboSyncToken is not a service.
+        ],
     ]);

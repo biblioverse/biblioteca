@@ -9,10 +9,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ShelfController extends AbstractController
 {
-    #[Route('/shelf/{slug:shelf}', name: 'app_shelf')]
-    public function index(Shelf $shelf, ShelfManager $shelfManager): Response
+    public function __construct(private readonly ShelfManager $shelfManager)
     {
-        $books = $shelfManager->getBooksInShelf($shelf);
+    }
+
+    #[Route('/shelf/{slug:shelf}', name: 'app_shelf')]
+    public function index(Shelf $shelf): Response
+    {
+        $books = $this->shelfManager->getBooksInShelf($shelf);
 
         return $this->render('shelf/index.html.twig', [
             'shelf' => $shelf,

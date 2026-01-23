@@ -13,21 +13,23 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SuggestionController extends AbstractController
 {
+    public function __construct(private readonly SuggestionRepository $suggestionRepository, private readonly PaginatorInterface $paginator)
+    {
+    }
+
     #[Route('/suggestion', name: 'app_suggestion')]
     public function index(
         Request $request,
-        SuggestionRepository $suggestionRepository,
-        PaginatorInterface $paginator,
     ): Response {
         $page = $request->query->getInt('page', 1);
 
-        $query = $suggestionRepository->createQueryBuilder('s')
+        $query = $this->suggestionRepository->createQueryBuilder('s')
             ->leftJoin('s.book', 'b')
             ->addSelect('b')
             ->orderBy('s.id', 'DESC')
             ->getQuery();
 
-        $pagination = $paginator->paginate(
+        $pagination = $this->paginator->paginate(
             $query,
             $page,
             10

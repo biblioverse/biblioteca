@@ -109,7 +109,7 @@ class UpstreamSyncMerger
 
         foreach ($response->headers->getIterator() as $name => $values) {
             foreach (((array) $values) as $key => $value) {
-                if (is_string($value)) {
+                if (is_string($key) && is_string($name) && is_string($value)) {
                     $httpResponse->headers->set('X-upstream-'.$key.'-'.$name, $value);
                 }
             }
