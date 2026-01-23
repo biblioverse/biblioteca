@@ -126,16 +126,8 @@ class DefaultController extends AbstractController
     public function notverified(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Check if sort parameters are provided in the request
-        $sortBy = $request->query->get('sort');
-        $sortOrder = $request->query->get('order');
-
-        // If no sort parameters in request, try to get from cookies
-        if ($sortBy === null) {
-            $sortBy = $request->cookies->get('notverified_sort', 'path');
-        }
-        if ($sortOrder === null) {
-            $sortOrder = $request->cookies->get('notverified_order', 'asc');
-        }
+        $sortBy = $request->query->getString('sort', $request->cookies->getString('notverified_sort', 'path'));
+        $sortOrder = $request->query->getString('order', $request->cookies->getString('notverified_order', 'asc'));
 
         // Validate sort order
         if (!in_array($sortOrder, ['asc', 'desc'], true)) {
@@ -154,8 +146,8 @@ class DefaultController extends AbstractController
 
         $books = $this->bookRepository->findBy(['verified' => false], $orderBy, 100);
 
-        $action = $request->query->get('action');
-        if ($action !== null) {
+        $action = $request->query->getString('action', $request->request->getString('action'));
+        if ($action !== '') {
             switch ($action) {
                 case 'relocate':
                     if ($this->isGranted('RELOCATE')) {
@@ -221,7 +213,7 @@ class DefaultController extends AbstractController
         ]);
 
         // Set cookies if sort parameters were provided in the request
-        if ($request->query->get('sort') !== null || $request->query->get('order') !== null) {
+        if ($request->query->getString('sort') !== '' || $request->query->getString('order') !== '') {
             $farAway = strtotime('+1 year');
 
             $farAway = (string) $farAway;

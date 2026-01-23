@@ -100,7 +100,7 @@ class OpdsController extends AbstractController
         $opds->title(ucfirst($type));
         $feeds = [];
         foreach ($group as $item) {
-            $feeds[] = $this->opds->getNavigationEntry('group:'.$type.':'.$item['item'], $item['item'], $this->generateOpdsUrl('opds_group_item', ['type' => $type, 'item' => $item['item']]));
+            $feeds[] = $this->opds->getNavigationEntry('group:'.$type.':'.$item['item'], (string) $item['item'], $this->generateOpdsUrl('opds_group_item', ['type' => $type, 'item' => $item['item']]));
         }
         $opds->feeds($feeds);
 

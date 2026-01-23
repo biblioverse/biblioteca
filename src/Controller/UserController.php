@@ -74,7 +74,7 @@ class UserController extends AbstractController
             'form' => $form->createView(),
             'opds_access' => $opds,
             'user' => $user,
-            'tab' => $request->query->get('tab', 'profile'),
+            'tab' => $request->query->getString('tab', 'profile'),
         ]);
     }
 

@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @extends ServiceEntityRepository<Book>
  *
  * @phpstan-type UnconvertedGroupType array{ item:null|string|array, bookCount:int, booksFinished:int }
- * @phpstan-type GroupType array{ item:string, bookCount:int, booksFinished:int }
+ * @phpstan-type GroupType array{ item:string|null, bookCount:int, booksFinished:int }
  */
 class BookRepository extends ServiceEntityRepository
 {
