@@ -31,6 +31,10 @@ class UploadBookPicture extends AbstractController
 
     public ?string $flashMessage = null;
 
+    public function __construct(private readonly LoggerInterface $logger, private readonly BookFileSystemManager $fileSystemManager)
+    {
+    }
+
     #[LiveAction]
     public function activateEditing(): void
     {
@@ -38,7 +42,7 @@ class UploadBookPicture extends AbstractController
     }
 
     #[LiveAction]
-    public function uploadFiles(Request $request, LoggerInterface $logger, BookFileSystemManager $fileSystemManager, EntityManagerInterface $entityManager): void
+    public function uploadFiles(Request $request, EntityManagerInterface $entityManager): void
     {
         /** @var ?UploadedFile $symfonyFile */
         $symfonyFile = $request->files->getIterator()->current();
@@ -50,10 +54,10 @@ class UploadBookPicture extends AbstractController
         }
 
         if (UPLOAD_ERR_OK === $symfonyFile->getError()) {
-            $logger->info('uploading file '.$symfonyFile->getClientOriginalName());
+            $this->logger->info('uploading file '.$symfonyFile->getClientOriginalName());
 
-            $book = $fileSystemManager->uploadBookCover($symfonyFile, $this->book);
-            $logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
+            $book = $this->fileSystemManager->uploadBookCover($symfonyFile, $this->book);
+            $this->logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
 
             $entityManager->persist($book);
             $entityManager->flush();
@@ -62,7 +66,7 @@ class UploadBookPicture extends AbstractController
 
             return;
         }
-        $logger->info('Error in file ', ['error' => $symfonyFile->getErrorMessage()]);
+        $this->logger->info('Error in file ', ['error' => $symfonyFile->getErrorMessage()]);
 
         $this->flashMessage = $symfonyFile->getErrorMessage();
     }

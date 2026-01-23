@@ -23,19 +23,23 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/ai/model')]
 final class AiModelController extends AbstractController
 {
-    #[Route(name: 'app_ai_model_index')]
-    public function index(Request $request, AiModelRepository $aiModelRepository, ConfigValue $configValue): Response
+    public function __construct(private readonly AiModelRepository $aiModelRepository, private readonly ConfigValue $configValue, private readonly PromptFactory $promptFactory, private readonly CommunicatorDefiner $communicatorDefiner, private readonly BookRepository $bookRepository)
     {
-        $allModels = $aiModelRepository->findAllIndexed();
+    }
+
+    #[Route(name: 'app_ai_model_index')]
+    public function index(Request $request): Response
+    {
+        $allModels = $this->aiModelRepository->findAllIndexed();
 
         $values = [
-            'AI_SUMMARIZATION_MODEL' => $allModels[(int) $configValue->resolve('AI_SUMMARIZATION_MODEL', true)] ?? null,
-            'AI_TAG_MODEL' => $allModels[(int) $configValue->resolve('AI_TAG_MODEL', true)] ?? null,
-            'AI_SEARCH_MODEL' => $allModels[(int) $configValue->resolve('AI_SEARCH_MODEL', true)] ?? null,
-            'AI_ASSISTANT_MODEL' => $allModels[(int) $configValue->resolve('AI_ASSISTANT_MODEL', true)] ?? null,
-            'AI_CONTEXT_MODEL' => $allModels[(int) $configValue->resolve('AI_CONTEXT_MODEL', true)] ?? null,
-            'AI_SUMMARY_PROMPT' => $configValue->resolve('AI_SUMMARY_PROMPT', true),
-            'AI_TAG_PROMPT' => $configValue->resolve('AI_TAG_PROMPT', true),
+            'AI_SUMMARIZATION_MODEL' => $allModels[(int) $this->configValue->resolve('AI_SUMMARIZATION_MODEL', true)] ?? null,
+            'AI_TAG_MODEL' => $allModels[(int) $this->configValue->resolve('AI_TAG_MODEL', true)] ?? null,
+            'AI_SEARCH_MODEL' => $allModels[(int) $this->configValue->resolve('AI_SEARCH_MODEL', true)] ?? null,
+            'AI_ASSISTANT_MODEL' => $allModels[(int) $this->configValue->resolve('AI_ASSISTANT_MODEL', true)] ?? null,
+            'AI_CONTEXT_MODEL' => $allModels[(int) $this->configValue->resolve('AI_CONTEXT_MODEL', true)] ?? null,
+            'AI_SUMMARY_PROMPT' => $this->configValue->resolve('AI_SUMMARY_PROMPT', true),
+            'AI_TAG_PROMPT' => $this->configValue->resolve('AI_TAG_PROMPT', true),
         ];
 
         $form = $this->createForm(AiConfigurationType::class, $values);
@@ -50,7 +54,7 @@ final class AiModelController extends AbstractController
                 if ($value instanceof AiModel) {
                     $value = $value->getId();
                 }
-                $configValue->update((string) $key, $value);
+                $this->configValue->update((string) $key, $value);
             }
             $this->addFlash('success', 'Configuration updated successfully');
         }
@@ -62,9 +66,9 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/test/{id}', name: 'app_ai_model_test', methods: ['GET', 'POST'])]
-    public function test(Request $request, AiModel $aiModel, PromptFactory $promptFactory, CommunicatorDefiner $communicatorDefiner, BookRepository $bookRepository): Response
+    public function test(Request $request, AiModel $aiModel): Response
     {
-        $book = $bookRepository->findOneBy([]);
+        $book = $this->bookRepository->findOneBy([]);
         if (!$book instanceof Book) {
             $this->addFlash('error', 'No books');
 
@@ -72,7 +76,7 @@ final class AiModelController extends AbstractController
         }
 
         try {
-            $communicator = $communicatorDefiner->getSpecificCommunicator($aiModel);
+            $communicator = $this->communicatorDefiner->getSpecificCommunicator($aiModel);
 
             $user = $this->getUser();
             if (!$user instanceof User) {
@@ -80,8 +84,8 @@ final class AiModelController extends AbstractController
 
                 return $this->redirectToRoute('app_ai_model_index');
             }
-            $tagPrompt = $promptFactory->getPrompt(TagPrompt::class, $book);
-            $summaryPrompt = $promptFactory->getPrompt(SummaryPrompt::class, $book);
+            $tagPrompt = $this->promptFactory->getPrompt(TagPrompt::class, $book);
+            $summaryPrompt = $this->promptFactory->getPrompt(SummaryPrompt::class, $book);
 
             $tagPromptResponse = '';
             $summaryPromptResponse = '';
@@ -108,10 +112,10 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/new', name: 'app_ai_model_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ConfigValue $configValue): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $aiModel = new AiModel();
-        $aiModel->setSystemPrompt($configValue->resolve('GENERIC_SYSTEM_PROMPT'));
+        $aiModel->setSystemPrompt($this->configValue->resolve('GENERIC_SYSTEM_PROMPT'));
         $form = $this->createForm(AiModelType::class, $aiModel);
         $form->handleRequest($request);
 

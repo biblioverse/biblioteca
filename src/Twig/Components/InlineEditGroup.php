@@ -34,6 +34,10 @@ class InlineEditGroup extends AbstractController
 
     public ?string $flashMessage = null;
 
+    public function __construct(private readonly BookRepository $bookRepository)
+    {
+    }
+
     #[LiveAction]
     public function activateEditing(): void
     {
@@ -44,19 +48,19 @@ class InlineEditGroup extends AbstractController
      * @throws \JsonException
      */
     #[LiveAction]
-    public function remove(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
+    public function remove(EntityManagerInterface $entityManager): void
     {
         $this->fieldValue = '';
-        $this->save($bookRepository, $entityManager);
+        $this->save($entityManager);
     }
 
     /**
      * @throws \JsonException
      */
     #[LiveAction]
-    public function save(BookRepository $bookRepository, EntityManagerInterface $entityManager): void
+    public function save(EntityManagerInterface $entityManager): void
     {
-        $qb = $bookRepository->createQueryBuilder('book')
+        $qb = $this->bookRepository->createQueryBuilder('book')
             ->select('book');
         $qb->andWhere('JSON_CONTAINS(lower(book.'.$this->field.'), :value)=1');
         $qb->setParameter('value', json_encode([strtolower($this->existingValue)], JSON_THROW_ON_ERROR));

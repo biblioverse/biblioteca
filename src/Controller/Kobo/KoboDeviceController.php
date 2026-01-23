@@ -23,18 +23,19 @@ class KoboDeviceController extends AbstractController
         protected string $kernelLogsDir,
         #[Autowire(param: 'kernel.environment')]
         protected string $kernelEnvironment,
+        private readonly KoboDeviceRepository $koboDeviceRepository,
     ) {
     }
 
     #[Route('/', name: 'app_kobodevice_user_index', methods: ['GET'])]
-    public function index(KoboDeviceRepository $koboDeviceRepository): Response
+    public function index(): Response
     {
         if (!$this->getUser() instanceof UserInterface) {
             throw $this->createAccessDeniedException();
         }
 
         return $this->render('kobodevice_user/index.html.twig', [
-            'kobos' => $koboDeviceRepository->findAll(),
+            'kobos' => $this->koboDeviceRepository->findAll(),
         ]);
     }
 
