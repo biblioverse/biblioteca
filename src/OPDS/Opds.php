@@ -84,7 +84,7 @@ class Opds
             $this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
             content: $book->getSummary() ?? ' ',
             updated: new \DateTime($updated->format('Y-m-d h:i:s')),
-            download: $this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL).$this->bookFileSystemManager->getBookPublicPath($book),
+            download: rtrim($this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/').$this->bookFileSystemManager->getBookPublicPath($book),
             mediaThumbnail: $cover,
             categories: $book->getTags() ?? [],
             authors: array_map($this->getOpdsAuthor(...), $book->getAuthors()),
