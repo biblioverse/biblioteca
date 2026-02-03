@@ -32,13 +32,32 @@ class BookManager
     public function createBook(\SplFileInfo $file): Book
     {
         $book = new Book();
+        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
 
         $extractedMetadata = $this->extractEbookMetadata($file);
+        $book = $this->applyMetadataToBook($book, $extractedMetadata);
+
+        $book->setExtension($file->getExtension());
+        $book->setBookPath('');
+        $book->setBookFilename('');
+
+        return $this->updateBookLocation($book, $file);
+    }
+
+    public function updateBookMetadata(Book $book, \SplFileInfo $file): Book
+    {
+        $extractedMetadata = $this->extractEbookMetadata($file);
+
+        return $this->applyMetadataToBook($book, $extractedMetadata);
+    }
+
+    private function applyMetadataToBook(Book $book, array $extractedMetadata): Book
+    {
         if ('' === $extractedMetadata['title'] || '.pdf' === $extractedMetadata['title']) {
-            $extractedMetadata['title'] = $file->getBasename();
+            $extractedMetadata['title'] = $book->getBookFilename();
         }
         $book->setTitle($extractedMetadata['title']);
-        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
+        $book->setAuthors([]);
         if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {
             $book->addAuthor($extractedMetadata['main_author']->getName());
         }
@@ -63,15 +82,11 @@ class BookManager
             $book->setLanguage($extractedMetadata['language']);
         }
 
-        $book->setExtension($file->getExtension());
         $book->setTags($extractedMetadata['tags']);
 
-        $book->setBookPath('');
-        $book->setBookFilename('');
-
-        return $this->updateBookLocation($book, $file);
+        return $book;
     }
-
+    
     public function updateBookLocation(Book $book, \SplFileInfo $file): Book
     {
         $path = $this->fileSystemManager->getFolderName($file);
@@ -146,7 +161,7 @@ class BookManager
         ];
     }
 
-    public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null): void
+    public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null, bool $force = false): void
     {
         if (!$output instanceof OutputInterface) {
             $output = new NullOutput();
@@ -166,7 +181,7 @@ class BookManager
                 $progressBar->setMessage($file->getFilename());
                 $book = null;
                 try {
-                    $book = $this->consumeBook($file);
+                    $book = $this->consumeBook($file, $force);
                 } catch (BookExtractionException $e) {
                     $book = $this->createBookWithoutMetadata($file);
                     $io->error($e->getMessage());
@@ -188,7 +203,7 @@ class BookManager
         $progressBar->finish();
     }
 
-    public function consumeBook(\SplFileInfo $file): Book
+    public function consumeBook(\SplFileInfo $file, bool $force = false): Book
     {
         $book = $this->bookRepository->findOneBy(
             [
@@ -198,6 +213,10 @@ class BookManager
         );
 
         if (null !== $book) {
+            if ($force) {
+                return $this->updateBookMetadata($book, $file);
+            }
+
             return $book;
         }
 
