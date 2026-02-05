@@ -110,7 +110,7 @@ class StateController extends AbstractKoboController
 
         $this->denyAccessUnlessGranted(BookVoter::VIEW, $book, 'You are not allowed to view this book');
 
-        $syncToken = $syncToken ?? $koboDevice->getLastSyncToken() ?? new SyncTokenV1();
+        $syncToken ??= $koboDevice->getLastSyncToken() ?? new SyncTokenV1();
         $rsResponse = $this->readingStateResponseFactory->create($syncToken, $koboDevice, $book);
 
         $response->setContent($rsResponse);
