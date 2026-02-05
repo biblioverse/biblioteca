@@ -13,6 +13,7 @@ use App\Kobo\Request\ReadingStateStatusInfo;
 use App\Kobo\Response\ReadingStateResponseFactory;
 use App\Kobo\Response\StateResponse;
 use App\Kobo\SyncToken\SyncTokenInterface;
+use App\Kobo\SyncToken\SyncTokenV1;
 use App\Repository\BookRepository;
 use App\Security\Voter\BookVoter;
 use App\Service\BookProgressionService;
@@ -34,7 +35,6 @@ class StateController extends AbstractKoboController
         protected EntityManagerInterface $em,
         protected BookProgressionService $bookProgressionService,
         protected ReadingStateResponseFactory $readingStateResponseFactory,
-        private readonly SyncTokenInterface $syncToken,
     ) {
     }
 
@@ -90,7 +90,7 @@ class StateController extends AbstractKoboController
      * @throws GuzzleException
      */
     #[Route('/{uuid}/state', name: 'api_endpoint_v1_getstate', requirements: ['uuid' => '^[a-zA-Z0-9\-]+$'], methods: ['GET'])]
-    public function getState(KoboDevice $koboDevice, string $uuid, Request $request): Response|JsonResponse
+    public function getState(KoboDevice $koboDevice, string $uuid, Request $request, ?SyncTokenInterface $syncToken = null): Response|JsonResponse
     {
         // Get State returns an empty response
         $response = new JsonResponse([]);
@@ -110,7 +110,8 @@ class StateController extends AbstractKoboController
 
         $this->denyAccessUnlessGranted(BookVoter::VIEW, $book, 'You are not allowed to view this book');
 
-        $rsResponse = $this->readingStateResponseFactory->create($this->syncToken, $koboDevice, $book);
+        $syncToken = $syncToken ?? $koboDevice->getLastSyncToken() ?? new SyncTokenV1();
+        $rsResponse = $this->readingStateResponseFactory->create($syncToken, $koboDevice, $book);
 
         $response->setContent($rsResponse);
 
