@@ -236,7 +236,7 @@ class BooksTagsHarmonizeCommand extends Command
         AiCommunicatorInterface $communicator,
         array $books,
         string $language,
-        array $allowedGenres
+        array $allowedGenres,
     ): array {
         $booksData = [];
         foreach ($books as $book) {
