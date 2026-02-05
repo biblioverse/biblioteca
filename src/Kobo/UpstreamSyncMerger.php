@@ -109,8 +109,8 @@ class UpstreamSyncMerger
 
         foreach ($response->headers->getIterator() as $name => $values) {
             foreach (((array) $values) as $key => $value) {
-                if (is_string($value)) {
-                    $httpResponse->headers->set('X-upstream-'.$key.'-'.$name, $value);
+                if (is_string($value) && is_string($name)) {
+                    $httpResponse->headers->set(sprintf('X-upstream-%s-%s', (string) $key, $name), $value);
                 }
             }
         }

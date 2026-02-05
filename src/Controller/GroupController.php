@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Repository\BookRepository;
-use http\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,11 +37,7 @@ class GroupController extends AbstractController
                 $group = $this->bookRepository->getAllSeries();
                 break;
         }
-        $search = $request->get('search', '');
-
-        if (!is_string($search)) {
-            throw new RuntimeException('Invalid search type');
-        }
+        $search = $request->query->get('search', '');
 
         $group = match ($search) {
             default => array_filter($group, static fn (mixed $item) => str_contains(strtolower($item['item']), strtolower($search))),

@@ -40,13 +40,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, BookInteraction>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookInteraction::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: BookInteraction::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $bookInteractions;
 
     /**
      * @var Collection<int, Shelf>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Shelf::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Shelf::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $shelves;
 
     #[ORM\Column(options: ['default' => true])]
@@ -79,7 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, KoboDevice>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: KoboDevice::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: KoboDevice::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $kobos;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
@@ -94,19 +94,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, BookmarkUser>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: BookmarkUser::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: BookmarkUser::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $bookmarkUsers;
 
     /**
      * @var Collection<int, OpdsAccess>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: OpdsAccess::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: OpdsAccess::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $opdsAccesses;
 
     /**
      * @var Collection<int, EreaderEmail>
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: EreaderEmail::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: EreaderEmail::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $ereaderEmails;
 
     public function __construct()

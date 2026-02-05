@@ -13,10 +13,14 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/series')]
 class SerieController extends AbstractController
 {
-    #[Route('/{name}', name: 'app_serie_detail', requirements: ['name' => '.+'])]
-    public function detail(string $name, BookRepository $bookRepository, BookInteractionService $bookInteractionService, ShelfRepository $shelfRepository): Response
+    public function __construct(private readonly BookRepository $bookRepository, private readonly BookInteractionService $bookInteractionService, private readonly ShelfRepository $shelfRepository)
     {
-        $books = $bookRepository->findBySerie($name);
+    }
+
+    #[Route('/{name}', name: 'app_serie_detail', requirements: ['name' => '.+'])]
+    public function detail(string $name): Response
+    {
+        $books = $this->bookRepository->findBySerie($name);
 
         if ($books === []) {
             throw $this->createNotFoundException('No books found for this serie');
@@ -29,7 +33,7 @@ class SerieController extends AbstractController
 
         $authors = [];
 
-        $firstUnreadBook = $bookRepository->getFirstUnreadBook($name);
+        $firstUnreadBook = $this->bookRepository->getFirstUnreadBook($name);
 
         $tags = [];
         $publishers = [];
@@ -72,11 +76,11 @@ class SerieController extends AbstractController
             $serieMax = max($keys);
         }
 
-        $stats = $bookInteractionService->getStats($books, $user);
+        $stats = $this->bookInteractionService->getStats($books, $user);
 
         return $this->render('serie/detail.html.twig', [
             'serie' => $name,
-            'shelves' => $shelfRepository->findManualShelvesForUser($user),
+            'shelves' => $this->shelfRepository->findManualShelvesForUser($user),
             'books' => $serie,
             'serieMax' => $serieMax,
             'authors' => $authors,

@@ -14,11 +14,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/shelves/crud')]
 class ShelfCrudController extends AbstractController
 {
+    public function __construct(private readonly ShelfRepository $shelfRepository)
+    {
+    }
+
     #[Route('/', name: 'app_shelf_crud_index', methods: ['GET'])]
-    public function index(ShelfRepository $shelfRepository): Response
+    public function index(): Response
     {
         return $this->render('shelf_crud/index.html.twig', [
-            'shelves' => $shelfRepository->findBy(['user' => $this->getUser()]),
+            'shelves' => $this->shelfRepository->findBy(['user' => $this->getUser()]),
         ]);
     }
 

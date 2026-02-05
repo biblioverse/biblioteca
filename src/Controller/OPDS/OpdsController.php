@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/opds/{accessKey}', name: 'opds_')]
 class OpdsController extends AbstractController
 {
-    public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SearchHelper $searchHelper)
+    public function __construct(RequestStack $requestStack, private readonly Opds $opds, private readonly BookRepository $bookRepository, private readonly SearchHelper $searchHelper, private readonly ShelfRepository $shelfRepository, private readonly ShelfManager $manager, private readonly BookInteractionRepository $bookInteractionRepository)
     {
         $current = $requestStack->getCurrentRequest();
         if (!$current instanceof Request) {
@@ -108,13 +108,11 @@ class OpdsController extends AbstractController
     }
 
     #[Route('/shelves/', name: 'shelves')]
-    public function shelves(ShelfRepository $shelfRepository): Response
+    public function shelves(): Response
     {
         $opds = $this->opds->getOpdsConfig();
         $opds->title('Shelves');
-
-        $shelves = $shelfRepository->findBy(['user' => $this->getUser()]);
-
+        $shelves = $this->shelfRepository->findBy(['user' => $this->getUser()]);
         $feeds = [];
         foreach ($shelves as $item) {
             $feeds[] = $this->opds->getNavigationEntry('shelf:'.$item->getId(), $item->getName(), $this->generateOpdsUrl('opds_shelf_item', ['item' => $item->getId()]));
@@ -125,12 +123,12 @@ class OpdsController extends AbstractController
     }
 
     #[Route('/shelves/{item}', name: 'shelf_item')]
-    public function shelfItem(Shelf $item, ShelfManager $manager): Response
+    public function shelfItem(Shelf $item): Response
     {
         $opds = $this->opds->getOpdsConfig();
         $opds->title('Shelf: '.$item->getName());
 
-        $books = $manager->getBooksInShelf($item);
+        $books = $this->manager->getBooksInShelf($item);
 
         $feeds = [];
         foreach ($books as $book) {
@@ -142,13 +140,11 @@ class OpdsController extends AbstractController
     }
 
     #[Route('/reading-list', name: 'readinglist')]
-    public function readinglist(BookInteractionRepository $bookInteractionRepository): Response
+    public function readinglist(): Response
     {
         $opds = $this->opds->getOpdsConfig();
         $opds->title('Reading List');
-
-        $books = $bookInteractionRepository->getFavourite();
-
+        $books = $this->bookInteractionRepository->getFavourite();
         $feeds = [];
         foreach ($books as $bookInteraction) {
             $feeds[] = $this->opds->convertBookToOpdsEntry($bookInteraction->getBook());

@@ -42,11 +42,18 @@ class BookController extends AbstractController
         private readonly BookManager $bookManager,
         private readonly EpubMetadataService $epubMetadataService,
         private readonly EreaderEmailService $ereaderEmailService,
+        private readonly BookRepository $bookRepository,
+        private readonly SearchCollectionInterface $searchBooks,
+        private readonly BookFileSystemManagerInterface $fileSystemManager,
+        private readonly ShelfRepository $shelfRepository,
+        private readonly EreaderEmailRepository $ereaderEmailRepository,
+        private readonly PaginatorInterface $paginator,
+        private readonly ThemeSelector $themeSelector,
     ) {
     }
 
     #[Route('/{book}/{slug}', name: 'app_book')]
-    public function index(Book $book, string $slug, BookRepository $bookRepository, SearchCollectionInterface $searchBooks, BookFileSystemManagerInterface $fileSystemManager, ShelfRepository $shelfRepository, EreaderEmailRepository $ereaderEmailRepository): Response
+    public function index(Book $book, string $slug): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -82,7 +89,7 @@ class BookController extends AbstractController
         $serie = [];
         $serieMax = 0;
         if ($book->getSerie() !== null) {
-            $booksInSerie = $bookRepository->findBySerie($book->getSerie());
+            $booksInSerie = $this->bookRepository->findBySerie($book->getSerie());
             foreach ($booksInSerie as $bookInSerie) {
                 $index = $bookInSerie->getSerieIndex();
                 if ($index === 0.0 || floor($index ?? 0.0) !== $index) {
@@ -112,21 +119,21 @@ class BookController extends AbstractController
             limit: 12
         );
         try {
-            $similar = $searchBooks->search($querySimilar);
+            $similar = $this->searchBooks->search($querySimilar);
         } catch (SearchException) {
             $similar = [];
         }
 
-        $calculatedPath = $fileSystemManager->getCalculatedFilePath($book, false).$fileSystemManager->getCalculatedFileName($book);
-        $needsRelocation = $fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
+        $calculatedPath = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
+        $needsRelocation = $this->fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
 
         $interaction = $book->getLastInteraction($user);
 
-        $ereaderEmails = $ereaderEmailRepository->findAllByUser($user);
+        $ereaderEmails = $this->ereaderEmailRepository->findAllByUser($user);
 
         return $this->render('book/index.html.twig', [
             'book' => $book,
-            'shelves' => $shelfRepository->findManualShelvesForUser($user),
+            'shelves' => $this->shelfRepository->findManualShelvesForUser($user),
             'serie' => $serie,
             'serieMax' => $serieMax,
             'similar' => $similar,
@@ -143,11 +150,7 @@ class BookController extends AbstractController
         Request $request,
         Book $book,
         string $slug,
-        BookFileSystemManagerInterface $fileSystemManager,
-        PaginatorInterface $paginator,
-        ThemeSelector $themeSelector,
         EntityManagerInterface $manager,
-        EreaderEmailRepository $ereaderEmailRepository,
     ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
@@ -179,9 +182,9 @@ class BookController extends AbstractController
                 return $this->render('book/reader-files-epub.html.twig', [
                     'book' => $book,
                     'percent' => $this->bookProgressionService->getProgression($book, $user),
-                    'file' => $fileSystemManager->getBookPublicPath($book),
-                    'body_class' => $themeSelector->isDark() ? 'bg-darker' : '',
-                    'isDark' => $themeSelector->isDark(),
+                    'file' => $this->fileSystemManager->getBookPublicPath($book),
+                    'body_class' => $this->themeSelector->isDark() ? 'bg-darker' : '',
+                    'isDark' => $this->themeSelector->isDark(),
                     'backUrl' => $this->generateUrl('app_book', [
                         'book' => $book->getId(),
                         'slug' => $book->getSlug(),
@@ -190,7 +193,7 @@ class BookController extends AbstractController
             case 'pdf':
             case 'cbr':
             case 'cbz':
-                $files = $fileSystemManager->extractFilesToRead($book);
+                $files = $this->fileSystemManager->extractFilesToRead($book);
                 break;
             default:
                 $this->addFlash('danger', 'Unsupported book format: '.$book->getExtension());
@@ -215,7 +218,7 @@ class BookController extends AbstractController
             $interaction->setUser($user);
         }
 
-        $page = $request->get('page', $interaction->getReadPages() ?? 1);
+        $page = $request->query->get('page', $interaction->getReadPages() ?? 1);
 
         if (!is_numeric($page)) {
             $page = 1;
@@ -245,7 +248,7 @@ class BookController extends AbstractController
             ]);
         }
 
-        $pagination = $paginator->paginate(
+        $pagination = $this->paginator->paginate(
             $files,
             $page,
             1
@@ -262,7 +265,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
-    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
         if (!$this->isGranted(BookVoter::EDIT, $book)) {
             $this->addFlash('danger', 'You are not allowed to edit this book');
@@ -273,7 +276,7 @@ class BookController extends AbstractController
             ], 301);
         }
 
-        $book = $fileSystemManager->extractCover($book);
+        $book = $this->fileSystemManager->extractCover($book);
 
         $entityManager->flush();
 
@@ -290,7 +293,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
-    public function deleteBook(int $id, EntityManagerInterface $entityManager, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function deleteBook(int $id, EntityManagerInterface $entityManager): Response
     {
         /** @var Book $book */
         $book = $entityManager->getRepository(Book::class)->find($id);
@@ -304,7 +307,7 @@ class BookController extends AbstractController
             ], 301);
         }
 
-        $fileSystemManager->deleteBookFiles($book);
+        $this->fileSystemManager->deleteBookFiles($book);
 
         $entityManager->remove($book);
 
@@ -316,7 +319,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/new/consume/upload', name: 'app_book_upload_consume')]
-    public function upload(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function upload(Request $request): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You are not allowed to add books');
@@ -347,7 +350,7 @@ class BookController extends AbstractController
             /** @var array<int, UploadedFile> $files */
             $files = (array) $form->get('file')->getData();
             if (count($files) > 0) {
-                $fileSystemManager->uploadFilesToConsumeDirectory($files);
+                $this->fileSystemManager->uploadFilesToConsumeDirectory($files);
 
                 return $this->redirectToRoute('app_book_consume');
             }
@@ -359,7 +362,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/new/consume/files', name: 'app_book_consume')]
-    public function consume(Request $request, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function consume(Request $request): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'You are not allowed to add books');
@@ -367,7 +370,7 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
 
-        $bookFiles = $fileSystemManager->getAllBooksFiles(true);
+        $bookFiles = $this->fileSystemManager->getAllBooksFiles(true);
 
         $bookFiles = iterator_to_array($bookFiles);
 
@@ -386,7 +389,7 @@ class BookController extends AbstractController
             return strcmp($a->getFilename(), $b->getFilename());
         });
 
-        $consume = $request->get('consume');
+        $consume = $request->query->get('consume');
         if ($consume !== null) {
             set_time_limit(240);
             foreach ($bookFiles as $bookFile) {
@@ -403,7 +406,7 @@ class BookController extends AbstractController
             }
         }
 
-        $delete = $request->get('delete');
+        $delete = $request->query->get('delete');
         if ($delete !== null) {
             foreach ($bookFiles as $bookFile) {
                 if ($bookFile->getRealPath() !== $delete) {
@@ -422,13 +425,13 @@ class BookController extends AbstractController
     }
 
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
-    public function relocate(Request $request, Book $book, BookFileSystemManagerInterface $fileSystemManager, EntityManagerInterface $entityManager): Response
+    public function relocate(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
         try {
             if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
                 throw $this->createAccessDeniedException('Book relocation is not allowed');
             }
-            $book = $fileSystemManager->renameFiles($book);
+            $book = $this->fileSystemManager->renameFiles($book);
             $entityManager->persist($book);
             $entityManager->flush();
             $this->addFlash('success', 'Book relocated.');
@@ -462,7 +465,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/{book}/{slug}/download', name: 'app_book_download')]
-    public function download(Request $request, Book $book, string $slug, BookFileSystemManagerInterface $fileSystemManager): Response
+    public function download(Request $request, Book $book, string $slug): Response
     {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book_download', [
@@ -477,8 +480,8 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard', [], 301);
         }
 
-        $bookPath = $fileSystemManager->getBookFilename($book);
-        if (!$fileSystemManager->fileExist($book)) {
+        $bookPath = $this->fileSystemManager->getBookFilename($book);
+        if (!$this->fileSystemManager->fileExist($book)) {
             $this->addFlash('danger', 'Book file not found');
 
             return $this->redirectToRoute('app_book', [
@@ -525,7 +528,6 @@ class BookController extends AbstractController
         Book $book,
         string $slug,
         EreaderEmail $ereaderEmail,
-        BookFileSystemManagerInterface $fileSystemManager,
     ): Response {
         if ($slug !== $book->getSlug()) {
             return $this->redirectToRoute('app_book', [
@@ -555,8 +557,8 @@ class BookController extends AbstractController
 
         // For EPUB files, embed metadata from database when enabled
         $deleteAfterSend = false;
-        $fileToSend = $fileSystemManager->getBookFilename($book);
-        $bookPath = $fileSystemManager->getBookPublicPath($book);
+        $fileToSend = $this->fileSystemManager->getBookFilename($book);
+        $bookPath = $this->fileSystemManager->getBookPublicPath($book);
         try {
             $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
             $fileToSend = $embeddedPath;

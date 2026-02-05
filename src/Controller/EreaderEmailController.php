@@ -16,15 +16,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Route('/user/ereader-email')]
 class EreaderEmailController extends AbstractController
 {
+    public function __construct(private readonly EreaderEmailRepository $ereaderEmailRepository)
+    {
+    }
+
     #[Route('/', name: 'app_ereader_email_index', methods: ['GET'])]
-    public function index(EreaderEmailRepository $ereaderEmailRepository): Response
+    public function index(): Response
     {
         if (!$this->getUser() instanceof UserInterface) {
             throw $this->createAccessDeniedException();
         }
 
         return $this->render('ereader_email/index.html.twig', [
-            'ereader_emails' => $ereaderEmailRepository->findAllByUser($this->getUser()),
+            'ereader_emails' => $this->ereaderEmailRepository->findAllByUser($this->getUser()),
         ]);
     }
 
