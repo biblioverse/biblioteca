@@ -75,8 +75,8 @@ Examples:
 - "Foundation 1" → title: "Foundation", series: "Foundation", index: 1
 
 ```bash
-books:series-harmonize --language fr           # Preview
-books:series-harmonize --language fr --apply   # Apply
+books:series-harmonize           # Preview
+books:series-harmonize --apply   # Apply
 ```
 
 Series names are kept in their original language (e.g., "Foundation" stays "Foundation", not translated).
