@@ -133,7 +133,7 @@ class BooksSeriesHarmonizeCommand extends Command
 
         $io->table(
             ['Current Title', 'New Title', 'Series', '#'],
-            array_slice($rows, 0, 50)
+            array_slice($rows, 0, 50),
         );
         if (count($rows) > 50) {
             $io->comment('... and '.(count($rows) - 50).' more books');
@@ -242,7 +242,7 @@ class BooksSeriesHarmonizeCommand extends Command
     private function analyzeBookBatch(
         AiCommunicatorInterface $communicator,
         array $books,
-        string $language
+        string $language,
     ): array {
         $booksData = [];
         foreach ($books as $book) {

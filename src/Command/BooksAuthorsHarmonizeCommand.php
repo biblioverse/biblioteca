@@ -162,7 +162,7 @@ class BooksAuthorsHarmonizeCommand extends Command
      */
     private function analyzeAuthorBatch(
         AiCommunicatorInterface $communicator,
-        array $authors
+        array $authors,
     ): array {
         $authorsJson = json_encode($authors, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 
