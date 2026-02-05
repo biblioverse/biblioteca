@@ -74,7 +74,7 @@ class BooksAiOrganizeCommand extends Command
             $commandName = $step['command'];
             $command = $this->getApplication()?->find($commandName);
 
-            if ($command === null) {
+            if (!$command instanceof Command) {
                 $io->error(sprintf('Command %s not found.', $commandName));
 
                 return Command::FAILURE;
