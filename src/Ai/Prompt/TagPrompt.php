@@ -2,6 +2,8 @@
 
 namespace App\Ai\Prompt;
 
+use App\Ai\GenreList;
+
 class TagPrompt extends AbstractBookPrompt
 {
     #[\Override]
@@ -15,8 +17,19 @@ class TagPrompt extends AbstractBookPrompt
     #[\Override]
     public function getPrompt(): string
     {
-        return $this->getPromptWithoutInstructions().'
-The output must be only valid JSON format. It must be an object with one key named "tags" containing an array of genres and tags for this book in strings. 
+        $genres = GenreList::getForLanguage($this->language);
+        $genresList = implode(', ', $genres);
+
+        return 'You are an expert librarian specializing in book categorization.
+
+'.$this->getPromptWithoutInstructions().'
+
+IMPORTANT: You must select ONE main genre from this list: ['.$genresList.']
+
+Then add 3-5 specific tags that describe this book (themes, setting, style, etc.).
+
+The output must be only valid JSON format: {"genre": "MainGenre", "tags": ["tag1", "tag2", "tag3"]}
+The genre MUST be from the list above. Tags should be in the same language.
 Do not add anything else than json. Do not add any other text or comment.';
     }
 
@@ -41,10 +54,26 @@ Do not add anything else than json. Do not add any other text or comment.';
             return [];
         }
 
-        if (!is_array($items) || !isset($items['tags']) || !is_array($items['tags'])) {
+        if (!is_array($items)) {
             return [$result];
         }
 
-        return array_filter($items['tags'], fn ($item) => $item !== null);
+        $tags = [];
+
+        // Add main genre first if present and valid
+        if (isset($items['genre']) && is_string($items['genre']) && $items['genre'] !== '') {
+            $tags[] = $items['genre'];
+        }
+
+        // Add other tags
+        if (isset($items['tags']) && is_array($items['tags'])) {
+            foreach ($items['tags'] as $tag) {
+                if ($tag !== null && $tag !== '') {
+                    $tags[] = $tag;
+                }
+            }
+        }
+
+        return array_unique($tags);
     }
 }
