@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksAuthorsHarmonizeCommand extends Command
 {
-    private const BATCH_SIZE = 30;
+    private const int BATCH_SIZE = 30;
 
     public function __construct(
         private readonly EntityManagerInterface $em,
