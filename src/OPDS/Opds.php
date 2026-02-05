@@ -78,26 +78,26 @@ class Opds
             $updated = new \DateTimeImmutable();
         }
 
-            $publicPath = $this->bookFileSystemManager->getBookPublicPath($book);
-            $dirname = dirname($publicPath);
-            $basename = basename($publicPath);
-            $encodedBasename = rawurlencode($basename);
-            $fullPath = rtrim($this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/').$dirname.'/'.$encodedBasename;
+        $publicPath = $this->bookFileSystemManager->getBookPublicPath($book);
+        $dirname = dirname($publicPath);
+        $basename = basename($publicPath);
+        $encodedBasename = rawurlencode($basename);
+        $fullPath = rtrim($this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/').$dirname.'/'.$encodedBasename;
 
-            return new OpdsEntryBook(
-                'book:'.$book->getId(),
-                $book->getTitle(),
-                $this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
-                content: $book->getSummary() ?? ' ',
-                updated: new \DateTime($updated->format('Y-m-d h:i:s')),
-                download: $fullPath,
-                mediaThumbnail: $cover,
-                categories: $book->getTags() ?? [],
-                authors: array_map($this->getOpdsAuthor(...), $book->getAuthors()),
-                volume: $book->getSerieIndex(),
-                serie: $book->getSerie(),
-                language: $book->getLanguage() ?? ' ',
-                publisher: $book->getPublisher(),
-            );
+        return new OpdsEntryBook(
+            'book:'.$book->getId(),
+            $book->getTitle(),
+            $this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL),
+            content: $book->getSummary() ?? ' ',
+            updated: new \DateTime($updated->format('Y-m-d h:i:s')),
+            download: $fullPath,
+            mediaThumbnail: $cover,
+            categories: $book->getTags() ?? [],
+            authors: array_map($this->getOpdsAuthor(...), $book->getAuthors()),
+            volume: $book->getSerieIndex(),
+            serie: $book->getSerie(),
+            language: $book->getLanguage() ?? ' ',
+            publisher: $book->getPublisher(),
+        );
     }
 }
