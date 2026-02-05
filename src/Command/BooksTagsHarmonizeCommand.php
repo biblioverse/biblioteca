@@ -47,7 +47,9 @@ class BooksTagsHarmonizeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $apply = $input->getOption('apply') === true;
+        /** @var string $language */
         $language = $input->getOption('language');
+        /** @var string $mode */
         $mode = $input->getOption('mode');
 
         if (!in_array($mode, ['replace', 'add'], true)) {
@@ -243,7 +245,7 @@ class BooksTagsHarmonizeCommand extends Command
             $booksData[] = [
                 'id' => $book->getId(),
                 'title' => $book->getTitle(),
-                'authors' => implode(', ', $book->getAuthors() ?? []),
+                'authors' => implode(', ', $book->getAuthors()),
                 'tags' => $book->getTags(),
             ];
         }
@@ -291,7 +293,7 @@ PROMPT;
         if (str_starts_with($result, 'json')) {
             $result = substr($result, 4);
         }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result);
+        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
