@@ -18,22 +18,22 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserRepository $userRepository, private readonly Security $security, private readonly RequestStack $requestStack)
     {
     }
 
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(): Response
     {
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $this->userRepository->findAll(),
         ]);
     }
 
     #[Route('/profile', name: 'app_user_profile')]
-    public function profile(Request $request, EntityManagerInterface $entityManager, Security $security, RequestStack $requestStack): Response
+    public function profile(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $user = $security->getUser();
+        $user = $this->security->getUser();
         if (!$user instanceof User) {
             throw new \RuntimeException('User must be an instance of User');
         }
@@ -57,7 +57,7 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $requestStack->getSession()->set('_locale', $user->getLanguage());
+            $this->requestStack->getSession()->set('_locale', $user->getLanguage());
 
             $this->addFlash('success', 'Profile updated successfully');
 
@@ -74,7 +74,7 @@ class UserController extends AbstractController
             'form' => $form->createView(),
             'opds_access' => $opds,
             'user' => $user,
-            'tab' => $request->get('tab', 'profile'),
+            'tab' => $request->query->get('tab', 'profile'),
         ]);
     }
 

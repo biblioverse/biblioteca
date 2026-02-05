@@ -46,7 +46,7 @@ class DefaultControllerTest extends WebTestCase
         self::assertGreaterThan(0, $sortingLinks->count(), 'Should have sorting links in table header');
 
         // Find the Path link specifically
-        $pathLink = $crawler->filter('a')->reduce(fn ($node) => str_contains((string) $node->text(), 'Path'));
+        $pathLink = $crawler->filter('a')->reduce(fn ($node) => str_contains($node->text(), 'Path'));
 
         self::assertCount(1, $pathLink, 'Should have exactly one Path sorting link');
         self::assertStringContainsString('bi-chevron-up', $pathLink->html(), 'Path should show ascending order indicator');
@@ -133,7 +133,7 @@ class DefaultControllerTest extends WebTestCase
         // Serie should be the active sort with up chevron (asc)
         $crawler = $client->getCrawler();
         // Look specifically in the table header for the Serie sorting link
-        $serieLink = $crawler->filter('th a')->reduce(fn ($node) => str_contains((string) $node->text(), 'Serie'));
+        $serieLink = $crawler->filter('th a')->reduce(fn ($node) => str_contains($node->text(), 'Serie'));
         self::assertCount(1, $serieLink, 'Should have exactly one Serie sorting link in table header');
         self::assertStringContainsString('bi-chevron-up', $serieLink->html());
     }

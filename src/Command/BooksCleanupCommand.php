@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFileSystemManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,7 +41,7 @@ class BooksCleanupCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $delete = $input->getOption('delete');
+        $delete = (bool) $input->getOption('delete');
 
         $books = $this->bookRepository->findAll();
 
@@ -85,10 +84,10 @@ class BooksCleanupCommand extends Command
         foreach ($orphanedBooks as $book) {
             $table->addRow([
                 $book->getId(),
-                mb_substr($book->getTitle() ?? '', 0, 40),
+                mb_substr($book->getTitle(), 0, 40),
                 $book->getExtension(),
                 $book->getBookPath(),
-                mb_substr($book->getBookFilename() ?? '', 0, 50),
+                mb_substr($book->getBookFilename(), 0, 50),
             ]);
         }
 

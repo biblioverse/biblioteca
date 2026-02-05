@@ -15,13 +15,16 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/configuration')]
 final class InstanceConfigurationController extends AbstractController
 {
+    public function __construct(private readonly ParameterBagInterface $parameterBagInterface, private readonly ConfigValue $configValue)
+    {
+    }
+
     #[Route('', name: 'app_instance_configuration_index', methods: ['GET'])]
-    public function index(ParameterBagInterface $parameterBagInterface, ConfigValue $configValue): Response
+    public function index(): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
-
         $documentedParams = [
             'ALLOW_BOOK_RELOCATION' => 'Allow book relocation',
             'BOOK_FOLDER_NAMING_FORMAT' => '{authorFirst}/{author}/{serie}/{title}',
@@ -40,7 +43,7 @@ final class InstanceConfigurationController extends AbstractController
             'SMTP_MAX_FILE_SIZE' => 'Maximum file size in MB for email attachments (default: 25)',
         ];
         foreach ($documentedParams as $key => $value) {
-            $paramValue = $parameterBagInterface->has($key) ? $parameterBagInterface->get($key) : null;
+            $paramValue = $this->parameterBagInterface->has($key) ? $this->parameterBagInterface->get($key) : null;
             // Hide sensitive parts of MAILER_DSN for security
             if ($key === 'MAILER_DSN' && $paramValue !== null && is_string($paramValue)) {
                 // Hide password in DSN format: smtp://user:pass@host
@@ -51,11 +54,10 @@ final class InstanceConfigurationController extends AbstractController
                 'description' => $value,
             ];
         }
-
         $availableParamsForEdit = ['GENERIC_SYSTEM_PROMPT'];
         $editableParams = [];
         foreach ($availableParamsForEdit as $key) {
-            $editableParams[$key] = $configValue->resolve($key, true);
+            $editableParams[$key] = $this->configValue->resolve($key, true);
         }
 
         return $this->render('instance_configuration/index.html.twig', [

@@ -33,5 +33,6 @@ return RectorConfig::configure()
     ->withImportNames(true, true, false, true)
     ->withSkip([
         '**/config/bundles.php',
-        InlineClassRoutePrefixRector::class
+        InlineClassRoutePrefixRector::class,
+        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class => ['src/Controller/GroupController.php'],
     ]);

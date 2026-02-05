@@ -15,19 +15,21 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
-    #[Route('/', name: 'app_dashboard')]
-    public function index(BookRepository $bookRepository, BookInteractionRepository $bookInteractionRepository, SearchHelper $helper): Response
+    public function __construct(private readonly BookRepository $bookRepository, private readonly BookInteractionRepository $bookInteractionRepository, private readonly SearchHelper $helper, private readonly BookFileSystemManagerInterface $bookFileSystemManager)
     {
-        $exts = $bookRepository->countBooks(false);
-        $types = $bookRepository->countBooks(true);
+    }
 
-        $reading = $bookInteractionRepository->getStartedBooks();
-        $readList = $bookInteractionRepository->getFavourite(6);
-
+    #[Route('/', name: 'app_dashboard')]
+    public function index(): Response
+    {
+        $exts = $this->bookRepository->countBooks(false);
+        $types = $this->bookRepository->countBooks(true);
+        $reading = $this->bookInteractionRepository->getStartedBooks();
+        $readList = $this->bookInteractionRepository->getFavourite(6);
         /**
          * @var array<string, array{booksFinished: int, bookCount: int, item: string}> $startedSeries
          */
-        $startedSeries = $bookRepository->getStartedSeries(12)->getResult();
+        $startedSeries = $this->bookRepository->getStartedSeries(12)->getResult();
         $booksInSeries = [];
         foreach ($startedSeries as $serie) {
             if ($serie['booksFinished'] === $serie['bookCount']) {
@@ -36,21 +38,17 @@ class DefaultController extends AbstractController
 
             $booksInSeries[$serie['item']] = [
                 'progress' => $serie,
-                'book' => $bookRepository->getFirstUnreadBook($serie['item']),
+                'book' => $this->bookRepository->getFirstUnreadBook($serie['item']),
             ];
         }
-
-        $tags = $bookRepository->getAllTags();
-
+        $tags = $this->bookRepository->getAllTags();
         $keys = $tags === [] ? [] : array_rand($tags, min(count($tags), 2));
-
         if (!is_array($keys)) {
             $keys = [];
         }
-
         $inspiration = [];
         foreach ($keys as $key) {
-            $randomBooks = $helper->prepareQuery('', 'tags:=`'.$key.'`', perPage: 2)->execute()->getBooks();
+            $randomBooks = $this->helper->prepareQuery('', 'tags:=`'.$key.'`', perPage: 2)->execute()->getBooks();
 
             $inspiration[] = [
                 ...$tags[$key],
@@ -69,10 +67,9 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/reading-list', name: 'app_readinglist')]
-    public function readingList(BookInteractionRepository $bookInteractionRepository): Response
+    public function readingList(): Response
     {
-        $readList = $bookInteractionRepository->getFavourite(hideFinished: false);
-
+        $readList = $this->bookInteractionRepository->getFavourite(hideFinished: false);
         $statuses = [
             'unread' => [],
             'finished' => [],
@@ -97,7 +94,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/timeline/{type?}/{year?}', name: 'app_timeline', requirements: ['page' => '\d+'])]
-    public function timeline(?string $type, ?string $year, BookRepository $bookRepository): Response
+    public function timeline(?string $type, ?string $year): Response
     {
         $redirectType = $type ?? 'all';
         $redirectYear = $year ?? date('Y');
@@ -109,10 +106,10 @@ class DefaultController extends AbstractController
             $year = null;
         }
 
-        $qb = $bookRepository->getReadBooks($year, $type);
+        $qb = $this->bookRepository->getReadBooks($year, $type);
 
-        $types = $bookRepository->getReadTypes();
-        $years = $bookRepository->getReadYears();
+        $types = $this->bookRepository->getReadTypes();
+        $years = $this->bookRepository->getReadYears();
 
         $books = $qb->getQuery()->getResult();
 
@@ -126,11 +123,11 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/not-verified', name: 'app_notverified')]
-    public function notverified(Request $request, BookRepository $bookRepository, BookFileSystemManagerInterface $bookFileSystemManager, EntityManagerInterface $entityManager): Response
+    public function notverified(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Check if sort parameters are provided in the request
-        $sortBy = $request->get('sort');
-        $sortOrder = $request->get('order');
+        $sortBy = $request->query->get('sort');
+        $sortOrder = $request->query->get('order');
 
         // If no sort parameters in request, try to get from cookies
         if ($sortBy === null) {
@@ -155,9 +152,9 @@ class DefaultController extends AbstractController
             default => ['bookPath' => $sortOrder, 'bookFilename' => $sortOrder],
         };
 
-        $books = $bookRepository->findBy(['verified' => false], $orderBy, 100);
+        $books = $this->bookRepository->findBy(['verified' => false], $orderBy, 100);
 
-        $action = $request->get('action');
+        $action = $request->query->get('action');
         if ($action !== null) {
             switch ($action) {
                 case 'relocate':
@@ -165,7 +162,7 @@ class DefaultController extends AbstractController
                         $success = true;
                         foreach ($books as $book) {
                             try {
-                                $book = $bookFileSystemManager->renameFiles($book);
+                                $book = $this->bookFileSystemManager->renameFiles($book);
                                 $entityManager->persist($book);
                             } catch (\Exception $e) {
                                 $success = false;
@@ -186,7 +183,7 @@ class DefaultController extends AbstractController
 
                     foreach ($books as $book) {
                         try {
-                            $book = $bookFileSystemManager->extractCover($book);
+                            $book = $this->bookFileSystemManager->extractCover($book);
                             $entityManager->persist($book);
                         } catch (\Exception $e) {
                             $success = false;
@@ -224,7 +221,7 @@ class DefaultController extends AbstractController
         ]);
 
         // Set cookies if sort parameters were provided in the request
-        if ($request->get('sort') !== null || $request->get('order') !== null) {
+        if ($request->query->get('sort') !== null || $request->query->get('order') !== null) {
             $farAway = strtotime('+1 year');
 
             $farAway = (string) $farAway;

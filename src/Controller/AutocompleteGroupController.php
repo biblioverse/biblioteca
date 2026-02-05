@@ -15,10 +15,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AutocompleteGroupController extends AbstractController
 {
-    #[Route('/autocomplete/group/{type}', name: 'app_autocomplete_group')]
-    public function index(Request $request, BookRepository $bookRepository, string $type, TranslatorInterface $translator): Response
+    public function __construct(private readonly BookRepository $bookRepository, private readonly TranslatorInterface $translator)
     {
-        $query = $request->get('query');
+    }
+
+    #[Route('/autocomplete/group/{type}', name: 'app_autocomplete_group')]
+    public function index(Request $request, string $type): Response
+    {
+        $query = $request->query->get('query');
         if (!is_string($query)) {
             return new JsonResponse(['results' => []]);
         }
@@ -27,7 +31,7 @@ class AutocompleteGroupController extends AbstractController
 
         if ($type === 'ageCategory') {
             foreach (AgeCategory::cases() as $ageCategory) {
-                $json['results'][] = ['value' => $ageCategory->value, 'text' => $translator->trans(AgeCategory::getLabel($ageCategory))];
+                $json['results'][] = ['value' => $ageCategory->value, 'text' => $this->translator->trans(AgeCategory::getLabel($ageCategory))];
             }
 
             return new JsonResponse($json);
@@ -35,16 +39,16 @@ class AutocompleteGroupController extends AbstractController
 
         /** @var array<GroupType> $group */
         $group = match ($type) {
-            'serie' => $bookRepository->getAllSeries(),
-            'authors' => $bookRepository->getAllAuthors(),
-            'tags' => $bookRepository->getAllTags(),
-            'publisher' => $bookRepository->getAllPublishers(),
+            'serie' => $this->bookRepository->getAllSeries(),
+            'authors' => $this->bookRepository->getAllAuthors(),
+            'tags' => $this->bookRepository->getAllTags(),
+            'publisher' => $this->bookRepository->getAllPublishers(),
             default => [],
         };
 
         $exactmatch = false;
 
-        if ($type !== 'authors' && $query === '' && $request->get('create', true) !== true) {
+        if ($type !== 'authors' && $query === '' && $request->query->get('create', true) !== true) {
             $json['results'][] = ['value' => 'no_'.$type, 'text' => '[No '.$type.' defined]'];
         }
         foreach ($group as $item) {
@@ -57,7 +61,7 @@ class AutocompleteGroupController extends AbstractController
             $json['results'][] = ['value' => $item['item'], 'text' => $item['item']];
         }
 
-        if (!$exactmatch && strlen($query) > 2 && $request->get('create', true) === true) {
+        if (!$exactmatch && strlen($query) > 2 && $request->query->get('create', true) === true) {
             $json['results'][] = ['value' => $query, 'text' => 'New: '.$query];
         }
 

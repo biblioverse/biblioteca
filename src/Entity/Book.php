@@ -89,13 +89,13 @@ class Book
     /**
      * @var Collection<int, BookInteraction>
      */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookInteraction::class, cascade: ['remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: BookInteraction::class, mappedBy: 'book', cascade: ['remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['updated' => 'ASC'])]
     private Collection $bookInteractions;
     /**
      * @var Collection<int, BookmarkUser>
      */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookmarkUser::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: BookmarkUser::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $bookmarkUsers;
     /**
      * @var array<string>|null
@@ -112,13 +112,13 @@ class Book
     #[ORM\ManyToMany(targetEntity: Shelf::class, mappedBy: 'books', cascade: ['persist'])]
     private Collection $shelves;
 
-    #[ORM\Column(enumType: AgeCategory::class, nullable: true)]
+    #[ORM\Column(nullable: true, enumType: AgeCategory::class)]
     private ?AgeCategory $ageCategory = null;
 
     /**
      * @var Collection<int, KoboSyncedBook>
      */
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: KoboSyncedBook::class, cascade: ['remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: KoboSyncedBook::class, mappedBy: 'book', cascade: ['remove'], orphanRemoval: true)]
     private Collection $koboSyncedBooks;
 
     /**
