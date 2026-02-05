@@ -45,6 +45,7 @@ class BooksSeriesHarmonizeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $apply = $input->getOption('apply') === true;
+        /** @var string $language */
         $language = $input->getOption('language');
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
@@ -249,7 +250,7 @@ class BooksSeriesHarmonizeCommand extends Command
             $booksData[] = [
                 'id' => $book->getId(),
                 'title' => $book->getTitle(),
-                'authors' => implode(', ', $book->getAuthors() ?? []),
+                'authors' => implode(', ', $book->getAuthors()),
                 'currentSerie' => $book->getSerie(),
                 'currentIndex' => $book->getSerieIndex(),
             ];
@@ -303,7 +304,7 @@ PROMPT;
         if (str_starts_with($result, 'json')) {
             $result = substr($result, 4);
         }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result);
+        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
