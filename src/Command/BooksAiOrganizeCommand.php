@@ -87,7 +87,7 @@ class BooksAiOrganizeCommand extends Command
             }
 
             // Add language option for commands that support it
-            if (in_array($commandName, ['books:series-harmonize', 'books:tags-harmonize'], true)) {
+            if ($commandName === 'books:tags-harmonize') {
                 $arguments['--language'] = $language;
             }
 

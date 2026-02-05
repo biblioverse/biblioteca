@@ -36,7 +36,6 @@ class BooksSeriesHarmonizeCommand extends Command
     {
         $this
             ->addOption('apply', 'a', InputOption::VALUE_NONE, 'Apply the changes (without this flag, only shows the proposed changes)')
-            ->addOption('language', 'l', InputOption::VALUE_REQUIRED, 'Language for series names (e.g., en, fr)', 'en')
         ;
     }
 
@@ -45,8 +44,6 @@ class BooksSeriesHarmonizeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $apply = $input->getOption('apply') === true;
-        /** @var string $language */
-        $language = $input->getOption('language');
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
 
@@ -82,7 +79,7 @@ class BooksSeriesHarmonizeCommand extends Command
         $progressBar->start();
 
         foreach ($batches as $batch) {
-            $result = $this->analyzeBookBatch($communicator, $batch, $language);
+            $result = $this->analyzeBookBatch($communicator, $batch);
             foreach ($result as $bookId => $info) {
                 $bookData[$bookId] = $info;
             }
@@ -243,7 +240,6 @@ class BooksSeriesHarmonizeCommand extends Command
     private function analyzeBookBatch(
         AiCommunicatorInterface $communicator,
         array $books,
-        string $language,
     ): array {
         $booksData = [];
         foreach ($books as $book) {
