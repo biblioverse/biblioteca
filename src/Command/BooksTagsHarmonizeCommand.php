@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class BooksTagsHarmonizeCommand extends Command
 {
-    private const BATCH_SIZE = 15;
+    private const int BATCH_SIZE = 15;
 
     public function __construct(
         private readonly EntityManagerInterface $em,
