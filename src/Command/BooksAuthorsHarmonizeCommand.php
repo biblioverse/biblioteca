@@ -143,11 +143,8 @@ class BooksAuthorsHarmonizeCommand extends Command
 
         foreach ($books as $book) {
             $authors = $book->getAuthors();
-            if ($authors === null) {
-                continue;
-            }
             foreach ($authors as $author) {
-                if ($author !== '' && $author !== null) {
+                if ($author !== '') {
                     $authorBooks[$author][] = $book;
                 }
             }
@@ -198,7 +195,7 @@ PROMPT;
         if (str_starts_with($result, 'json')) {
             $result = substr($result, 4);
         }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result);
+        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
@@ -236,7 +233,7 @@ PROMPT;
                     $updatedBooks[$bookId] = $book;
                 }
 
-                $currentAuthors = $book->getAuthors() ?? [];
+                $currentAuthors = $book->getAuthors();
                 $newAuthors = [];
                 $modified = false;
 
