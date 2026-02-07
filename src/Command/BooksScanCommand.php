@@ -32,6 +32,7 @@ class BooksScanCommand extends Command
         $this
             ->addOption('book-path', 'b', InputOption::VALUE_REQUIRED, 'Which file path to consume')
             ->addOption('consume', 'c', InputOption::VALUE_NONE, 'scan only the consume directory')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force re-import of metadata for existing books')
         ;
     }
 
@@ -40,6 +41,8 @@ class BooksScanCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $force = $input->getOption('force') === true;
+
         if ($input->getOption('book-path') !== null) {
             $path = $input->getOption('book-path');
             if (!is_string($path)) {
@@ -47,19 +50,19 @@ class BooksScanCommand extends Command
             }
             $io->writeln('Consuming '.$path);
             $info = new \SplFileInfo($path);
-            $book = $this->bookManager->consumeBook($info);
+            $book = $this->bookManager->consumeBook($info, $force);
             $this->entityManager->persist($book);
             $this->entityManager->flush();
             $this->fileSystemManager->renameFiles($book);
             $this->entityManager->flush();
         } else {
-            $io->writeln('Scanning books directory');
+            $io->writeln('Scanning books directory'.($force ? ' (force metadata refresh)' : ''));
             $consume = $input->getOption('consume');
             if (!is_bool($consume)) {
                 $consume = false;
             }
             $files = $this->fileSystemManager->getAllBooksFiles($consume);
-            $this->bookManager->consumeBooks(iterator_to_array($files), $input, $output);
+            $this->bookManager->consumeBooks(iterator_to_array($files), $input, $output, $force);
         }
         $io->success('Done!');
 
