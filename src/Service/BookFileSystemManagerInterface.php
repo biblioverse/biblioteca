@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Entity\RemoteBook;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface BookFileSystemManagerInterface
@@ -25,11 +26,11 @@ interface BookFileSystemManagerInterface
 
     public function coverExist(Book $book): bool;
 
-    public function getBookFile(Book $book): \SplFileInfo;
+    public function getBookFile(Book $book): RemoteBook;
 
-    public function getFileChecksum(\SplFileInfo $file): string;
+    public function getFileChecksum(RemoteBook $file): string;
 
-    public function getFolderName(\SplFileInfo $file, bool $absolute = false): string;
+    public function getFolderName(RemoteBook $file, bool $absolute = false): string;
 
     public function getCalculatedFilePath(Book $book, bool $realpath): string;
 
@@ -49,9 +50,19 @@ interface BookFileSystemManagerInterface
     public function renameFiles(Book $book): Book;
 
     /**
-     * @return \Iterator<\SplFileInfo>
+     * @return \SplFileInfo[]
      */
-    public function getAllBooksFiles(bool $onlyConsumeDirectory = false): \Iterator;
+    public function getAllConsumeFiles(): array;
 
     public function removeEmptySubFolders(?string $path = null): bool;
+
+    public function downloadToTempFile(RemoteBook|Book $book): \SplFileInfo;
+
+    public function getFileName(RemoteBook $remote): string;
+
+    public function uploadFile(\SplFileInfo $file, string $location): RemoteBook;
+
+    public function remove(RemoteBook $remote);
+
+    public function getLocalConsumeDirectory(): string;
 }

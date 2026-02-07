@@ -370,10 +370,7 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
 
-        $bookFiles = $this->fileSystemManager->getAllBooksFiles(true);
-
-        $bookFiles = iterator_to_array($bookFiles);
-
+        $bookFiles = $this->fileSystemManager->getAllConsumeFiles();
         // Sort book files by folder path first, then by filename
         uasort($bookFiles, function (\SplFileInfo $a, \SplFileInfo $b) {
             $pathA = dirname($a->getRealPath());
