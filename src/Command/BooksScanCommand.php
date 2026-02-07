@@ -31,7 +31,6 @@ class BooksScanCommand extends Command
     {
         $this
             ->addOption('book-path', 'b', InputOption::VALUE_REQUIRED, 'Which file path to consume')
-            ->addOption('consume', 'c', InputOption::VALUE_NONE, 'scan only the consume directory')
         ;
     }
 
@@ -53,13 +52,9 @@ class BooksScanCommand extends Command
             $this->fileSystemManager->renameFiles($book);
             $this->entityManager->flush();
         } else {
-            $io->writeln('Scanning books directory');
-            $consume = $input->getOption('consume');
-            if (!is_bool($consume)) {
-                $consume = false;
-            }
-            $files = $this->fileSystemManager->getAllBooksFiles($consume);
-            $this->bookManager->consumeBooks(iterator_to_array($files), $input, $output);
+            $io->writeln('Scanning consume directory');
+            $files = $this->fileSystemManager->getAllConsumeFiles();
+            $this->bookManager->consumeBooks($files, $input, $output);
         }
         $io->success('Done!');
 

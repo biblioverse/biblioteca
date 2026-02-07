@@ -92,13 +92,14 @@ class BookProgressionService
     public function processPageNumber(Book $book, bool $force = false): ?int
     {
         // Read from book entity (null > 0 is falsy)
-        if ($book->getPageNumber() > 0 && $force === false) {
+        if ($force === false && $book->getPageNumber() > 0) {
             return $book->getPageNumber();
         }
 
+        $file = null;
         // Read from the file
         try {
-            $file = $this->fileSystemManager->getBookFile($book);
+            $file = $this->fileSystemManager->downloadToTempFile($book);
             $ebook = Ebook::read($file->getRealPath());
             if ($ebook instanceof Ebook) {
                 $count = $ebook->getPagesCount();
@@ -112,6 +113,10 @@ class BookProgressionService
             $this->logger->error('Error counting book pages', ['exception' => $e]);
 
             return null;
+        } finally {
+            if ($file instanceof \SplFileInfo) {
+                unlink($file);
+            }
         }
     }
 }

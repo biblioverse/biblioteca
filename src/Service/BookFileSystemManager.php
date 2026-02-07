@@ -3,10 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Entity\RemoteBook;
 use App\Security\Voter\RelocationVoter;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Filesystem\Filesystem;
@@ -25,6 +27,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
 
     public function __construct(
         private readonly Security $security,
+        private readonly FilesystemOperator $publicStorage,
         private readonly string $publicDir,
         private readonly string $bookFolderNamingFormat,
         private readonly string $bookFileNamingFormat,
@@ -39,35 +42,36 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function getBooksDirectory(): string
     {
-        return $this->publicDir.'/books/';
+        return 'books/';
     }
 
     #[\Override]
     public function getCoverDirectory(): string
     {
-        return $this->publicDir.'/covers/';
+        return 'covers/';
+    }
+
+    public function getLocalConsumeDirectory(): string
+    {
+        return $this->publicDir.'/'.$this->getBooksDirectory().'consume/';
     }
 
     /**
-     * @return \Iterator<\SplFileInfo>
+     * @return \SplFileInfo[]
      */
     #[\Override]
-    public function getAllBooksFiles(bool $onlyConsumeDirectory = false): \Iterator
+    public function getAllConsumeFiles(): array
     {
         try {
             $finder = new Finder();
             $finder->files()->name(self::ALLOWED_FILE_EXTENSIONS)->sort(fn (\SplFileInfo $a, \SplFileInfo $b): int => strcmp($a->getRealPath(), $b->getRealPath()));
-            if ($onlyConsumeDirectory) {
-                $finder->in($this->getBooksDirectory().'/consume');
-            } else {
-                $finder->in($this->getBooksDirectory());
-            }
+            $finder->in($this->getLocalConsumeDirectory());
             $iterator = $finder->getIterator();
         } catch (\Exception) {
             $iterator = new \ArrayIterator();
         }
 
-        return $iterator;
+        return iterator_to_array($iterator);
     }
 
     #[\Override]
@@ -100,11 +104,11 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function getBookSize(Book $book): ?int
     {
-        if (!$this->fileExist($book)) {
+        if (!$this->publicStorage->fileExists($this->getBookFilename($book))) {
             return null;
         }
 
-        $size = filesize($this->getBookFilename($book));
+        $size = $this->publicStorage->fileSize($this->getBookFilename($book));
 
         return $size === false ? null : $size;
     }
@@ -117,7 +121,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
 
         $filename = $this->getCoverFilename($book);
-        $size = $filename === null ? false : filesize($filename);
+        $size = $filename === null ? false : $this->publicStorage->fileSize($filename);
 
         return $size === false ? null : $size;
     }
@@ -127,7 +131,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         $path = $this->getBookFilename($book);
 
-        return file_exists($path);
+        return $this->publicStorage->fileExists($path);
     }
 
     #[\Override]
@@ -135,74 +139,87 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         $cover = $this->getCoverFilename($book);
 
-        return $cover !== null && file_exists($cover);
+        return $cover !== null && $this->publicStorage->fileExists($cover);
     }
 
     /**
      * @throws \Exception
      */
     #[\Override]
-    public function getBookFile(Book $book): \SplFileInfo
+    public function getBookFile(Book $book): RemoteBook
     {
-        $finder = new Finder();
         $filename = str_replace(['[', ']'], '*', $book->getBookFilename());
+        $regex = '/^'.str_replace('\*', '.*', preg_quote($filename, '/')).'$/i';
+        foreach ($this->publicStorage->listContents($this->getBooksDirectory().$book->getBookPath(), false) as $attr) {
+            if (!$attr->isFile()) {
+                continue;
+            }
 
-        $finder->files()->name($filename)->in($this->getBooksDirectory().$book->getBookPath());
-        $return = iterator_to_array($finder->getIterator());
-
-        if ([] === $return) {
-            throw new \RuntimeException('Book file not found '.$book->getBookPath().$book->getBookFilename());
+            $basename = basename($attr->path());
+            if (preg_match($regex, $basename) === 1) {
+                return new RemoteBook($attr->path());
+            }
         }
 
-        return current($return);
+        throw new \RuntimeException('Book file not found '.$book->getBookPath().$book->getBookFilename());
     }
 
     /**
      * @throws \Exception
      */
-    public function getCoverFile(Book $book): ?\SplFileInfo
+    public function getCoverFile(Book $book): ?RemoteBook
     {
         if (null === $book->getImageFilename()) {
             return null;
         }
 
-        $finder = new Finder();
-        $finder->files()->name($book->getImageFilename())->in($this->getCoverDirectory().$book->getImagePath());
-        $return = iterator_to_array($finder->getIterator());
-        if ([] === $return) {
-            throw new \RuntimeException('Cover file not found:'.$this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename());
+        $cover = $this->getCoverDirectory().$book->getImagePath();
+        if ($this->publicStorage->fileExists($cover)) {
+            return new RemoteBook($cover);
         }
 
-        return current($return);
+        throw new \RuntimeException('Cover file not found:'.$this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename());
     }
 
     /**
      * Calculates the checksum of a given file.
      *
-     * @param \SplFileInfo $file the file for which to calculate the checksum
+     * @param RemoteBook $file the file for which to calculate the checksum
      *
      * @return string the checksum of the file
      *
      * @throws \RuntimeException if the checksum calculation fails
      */
     #[\Override]
-    public function getFileChecksum(\SplFileInfo $file): string
+    public function getFileChecksum(RemoteBook|Book $remote): string
     {
-        $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
-        if (!is_string($checkSum)) {
-            throw new \RuntimeException('Could not calculate file Checksum:'.$file->getRealPath());
+        if (false === $remote instanceof RemoteBook) {
+            $remote = $this->getBookFile($remote);
         }
-        $checkSum = explode(' ', $checkSum);
+        if (false === $this->publicStorage->fileExists($remote->path)) {
+            throw new \RuntimeException('File not found: '.$remote->path);
+        }
+        try {
+            $stream = $this->publicStorage->readStream($remote->path);
+            try {
+                $hash = hash_init('sha1');
+                hash_update_stream($hash, $stream);
 
-        return $checkSum[0];
+                return hash_final($hash);
+            } finally {
+                fclose($stream);
+            }
+        } catch (\Exception $exception) {
+            throw new \RuntimeException('Could not calculate file Checksum: '.$file->path, $exception->getCode(), $exception);
+        }
     }
 
     #[\Override]
-    public function getFolderName(\SplFileInfo $file, bool $absolute = false): string
+    public function getFolderName(RemoteBook $file, bool $absolute = false): string
     {
-        $path = $absolute ? $file->getRealPath() : str_replace($this->getBooksDirectory(), '', $file->getRealPath());
+        $path = str_replace($this->getBooksDirectory(), '', $file->path);
 
-        return str_replace($file->getFilename(), '', $path);
+        return dirname($path);
     }
 
     private function getPlaceHolders(Book $book): array
@@ -263,8 +280,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         $placeholders = $this->getPlaceHolders($book);
 
-        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFileNamingFormat);
-        $filename = str_replace('/', '', $filename);
+        $filename = str_replace([...array_keys($placeholders), '/'], [array_values($placeholders), ''], $this->bookFileNamingFormat);
 
         return $this->slugger->slug($filename);
     }
@@ -280,6 +296,66 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $checksum.$this->calculateFileName($book).'.'.$book->getImageExtension();
     }
 
+    public function downloadToTempFile(RemoteBook|Book $remote): \SplFileInfo
+    {
+        if (false === $remote instanceof RemoteBook) {
+            $remote = $this->getBookFile($remote);
+        }
+        if (false === $this->publicStorage->fileExists($remote->path)) {
+            throw new \RuntimeException(sprintf('File "%s" does not exist', $remote->path));
+        }
+
+        $stream = $this->publicStorage->readStream($remote->path);
+        $tmpFile = tempnam(sys_get_temp_dir(), 'fly_');
+        if ($tmpFile === false) {
+            fclose($stream);
+            throw new \RuntimeException('Unable to create temporary file');
+        }
+
+        $extension = pathinfo($remote->path, PATHINFO_EXTENSION);
+        $suffix = $extension !== '' ? '.'.$extension : '';
+        $tmpFile .= $suffix;
+
+        $tmpStream = fopen($tmpFile, 'wb');
+        if ($tmpStream === false) {
+            fclose($stream);
+            throw new \RuntimeException('Unable to open temporary file');
+        }
+
+        stream_copy_to_stream($stream, $tmpStream);
+
+        fclose($stream);
+        fclose($tmpStream);
+
+        return new \SplFileInfo($tmpFile); // caller is responsible for unlink()
+    }
+
+    public function uploadFile(\SplFileInfo $file, string $location): RemoteBook
+    {
+        $stream = fopen($file->getRealPath(), 'rb');
+
+        if ($stream === false) {
+            throw new \RuntimeException('Unable to open file for reading');
+        }
+
+        try {
+            $this->publicStorage->writeStream($location, $stream);
+        } finally {
+            fclose($stream);
+        }
+
+        return new RemoteBook($location);
+    }
+
+    public function remove(RemoteBook $remote): void
+    {
+        if (false === $this->publicStorage->fileExists($remote->path)) {
+            return;
+        }
+
+        $this->publicStorage->delete($remote->path);
+    }
+
     #[\Override]
     public function renameFiles(Book $book): Book
     {
@@ -288,14 +364,11 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
 
         try {
-            $filesystem = new Filesystem();
-
             if ($book->getBookPath().'/' !== $this->getCalculatedFilePath($book, false)) {
-                $filesystem->mkdir($this->getCalculatedFilePath($book, true));
                 if ($book->getBookPath() === '' || $book->getBookFilename() === '') {
                     throw new \InvalidArgumentException('Book path or filename is empty');
                 }
-                $filesystem->rename(
+                $this->publicStorage->move(
                     $this->getBooksDirectory().$book->getBookPath().$book->getBookFilename(),
                     $this->getCalculatedFilePath($book, true).$this->getCalculatedFileName($book),
                 );
@@ -305,8 +378,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
             }
 
             if (null !== $book->getImagePath() && $book->getImagePath().'/' !== $this->getCalculatedImagePath($book, false)) {
-                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-                $filesystem->rename(
+                $this->publicStorage->move(
                     $this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename(),
                     $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book),
                 );
@@ -324,25 +396,33 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function removeEmptySubFolders(?string $path = null): bool
     {
-        if (null === $path) {
-            $path = $this->getBooksDirectory();
-        }
+        // In Flysystem, your filesystem is usually already "rooted" at books/,
+        // so root is often '' instead of an absolute OS path.
+        $root = rtrim($this->getBooksDirectory(), '/');
+        $path = $path === null ? $root : rtrim($path, '/');
+
+        $isRoot = ($path === '' && $root === '') || ($path === $root);
+
         $empty = true;
 
-        $files = glob($path.DIRECTORY_SEPARATOR.'{,.}[!.,!..]*', GLOB_MARK | GLOB_BRACE);
-        if (false !== $files && $files !== []) {
-            foreach ($files as $file) {
-                if (is_dir($file)) {
-                    if (!$this->removeEmptySubFolders($file)) {
-                        $empty = false;
-                    }
-                } else {
+        // list immediate children (NOT recursive)
+        foreach ($this->publicStorage->listContents($path, false) as $attr) {
+            if ($attr->isDir()) {
+                // recurse into subdir
+                if (!$this->removeEmptySubFolders($attr->path())) {
                     $empty = false;
                 }
+            } else {
+                // any file (including dotfiles) makes directory non-empty
+                $empty = false;
             }
         }
-        if ($empty && is_dir($path) && $path !== $this->getBooksDirectory()) {
-            rmdir($path);
+
+        // Delete this directory if it's empty and not the root
+        if ($empty && !$isRoot) {
+            // deleteDirectory is safe here because we only call it when empty
+            // (and on object stores it will typically just ensure prefix is gone)
+            $this->publicStorage->deleteDirectory($path);
         }
 
         return $empty;
@@ -864,5 +944,12 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         } while (str_contains($result, '//'));
 
         return $result;
+    }
+
+    public function getFileName(RemoteBook $remote): string
+    {
+        $dir = pathinfo($remote->path, PATHINFO_DIRNAME);
+
+        return str_replace($dir, '', $remote->path);
     }
 }
