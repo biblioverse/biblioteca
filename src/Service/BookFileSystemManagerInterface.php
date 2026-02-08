@@ -62,7 +62,7 @@ interface BookFileSystemManagerInterface
 
     public function uploadFile(\SplFileInfo $file, string $location): RemoteBook;
 
-    public function remove(RemoteBook $remote);
+    public function remove(RemoteBook $remote): void;
 
     public function getLocalConsumeDirectory(): string;
 }

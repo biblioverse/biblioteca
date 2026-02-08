@@ -12,8 +12,9 @@ class EpubMetadataService
 
     private readonly Filesystem $filesystem;
 
-    public function __construct(private readonly bool $metadataEmbeddingEnabled = true)
-    {
+    public function __construct(
+        private readonly bool $metadataEmbeddingEnabled = true,
+    ) {
         $this->filesystem = new Filesystem();
     }
 
@@ -22,14 +23,14 @@ class EpubMetadataService
      * This works by extracting the EPUB, modifying the OPF file, and re-zipping.
      *
      * @param Book $book The book entity with metadata
-     * @param string $originalPath Path to the original EPUB file
+     * @param \SplFileInfo $originalPath Path to the original EPUB file
      * @throws \RuntimeException if the original EPUB file is not found, cannot be opened, or the OPF file is missing
      * @throws \Exception if any other error occurs during the process
      */
-    public function embedMetadata(Book $book, string $originalPath): string
+    public function embedMetadata(Book $book, \SplFileInfo $originalPath): \SplFileInfo
     {
-        if (!file_exists($originalPath)) {
-            throw new \RuntimeException('Original EPUB file not found: '.$originalPath);
+        if (!file_exists($originalPath->getRealPath())) {
+            throw new \RuntimeException('Original EPUB file not found: '.$originalPath->getRealPath());
         }
 
         if ($this->metadataEmbeddingEnabled === false) {
@@ -63,8 +64,9 @@ class EpubMetadataService
 
             // Clean up extraction directory
             $this->filesystem->remove($tempDir);
+            $this->filesystem->remove($originalPath);
 
-            return $tempPath;
+            return new \SplFileInfo($tempPath);
         } catch (\Exception $e) {
             // Clean up on error
             if ($this->filesystem->exists($tempDir)) {
@@ -85,7 +87,8 @@ class EpubMetadataService
         // First check META-INF/container.xml
         $containerPath = $epubDir.'/META-INF/container.xml';
         if (file_exists($containerPath)) {
-            $container = simplexml_load_file($containerPath);
+            $content = file_get_contents($containerPath);
+            $container = $content !== false ? simplexml_load_string($content) : false;
             if ($container !== false) {
                 $rootfiles = $container->rootfiles->rootfile;
                 foreach ($rootfiles as $rootfile) {

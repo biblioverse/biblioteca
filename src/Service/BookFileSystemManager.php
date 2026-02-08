@@ -8,6 +8,7 @@ use App\Security\Voter\RelocationVoter;
 use Archive7z\Archive7z;
 use Kiwilan\Ebook\Ebook;
 use Kiwilan\Ebook\EbookCover;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -104,13 +105,15 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function getBookSize(Book $book): ?int
     {
-        if (!$this->publicStorage->fileExists($this->getBookFilename($book))) {
+        try {
+            if (!$this->publicStorage->fileExists($this->getBookFilename($book))) {
+                return null;
+            }
+
+            return $this->publicStorage->fileSize($this->getBookFilename($book));
+        } catch (FilesystemException) {
             return null;
         }
-
-        $size = $this->publicStorage->fileSize($this->getBookFilename($book));
-
-        return $size === false ? null : $size;
     }
 
     #[\Override]
@@ -184,15 +187,25 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     /**
      * Calculates the checksum of a given file.
      *
-     * @param RemoteBook $file the file for which to calculate the checksum
+     * @param RemoteBook|Book|\SplFileInfo $remote the file for which to calculate the checksum
      *
      * @return string the checksum of the file
      *
-     * @throws \RuntimeException if the checksum calculation fails
+     * @throws \RuntimeException|FilesystemException if the checksum calculation fails
      */
     #[\Override]
-    public function getFileChecksum(RemoteBook|Book $remote): string
+    public function getFileChecksum(RemoteBook|Book|\SplFileInfo $remote): string
     {
+        if ($remote instanceof \SplFileInfo) {
+            $checkSum = shell_exec('sha1sum -b '.escapeshellarg($remote->getRealPath()));
+            if (!is_string($checkSum)) {
+                throw new \RuntimeException('Could not calculate file Checksum:'.$remote->getRealPath());
+            }
+            $checkSum = explode(' ', $checkSum);
+
+            return $checkSum[0];
+        }
+
         if (false === $remote instanceof RemoteBook) {
             $remote = $this->getBookFile($remote);
         }
@@ -210,7 +223,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                 fclose($stream);
             }
         } catch (\Exception $exception) {
-            throw new \RuntimeException('Could not calculate file Checksum: '.$file->path, $exception->getCode(), $exception);
+            throw new \RuntimeException('Could not calculate file Checksum: '.$remote->path, $exception->getCode(), $exception);
         }
     }
 
@@ -280,7 +293,8 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         $placeholders = $this->getPlaceHolders($book);
 
-        $filename = str_replace([...array_keys($placeholders), '/'], [array_values($placeholders), ''], $this->bookFileNamingFormat);
+        $filename = str_replace(array_keys($placeholders), array_values($placeholders), $this->bookFileNamingFormat);
+        $filename = str_replace('/', '', $filename);
 
         return $this->slugger->slug($filename);
     }
@@ -339,7 +353,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
 
         try {
-            $this->publicStorage->writeStream($location, $stream);
+            $this->publicStorage->writeStream('books/'.$location, $stream);
         } finally {
             fclose($stream);
         }
@@ -475,103 +489,111 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     public function extractCover(Book $book): Book
     {
         $filesystem = new Filesystem();
-        $bookFile = $this->getBookFile($book);
-        switch ($book->getExtension()) {
-            case 'epub':
-                $ebook = Ebook::read($bookFile->getRealPath());
-                if (!$ebook instanceof Ebook) {
+        $bookFile = $this->downloadToTempFile($book);
+        try {
+            switch ($book->getExtension()) {
+                case 'epub':
+                    $ebook = Ebook::read($bookFile->getRealPath());
+                    if (!$ebook instanceof Ebook) {
+                        break;
+                    }
+                    $cover = $ebook->getCover();
+
+                    if (!$cover instanceof EbookCover || $cover->getPath() === null) {
+                        break;
+                    }
+                    $coverContent = $cover->getContents();
+
+                    $coverFileName = explode('/', $cover->getPath());
+                    $coverFileName = end($coverFileName);
+                    $ext = explode('.', $coverFileName);
+                    $book->setImageExtension(end($ext));
+
+                    $coverPath = $this->getCalculatedImagePath($book, true);
+                    $coverFileName = $this->getCalculatedImageName($book);
+
+                    $filesystem = new Filesystem();
+                    $filesystem->mkdir($coverPath);
+
+                    $coverFile = file_put_contents($coverPath.$coverFileName, $coverContent);
+
+                    if (false !== $coverFile) {
+                        $book->setImagePath($this->getCalculatedImagePath($book, false));
+                        $book->setImageFilename($coverFileName);
+                    }
                     break;
-                }
-                $cover = $ebook->getCover();
+                case 'cbr':
+                case 'cbz':
+                    $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
-                if (!$cover instanceof EbookCover || $cover->getPath() === null) {
+                    if (!is_string($return)) {
+                        $book = $this->extractCoverFromGeneralArchive($bookFile, $book);
+                        break;
+                    }
+                    $book = $this->extractCoverFromRarArchive($bookFile, $book);
+
                     break;
-                }
-                $coverContent = $cover->getContents();
+                case 'pdf':
+                    $checksum = md5(''.time());
 
-                $coverFileName = explode('/', $cover->getPath());
-                $coverFileName = end($coverFileName);
-                $ext = explode('.', $coverFileName);
-                $book->setImageExtension(end($ext));
+                    try {
+                        $im = new \Imagick($bookFile->getRealPath().'[0]'); // 0-first page, 1-second page
+                    } catch (\Exception $e) {
+                        $this->logger->error('Could not extract cover', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
+                        break;
+                    }
 
-                $coverPath = $this->getCalculatedImagePath($book, true);
-                $coverFileName = $this->getCalculatedImageName($book);
-
-                $filesystem = new Filesystem();
-                $filesystem->mkdir($coverPath);
-
-                $coverFile = file_put_contents($coverPath.$coverFileName, $coverContent);
-
-                if (false !== $coverFile) {
+                    $im->setImageColorspace(\Imagick::COLORSPACE_RGB); // prevent image colors from inverting
+                    $im->setImageFormat('jpeg');
+                    $im->thumbnailImage(300, 460); // width and height
+                    $book->setImageExtension('jpg');
+                    $filesystem->mkdir($this->getCalculatedImagePath($book, true));
+                    $im->writeImage($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum));
+                    $im->clear();
+                    $im->destroy();
                     $book->setImagePath($this->getCalculatedImagePath($book, false));
-                    $book->setImageFilename($coverFileName);
-                }
-                break;
-            case 'cbr':
-            case 'cbz':
-                $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
+                    $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
 
-                if (!is_string($return)) {
-                    $book = $this->extractCoverFromGeneralArchive($bookFile, $book);
                     break;
-                }
-                $book = $this->extractCoverFromRarArchive($bookFile, $book);
+                default:
+                    throw new \RuntimeException('Extension not implemented');
+            }
 
-                break;
-            case 'pdf':
-                $checksum = md5(''.time());
-
-                try {
-                    $im = new \Imagick($bookFile->getRealPath().'[0]'); // 0-first page, 1-second page
-                } catch (\Exception $e) {
-                    $this->logger->error('Could not extract cover', ['book' => $bookFile->getRealPath(), 'exception' => $e->getMessage()]);
-                    break;
-                }
-
-                $im->setImageColorspace(\Imagick::COLORSPACE_RGB); // prevent image colors from inverting
-                $im->setImageFormat('jpeg');
-                $im->thumbnailImage(300, 460); // width and height
-                $book->setImageExtension('jpg');
-                $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-                $im->writeImage($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum));
-                $im->clear();
-                $im->destroy();
-                $book->setImagePath($this->getCalculatedImagePath($book, false));
-                $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
-
-                break;
-            default:
-                throw new \RuntimeException('Extension not implemented');
+            return $book;
+        } finally {
+            unlink($bookFile->getRealPath());
         }
-
-        return $book;
     }
 
     #[\Override]
     public function extractFilesToRead(Book $book): array
     {
-        $bookFile = $this->getBookFile($book);
-        $files = [];
-        switch ($book->getExtension()) {
-            case 'cbr':
-            case 'cbz':
-                $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
+        $bookFile = $this->downloadToTempFile($book);
+        try {
+            $files = [];
+            switch ($book->getExtension()) {
+                case 'cbr':
+                case 'cbz':
+                    $return = shell_exec('unrar lb '.escapeshellarg($bookFile->getRealPath()));
 
-                if (!is_string($return)) {
-                    $files = $this->extractFilesFromGeneralArchive($bookFile, $book);
+                    if (!is_string($return)) {
+                        $files = $this->extractFilesFromGeneralArchive($bookFile, $book);
+                        break;
+                    }
+                    $files = $this->extractFilesFromRarArchive($bookFile, $book);
+
                     break;
-                }
-                $files = $this->extractFilesFromRarArchive($bookFile, $book);
+                case 'pdf':
+                    $files = $this->extractFilesFromPdf($bookFile, $book);
+                    break;
+                default:
+                    throw new \RuntimeException('Extension not implemented');
+            }
 
-                break;
-            case 'pdf':
-                $files = $this->extractFilesFromPdf($bookFile, $book);
-                break;
-            default:
-                throw new \RuntimeException('Extension not implemented');
+            return $files;
+        } finally {
+            unlink($bookFile->getRealPath());
         }
-
-        return $files;
     }
 
     private function extractCoverFromRarArchive(\SplFileInfo $bookFile, Book $book): Book
@@ -949,6 +971,13 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     public function getFileName(RemoteBook $remote): string
     {
         $dir = pathinfo($remote->path, PATHINFO_DIRNAME);
+        if ($dir === '.' || $dir === '') {
+            $dir = '';
+        }
+        $dir = rtrim($dir, '/').'/';
+        if ($dir === '/') {
+            return $remote->path;
+        }
 
         return str_replace($dir, '', $remote->path);
     }

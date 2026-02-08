@@ -76,8 +76,10 @@ class BookManager
 
         $book->setExtension($file->getExtension());
         $book->setTags($extractedMetadata['tags']);
+        $this->upload($file, $book);
+        $this->fileSystemManager->renameFiles($book);
 
-        return $this->upload($file, $book);
+        return $book;
     }
 
     public function updateBookLocation(Book $book, RemoteBook $remote): Book
@@ -106,7 +108,10 @@ class BookManager
 
         $book->setExtension($file->getExtension());
 
-        return $this->upload($file, $book);
+        $this->upload($file, $book);
+        $this->fileSystemManager->renameFiles($book);
+
+        return $book;
     }
 
     /**
@@ -174,10 +179,8 @@ class BookManager
                 $book = null;
                 try {
                     $book = $this->consumeBook($file);
-                    unlink($file);
                 } catch (BookExtractionException $e) {
                     $book = $this->createBookWithoutMetadata($file);
-                    unlink($file);
                     $io->error($e->getMessage());
                     if ($e->getPrevious() instanceof \Exception) {
                         $io->error('Caused by '.$e->getPrevious()->getMessage());
@@ -207,7 +210,7 @@ class BookManager
             $dir = '';
         }
         $filename = str_replace($dir, '', $relative_path);
-
+        $filename = ltrim($filename, '/');
         $book = $this->bookRepository->findOneBy(
             [
                 'bookPath' => $dir,
@@ -236,8 +239,12 @@ class BookManager
         }
 
         // Override current book file
-        $dest = $this->fileSystemManager->getBookFile($book);
-        $this->fileSystemManager->uploadFile($file, $dest->path);
+        if ($book->getChecksum() !== $checksum) {
+            $this->fileSystemManager->renameFiles($book);
+            $book->setChecksum($checksum);
+            $this->fileSystemManager->uploadFile($file, $this->fileSystemManager->getBookFile($book)->path);
+        }
+
         unlink($file->getRealPath());
 
         return $book;
@@ -251,7 +258,8 @@ class BookManager
 
     private function upload(\SplFileInfo $file, Book $book): Book
     {
-        $remote = $this->fileSystemManager->uploadFile($file, $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book));
+        $location = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
+        $remote = $this->fileSystemManager->uploadFile($file, $location);
         $book->setBookPath($this->fileSystemManager->getFolderName($remote, true));
         $book->setBookFilename($this->fileSystemManager->getFileName($remote));
 

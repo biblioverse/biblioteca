@@ -49,7 +49,6 @@ class BooksScanCommand extends Command
             $book = $this->bookManager->consumeBook($info);
             $this->entityManager->persist($book);
             $this->entityManager->flush();
-            $this->fileSystemManager->renameFiles($book);
             $this->entityManager->flush();
         } else {
             $io->writeln('Scanning consume directory');
