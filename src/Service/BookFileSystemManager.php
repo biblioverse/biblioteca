@@ -16,6 +16,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class BookFileSystemManager implements BookFileSystemManagerInterface
@@ -34,20 +36,19 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         private readonly string $bookFileNamingFormat,
         private readonly SluggerInterface $slugger,
         private readonly LoggerInterface $logger,
+        private readonly RouterInterface $router,
     ) {
         if ($this->bookFolderNamingFormat === '') {
             throw new \RuntimeException('Could not get filename format');
         }
     }
 
-    #[\Override]
-    public function getBooksDirectory(): string
+    protected function getBooksDirectory(): string
     {
         return 'books/';
     }
 
-    #[\Override]
-    public function getCoverDirectory(): string
+    protected function getCoverDirectory(): string
     {
         return 'covers/';
     }
@@ -87,8 +88,10 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     public function getBookPublicPath(Book $book): string
     {
         $path = $this->getBookFilename($book);
+        $path = str_replace($this->publicDir, '', $path);
+        $encodedBasename = dirname($path).'/'.rawurlencode(basename($path));
 
-        return str_replace($this->publicDir, '', $path);
+        return rtrim($this->router->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL), '/').'/'.$encodedBasename;
     }
 
     #[\Override]
@@ -132,9 +135,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function fileExist(Book $book): bool
     {
-        $path = $this->getBookFilename($book);
-
-        return $this->publicStorage->fileExists($path);
+        return $this->publicStorage->fileExists($this->getBookFilename($book));
     }
 
     #[\Override]
@@ -160,7 +161,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
 
             $basename = basename($attr->path());
             if (preg_match($regex, $basename) === 1) {
-                return new RemoteBook($attr->path());
+                return new RemoteBook(substr($attr->path(), strlen($this->getBooksDirectory())));
             }
         }
 
@@ -176,12 +177,12 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
             return null;
         }
 
-        $cover = $this->getCoverDirectory().$book->getImagePath();
-        if ($this->publicStorage->fileExists($cover)) {
+        $cover = $book->getImagePath().$book->getImageFilename();
+        if ($this->publicStorage->fileExists($this->getCoverDirectory().$cover)) {
             return new RemoteBook($cover);
         }
 
-        throw new \RuntimeException('Cover file not found:'.$this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename());
+        throw new \RuntimeException('Cover file not found:'.$book->getImagePath().'/'.$book->getImageFilename());
     }
 
     /**
@@ -209,11 +210,11 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         if (false === $remote instanceof RemoteBook) {
             $remote = $this->getBookFile($remote);
         }
-        if (false === $this->publicStorage->fileExists($remote->path)) {
+        if (false === $this->publicStorage->fileExists($this->getBooksDirectory().$remote->path)) {
             throw new \RuntimeException('File not found: '.$remote->path);
         }
         try {
-            $stream = $this->publicStorage->readStream($remote->path);
+            $stream = $this->publicStorage->readStream($this->getBooksDirectory().$remote->path);
             try {
                 $hash = hash_init('sha1');
                 hash_update_stream($hash, $stream);
@@ -232,7 +233,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     {
         $path = str_replace($this->getBooksDirectory(), '', $file->path);
 
-        return dirname($path);
+        return dirname($path).'/';
     }
 
     private function getPlaceHolders(Book $book): array
@@ -282,11 +283,11 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return ($realpath ? $this->getBooksDirectory() : '').$expectedPath;
     }
 
-    public function getCalculatedImagePath(Book $book, bool $realpath): string
+    public function getCalculatedImagePath(Book $book, bool $prefix): string
     {
         $expectedFilepath = $this->calculateFilePath($book);
 
-        return ($realpath ? $this->getCoverDirectory() : '').$expectedFilepath;
+        return ($prefix ? $this->getCoverDirectory() : '').$expectedFilepath;
     }
 
     private function calculateFileName(Book $book): string
@@ -315,18 +316,18 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         if (false === $remote instanceof RemoteBook) {
             $remote = $this->getBookFile($remote);
         }
-        if (false === $this->publicStorage->fileExists($remote->path)) {
+        if (false === $this->publicStorage->fileExists($this->getBooksDirectory().$remote->path)) {
             throw new \RuntimeException(sprintf('File "%s" does not exist', $remote->path));
         }
 
-        $stream = $this->publicStorage->readStream($remote->path);
+        $stream = $this->publicStorage->readStream($this->getBooksDirectory().$remote->path);
         $tmpFile = tempnam(sys_get_temp_dir(), 'fly_');
         if ($tmpFile === false) {
             fclose($stream);
             throw new \RuntimeException('Unable to create temporary file');
         }
 
-        $extension = pathinfo($remote->path, PATHINFO_EXTENSION);
+        $extension = pathinfo($this->getBooksDirectory().$remote->path, PATHINFO_EXTENSION);
         $suffix = $extension !== '' ? '.'.$extension : '';
         $tmpFile .= $suffix;
 
@@ -344,7 +345,21 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return new \SplFileInfo($tmpFile); // caller is responsible for unlink()
     }
 
-    public function uploadFile(\SplFileInfo $file, string $location): RemoteBook
+    public function uploadCover(\SplFileInfo $file, Book $book): RemoteBook
+    {
+        $location = $book->getImagePath().$book->getImageFilename();
+
+        return $this->uploadFile($file, $this->getCoverDirectory(), $location);
+    }
+
+    public function uploadBook(\SplFileInfo $file, Book $book): RemoteBook
+    {
+        $location = $book->getBookPath().$book->getBookFilename();
+
+        return $this->uploadFile($file, $this->getBooksDirectory(), $location);
+    }
+
+    private function uploadFile(\SplFileInfo $file, string $prefix, string $location): RemoteBook
     {
         $stream = fopen($file->getRealPath(), 'rb');
 
@@ -353,7 +368,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
 
         try {
-            $this->publicStorage->writeStream('books/'.$location, $stream);
+            $this->publicStorage->writeStream($prefix.$location, $stream);
         } finally {
             fclose($stream);
         }
@@ -394,7 +409,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
             if (null !== $book->getImagePath() && $book->getImagePath().'/' !== $this->getCalculatedImagePath($book, false)) {
                 $this->publicStorage->move(
                     $this->getCoverDirectory().$book->getImagePath().'/'.$book->getImageFilename(),
-                    $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book),
+                    $this->getCoverDirectory().$this->getCalculatedImagePath($book, false).$this->getCalculatedImageName($book),
                 );
 
                 $book->setImagePath($this->getCalculatedImagePath($book, false));
@@ -407,8 +422,7 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         return $book;
     }
 
-    #[\Override]
-    public function removeEmptySubFolders(?string $path = null): bool
+    protected function removeEmptySubFolders(?string $path = null): bool
     {
         // In Flysystem, your filesystem is usually already "rooted" at books/,
         // so root is often '' instead of an absolute OS path.
@@ -444,30 +458,19 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
 
     public function uploadBookCover(UploadedFile $file, Book $book): Book
     {
-        $filesystem = new Filesystem();
-
         $coverFileName = explode('/', $file->getClientOriginalName());
         $this->logger->info('Upload Started', ['filename' => $file->getClientOriginalName(), 'book' => $book->getTitle()]);
         $coverFileName = end($coverFileName);
         $ext = explode('.', $coverFileName);
         $ext = end($ext);
+        $checksum = $this->getFileChecksum($file->getFileInfo());
 
         $book->setImageExtension($ext);
-
-        $checksum = (string) md5_file($file->getRealPath());
-
-        $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-        $filesystem->rename(
-            $file->getRealPath(),
-            $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum),
-            true
-        );
-
-        $this->logger->info('Rename file', ['from' => $file->getRealPath(), 'to' => $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum)]);
-
         $book->setImagePath($this->getCalculatedImagePath($book, false));
         $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
-        $book->setImageExtension($ext);
+        $this->uploadCover($file->getFileInfo(), $book);
+        $this->logger->info('Rename file', ['from' => $file->getRealPath(), 'to' => $this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum)]);
+        unlink($file->getRealPath());
 
         return $book;
     }
@@ -488,7 +491,6 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
     #[\Override]
     public function extractCover(Book $book): Book
     {
-        $filesystem = new Filesystem();
         $bookFile = $this->downloadToTempFile($book);
         try {
             switch ($book->getExtension()) {
@@ -509,18 +511,19 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                     $ext = explode('.', $coverFileName);
                     $book->setImageExtension(end($ext));
 
-                    $coverPath = $this->getCalculatedImagePath($book, true);
+                    $coverPath = $this->getCalculatedImagePath($book, false);
                     $coverFileName = $this->getCalculatedImageName($book);
+                    $book->setImagePath($coverPath);
+                    $book->setImageFilename($coverFileName);
 
-                    $filesystem = new Filesystem();
-                    $filesystem->mkdir($coverPath);
-
-                    $coverFile = file_put_contents($coverPath.$coverFileName, $coverContent);
-
-                    if (false !== $coverFile) {
-                        $book->setImagePath($this->getCalculatedImagePath($book, false));
-                        $book->setImageFilename($coverFileName);
+                    $tempCover = tempnam(sys_get_temp_dir(), 'fly_');
+                    $coverFile = file_put_contents($tempCover, $coverContent);
+                    if ($coverFile === false) {
+                        unlink($tempCover);
+                        throw new \RuntimeException("Unable to write to $tempCover");
                     }
+
+                    $this->uploadCover(new \SplFileInfo($tempCover), $book);
                     break;
                 case 'cbr':
                 case 'cbz':
@@ -547,12 +550,19 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
                     $im->setImageFormat('jpeg');
                     $im->thumbnailImage(300, 460); // width and height
                     $book->setImageExtension('jpg');
-                    $filesystem->mkdir($this->getCalculatedImagePath($book, true));
-                    $im->writeImage($this->getCalculatedImagePath($book, true).$this->getCalculatedImageName($book, $checksum));
-                    $im->clear();
-                    $im->destroy();
-                    $book->setImagePath($this->getCalculatedImagePath($book, false));
                     $book->setImageFilename($this->getCalculatedImageName($book, $checksum));
+                    $book->setImagePath($this->getCalculatedImagePath($book, false));
+                    $tempCover = new \SplFileInfo(tempnam(sys_get_temp_dir(), 'fly_'));
+                    try {
+                        $im->writeImage($tempCover->getRealPath());
+                        $im->clear();
+                        $im->destroy();
+                        $this->uploadCover($tempCover, $book);
+                    } finally {
+                        if ($tempCover->isFile()) {
+                            unlink($tempCover->getRealPath());
+                        }
+                    }
 
                     break;
                 default:
@@ -980,5 +990,19 @@ class BookFileSystemManager implements BookFileSystemManagerInterface
         }
 
         return str_replace($dir, '', $remote->path);
+    }
+
+    public function cleanup(): void
+    {
+        $this->removeEmptySubFolders($this->getCoverDirectory());
+        $this->removeEmptySubFolders($this->getBooksDirectory());
+    }
+
+    public function needsRelocation(Book $book): bool
+    {
+        $a = $this->getCalculatedFilePath($book, false).$this->getCalculatedFileName($book);
+        $b = $this->getBookFile($book)->path;
+
+        return $a !== $b;
     }
 }

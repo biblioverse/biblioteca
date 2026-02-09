@@ -242,7 +242,7 @@ class BookManager
         if ($book->getChecksum() !== $checksum) {
             $this->fileSystemManager->renameFiles($book);
             $book->setChecksum($checksum);
-            $this->fileSystemManager->uploadFile($file, $this->fileSystemManager->getBookFile($book)->path);
+            $this->fileSystemManager->uploadBook($file, $book);
         }
 
         unlink($file->getRealPath());
@@ -258,10 +258,13 @@ class BookManager
 
     private function upload(\SplFileInfo $file, Book $book): Book
     {
-        $location = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
-        $remote = $this->fileSystemManager->uploadFile($file, $location);
-        $book->setBookPath($this->fileSystemManager->getFolderName($remote, true));
-        $book->setBookFilename($this->fileSystemManager->getFileName($remote));
+        $book->setBookPath($this->fileSystemManager->getCalculatedFilePath($book, false));
+        $book->setBookFilename($this->fileSystemManager->getCalculatedFileName($book));
+
+        $this->fileSystemManager->uploadBook($file, $book);
+        if ($file->isFile()) {
+            unlink($file->getRealPath());
+        }
 
         return $book;
     }

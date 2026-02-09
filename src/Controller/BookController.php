@@ -125,8 +125,7 @@ class BookController extends AbstractController
         }
 
         $calculatedPath = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
-        $needsRelocation = $this->fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
-
+        $needsRelocation = $this->fileSystemManager->needsRelocation($book);
         $interaction = $book->getLastInteraction($user);
 
         $ereaderEmails = $this->ereaderEmailRepository->findAllByUser($user);

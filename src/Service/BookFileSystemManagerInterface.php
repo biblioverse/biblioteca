@@ -8,10 +8,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface BookFileSystemManagerInterface
 {
-    public function getBooksDirectory(): string;
-
-    public function getCoverDirectory(): string;
-
     public function getBookFilename(Book $book): string;
 
     public function getBookPublicPath(Book $book): string;
@@ -54,15 +50,19 @@ interface BookFileSystemManagerInterface
      */
     public function getAllConsumeFiles(): array;
 
-    public function removeEmptySubFolders(?string $path = null): bool;
-
     public function downloadToTempFile(RemoteBook|Book $book): \SplFileInfo;
 
     public function getFileName(RemoteBook $remote): string;
 
-    public function uploadFile(\SplFileInfo $file, string $location): RemoteBook;
+    public function uploadCover(\SplFileInfo $file, Book $book): RemoteBook;
+
+    public function uploadBook(\SplFileInfo $file, Book $book): RemoteBook;
 
     public function remove(RemoteBook $remote): void;
 
     public function getLocalConsumeDirectory(): string;
+
+    public function cleanup(): void;
+
+    public function needsRelocation(Book $book): bool;
 }
