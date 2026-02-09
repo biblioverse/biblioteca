@@ -65,8 +65,7 @@ class BooksRelocateCommand extends Command
             $progressBar->advance();
             try {
                 $calculatedPath = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
-                $needsRelocation = $this->fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
-
+                $needsRelocation = $this->fileSystemManager->needsRelocation($book);
                 if ($needsRelocation) {
                     $relocationCounter++;
 
@@ -89,9 +88,8 @@ class BooksRelocateCommand extends Command
 
         if ($executeChanges) {
             $io->writeln('');
-            $io->writeln('Remove empty folders');
-            $this->fileSystemManager->removeEmptySubFolders($this->fileSystemManager->getBooksDirectory());
-            $this->fileSystemManager->removeEmptySubFolders($this->fileSystemManager->getCoverDirectory());
+            $io->writeln('Cleanup folders');
+            $this->fileSystemManager->cleanup();
         }
 
         return Command::SUCCESS;

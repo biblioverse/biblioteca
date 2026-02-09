@@ -125,8 +125,7 @@ class BookController extends AbstractController
         }
 
         $calculatedPath = $this->fileSystemManager->getCalculatedFilePath($book, false).$this->fileSystemManager->getCalculatedFileName($book);
-        $needsRelocation = $this->fileSystemManager->getCalculatedFilePath($book, false) !== $book->getBookPath();
-
+        $needsRelocation = $this->fileSystemManager->needsRelocation($book);
         $interaction = $book->getLastInteraction($user);
 
         $ereaderEmails = $this->ereaderEmailRepository->findAllByUser($user);
@@ -370,10 +369,7 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard');
         }
 
-        $bookFiles = $this->fileSystemManager->getAllBooksFiles(true);
-
-        $bookFiles = iterator_to_array($bookFiles);
-
+        $bookFiles = $this->fileSystemManager->getAllConsumeFiles();
         // Sort book files by folder path first, then by filename
         uasort($bookFiles, function (\SplFileInfo $a, \SplFileInfo $b) {
             $pathA = dirname($a->getRealPath());
@@ -480,7 +476,6 @@ class BookController extends AbstractController
             return $this->redirectToRoute('app_dashboard', [], 301);
         }
 
-        $bookPath = $this->fileSystemManager->getBookFilename($book);
         if (!$this->fileSystemManager->fileExist($book)) {
             $this->addFlash('danger', 'Book file not found');
 
@@ -489,24 +484,19 @@ class BookController extends AbstractController
                 'slug' => $book->getSlug(),
             ]);
         }
-
-        $deleteAfterSend = false;
-        $fileToStream = $bookPath;
-
+        $temporaryFile = $this->fileSystemManager->downloadToTempFile($book);
+        $fileToStream = $temporaryFile;
         // For EPUB files, embed metadata from database when enabled
         if (strtolower($book->getExtension()) === 'epub') {
             try {
-                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $temporaryFile);
                 $fileToStream = $embeddedPath;
-                $deleteAfterSend = $embeddedPath !== $bookPath;
             } catch (\Exception) {
-                // If metadata embedding fails, fall back to original file
-                $fileToStream = $bookPath;
             }
         }
 
         $response = new BinaryFileResponse($fileToStream, Response::HTTP_OK);
-        $response->deleteFileAfterSend($deleteAfterSend);
+        $response->deleteFileAfterSend(true);
 
         $filename = basename($book->getBookFilename());
         $encodedFilename = rawurlencode($filename);
@@ -556,22 +546,19 @@ class BookController extends AbstractController
         }
 
         // For EPUB files, embed metadata from database when enabled
-        $deleteAfterSend = false;
-        $fileToSend = $this->fileSystemManager->getBookFilename($book);
-        $bookPath = $this->fileSystemManager->getBookPublicPath($book);
+        $tempFile = $this->fileSystemManager->downloadToTempFile($book);
         try {
-            $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+            $embeddedPath = $this->epubMetadataService->embedMetadata($book, $tempFile);
             $fileToSend = $embeddedPath;
-            $deleteAfterSend = $embeddedPath !== $bookPath;
         } catch (\Exception) {
             // If metadata embedding fails, fall back to original file
-            $fileToSend = $bookPath;
+            $fileToSend = $tempFile;
         }
 
         try {
             $this->ereaderEmailService->sendBook($book, $ereaderEmail, $fileToSend);
 
-            if ($deleteAfterSend && file_exists($fileToSend)) {
+            if (file_exists($fileToSend)) {
                 unlink($fileToSend);
             }
 
@@ -582,7 +569,7 @@ class BookController extends AbstractController
                 'slug' => $book->getSlug(),
             ], 301);
         } catch (\RuntimeException $e) {
-            if ($deleteAfterSend && file_exists($fileToSend)) {
+            if (file_exists($fileToSend)) {
                 unlink($fileToSend);
             }
 
