@@ -48,7 +48,7 @@ class BooksSeriesHarmonizeCommand extends Command
         /** @var string|null $excludeOption */
         $excludeOption = $input->getOption('exclude');
         $excludedIds = $excludeOption !== null
-            ? array_map('intval', explode(',', $excludeOption))
+            ? array_map(intval(...), explode(',', $excludeOption))
             : [];
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
@@ -172,7 +172,7 @@ class BooksSeriesHarmonizeCommand extends Command
                 $lang = $book?->getLanguage() ?? '-';
                 $author = $book !== null ? ($book->getAuthors()[0] ?? '-') : '-';
                 $key = $info['serie'].'|'.$lang;
-                $seriesByLang[$key] = ($seriesByLang[$key] ?? ['serie' => $info['serie'], 'lang' => $lang, 'author' => $author, 'count' => 0]);
+                $seriesByLang[$key] ??= ['serie' => $info['serie'], 'lang' => $lang, 'author' => $author, 'count' => 0];
                 $seriesByLang[$key]['count']++;
             }
         }

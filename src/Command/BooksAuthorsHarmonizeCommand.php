@@ -48,7 +48,7 @@ class BooksAuthorsHarmonizeCommand extends Command
         /** @var string|null $excludeOption */
         $excludeOption = $input->getOption('exclude');
         $excludedAuthors = $excludeOption !== null
-            ? array_map('trim', explode(',', $excludeOption))
+            ? array_map(trim(...), explode(',', $excludeOption))
             : [];
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
@@ -251,7 +251,7 @@ PROMPT;
                 foreach ($currentAuthors as $author) {
                     if ($author === $oldName) {
                         // Canonical name may contain multiple authors (comma-separated)
-                        $splitAuthors = array_map('trim', explode(',', $canonicalName));
+                        $splitAuthors = array_map(trim(...), explode(',', $canonicalName));
                         array_push($newAuthors, ...$splitAuthors);
                         $modified = true;
                     } else {

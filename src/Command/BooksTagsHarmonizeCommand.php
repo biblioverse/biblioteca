@@ -55,7 +55,7 @@ class BooksTagsHarmonizeCommand extends Command
         /** @var string|null $excludeOption */
         $excludeOption = $input->getOption('exclude');
         $excludedIds = $excludeOption !== null
-            ? array_map('intval', explode(',', $excludeOption))
+            ? array_map(intval(...), explode(',', $excludeOption))
             : [];
 
         if (!in_array($mode, ['replace', 'add'], true)) {
@@ -190,11 +190,7 @@ class BooksTagsHarmonizeCommand extends Command
             $newAll = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
             $currentTags = $book->getTags() ?? [];
 
-            if ($mode === 'add') {
-                $finalTags = array_unique(array_merge($currentTags, $newAll));
-            } else {
-                $finalTags = $newAll;
-            }
+            $finalTags = $mode === 'add' ? array_unique(array_merge($currentTags, $newAll)) : $newAll;
 
             if ($currentTags !== $finalTags) {
                 $book->setTags(array_values($finalTags));
