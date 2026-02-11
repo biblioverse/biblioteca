@@ -153,7 +153,7 @@ class BooksSeriesHarmonizeCommand extends Command
                 $book = $booksById[$bookId] ?? null;
                 $lang = $book?->getLanguage() ?? '-';
                 $author = $book !== null ? ($book->getAuthors()[0] ?? '-') : '-';
-                $key = $info['serie'] . '|' . $lang;
+                $key = $info['serie'].'|'.$lang;
                 $seriesByLang[$key] = ($seriesByLang[$key] ?? ['serie' => $info['serie'], 'lang' => $lang, 'author' => $author, 'count' => 0]);
                 $seriesByLang[$key]['count']++;
             }
