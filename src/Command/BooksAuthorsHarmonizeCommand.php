@@ -106,11 +106,7 @@ class BooksAuthorsHarmonizeCommand extends Command
         }
 
         usort($rows, fn ($a, $b) => $b[2] <=> $a[2]); // Sort by book count
-        $io->table(['Current Name', 'Canonical Name', 'Books'], array_slice($rows, 0, 50));
-
-        if (count($rows) > 50) {
-            $io->comment('... and '.(count($rows) - 50).' more authors');
-        }
+        $io->table(['Current Name', 'Canonical Name', 'Books'], $rows);
 
         $io->note(sprintf('%d author names will be harmonized, affecting %d books.', count($authorMapping), $affectedBooks));
 
@@ -171,19 +167,24 @@ TASK: Harmonize these author names by identifying duplicates and variations.
 AUTHOR NAMES TO ANALYZE:
 {$authorsJson}
 
+IMPORTANT: Some entries may contain multiple authors separated by commas or "and".
+In that case, you MUST preserve ALL authors. Split them into individual names, harmonize each one, and return them as a comma-separated list.
+NEVER drop any author from a multi-author entry.
+
 For each author name:
 1. Identify if it's a variation of another name in the list (e.g., "J.R.R. Tolkien", "JRR Tolkien", "Tolkien, J.R.R.")
 2. Choose the most complete and standard form as the canonical name
 3. Use format: "Firstname Lastname" (not "Lastname, Firstname")
 4. Keep accents and special characters
 5. For authors with known pen names, use their most famous name
+6. If you are not familiar with an author, return their name unchanged rather than guessing
 
 Return a JSON object where:
 - Keys are the original author names
-- Values are the canonical names
+- Values are the canonical names (comma-separated if multiple authors)
 - Include ALL names, even if unchanged
 
-Example: {"J.R.R. Tolkien": "J.R.R. Tolkien", "JRR Tolkien": "J.R.R. Tolkien", "Tolkien, John Ronald Reuel": "J.R.R. Tolkien"}
+Example: {"J.R.R. Tolkien": "J.R.R. Tolkien", "JRR Tolkien": "J.R.R. Tolkien", "Tolkien, John Ronald Reuel": "J.R.R. Tolkien", "Bob Smith and Alice Foo": "Bob Smith, Alice Foo", "Bob Smith, Alice Foo": "Bob Smith, Alice Foo"}
 
 Return only the JSON, no other text.
 PROMPT;
@@ -239,7 +240,9 @@ PROMPT;
 
                 foreach ($currentAuthors as $author) {
                     if ($author === $oldName) {
-                        $newAuthors[] = $canonicalName;
+                        // Canonical name may contain multiple authors (comma-separated)
+                        $splitAuthors = array_map('trim', explode(',', $canonicalName));
+                        array_push($newAuthors, ...$splitAuthors);
                         $modified = true;
                     } else {
                         $newAuthors[] = $author;

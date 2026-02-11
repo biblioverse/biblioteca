@@ -139,11 +139,8 @@ class BooksSeriesHarmonizeCommand extends Command
 
         $io->table(
             ['Current Title', 'New Title', 'Series', '#', 'Lang'],
-            array_slice($rows, 0, 50),
+            $rows,
         );
-        if (count($rows) > 50) {
-            $io->comment('... and '.(count($rows) - 50).' more books');
-        }
 
         // Show series distribution grouped by language
         $seriesByLang = [];
@@ -295,7 +292,7 @@ IMPORTANT:
 - Only return title if it needs cleaning (different from current)
 - Keep series names in the book's language (do NOT translate)
 - If standalone book, set serie and serieIndex to null
-- Only include confident changes
+- Only include confident changes — if you are not familiar with a book, return null values rather than guessing
 - Preserve academic annotations like "(SparkNotes)", "(CliffsNotes)", or similar study guide indicators in titles — do NOT strip them
 - If a book already has "currentSerie" and/or "currentIndex", use them as hints — keep them if correct, fix them if wrong
 
