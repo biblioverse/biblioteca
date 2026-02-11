@@ -36,6 +36,7 @@ class BooksSeriesHarmonizeCommand extends Command
     {
         $this
             ->addOption('apply', 'a', InputOption::VALUE_NONE, 'Apply the changes (without this flag, only shows the proposed changes)')
+            ->addOption('exclude', null, InputOption::VALUE_REQUIRED, 'Comma-separated list of book IDs to exclude from changes')
         ;
     }
 
@@ -44,6 +45,11 @@ class BooksSeriesHarmonizeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $apply = $input->getOption('apply') === true;
+        /** @var string|null $excludeOption */
+        $excludeOption = $input->getOption('exclude');
+        $excludedIds = $excludeOption !== null
+            ? array_map('intval', explode(',', $excludeOption))
+            : [];
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
 
@@ -113,14 +119,19 @@ class BooksSeriesHarmonizeCommand extends Command
             $indexChanged = $newIndex !== null && $newIndex !== $currentIndex;
 
             if ($titleChanged || $serieChanged || $indexChanged) {
+                $excluded = in_array($bookId, $excludedIds, true);
                 $rows[] = [
+                    $bookId,
                     mb_substr($currentTitle, 0, 30),
                     $titleChanged ? mb_substr($newTitle, 0, 30) : '(no change)',
                     $newSerie ?? $currentSerie ?? '-',
                     $newIndex ?? $currentIndex ?? '-',
                     $book->getLanguage() ?? '-',
+                    $excluded ? 'SKIP' : '',
                 ];
-                $changesCount++;
+                if (!$excluded) {
+                    $changesCount++;
+                }
             }
         }
 
@@ -132,20 +143,20 @@ class BooksSeriesHarmonizeCommand extends Command
 
         // Sort by language, then series, then index
         usort($rows, function (array $a, array $b): int {
-            $cmp = $a[4] <=> $b[4];
+            $cmp = $a[5] <=> $b[5];
             if ($cmp !== 0) {
                 return $cmp;
             }
-            $cmp = $a[2] <=> $b[2];
+            $cmp = $a[3] <=> $b[3];
             if ($cmp !== 0) {
                 return $cmp;
             }
 
-            return ((float) $a[3]) <=> ((float) $b[3]);
+            return ((float) $a[4]) <=> ((float) $b[4]);
         });
 
         $io->table(
-            ['Current Title', 'New Title', 'Series', '#', 'Lang'],
+            ['ID', 'Current Title', 'New Title', 'Series', '#', 'Lang', ''],
             $rows,
         );
 
@@ -188,7 +199,7 @@ class BooksSeriesHarmonizeCommand extends Command
 
         foreach ($books as $book) {
             $bookId = $book->getId();
-            if (!isset($bookData[$bookId])) {
+            if (!isset($bookData[$bookId]) || in_array($bookId, $excludedIds, true)) {
                 continue;
             }
 
