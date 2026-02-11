@@ -36,6 +36,7 @@ class BooksAuthorsHarmonizeCommand extends Command
     {
         $this
             ->addOption('apply', 'a', InputOption::VALUE_NONE, 'Apply the changes (without this flag, only shows the proposed changes)')
+            ->addOption('exclude', null, InputOption::VALUE_REQUIRED, 'Comma-separated list of author names to exclude from changes')
         ;
     }
 
@@ -44,6 +45,11 @@ class BooksAuthorsHarmonizeCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $apply = $input->getOption('apply') === true;
+        /** @var string|null $excludeOption */
+        $excludeOption = $input->getOption('exclude');
+        $excludedAuthors = $excludeOption !== null
+            ? array_map('trim', explode(',', $excludeOption))
+            : [];
 
         $communicator = $this->aiCommunicator->getCommunicator(AiAction::Assistant);
 
@@ -100,15 +106,18 @@ class BooksAuthorsHarmonizeCommand extends Command
         $rows = [];
         $affectedBooks = 0;
         foreach ($authorMapping as $oldName => $canonicalName) {
+            $excluded = in_array($oldName, $excludedAuthors, true);
             $bookCount = count($authorBooks[$oldName] ?? []);
-            $affectedBooks += $bookCount;
-            $rows[] = [$oldName, $canonicalName, $bookCount];
+            if (!$excluded) {
+                $affectedBooks += $bookCount;
+            }
+            $rows[] = [$oldName, $canonicalName, $bookCount, $excluded ? 'SKIP' : ''];
         }
 
         usort($rows, fn ($a, $b) => $b[2] <=> $a[2]); // Sort by book count
-        $io->table(['Current Name', 'Canonical Name', 'Books'], $rows);
+        $io->table(['Current Name', 'Canonical Name', 'Books', ''], $rows);
 
-        $io->note(sprintf('%d author names will be harmonized, affecting %d books.', count($authorMapping), $affectedBooks));
+        $io->note(sprintf('%d author names will be harmonized, affecting %d books.', count($authorMapping) - count($excludedAuthors), $affectedBooks));
 
         if (!$apply) {
             $io->note('Run with --apply to apply these changes.');
@@ -116,9 +125,10 @@ class BooksAuthorsHarmonizeCommand extends Command
             return Command::SUCCESS;
         }
 
-        // Apply changes
+        // Apply changes (excluding skipped authors)
         $io->section('Applying author harmonization...');
-        $updatedCount = $this->applyAuthorMapping($authorMapping, $authorBooks);
+        $filteredMapping = array_diff_key($authorMapping, array_flip($excludedAuthors));
+        $updatedCount = $this->applyAuthorMapping($filteredMapping, $authorBooks);
 
         $this->em->flush();
 

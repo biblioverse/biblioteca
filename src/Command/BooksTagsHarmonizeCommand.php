@@ -39,6 +39,7 @@ class BooksTagsHarmonizeCommand extends Command
             ->addOption('apply', 'a', InputOption::VALUE_NONE, 'Apply the harmonization (without this flag, only shows the proposed changes)')
             ->addOption('language', 'l', InputOption::VALUE_REQUIRED, 'Target language for tags (e.g., en, fr)', 'en')
             ->addOption('mode', 'm', InputOption::VALUE_REQUIRED, 'How to apply changes: "replace" (default) or "add" (keeps original tags)', 'replace')
+            ->addOption('exclude', null, InputOption::VALUE_REQUIRED, 'Comma-separated list of book IDs to exclude from changes')
         ;
     }
 
@@ -51,6 +52,11 @@ class BooksTagsHarmonizeCommand extends Command
         $language = $input->getOption('language');
         /** @var string $mode */
         $mode = $input->getOption('mode');
+        /** @var string|null $excludeOption */
+        $excludeOption = $input->getOption('exclude');
+        $excludedIds = $excludeOption !== null
+            ? array_map('intval', explode(',', $excludeOption))
+            : [];
 
         if (!in_array($mode, ['replace', 'add'], true)) {
             $io->error('Invalid mode. Use "replace" or "add".');
@@ -129,11 +135,14 @@ class BooksTagsHarmonizeCommand extends Command
                 $combined = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
                 $newAll = implode(', ', $combined);
                 if ($oldTags !== $newAll) {
+                    $excluded = in_array($bookId, $excludedIds, true);
                     $rows[] = [
+                        $bookId,
                         mb_substr($book->getTitle(), 0, 30),
                         mb_substr($oldTags, 0, 30),
                         $newGenres,
                         mb_substr($newTags, 0, 40),
+                        $excluded ? 'SKIP' : '',
                     ];
                 }
             }
@@ -145,7 +154,7 @@ class BooksTagsHarmonizeCommand extends Command
             return Command::SUCCESS;
         }
 
-        $io->table(['Book', 'Current Tags', 'Genres', 'Tags'], $rows);
+        $io->table(['ID', 'Book', 'Current Tags', 'Genres', 'Tags', ''], $rows);
 
         // Show genre distribution
         $genreCounts = [];
@@ -174,7 +183,7 @@ class BooksTagsHarmonizeCommand extends Command
 
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
-            if (!isset($bookResults[$bookId])) {
+            if (!isset($bookResults[$bookId]) || in_array($bookId, $excludedIds, true)) {
                 continue;
             }
 
