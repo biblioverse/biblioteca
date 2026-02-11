@@ -53,6 +53,8 @@ Options:
 - `--skip-series`: Skip series/title harmonization
 - `--skip-tags`: Skip tag harmonization
 
+For finer control (e.g., excluding specific books or authors), run the individual commands below.
+
 ## `books:authors-harmonize`
 
 **Harmonize author names** - Unifies author name variations across your library.
@@ -64,7 +66,12 @@ Examples of harmonization:
 ```bash
 books:authors-harmonize           # Preview
 books:authors-harmonize --apply   # Apply
+books:authors-harmonize --exclude="J.R.R. Tolkien,Stephen King"  # Skip specific authors
 ```
+
+Options:
+- `--apply` / `-a`: Apply changes (preview mode by default)
+- `--exclude`: Comma-separated list of author names to skip
 
 ## `books:series-harmonize`
 
@@ -77,24 +84,37 @@ Examples:
 ```bash
 books:series-harmonize           # Preview
 books:series-harmonize --apply   # Apply
+books:series-harmonize --exclude=84,142,143  # Skip specific book IDs
 ```
+
+Options:
+- `--apply` / `-a`: Apply changes (preview mode by default)
+- `--exclude`: Comma-separated list of book IDs to skip
 
 Series names are kept in their original language (e.g., "Foundation" stays "Foundation", not translated).
 
 ## `books:tags-harmonize`
 
-**Assign genres from predefined list** - Analyzes each book and assigns 1-2 genres from a curated list of 37 literary genres.
+**Harmonize tags and assign genres** - Assigns 1-2 main genres from a predefined list, curates existing tags (keeps meaningful ones, removes junk), and may add descriptive tags.
 
-Available genres (French): Science-Fiction, Fantastique, Policier, Thriller, Romance, Roman historique, Aventure, Horreur, Humour, Classique, Littérature jeunesse, Biographie, Essai, Poésie, Théâtre, Contes et légendes, Dystopie, Space Opera, Philosophie, Drame, Autobiographie, Nouvelle, Roman psychologique, Théologie, Religion, Histoire, Voyage, Politique, Économie, Art, Cuisine, Développement personnel, Guerre, Satire, Bande dessinée, Manga, Érotique, Littérature générale
+The hybrid approach:
+1. Assigns 1-2 main genres from a curated list of 37 literary genres
+2. Preserves meaningful existing tags (themes, settings, mood, etc.)
+3. Removes junk tags ("Book", "Ebook", "General", "Fiction", etc.)
+4. May add 1-2 new descriptive tags when clearly applicable
 
 ```bash
 books:tags-harmonize --language fr           # Preview
 books:tags-harmonize --language fr --apply   # Apply (replaces existing tags)
 books:tags-harmonize --language fr --mode add --apply  # Add genres to existing tags
+books:tags-harmonize --language fr --exclude=42,99     # Skip specific book IDs
 ```
 
 Options:
-- `--mode`: `replace` (default) replaces all tags, `add` keeps existing tags
+- `--apply` / `-a`: Apply changes (preview mode by default)
+- `--language` / `-l`: Target language for genres (fr, en, de, es). Default: en
+- `--mode` / `-m`: `replace` (default) replaces all tags, `add` keeps existing tags
+- `--exclude`: Comma-separated list of book IDs to skip
 
 ## `cache:clear`
 Clears the cache
