@@ -115,9 +115,10 @@ class BooksSeriesHarmonizeCommand extends Command
             if ($titleChanged || $serieChanged || $indexChanged) {
                 $rows[] = [
                     mb_substr($currentTitle, 0, 30),
-                    $titleChanged ? mb_substr($newTitle, 0, 30) : '-',
+                    $titleChanged ? mb_substr($newTitle, 0, 30) : '(no change)',
                     $newSerie ?? $currentSerie ?? '-',
                     $newIndex ?? $currentIndex ?? '-',
+                    $book->getLanguage() ?? '-',
                 ];
                 $changesCount++;
             }
@@ -129,30 +130,46 @@ class BooksSeriesHarmonizeCommand extends Command
             return Command::SUCCESS;
         }
 
+        // Sort by language, then series, then index
+        usort($rows, function (array $a, array $b): int {
+            return ($a[4] <=> $b[4])
+                ?: ($a[2] <=> $b[2])
+                ?: (((float) $a[3]) <=> ((float) $b[3]));
+        });
+
         $io->table(
-            ['Current Title', 'New Title', 'Series', '#'],
+            ['Current Title', 'New Title', 'Series', '#', 'Lang'],
             array_slice($rows, 0, 50),
         );
         if (count($rows) > 50) {
             $io->comment('... and '.(count($rows) - 50).' more books');
         }
 
-        // Show series distribution
-        $seriesCounts = [];
-        foreach ($bookData as $info) {
+        // Show series distribution grouped by language
+        $seriesByLang = [];
+        $booksById = [];
+        foreach ($books as $book) {
+            $booksById[$book->getId()] = $book;
+        }
+        foreach ($bookData as $bookId => $info) {
             if ($info['serie'] !== null) {
-                $seriesCounts[$info['serie']] = ($seriesCounts[$info['serie']] ?? 0) + 1;
+                $book = $booksById[$bookId] ?? null;
+                $lang = $book?->getLanguage() ?? '-';
+                $author = $book !== null ? ($book->getAuthors()[0] ?? '-') : '-';
+                $key = $info['serie'] . '|' . $lang;
+                $seriesByLang[$key] = ($seriesByLang[$key] ?? ['serie' => $info['serie'], 'lang' => $lang, 'author' => $author, 'count' => 0]);
+                $seriesByLang[$key]['count']++;
             }
         }
-        arsort($seriesCounts);
+        usort($seriesByLang, fn (array $a, array $b) => $b['count'] <=> $a['count']);
 
-        if ($seriesCounts !== []) {
+        if ($seriesByLang !== []) {
             $io->section('Series distribution (detected):');
             $seriesRows = [];
-            foreach (array_slice($seriesCounts, 0, 30, true) as $serie => $count) {
-                $seriesRows[] = [$serie, $count];
+            foreach (array_slice($seriesByLang, 0, 30) as $entry) {
+                $seriesRows[] = [$entry['serie'], $entry['author'], $entry['lang'], $entry['count']];
             }
-            $io->table(['Series', 'Books'], $seriesRows);
+            $io->table(['Series', 'Author', 'Lang', 'Books'], $seriesRows);
         }
 
         if (!$apply) {
@@ -247,6 +264,7 @@ class BooksSeriesHarmonizeCommand extends Command
                 'id' => $book->getId(),
                 'title' => $book->getTitle(),
                 'authors' => implode(', ', $book->getAuthors()),
+                'language' => $book->getLanguage(),
                 'currentSerie' => $book->getSerie(),
                 'currentIndex' => $book->getSerieIndex(),
             ];
@@ -269,13 +287,17 @@ For each book:
    - "Harry Potter 1 - Philosopher's Stone" → "Harry Potter and the Philosopher's Stone"
 2. DETECT SERIES: Identify if the book belongs to a series
 3. DETECT INDEX: Find the book's position in the series
-4. Keep titles and series names in their ORIGINAL language (do NOT translate)
+4. Each book includes a "language" field (e.g. "fr", "en"). Keep titles and series names in the language indicated by this field. Do NOT translate between languages.
+   - A French book (language: "fr") must keep its French title and French series name
+   - An English book (language: "en") must keep its English title and English series name
 
 IMPORTANT:
 - Only return title if it needs cleaning (different from current)
-- Keep series names in original language
+- Keep series names in the book's language (do NOT translate)
 - If standalone book, set serie and serieIndex to null
 - Only include confident changes
+- Preserve academic annotations like "(SparkNotes)", "(CliffsNotes)", or similar study guide indicators in titles — do NOT strip them
+- If a book already has "currentSerie" and/or "currentIndex", use them as hints — keep them if correct, fix them if wrong
 
 Return a JSON object where:
 - Keys are the book IDs (as strings)
@@ -287,7 +309,8 @@ Return a JSON object where:
 Example: {
   "123": {"title": "Dune Messiah", "serie": "Dune", "serieIndex": 2},
   "456": {"title": null, "serie": null, "serieIndex": null},
-  "789": {"title": null, "serie": "Foundation", "serieIndex": 3}
+  "789": {"title": null, "serie": "Foundation", "serieIndex": 3},
+  "101": {"title": "Les enfants de Dune", "serie": "Dune", "serieIndex": 3}
 }
 
 Return only the JSON, no other text.
