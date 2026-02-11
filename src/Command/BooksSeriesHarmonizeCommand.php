@@ -132,9 +132,16 @@ class BooksSeriesHarmonizeCommand extends Command
 
         // Sort by language, then series, then index
         usort($rows, function (array $a, array $b): int {
-            return ($a[4] <=> $b[4])
-                ?: ($a[2] <=> $b[2])
-                ?: (((float) $a[3]) <=> ((float) $b[3]));
+            $cmp = $a[4] <=> $b[4];
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+            $cmp = $a[2] <=> $b[2];
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+
+            return ((float) $a[3]) <=> ((float) $b[3]);
         });
 
         $io->table(
