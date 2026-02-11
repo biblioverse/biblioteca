@@ -101,15 +101,15 @@ class BooksTagsHarmonizeCommand extends Command
         $batches = array_chunk($booksWithTags, self::BATCH_SIZE);
         $io->note(sprintf('Processing in %d batches of up to %d books each.', count($batches), self::BATCH_SIZE));
 
-        /** @var array<int, string[]> $bookGenres book ID => new genres */
-        $bookGenres = [];
+        /** @var array<int, array{genres: string[], tags: string[]}> $bookResults book ID => genres + tags */
+        $bookResults = [];
         $progressBar = $io->createProgressBar(count($batches));
         $progressBar->start();
 
         foreach ($batches as $batch) {
             $result = $this->analyzeBookBatch($communicator, $batch, $language, $allowedGenres);
-            foreach ($result as $bookId => $genres) {
-                $bookGenres[$bookId] = $genres;
+            foreach ($result as $bookId => $data) {
+                $bookResults[$bookId] = $data;
             }
             $progressBar->advance();
         }
@@ -118,38 +118,39 @@ class BooksTagsHarmonizeCommand extends Command
         $io->newLine(2);
 
         // Show proposed changes
-        $io->section('Proposed genre assignments:');
+        $io->section('Proposed changes:');
         $rows = [];
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
-            if (isset($bookGenres[$bookId])) {
+            if (isset($bookResults[$bookId])) {
                 $oldTags = implode(', ', $book->getTags() ?? []);
-                $newGenres = implode(', ', $bookGenres[$bookId]);
-                if ($oldTags !== $newGenres) {
+                $newGenres = implode(', ', $bookResults[$bookId]['genres']);
+                $newTags = implode(', ', $bookResults[$bookId]['tags']);
+                $combined = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
+                $newAll = implode(', ', $combined);
+                if ($oldTags !== $newAll) {
                     $rows[] = [
-                        mb_substr($book->getTitle(), 0, 40),
-                        mb_substr($oldTags, 0, 40),
+                        mb_substr($book->getTitle(), 0, 30),
+                        mb_substr($oldTags, 0, 30),
                         $newGenres,
+                        mb_substr($newTags, 0, 40),
                     ];
                 }
             }
         }
 
         if ($rows === []) {
-            $io->success('All books already have appropriate genres.');
+            $io->success('All books already have appropriate tags.');
 
             return Command::SUCCESS;
         }
 
-        $io->table(['Book', 'Current Tags', 'New Genres'], array_slice($rows, 0, 50));
-        if (count($rows) > 50) {
-            $io->comment('... and '.(count($rows) - 50).' more books');
-        }
+        $io->table(['Book', 'Current Tags', 'Genres', 'Tags'], $rows);
 
         // Show genre distribution
         $genreCounts = [];
-        foreach ($bookGenres as $genres) {
-            foreach ($genres as $genre) {
+        foreach ($bookResults as $data) {
+            foreach ($data['genres'] as $genre) {
                 $genreCounts[$genre] = ($genreCounts[$genre] ?? 0) + 1;
             }
         }
@@ -168,24 +169,22 @@ class BooksTagsHarmonizeCommand extends Command
         }
 
         // Apply changes
-        $io->section('Applying genre assignments...');
+        $io->section('Applying changes...');
         $updatedCount = 0;
 
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
-            if (!isset($bookGenres[$bookId])) {
+            if (!isset($bookResults[$bookId])) {
                 continue;
             }
 
-            $newGenres = $bookGenres[$bookId];
+            $newAll = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
             $currentTags = $book->getTags() ?? [];
 
             if ($mode === 'add') {
-                // Add new genres to existing tags
-                $finalTags = array_unique(array_merge($currentTags, $newGenres));
+                $finalTags = array_unique(array_merge($currentTags, $newAll));
             } else {
-                // Replace with new genres only
-                $finalTags = $newGenres;
+                $finalTags = $newAll;
             }
 
             if ($currentTags !== $finalTags) {
@@ -232,7 +231,7 @@ class BooksTagsHarmonizeCommand extends Command
     /**
      * @param Book[] $books
      * @param string[] $allowedGenres
-     * @return array<int, string[]> book ID => genres
+     * @return array<int, array{genres: string[], tags: string[]}> book ID => genres + tags
      */
     private function analyzeBookBatch(
         AiCommunicatorInterface $communicator,
@@ -264,7 +263,7 @@ class BooksTagsHarmonizeCommand extends Command
         $prompt = <<<PROMPT
 You are a librarian expert in book categorization.
 
-TASK: For each book, analyze its title, authors, and current tags to determine the 1-2 most appropriate genres.
+TASK: For each book, assign 1-2 main genres from the allowed list AND curate its existing tags.
 
 ALLOWED GENRES (you MUST only use these exact values in {$languageName}):
 {$allowedGenresJson}
@@ -273,15 +272,20 @@ BOOKS TO ANALYZE:
 {$booksJson}
 
 For each book:
-1. Look at the title, authors, and ALL current tags together
-2. Determine what genre(s) best describe this book (1-2 genres max)
-3. Choose ONLY from the allowed genres list
+1. Pick 1-2 main genres from the ALLOWED GENRES list above
+2. Review the book's existing "tags" and KEEP any that are meaningful and specific (themes, settings, mood, character types, etc.)
+3. REMOVE junk or overly generic tags like "Book", "Ebook", "General", "Fiction", "Romans", "Novela", "General Fiction", format descriptors, or language learning labels
+4. You may add 1-2 new descriptive tags if they clearly apply to the book
+5. Normalize tag casing to Title Case
+6. Tags should be in {$languageName}
 
 Return a JSON object where:
 - Keys are the book IDs (as strings)
-- Values are arrays of 1-2 genre strings from the allowed list
+- Values are objects with:
+  - "genres": array of 1-2 genre strings from the allowed list
+  - "tags": array of curated tags (kept from existing + optionally added)
 
-Example: {"123": ["Science-Fiction"], "456": ["Policier", "Thriller"]}
+Example: {"123": {"genres": ["Science Fiction"], "tags": ["Space Exploration", "Artificial Intelligence"]}, "456": {"genres": ["Crime Fiction", "Thriller"], "tags": ["Murder Mystery", "Victorian England"]}}
 
 Return only the JSON, no other text.
 PROMPT;
@@ -301,16 +305,32 @@ PROMPT;
                 return [];
             }
 
-            // Convert string keys to int and validate genres
+            // Convert string keys to int and validate
             $validated = [];
-            foreach ($mapping as $bookId => $genres) {
-                if (!is_array($genres)) {
+            foreach ($mapping as $bookId => $data) {
+                if (!is_array($data)) {
                     continue;
                 }
+
+                $genres = $data['genres'] ?? [];
+                $tags = $data['tags'] ?? [];
+
+                if (!is_array($genres)) {
+                    $genres = [];
+                }
+                if (!is_array($tags)) {
+                    $tags = [];
+                }
+
                 // Filter to only allowed genres
-                $validGenres = array_filter($genres, fn ($g) => in_array($g, $allowedGenres, true));
+                $validGenres = array_values(array_filter($genres, fn ($g) => is_string($g) && in_array($g, $allowedGenres, true)));
+                $validTags = array_values(array_filter($tags, fn ($t) => is_string($t) && $t !== ''));
+
                 if ($validGenres !== []) {
-                    $validated[(int) $bookId] = array_values($validGenres);
+                    $validated[(int) $bookId] = [
+                        'genres' => $validGenres,
+                        'tags' => $validTags,
+                    ];
                 }
             }
 
