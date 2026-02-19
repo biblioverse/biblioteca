@@ -187,10 +187,24 @@ class BooksTagsHarmonizeCommand extends Command
                 continue;
             }
 
-            $newAll = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
+            $aiGenres = $bookResults[$bookId]['genres'];
+            $aiTags = $bookResults[$bookId]['tags'];
+            $newAll = array_unique(array_merge($aiGenres, $aiTags));
             $currentTags = $book->getTags() ?? [];
 
-            $finalTags = $mode === 'add' ? array_unique(array_merge($currentTags, $newAll)) : $newAll;
+            if ($newAll === []) {
+                continue;
+            }
+
+            // In replace mode, if the AI found genres but returned no curated tags,
+            // preserve existing tags rather than wiping them.
+            if ($mode === 'replace' && $aiTags === []) {
+                $finalTags = array_unique(array_merge($aiGenres, $currentTags));
+            } elseif ($mode === 'add') {
+                $finalTags = array_unique(array_merge($currentTags, $newAll));
+            } else {
+                $finalTags = $newAll;
+            }
 
             if ($currentTags !== $finalTags) {
                 $book->setTags(array_values($finalTags));
