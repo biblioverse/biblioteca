@@ -292,11 +292,12 @@ BOOKS TO ANALYZE:
 
 For each book:
 1. Pick 1-2 main genres from the ALLOWED GENRES list above
-2. Review the book's existing "tags" and KEEP any that are meaningful and specific (themes, settings, mood, character types, etc.)
+2. Review the book's existing "tags" and KEEP any that are meaningful and specific (themes, settings, mood, character types, etc.) — translate them to {$languageName} if needed
 3. REMOVE junk or overly generic tags like "Book", "Ebook", "General", "Fiction", "Romans", "Novela", "General Fiction", format descriptors, or language learning labels
 4. You may add 1-2 new descriptive tags if they clearly apply to the book
 5. Normalize tag casing to Title Case
-6. Tags should be in {$languageName}
+6. ALL output (genres and tags) MUST be in {$languageName} — translate existing tags even if they are in a different language
+7. The "tags" array must NEVER be empty if the book has meaningful existing tags — always translate and return them
 
 Return a JSON object where:
 - Keys are the book IDs (as strings)
