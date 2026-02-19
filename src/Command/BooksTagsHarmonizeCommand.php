@@ -311,6 +311,7 @@ For each book:
 5. Normalize tag casing to Title Case
 6. ALL output (genres and tags) MUST be in {$languageName} — translate existing tags even if they are in a different language
 7. The "tags" array must NEVER be empty if the book has meaningful existing tags — always translate and return them
+8. If a tag contains multiple concepts joined by separators like " - ", " / ", "--" or similar, split them into individual tags (e.g. "Policier - Crime - Mystère" → ["Policier", "Crime", "Mystère"])
 
 Return a JSON object where:
 - Keys are the book IDs (as strings)
