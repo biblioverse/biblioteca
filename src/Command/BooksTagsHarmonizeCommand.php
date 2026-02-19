@@ -6,6 +6,7 @@ use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
 use App\Ai\GenreList;
+use App\Ai\LlmJsonCleaner;
 use App\Entity\Book;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -129,20 +130,32 @@ class BooksTagsHarmonizeCommand extends Command
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
             if (isset($bookResults[$bookId])) {
-                $oldTags = implode(', ', $book->getTags() ?? []);
-                $newGenres = implode(', ', $bookResults[$bookId]['genres']);
-                $newTags = implode(', ', $bookResults[$bookId]['tags']);
-                $combined = array_unique(array_merge($bookResults[$bookId]['genres'], $bookResults[$bookId]['tags']));
-                $newAll = implode(', ', $combined);
-                if ($oldTags !== $newAll) {
+                $currentTags = $book->getTags() ?? [];
+                $aiGenres = $bookResults[$bookId]['genres'];
+                $aiTags = $bookResults[$bookId]['tags'];
+                $aiCombined = array_unique(array_merge($aiGenres, $aiTags));
+
+                // Mirror apply logic so the preview matches what will actually be stored
+                if ($mode === 'replace' && $aiTags === []) {
+                    $finalTags = array_unique(array_merge($aiGenres, $currentTags));
+                } elseif ($mode === 'add') {
+                    $finalTags = array_unique(array_merge($currentTags, $aiCombined));
+                } else {
+                    $finalTags = $aiCombined;
+                }
+
+                $oldTagsStr = implode(', ', $currentTags);
+                $finalTagsStr = implode(', ', $finalTags);
+
+                if ($oldTagsStr !== $finalTagsStr) {
                     $excluded = in_array($bookId, $excludedIds, true);
                     $rows[] = [
-                        $bookId,
-                        mb_substr($book->getTitle(), 0, 30),
-                        mb_substr($oldTags, 0, 30),
-                        $newGenres,
-                        mb_substr($newTags, 0, 40),
-                        $excluded ? 'SKIP' : '',
+                        'id' => $bookId,
+                        'title' => mb_substr($book->getTitle(), 0, 30),
+                        'currentTags' => mb_substr($oldTagsStr, 0, 30),
+                        'genres' => implode(', ', $aiGenres),
+                        'finalTags' => mb_substr($finalTagsStr, 0, 40),
+                        'status' => $excluded ? 'SKIP' : '',
                     ];
                 }
             }
@@ -154,7 +167,7 @@ class BooksTagsHarmonizeCommand extends Command
             return Command::SUCCESS;
         }
 
-        $io->table(['ID', 'Book', 'Current Tags', 'Genres', 'Tags', ''], $rows);
+        $io->table(['ID', 'Book', 'Current Tags', 'Genres', 'Final Tags', ''], $rows);
 
         // Show genre distribution
         $genreCounts = [];
@@ -310,14 +323,7 @@ Example: {"123": {"genres": ["Science Fiction"], "tags": ["Space Exploration", "
 Return only the JSON, no other text.
 PROMPT;
 
-        $result = $communicator->interrogate($prompt);
-
-        // Clean up result
-        $result = trim($result, "´`\n\r\t\v\0 ");
-        if (str_starts_with($result, 'json')) {
-            $result = substr($result, 4);
-        }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
+        $result = LlmJsonCleaner::clean($communicator->interrogate($prompt));
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
