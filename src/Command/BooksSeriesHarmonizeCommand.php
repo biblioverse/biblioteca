@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
+use App\Ai\LlmJsonCleaner;
 use App\Entity\Book;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -121,13 +122,13 @@ class BooksSeriesHarmonizeCommand extends Command
             if ($titleChanged || $serieChanged || $indexChanged) {
                 $excluded = in_array($bookId, $excludedIds, true);
                 $rows[] = [
-                    $bookId,
-                    mb_substr($currentTitle, 0, 30),
-                    $titleChanged ? mb_substr($newTitle, 0, 30) : '(no change)',
-                    $newSerie ?? $currentSerie ?? '-',
-                    $newIndex ?? $currentIndex ?? '-',
-                    $book->getLanguage() ?? '-',
-                    $excluded ? 'SKIP' : '',
+                    'id' => $bookId,
+                    'currentTitle' => mb_substr($currentTitle, 0, 30),
+                    'newTitle' => $titleChanged ? mb_substr($newTitle, 0, 30) : '(no change)',
+                    'serie' => $newSerie ?? $currentSerie ?? '-',
+                    'index' => $newIndex ?? $currentIndex ?? '-',
+                    'lang' => $book->getLanguage() ?? '-',
+                    'status' => $excluded ? 'SKIP' : '',
                 ];
                 if (!$excluded) {
                     $changesCount++;
@@ -143,16 +144,16 @@ class BooksSeriesHarmonizeCommand extends Command
 
         // Sort by language, then series, then index
         usort($rows, function (array $a, array $b): int {
-            $cmp = $a[5] <=> $b[5];
+            $cmp = $a['lang'] <=> $b['lang'];
             if ($cmp !== 0) {
                 return $cmp;
             }
-            $cmp = $a[3] <=> $b[3];
+            $cmp = $a['serie'] <=> $b['serie'];
             if ($cmp !== 0) {
                 return $cmp;
             }
 
-            return ((float) $a[4]) <=> ((float) $b[4]);
+            return ((float) $a['index']) <=> ((float) $b['index']);
         });
 
         $io->table(
@@ -331,14 +332,7 @@ Example: {
 Return only the JSON, no other text.
 PROMPT;
 
-        $result = $communicator->interrogate($prompt);
-
-        // Clean up result
-        $result = trim($result, "´`\n\r\t\v\0 ");
-        if (str_starts_with($result, 'json')) {
-            $result = substr($result, 4);
-        }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
+        $result = LlmJsonCleaner::clean($communicator->interrogate($prompt));
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);

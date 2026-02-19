@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
+use App\Ai\LlmJsonCleaner;
 use App\Entity\Book;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -111,10 +112,15 @@ class BooksAuthorsHarmonizeCommand extends Command
             if (!$excluded) {
                 $affectedBooks += $bookCount;
             }
-            $rows[] = [$oldName, $canonicalName, $bookCount, $excluded ? 'SKIP' : ''];
+            $rows[] = [
+                'oldName' => $oldName,
+                'canonicalName' => $canonicalName,
+                'bookCount' => $bookCount,
+                'status' => $excluded ? 'SKIP' : '',
+            ];
         }
 
-        usort($rows, fn ($a, $b) => $b[2] <=> $a[2]); // Sort by book count
+        usort($rows, fn ($a, $b) => $b['bookCount'] <=> $a['bookCount']); // Sort by book count
         $io->table(['Current Name', 'Canonical Name', 'Books', ''], $rows);
 
         $io->note(sprintf('%d author names will be harmonized, affecting %d books.', count($authorMapping) - count($excludedAuthors), $affectedBooks));
@@ -199,14 +205,7 @@ Example: {"J.R.R. Tolkien": "J.R.R. Tolkien", "JRR Tolkien": "J.R.R. Tolkien", "
 Return only the JSON, no other text.
 PROMPT;
 
-        $result = $communicator->interrogate($prompt);
-
-        // Clean up result
-        $result = trim($result, "´`\n\r\t\v\0 ");
-        if (str_starts_with($result, 'json')) {
-            $result = substr($result, 4);
-        }
-        $result = preg_replace('/<think>.*?<\/think>/s', '', $result) ?? '';
+        $result = LlmJsonCleaner::clean($communicator->interrogate($prompt));
 
         try {
             $mapping = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
