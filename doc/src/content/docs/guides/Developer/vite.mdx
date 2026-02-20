@@ -1,0 +1,57 @@
+---
+title: Frontend development
+---
+## Overview
+
+**Vite** is a modern frontend build tool that provides significantly faster development experience compared to traditional bundlers. When developing the Biblioteca frontend, Vite enables:
+
+- **Hot Module Replacement (HMR)**: Instantly reload code changes in your browser without losing application state
+- **Fast Startup**: Near-instant server start and rebuild times
+- **Optimized Builds**: Production builds are minified and optimized automatically
+
+During development, assets are served directly from the Vite dev server instead of being statically served from a build directory, enabling these real-time updates.
+
+## Docker Compose Setup
+
+To set up the Vite development server with Docker Compose:
+
+### 1. Include the Vite Compose File
+
+Add the Vite compose configuration to your `docker-compose.override.yaml`:
+
+```yaml
+include:
+    - docker-compose.vite.yml
+```
+
+### 2. Create the Vite Container
+
+After updating your compose configuration, start the Vite service:
+
+```bash
+docker compose up -d
+```
+
+### 3. Access the Development Server
+
+The Vite server is automatically configured with:
+- **URL**: `https://biblioteca-vite.docker.test`
+- **Proxy**: Routes through Traefik (already configured in the compose file)
+- **HMR**: Hot Module Replacement enabled for development
+
+Your frontend code changes will now automatically reload in the browser.
+
+## Troubleshooting
+
+**HMR not working?**
+- Verify the Vite container is running: `docker compose logs vite`
+- Check that `https://biblioteca-vite.docker.test` is accessible
+- Clear your browser cache and hard refresh (Cmd+Shift+R or Ctrl+Shift+R)
+
+**Port conflicts?**
+- Ensure port 5173 (Vite default) is not in use on your host machine
+
+**Changes not reflecting?**
+- Verify file watcher is active in the Vite container logs
+- Check file permissions in the mounted volume
+- Restart the container: `docker compose restart vite`

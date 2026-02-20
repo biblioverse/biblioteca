@@ -1,9 +1,6 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import symfony from 'vite-plugin-symfony';
-
-const isTraefik = process.env.VITE_TRAEFIK === 'true';
-
 export default defineConfig({
   plugins: [
     symfony({
@@ -33,11 +30,11 @@ export default defineConfig({
     middlewareMode: false,
     host: true,
     port: 5173,
-    origin: isTraefik ? 'https://biblioteca-vite.docker.test' : 'http://localhost:5173',
+    origin: process.env.VITE_ORIGIN || 'http://localhost:5173',
     allowedHosts: String(process.env.ALLOWED_HOSTS).split(",") || ['localhost'],
-    cors: isTraefik ? {
-      origin: ['https://biblioteca.docker.test', 'https://biblioteca-vite.docker.test'],
+    cors: {
+      origin: String(process.env.VITE_CORS).split(","),
       credentials: true
-    } : true
+    }
   },
 });

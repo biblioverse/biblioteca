@@ -4,7 +4,9 @@ services:
       target: frontend
     environment:
       ALLOWED_HOSTS: "biblioteca.docker.test"
-    command: ["npm", "run", "dev-server-traefik"]
+      VITE_CORS: 'https://biblioteca.docker.test,https://biblioteca-vite.docker.test'
+      VITE_ORIGIN: 'https://biblioteca-vite.docker.test'
+    command: ["npm", "run", "dev"]
     volumes:
       - .:/var/www/html
     stdin_open: true

@@ -28,7 +28,6 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev-server-traefik": "VITE_TRAEFIK=true vite",
     "build": "vite build",
     "preview": "vite preview"
   }
