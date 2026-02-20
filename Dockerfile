@@ -26,11 +26,14 @@ WORKDIR /var/www/html
 COPY --from=vendor /var/www/html/vendor /var/www/html/vendor
 
 # Only copy what is needed, improves cacheability
-COPY package.json package-lock.json webpack.config.js /var/www/html/
+COPY package.json package-lock.json vite.config.js /var/www/html/
 COPY assets/ /var/www/html/assets/
 
 RUN npm install
 RUN npm run build
+EXPOSE 5173
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["npm", "run", "dev"]
 
 FROM base AS prod
 USER root

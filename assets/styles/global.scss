@@ -1,6 +1,6 @@
-// the ~ allows you to reference things in node_modules
-@import "~bootstrap/scss/bootstrap";
-@import "~bootstrap-icons/font/bootstrap-icons.css";
+// Import from node_modules
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 @import "./overrides.css";
 
 @import "./variables.css";

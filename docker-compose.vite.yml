@@ -1,0 +1,28 @@
+services:
+  vite:
+    build:
+      target: frontend
+    environment:
+      ALLOWED_HOSTS: "biblioteca.docker.test"
+      VITE_CORS: 'https://biblioteca.docker.test,https://biblioteca-vite.docker.test'
+      VITE_ORIGIN: 'https://biblioteca-vite.docker.test'
+    command: ["npm", "run", "dev"]
+    volumes:
+      - .:/var/www/html
+    stdin_open: true
+    tty: true
+    networks:
+      - default
+      - pontsun
+    labels:
+      - 'traefik.port=5173'
+      - 'traefik.frontend.rule=Host:biblioteca-vite.docker.test'
+      # Traefik v2
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=pontsun'
+      - 'traefik.http.routers.biblioteca-vite.entrypoints=https,http'
+      - 'traefik.http.routers.biblioteca-vite.rule=Host(`biblioteca-vite.docker.test`)'
+      - 'traefik.http.services.biblioteca-vite.loadbalancer.server.port=5173'
+      - 'traefik.http.routers.biblioteca-vite.middlewares=https_redirect'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.https_redirect.redirectscheme.permanent=true'

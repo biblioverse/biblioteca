@@ -1,0 +1,4 @@
+parameters:
+  "env(VITE_PROXY_ORIGIN)": ""
+pentatrion_vite:
+  proxy_origin: "%env(VITE_PROXY_ORIGIN)%"

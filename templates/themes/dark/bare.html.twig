@@ -9,14 +9,14 @@
         <title>{{ block('title')|striptags }} - Biblioteca</title>
 
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('app') }}
         {% endblock %}
     </head>
     <body {{ (body_class is defined and body_class ? 'class="' ~ (body_class|e('html_attr'))~'"' : '')|raw }}>
     {% block content %}{% endblock %}
 
     {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
+        {{ vite_entry_script_tags('app') }}
     {% endblock %}
     </body>
 </html>
