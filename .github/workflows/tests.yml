@@ -28,7 +28,7 @@ jobs:
           chmod -R 777 .
 
       - name: Install Docker Compose
-        uses: ndeloof/install-compose-action@v0.0.1
+        uses: docker/setup-compose-action@v1
 
       - name: Run docker-compose up
         run: docker compose  -f docker-compose.yml -f docker-compose.test.yml up -d --build
