@@ -3,13 +3,13 @@
 
 {% block title %}{{ book.authors|first }} {% if book.serie is not null %}> {{ book.serie }} #{{ book.serieIndex }} {% endif %}> {{ book.title }}{% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('read-ebook') }}
+    {{ vite_entry_script_tags('read-ebook') }}
     {{ parent() }}
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('read-ebook') }}
+    {{ vite_entry_link_tags('read-ebook') }}
 {% endblock %}
 
 {% block content %}

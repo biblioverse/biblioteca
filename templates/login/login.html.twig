@@ -3,7 +3,8 @@
 {% block title %}{{ "login.login"|trans }}{% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('login') }}
+    {{ parent() }}
+    {{ vite_entry_script_tags('login') }}
 {% endblock %}
 
 {% block content %}
