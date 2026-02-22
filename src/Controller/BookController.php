@@ -218,13 +218,8 @@ class BookController extends AbstractController
             $interaction->setUser($user);
         }
 
-        $page = $request->query->get('page', $interaction->getReadPages() ?? 1);
-
-        if (!is_numeric($page)) {
-            $page = 1;
-        }
-
-        $page = (int) max(1, $page);
+        $page = $request->query->getInt('page', $request->request->getInt('page', $interaction->getReadPages() ?? 1));
+        $page = max(1, $page);
 
         if ($interaction->getReadStatus() !== ReadStatus::Finished && $interaction->getReadPages() < $page) {
             $interaction->setReadStatus(ReadStatus::Started);
@@ -389,8 +384,8 @@ class BookController extends AbstractController
             return strcmp($a->getFilename(), $b->getFilename());
         });
 
-        $consume = $request->query->get('consume');
-        if ($consume !== null) {
+        $consume = $request->query->getString('consume');
+        if ($consume !== '') {
             set_time_limit(240);
             foreach ($bookFiles as $bookFile) {
                 if ($bookFile->getRealPath() !== $consume) {
@@ -401,13 +396,13 @@ class BookController extends AbstractController
                 $this->bookManager->save($book);
 
                 $this->addFlash('success', 'Book '.$bookFile->getFilename().' consumed');
-
-                return $this->redirectToRoute('app_book_consume');
             }
+
+            return $this->redirectToRoute('app_book_consume');
         }
 
-        $delete = $request->query->get('delete');
-        if ($delete !== null) {
+        $delete = $request->query->getString('delete');
+        if ($delete !== '') {
             foreach ($bookFiles as $bookFile) {
                 if ($bookFile->getRealPath() !== $delete) {
                     continue;
