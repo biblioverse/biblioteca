@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Entity\RemoteBook;
 use App\Exception\BookExtractionException;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,15 +16,25 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @phpstan-type MetadataType array{ title:string, authors: BookAuthor[], main_author: ?BookAuthor, description: ?string, publisher: ?string, publish_date: ?\DateTime, language: ?string, tags: string[], serie:?string, serie_index: ?float, cover: ?EbookCover }
  */
 class BookManager
 {
-    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly EntityManagerInterface $entityManager, private readonly BookRepository $bookRepository, #[Autowire(param: 'ALLOW_BOOK_RELOCATION')] private readonly bool $allowBookRelocation)
+    public function __construct(private readonly BookFileSystemManagerInterface $fileSystemManager, private readonly EntityManagerInterface $entityManager, private readonly BookRepository $bookRepository)
     {
+    }
+
+    private function getChecksum(\SplFileInfo $file): string
+    {
+        $checkSum = shell_exec('sha1sum -b '.escapeshellarg($file->getRealPath()));
+        if (!is_string($checkSum)) {
+            throw new \RuntimeException('Could not calculate file Checksum:'.$file->getRealPath());
+        }
+        $checkSum = explode(' ', $checkSum);
+
+        return $checkSum[0];
     }
 
     /**
@@ -38,7 +49,7 @@ class BookManager
             $extractedMetadata['title'] = $file->getBasename();
         }
         $book->setTitle($extractedMetadata['title']);
-        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
+        $book->setChecksum($this->getChecksum($file));
         if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {
             $book->addAuthor($extractedMetadata['main_author']->getName());
         }
@@ -65,27 +76,19 @@ class BookManager
 
         $book->setExtension($file->getExtension());
         $book->setTags($extractedMetadata['tags']);
+        $this->upload($file, $book);
+        $this->fileSystemManager->renameFiles($book);
 
-        $book->setBookPath('');
-        $book->setBookFilename('');
-
-        return $this->updateBookLocation($book, $file);
+        return $book;
     }
 
-    public function updateBookLocation(Book $book, \SplFileInfo $file): Book
+    public function updateBookLocation(Book $book, RemoteBook $remote): Book
     {
-        $path = $this->fileSystemManager->getFolderName($file);
+        $path = $this->fileSystemManager->getFolderName($remote, true);
+        $filename = $this->fileSystemManager->getFileName($remote);
 
-        if ($file->getFilename() !== $book->getBookFilename()) {
-            $book->setBookFilename($file->getFilename());
-        }
-
-        $consumePath = $this->fileSystemManager->getBooksDirectory().'consume';
-        if (str_starts_with($file->getRealPath(), $consumePath) && $this->allowBookRelocation) {
-            $book->setBookPath($path);
-            $this->fileSystemManager->renameFiles($book);
-
-            return $book;
+        if ($filename !== $book->getBookFilename()) {
+            $book->setBookFilename($filename);
         }
 
         if ($path !== $book->getBookPath()) {
@@ -100,15 +103,15 @@ class BookManager
         $book = new Book();
 
         $book->setTitle($file->getBasename());
-        $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
+        $book->setChecksum($this->getChecksum($file));
         $book->addAuthor('unknown');
 
         $book->setExtension($file->getExtension());
 
-        $book->setBookPath('');
-        $book->setBookFilename('');
+        $this->upload($file, $book);
+        $this->fileSystemManager->renameFiles($book);
 
-        return $this->updateBookLocation($book, $file);
+        return $book;
     }
 
     /**
@@ -146,6 +149,10 @@ class BookManager
         ];
     }
 
+    /**
+     * @param \SplFileInfo[] $files
+     * @throws \Exception
+     */
     public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null): void
     {
         if (!$output instanceof OutputInterface) {
@@ -155,15 +162,20 @@ class BookManager
             $input = new StringInput('');
         }
         $io = new SymfonyStyle($input, $output);
+        if ($files === []) {
+            $output->writeln('No files to process');
+
+            return;
+        }
 
         $progressBar = new ProgressBar($output, count($files));
 
         $progressBar->setFormat('debug');
         $progressBar->start();
         foreach ($files as $file) {
-            $progressBar->advance();
             try {
-                $progressBar->setMessage($file->getFilename());
+                $progressBar->setMessage(sprintf('File: %s', $file->getFilename()));
+                $progressBar->display();
                 $book = null;
                 try {
                     $book = $this->consumeBook($file);
@@ -181,6 +193,8 @@ class BookManager
                 $io->error('died during process of '.$file->getRealPath());
                 $io->error($e->getMessage());
                 throw $e;
+            } finally {
+                $progressBar->advance();
             }
             $book = null;
             gc_collect_cycles();
@@ -190,26 +204,68 @@ class BookManager
 
     public function consumeBook(\SplFileInfo $file): Book
     {
+        $relative_path = str_replace($this->fileSystemManager->getLocalConsumeDirectory(), '', $file->getRealPath());
+        $dir = pathinfo($relative_path, PATHINFO_DIRNAME);
+        if ($dir === '.') {
+            $dir = '';
+        }
+        $filename = str_replace($dir, '', $relative_path);
+        $filename = ltrim($filename, '/');
         $book = $this->bookRepository->findOneBy(
             [
-                'bookPath' => $this->fileSystemManager->getFolderName($file),
-                'bookFilename' => $file->getFilename(),
+                'bookPath' => $dir,
+                'bookFilename' => $filename,
             ]
         );
 
         if (null !== $book) {
+            unlink($file->getRealPath());
+
             return $book;
         }
 
-        $checksum = $this->fileSystemManager->getFileChecksum($file);
+        $checksum = $this->getChecksum($file);
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
-        return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
+        if (null === $book) {
+            try {
+                $book = $this->createBook($file);
+            } catch (BookExtractionException) {
+                $book = $this->createBookWithoutMetadata($file);
+            }
+            unlink($file->getRealPath());
+
+            return $book;
+        }
+
+        // Override current book file
+        if ($book->getChecksum() !== $checksum) {
+            $this->fileSystemManager->renameFiles($book);
+            $book->setChecksum($checksum);
+            $this->fileSystemManager->uploadBook($file, $book);
+        }
+
+        unlink($file->getRealPath());
+
+        return $book;
     }
 
     public function save(Book $book): void
     {
         $this->entityManager->persist($book);
         $this->entityManager->flush();
+    }
+
+    private function upload(\SplFileInfo $file, Book $book): Book
+    {
+        $book->setBookPath($this->fileSystemManager->getCalculatedFilePath($book, false));
+        $book->setBookFilename($this->fileSystemManager->getCalculatedFileName($book));
+
+        $this->fileSystemManager->uploadBook($file, $book);
+        if ($file->isFile()) {
+            unlink($file->getRealPath());
+        }
+
+        return $book;
     }
 }

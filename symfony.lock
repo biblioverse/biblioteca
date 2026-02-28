@@ -74,6 +74,19 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v6.2.0"
     },
+    "league/flysystem-bundle": {
+        "version": "3.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "913dc3d7a5a1af0d2b044c5ac3a16e2f851d7380"
+        },
+        "files": [
+            "config/packages/flysystem.yaml",
+            "var/storage/.gitignore"
+        ]
+    },
     "liip/imagine-bundle": {
         "version": "2.10",
         "recipe": {

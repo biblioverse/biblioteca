@@ -94,35 +94,31 @@ class DownloadHelper
      */
     public function getResponse(Book $book, string $format): Response
     {
-        $bookPath = $this->getBookFilename($book);
-        if (false === $this->exists($book)) {
-            throw new BookFileNotFound($bookPath);
+        if (false === $this->fileSystemManager->fileExist($book)) {
+            throw new BookFileNotFound($this->fileSystemManager->getBookFile($book)->path);
         }
 
         $message = null;
-        $deleteAfterSend = false;
-
+        $tempFile = $this->fileSystemManager->downloadToTempFile($book);
         if ($format === MetadataResponseService::KEPUB_FORMAT || strtoupper($format) === MetadataResponseService::KEPUB_EXTENSION) {
             try {
-                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $bookPath);
+                $embeddedPath = $this->epubMetadataService->embedMetadata($book, $tempFile);
                 $message = $this->runKepubify($embeddedPath);
             } catch (KepubifyConversionFailed $e) {
                 throw new NotFoundHttpException('Book conversion failed', $e);
             }
-            $fileToStream = $message->destination ?? $bookPath;
-            $deleteAfterSend = $message->destination !== null;
+            $fileToStream = $message->destination !== null ? new \SplFileInfo($message->destination) : $tempFile;
         } else {
-            $fileToStream = $bookPath;
+            $fileToStream = $tempFile;
             if (strtoupper($format) === MetadataResponseService::EPUB_FORMAT && strtolower($book->getExtension()) === 'epub') {
-                $fileToStream = $this->epubMetadataService->embedMetadata($book, $bookPath);
-                $deleteAfterSend = $fileToStream !== $bookPath;
+                $fileToStream = $this->epubMetadataService->embedMetadata($book, $tempFile);
             }
         }
 
         $fileSize = ($message instanceof KepubifyMessage ? $message->size : null) ?? filesize($fileToStream);
 
         $response = (new BinaryFileResponse($fileToStream, Response::HTTP_OK))
-            ->deleteFileAfterSend($deleteAfterSend);
+            ->deleteFileAfterSend(true);
 
         $filename = basename($book->getBookFilename(), $book->getExtension()).strtolower($format);
         $encodedFilename = rawurlencode($filename);
