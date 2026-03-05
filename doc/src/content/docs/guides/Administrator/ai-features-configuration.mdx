@@ -86,6 +86,24 @@ There are currently 3 ways to add context for better results. They be enabled at
 - EPUB context: if the book is an epub, it will be entirely added to the context for summarization.
 - Amazon context: the app will try to find and scrape the Amazon product page of this Books
 
+## Library Organization Commands
+
+Biblioteca includes AI-powered commands to organize your entire library:
+
+- **`books:ai-organize`** - Master command that runs all harmonization in order
+- **`books:authors-harmonize`** - Unify author name variations
+- **`books:series-harmonize`** - Detect series and clean up titles
+- **`books:tags-harmonize`** - Assign standardized genres
+
+These commands use a predefined list of 37 literary genres (available in French, English, German, Spanish) to ensure consistent categorization across your library.
+
+```bash
+# Organize everything with French genres
+docker compose exec biblioteca bin/console books:ai-organize --language fr --apply
+```
+
+See the [Commands documentation](/guides/administrator/commands) for detailed usage.
+
 ## Example workflow
 I use 2 different LLMs in my workflow
 
