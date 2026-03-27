@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
 
 #[AsCommand(
     name: 'books:extract-cover',
@@ -52,12 +51,11 @@ class BooksExtractCoverCommand extends Command
 
         $progressBar = new ProgressBar($output, count($books));
         $progressBar->start();
-        $fs = new Filesystem();
         foreach ($books as $book) {
             /* @var Book $book */
             $progressBar->advance();
 
-            if ($force === true || $book->getImageFilename() === null || !$fs->exists($this->fileSystemManager->getCoverDirectory().$book->getImagePath().$book->getImageFilename())) {
+            if ($force === true || $book->getImageFilename() === null || !$this->fileSystemManager->coverExist($book)) {
                 try {
                     $book = $this->fileSystemManager->extractCover($book);
                     $this->entityManager->persist($book);

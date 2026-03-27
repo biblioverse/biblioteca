@@ -49,7 +49,7 @@ class EpubMetadataServiceTest extends TestCase
         $book->setSerieIndex(1.0);
 
         // Embed metadata
-        $resultPath = $this->service->embedMetadata($book, $this->testEpubPath);
+        $resultPath = $this->service->embedMetadata($book, new \SplFileInfo($this->testEpubPath));
 
         // Verify that a new file was created
         self::assertFileExists($resultPath);
@@ -96,7 +96,7 @@ class EpubMetadataServiceTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Original EPUB file not found');
 
-        $this->service->embedMetadata($book, '/path/to/nonexistent/file.epub');
+        $this->service->embedMetadata($book, new \SplFileInfo('/path/to/nonexistent/file.epub'));
     }
 
     public function testEmbedMetadataWithInvalidEpub(): void
@@ -111,7 +111,7 @@ class EpubMetadataServiceTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not open EPUB file');
 
-        $this->service->embedMetadata($book, $invalidEpubPath);
+        $this->service->embedMetadata($book, new \SplFileInfo($invalidEpubPath));
     }
 
     public function testEmbedMetadataWithMinimalBook(): void
@@ -121,7 +121,7 @@ class EpubMetadataServiceTest extends TestCase
         $book->setTitle('Minimal Book');
         $book->addAuthor('Unknown Author');
 
-        $resultPath = $this->service->embedMetadata($book, $this->testEpubPath);
+        $resultPath = $this->service->embedMetadata($book, new \SplFileInfo($this->testEpubPath));
 
         self::assertFileExists($resultPath);
 

@@ -54,21 +54,26 @@ class BooksCheckCommand extends Command
             } catch (\Exception $e) {
                 $io->warning($e->getMessage());
             }
+
+            try {
+                $file = $this->fileSystemManager->fileExist($book);
+                if ($file === false) {
+                    throw new \RuntimeException('Book not found');
+                }
+            } catch (\Exception) {
+                $io->writeln('');
+                $io->writeln('Book not found: '.$book->getBookPath().'/'.$book->getBookFilename());
+                $io->writeln('Book not found: '.$this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()]));
+                $progressBar->advance();
+                continue;
+            }
+
             // Trigger page number generation
             if ($book->getPageNumber() === 0 || $book->getPageNumber() === null) {
                 $this->bookProgressionService->processPageNumber($book, true);
             }
 
             $progressBar->advance();
-
-            try {
-                $file = $this->fileSystemManager->getBookFile($book);
-            } catch (\Exception) {
-                $io->writeln('');
-                $io->writeln('Book not found: '.$book->getBookPath().'/'.$book->getBookFilename());
-                $io->writeln('Book not found: '.$this->router->generate('app_book', ['book' => $book->getId(), 'slug' => $book->getSlug()]));
-                continue;
-            }
         }
         $io->writeln('');
         $progressBar->finish();
