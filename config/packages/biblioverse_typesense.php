@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Entity\Book;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 

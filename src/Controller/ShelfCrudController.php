@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Shelf;
@@ -14,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/shelves/crud')]
 class ShelfCrudController extends AbstractController
 {
-    public function __construct(private readonly ShelfRepository $shelfRepository)
+    public function __construct(private readonly ShelfRepository $shelfRepository, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -27,13 +29,13 @@ class ShelfCrudController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_shelf_crud_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Shelf $shelf, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Shelf $shelf): Response
     {
         $form = $this->createForm(ShelfType::class, $shelf);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_shelf_crud_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -45,10 +47,10 @@ class ShelfCrudController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_shelf_crud_delete')]
-    public function delete(Shelf $shelf, EntityManagerInterface $entityManager): Response
+    public function delete(Shelf $shelf): Response
     {
-        $entityManager->remove($shelf);
-        $entityManager->flush();
+        $this->entityManager->remove($shelf);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('app_shelf_crud_index', [], Response::HTTP_SEE_OTHER);
     }

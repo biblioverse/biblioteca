@@ -13,7 +13,7 @@ services:
         condition: service_started
     volumes:
       - .:/var/www/html
-      - .composer:/home/.composer:cached
+      - composer_cache:/home/.composer
     stdin_open: true
     tty: true
     networks:
@@ -61,6 +61,7 @@ services:
 volumes:
   mariadb:
   searchdata:
+  composer_cache:
 
 networks:
   pontsun:

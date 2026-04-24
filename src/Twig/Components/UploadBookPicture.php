@@ -31,7 +31,7 @@ class UploadBookPicture extends AbstractController
 
     public ?string $flashMessage = null;
 
-    public function __construct(private readonly LoggerInterface $logger, private readonly BookFileSystemManager $fileSystemManager)
+    public function __construct(private readonly LoggerInterface $logger, private readonly BookFileSystemManager $fileSystemManager, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -42,7 +42,7 @@ class UploadBookPicture extends AbstractController
     }
 
     #[LiveAction]
-    public function uploadFiles(Request $request, EntityManagerInterface $entityManager): void
+    public function uploadFiles(Request $request): void
     {
         /** @var ?UploadedFile $symfonyFile */
         $symfonyFile = $request->files->getIterator()->current();
@@ -59,8 +59,8 @@ class UploadBookPicture extends AbstractController
             $book = $this->fileSystemManager->uploadBookCover($symfonyFile, $this->book);
             $this->logger->info('save book ', ['path' => $book->getImagePath(), 'filename' => $book->getImageFilename()]);
 
-            $entityManager->persist($book);
-            $entityManager->flush();
+            $this->entityManager->persist($book);
+            $this->entityManager->flush();
             $this->flashMessage = 'Successfully uploaded, please reload the page';
             $this->isEditing = false;
 

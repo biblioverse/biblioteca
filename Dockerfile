@@ -6,6 +6,7 @@ WORKDIR /var/www/html
 USER root
 RUN mkdir -p /tmp && chown -R www-data:www-data /tmp && chmod -R 777 /tmp
 RUN mkdir -p /var/run/ && chown -R www-data:www-data /var/run && chmod -R 777 /var/run
+RUN mkdir -p /home/.composer && chown -R www-data:www-data /home/.composer
 USER www-data
 
 # We install the dependencies in a separate layer as the frontend image also needs them

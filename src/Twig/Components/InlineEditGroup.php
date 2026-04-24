@@ -34,7 +34,7 @@ class InlineEditGroup extends AbstractController
 
     public ?string $flashMessage = null;
 
-    public function __construct(private readonly BookRepository $bookRepository)
+    public function __construct(private readonly BookRepository $bookRepository, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -48,26 +48,24 @@ class InlineEditGroup extends AbstractController
      * @throws \JsonException
      */
     #[LiveAction]
-    public function remove(EntityManagerInterface $entityManager): void
+    public function remove(): void
     {
         $this->fieldValue = '';
-        $this->save($entityManager);
+        $this->save();
     }
 
     /**
      * @throws \JsonException
      */
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager): void
+    public function save(): void
     {
         $qb = $this->bookRepository->createQueryBuilder('book')
             ->select('book');
         $qb->andWhere('JSON_CONTAINS(lower(book.'.$this->field.'), :value)=1');
         $qb->setParameter('value', json_encode([strtolower($this->existingValue)], JSON_THROW_ON_ERROR));
-
         /** @var Book[] $books */
         $books = $qb->getQuery()->getResult();
-
         foreach ($books as $book) {
             switch ($this->field) {
                 case 'authors':
@@ -86,11 +84,9 @@ class InlineEditGroup extends AbstractController
                     throw new \RuntimeException('Field not implemented for group edition');
             }
         }
-        $entityManager->flush();
-
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
-
         $this->flashMessage = ' book updated';
     }
 }

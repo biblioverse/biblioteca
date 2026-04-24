@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Communicator;
 
 use App\Entity\AiModel;
@@ -40,7 +42,6 @@ class OllamaCommunicator extends AbstractCommunicator implements AiChatInterface
                 continue;
             }
 
-            // @phpstan-ignore-next-line
             $content[] = $data['response'] ?? $data['message']['content'];
         }
 

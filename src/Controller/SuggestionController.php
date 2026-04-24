@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Suggestion;
@@ -13,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SuggestionController extends AbstractController
 {
-    public function __construct(private readonly SuggestionRepository $suggestionRepository, private readonly PaginatorInterface $paginator)
+    public function __construct(private readonly SuggestionRepository $suggestionRepository, private readonly PaginatorInterface $paginator, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -41,7 +43,7 @@ final class SuggestionController extends AbstractController
     }
 
     #[Route('/suggestion/{id}/accept', name: 'app_suggestion_accept')]
-    public function accept(Suggestion $suggestion, EntityManagerInterface $entityManager): Response
+    public function accept(Suggestion $suggestion): Response
     {
         $book = $suggestion->getBook();
 
@@ -67,9 +69,9 @@ final class SuggestionController extends AbstractController
                 throw $this->createNotFoundException('Invalid field');
         }
 
-        $entityManager->remove($suggestion);
-        $entityManager->persist($book);
-        $entityManager->flush();
+        $this->entityManager->remove($suggestion);
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
 
         $this->addFlash('success', 'Suggestion accepted');
 
@@ -77,10 +79,10 @@ final class SuggestionController extends AbstractController
     }
 
     #[Route('/suggestion/{id}/refuse', name: 'app_suggestion_delete')]
-    public function delete(Suggestion $suggestion, EntityManagerInterface $entityManager): Response
+    public function delete(Suggestion $suggestion): Response
     {
-        $entityManager->remove($suggestion);
-        $entityManager->flush();
+        $this->entityManager->remove($suggestion);
+        $this->entityManager->flush();
 
         $this->addFlash('success', 'Suggestion deleted');
 

@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/ai/model')]
 final class AiModelController extends AbstractController
 {
-    public function __construct(private readonly AiModelRepository $aiModelRepository, private readonly ConfigValue $configValue, private readonly PromptFactory $promptFactory, private readonly CommunicatorDefiner $communicatorDefiner, private readonly BookRepository $bookRepository)
+    public function __construct(private readonly AiModelRepository $aiModelRepository, private readonly ConfigValue $configValue, private readonly PromptFactory $promptFactory, private readonly CommunicatorDefiner $communicatorDefiner, private readonly BookRepository $bookRepository, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -112,7 +112,7 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/new', name: 'app_ai_model_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $aiModel = new AiModel();
         $aiModel->setSystemPrompt($this->configValue->resolve('GENERIC_SYSTEM_PROMPT'));
@@ -120,8 +120,8 @@ final class AiModelController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($aiModel);
-            $entityManager->flush();
+            $this->entityManager->persist($aiModel);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_ai_model_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -133,13 +133,13 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_ai_model_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, AiModel $aiModel, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, AiModel $aiModel): Response
     {
         $form = $this->createForm(AiModelType::class, $aiModel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_ai_model_test', ['id' => $aiModel->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -151,10 +151,10 @@ final class AiModelController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_ai_model_delete')]
-    public function delete(AiModel $aiModel, EntityManagerInterface $entityManager): Response
+    public function delete(AiModel $aiModel): Response
     {
-        $entityManager->remove($aiModel);
-        $entityManager->flush();
+        $this->entityManager->remove($aiModel);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('app_ai_model_index', [], Response::HTTP_SEE_OTHER);
     }

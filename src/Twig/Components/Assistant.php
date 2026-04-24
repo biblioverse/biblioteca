@@ -55,6 +55,7 @@ final class Assistant extends AbstractController
         private readonly RouterInterface $router,
         private readonly PromptFactory $promptFactory,
         private readonly ContextBuilder $contextBuilder,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -123,7 +124,7 @@ If you don\'t know the answer to the user question, mention it in your answer.
     }
 
     #[LiveAction]
-    public function save(Request $request, EntityManagerInterface $entityManager): RedirectResponse
+    public function save(Request $request): RedirectResponse
     {
         // Submit the form! If validation fails, an exception is thrown
         // and the component is automatically re-rendered with the errors
@@ -131,8 +132,8 @@ If you don\'t know the answer to the user question, mention it in your answer.
 
         /** @var Book $book */
         $book = $this->getForm()->getData();
-        $entityManager->persist($book);
-        $entityManager->flush();
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
 
         $this->addFlash('success', 'Book saved!');
 

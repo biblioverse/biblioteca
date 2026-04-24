@@ -168,7 +168,8 @@ class SyncTokenParser
         $data = (array) ($infos['data'] ?? []);
 
         $token = new SyncTokenV1();
-        $token->version = $infos['version'] ?? $token->version;
+        $version = $infos['version'] ?? $token->version;
+        $token->version = is_scalar($version) ? (string) $version : $token->version;
 
         $token->lastModified = $this->timeStampStringToDate($data['books_last_modified'] ?? null);
         $token->lastCreated = $this->timeStampStringToDate($data['books_last_created'] ?? null);

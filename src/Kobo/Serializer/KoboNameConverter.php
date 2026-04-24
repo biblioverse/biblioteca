@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Kobo\Serializer;
 
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;

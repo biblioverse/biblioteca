@@ -490,7 +490,7 @@ class Book
 
     public function getAuthorsString(): ?string
     {
-        return implode(',', $this->authors ?? ['unknown']);
+        return implode(',', $this->authors === [] ? ['unknown'] : $this->authors);
     }
 
     public function setAuthorsString(?string $authors): static

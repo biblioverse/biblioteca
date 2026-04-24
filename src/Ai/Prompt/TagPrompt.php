@@ -68,7 +68,7 @@ Do not add anything else than json. Do not add any other text or comment.';
         // Add other tags
         if (isset($items['tags']) && is_array($items['tags'])) {
             foreach ($items['tags'] as $tag) {
-                if ($tag !== null && $tag !== '') {
+                if (is_string($tag) && $tag !== '') {
                     $tags[] = $tag;
                 }
             }

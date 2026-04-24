@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -18,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserRepository $userRepository, private readonly Security $security, private readonly RequestStack $requestStack)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserRepository $userRepository, private readonly Security $security, private readonly RequestStack $requestStack, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -31,7 +33,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profile', name: 'app_user_profile')]
-    public function profile(Request $request, EntityManagerInterface $entityManager): Response
+    public function profile(Request $request): Response
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -54,8 +56,8 @@ class UserController extends AbstractController
                 ));
             }
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             $this->requestStack->getSession()->set('_locale', $user->getLanguage());
 
@@ -79,7 +81,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -100,8 +102,8 @@ class UserController extends AbstractController
                 $user,
                 $plainPassword
             ));
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -113,7 +115,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -131,7 +133,7 @@ class UserController extends AbstractController
                 ));
             }
 
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }

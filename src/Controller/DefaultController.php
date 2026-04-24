@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
-    public function __construct(private readonly BookRepository $bookRepository, private readonly BookInteractionRepository $bookInteractionRepository, private readonly SearchHelper $helper, private readonly BookFileSystemManagerInterface $bookFileSystemManager)
+    public function __construct(private readonly BookRepository $bookRepository, private readonly BookInteractionRepository $bookInteractionRepository, private readonly SearchHelper $helper, private readonly BookFileSystemManagerInterface $bookFileSystemManager, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -123,7 +123,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/not-verified', name: 'app_notverified')]
-    public function notverified(Request $request, EntityManagerInterface $entityManager): Response
+    public function notverified(Request $request): Response
     {
         // Check if sort parameters are provided in the request
         $sortBy = $request->query->getString('sort', $request->cookies->getString('notverified_sort', 'path'));
@@ -155,13 +155,13 @@ class DefaultController extends AbstractController
                         foreach ($books as $book) {
                             try {
                                 $book = $this->bookFileSystemManager->renameFiles($book);
-                                $entityManager->persist($book);
+                                $this->entityManager->persist($book);
                             } catch (\Exception $e) {
                                 $success = false;
                                 $this->addFlash('danger', 'Error while relocating files: '.$e->getMessage());
                             }
                         }
-                        $entityManager->flush();
+                        $this->entityManager->flush();
                         if ($success) {
                             $this->addFlash('success', 'Files relocated');
                         }
@@ -176,13 +176,13 @@ class DefaultController extends AbstractController
                     foreach ($books as $book) {
                         try {
                             $book = $this->bookFileSystemManager->extractCover($book);
-                            $entityManager->persist($book);
+                            $this->entityManager->persist($book);
                         } catch (\Exception $e) {
                             $success = false;
                             $this->addFlash('danger', $e->getMessage());
                         }
                     }
-                    $entityManager->flush();
+                    $this->entityManager->flush();
                     if ($success) {
                         $this->addFlash('success', 'Covers extracted');
                     }
@@ -192,9 +192,9 @@ class DefaultController extends AbstractController
                     try {
                         foreach ($books as $book) {
                             $book->setVerified(true);
-                            $entityManager->persist($book);
+                            $this->entityManager->persist($book);
                         }
-                        $entityManager->flush();
+                        $this->entityManager->flush();
                         $this->addFlash('success', 'Books validated');
                     } catch (\Exception $e) {
                         $this->addFlash('error', $e->getMessage());

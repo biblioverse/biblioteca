@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Context;
 
 use App\Ai\Prompt\BookPromptInterface;
