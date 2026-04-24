@@ -1,0 +1,56 @@
+baseURL = "https://biblioverse.github.io/biblioteca/"
+title = "Biblioteca Docs"
+languageCode = "en-us"
+
+enableGitInfo = true
+enableRobotsTXT = true
+
+disableKinds = ["taxonomy", "term", "RSS"]
+
+[module]
+  [[module.imports]]
+    path = "github.com/imfing/hextra"
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.highlight]
+    noClasses = false
+
+[params]
+  description = "Documentation for Biblioteca, a modern, open-source, and privacy-focused eBook reader."
+
+  [params.navbar]
+    displayTitle = true
+    displayLogo = false
+
+  [params.footer]
+    enable = true
+    displayCopyright = true
+
+  [params.theme]
+    default = "system"
+
+  [params.page]
+    width = "wide"
+
+  [params.editURL]
+    enable = true
+    base = "https://github.com/biblioverse/biblioteca/edit/main/doc/content"
+
+  [params.search]
+    enable = true
+    type = "flexsearch"
+
+[[menu.main]]
+  name = "Search"
+  weight = 1
+  [menu.main.params]
+    type = "search"
+
+[[menu.main]]
+  name = "GitHub"
+  url = "https://github.com/biblioverse/biblioteca"
+  weight = 99
+  [menu.main.params]
+    icon = "github"

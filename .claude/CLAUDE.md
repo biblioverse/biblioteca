@@ -83,4 +83,4 @@ Typesense is the search backend, integrated via `biblioverse/typesense-bundle`. 
 - Code style: `@Symfony` preset via php-cs-fixer (`.php-cs-fixer.dist.php`) — run `just phpcs` before committing non-trivial changes. Rector is also enforced (`rector.php`).
 - New services are autowired/autoconfigured from `src/`; `src/Entity/`, `src/DependencyInjection/`, and `Kernel.php` are excluded.
 - Tests that need a deterministic clock should use `App\Tests\TestClock` (public in test env).
-- Documentation site is a separate Astro Starlight project under `doc/` (own `package.json`); full user docs live at https://biblioverse.github.io/biblioteca/.
+- Documentation site is a separate Hugo + Hextra project under `doc/` (Hugo Modules, no `package.json`); build locally with `hugo server` in `doc/`. Full user docs live at https://biblioverse.github.io/biblioteca/.

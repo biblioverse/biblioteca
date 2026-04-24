@@ -1,0 +1,27 @@
+---
+title: Similar Books
+---
+
+You can provide typesense with an embedding model that will allow it to suggest similar books based on your tags and on the book description.
+
+To do so, add the following line to your .env:
+```
+TYPESENSE_EMBED_MODEL='ts/e5-small'
+```
+
+This will use typesense's integrated models to generate the embeddings and the vector search.
+
+You can use your own ollama or online provider as well for embedding generation:
+
+```
+TYPESENSE_EMBED_MODEL='openai/nomic-embed-text'
+TYPESENSE_EMBED_URL='http://127.0.0.1:11434'
+TYPESENSE_EMBED_KEY='your key'
+TYPESENSE_EMBED_NUM_DIM=768
+```
+
+To disable this feature, for example in low memory environment, just provide an empty model:
+
+```
+TYPESENSE_EMBED_MODEL=''
+```
