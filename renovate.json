@@ -11,11 +11,13 @@
     "dependencyDashboardApproval": true
   },
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": false
   },
   "packageRules": [
     {
-      "matchManagers": ["composer"],
+      "matchManagers": [
+        "composer"
+      ],
       "rangeStrategy": "update-lockfile"
     }
   ]
