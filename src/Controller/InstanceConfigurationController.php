@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Config\ConfigValue;
@@ -15,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/configuration')]
 final class InstanceConfigurationController extends AbstractController
 {
-    public function __construct(private readonly ParameterBagInterface $parameterBagInterface, private readonly ConfigValue $configValue)
+    public function __construct(private readonly ParameterBagInterface $parameterBagInterface, private readonly ConfigValue $configValue, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -67,9 +69,9 @@ final class InstanceConfigurationController extends AbstractController
     }
 
     #[Route('/{name}/edit', name: 'app_instance_configuration_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, string $name, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, string $name): Response
     {
-        $instanceConfiguration = $entityManager->getRepository(InstanceConfiguration::class)->findOneBy(['name' => $name]);
+        $instanceConfiguration = $this->entityManager->getRepository(InstanceConfiguration::class)->findOneBy(['name' => $name]);
         if (!$instanceConfiguration instanceof InstanceConfiguration) {
             throw $this->createNotFoundException();
         }
@@ -77,7 +79,7 @@ final class InstanceConfigurationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_instance_configuration_index', [], Response::HTTP_SEE_OTHER);
         }

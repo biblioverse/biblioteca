@@ -145,9 +145,9 @@ class InlineEditInteraction extends AbstractController
     }
 
     #[LiveAction]
-    public function addToShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    public function addToShelf(#[LiveArg] int $shelf): void
     {
-        $shelfRepository = $entityManager->getRepository(Shelf::class);
+        $shelfRepository = $this->entityManager->getRepository(Shelf::class);
 
         $shelf = $shelfRepository->find($shelf);
 
@@ -157,7 +157,7 @@ class InlineEditInteraction extends AbstractController
 
         $this->book->addShelf($shelf);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $this->bookArchiver->unArchiveBookFromShelf($shelf, $this->book);
 
@@ -165,9 +165,9 @@ class InlineEditInteraction extends AbstractController
     }
 
     #[LiveAction]
-    public function removeFromShelf(EntityManagerInterface $entityManager, #[LiveArg] int $shelf): void
+    public function removeFromShelf(#[LiveArg] int $shelf): void
     {
-        $shelfRepository = $entityManager->getRepository(Shelf::class);
+        $shelfRepository = $this->entityManager->getRepository(Shelf::class);
 
         $shelf = $shelfRepository->find($shelf);
 
@@ -177,7 +177,7 @@ class InlineEditInteraction extends AbstractController
 
         $this->book->removeShelf($shelf);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $this->bookArchiver->archiveBookFromShelf($shelf, $this->book);
 

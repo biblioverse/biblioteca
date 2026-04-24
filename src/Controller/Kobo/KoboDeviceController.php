@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Kobo;
 
 use App\Entity\KoboDevice;
@@ -24,6 +26,7 @@ class KoboDeviceController extends AbstractController
         #[Autowire(param: 'kernel.environment')]
         protected string $kernelEnvironment,
         private readonly KoboDeviceRepository $koboDeviceRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -40,7 +43,7 @@ class KoboDeviceController extends AbstractController
     }
 
     #[Route('/new', name: 'app_kobodevice_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -57,8 +60,8 @@ class KoboDeviceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($koboDevice);
-            $entityManager->flush();
+            $this->entityManager->persist($koboDevice);
+            $this->entityManager->flush();
 
             return $this->redirect($request->headers->get('referer') ?? '/');
         }
@@ -70,7 +73,7 @@ class KoboDeviceController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_kobodevice_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, KoboDevice $koboDevice): Response
     {
         if (!$this->isGranted('EDIT', $koboDevice)) {
             throw $this->createAccessDeniedException('You don\'t have permission to edit this koboDevice');
@@ -80,7 +83,7 @@ class KoboDeviceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             return $this->redirect($request->headers->get('referer') ?? '/');
         }
@@ -92,28 +95,28 @@ class KoboDeviceController extends AbstractController
     }
 
     #[Route('/{id}/reset-sync-token', name: 'app_kobodevice_reset_sync_token')]
-    public function resetSyncToken(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
+    public function resetSyncToken(Request $request, KoboDevice $koboDevice): Response
     {
         if (!$this->isGranted('EDIT', $koboDevice)) {
             throw $this->createAccessDeniedException('You don\'t have permission to edit this koboDevice');
         }
 
         $koboDevice->setLastSyncToken(null);
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         return $this->redirect($request->headers->get('referer') ?? '/');
     }
 
     #[Route('/{id}', name: 'app_kobodevice_user_delete', methods: ['POST'])]
-    public function delete(Request $request, KoboDevice $koboDevice, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, KoboDevice $koboDevice): Response
     {
         if (!$this->isGranted('DELETE', $koboDevice)) {
             throw $this->createAccessDeniedException();
         }
 
         if ($this->isCsrfTokenValid('delete'.$koboDevice->getId(), (string) $request->request->get('_token'))) {
-            $entityManager->remove($koboDevice);
-            $entityManager->flush();
+            $this->entityManager->remove($koboDevice);
+            $this->entityManager->flush();
         }
 
         return $this->redirectToRoute('app_dashboard', [], Response::HTTP_SEE_OTHER);

@@ -32,6 +32,10 @@ class AddNewShelf extends AbstractController
     #[LiveProp()]
     public User $user;
 
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     #[LiveAction]
     public function activateEditing(): void
     {
@@ -42,23 +46,19 @@ class AddNewShelf extends AbstractController
     }
 
     #[LiveAction]
-    public function save(EntityManagerInterface $entityManager): void
+    public function save(): void
     {
         if (!$this->shelf instanceof Shelf) {
             $this->shelf = new Shelf();
         }
-
         $this->name = trim($this->name);
         if ('' === $this->name) {
             return;
         }
-
         $this->shelf->setName($this->name);
         $this->shelf->setUser($this->user);
-
-        $entityManager->persist($this->shelf);
-        $entityManager->flush();
-
+        $this->entityManager->persist($this->shelf);
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
     }

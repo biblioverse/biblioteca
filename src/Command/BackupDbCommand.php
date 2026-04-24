@@ -76,11 +76,11 @@ class BackupDbCommand extends Command
 
         $process->run(null, [
             'MYSQL_DUMP' => $mysqldump,
-            'DB_USER' => $params['user'], // @phpstan-ignore-line
-            'DB_HOST' => $params['host'], // @phpstan-ignore-line
-            'DB_PORT' => $params['port'], // @phpstan-ignore-line
+            'DB_USER' => $params['user'],
+            'DB_HOST' => $params['host'],
+            'DB_PORT' => $params['port'],
             'DB_NAME' => $database,
-            'MYSQL_PWD' => $params['password'], // @phpstan-ignore-line
+            'MYSQL_PWD' => $params['password'],
             'FILEPATH' => $filePath,
         ]);
 

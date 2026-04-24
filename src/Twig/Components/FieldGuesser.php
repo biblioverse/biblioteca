@@ -25,40 +25,41 @@ class FieldGuesser extends AbstractController
 
     public ?string $flashMessage = null;
 
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     #[LiveAction]
     #[LiveListener('submit')]
-    public function accept(EntityManagerInterface $entityManager): void
+    public function accept(): void
     {
         $this->book->setSerie($this->guessSerie());
         $this->book->setSerieIndex((float) $this->guessIndex());
         $this->book->setAuthors([$this->guessAuthor()]);
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
-
         $this->flashMessage = 'Saved';
     }
 
     #[LiveAction]
     #[LiveListener('submit')]
-    public function acceptIndex(EntityManagerInterface $entityManager): void
+    public function acceptIndex(): void
     {
         $this->book->setSerieIndex((float) $this->guessIndex());
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
-
         $this->flashMessage = 'Saved';
     }
 
     #[LiveAction]
     #[LiveListener('submit')]
-    public function acceptIndexAndRename(EntityManagerInterface $entityManager): void
+    public function acceptIndexAndRename(): void
     {
         $this->book->setSerieIndex((float) $this->guessIndex());
         $title = sprintf('T%02d', $this->guessIndex());
         $this->book->setTitle($title);
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
-
         $this->flashMessage = 'Saved';
     }
 

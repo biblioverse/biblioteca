@@ -49,6 +49,8 @@ class BookController extends AbstractController
         private readonly EreaderEmailRepository $ereaderEmailRepository,
         private readonly PaginatorInterface $paginator,
         private readonly ThemeSelector $themeSelector,
+        private readonly EntityManagerInterface $manager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -150,7 +152,6 @@ class BookController extends AbstractController
         Request $request,
         Book $book,
         string $slug,
-        EntityManagerInterface $manager,
     ): Response {
         set_time_limit(120);
         if ($slug !== $book->getSlug()) {
@@ -206,9 +207,9 @@ class BookController extends AbstractController
 
         if ($book->getPageNumber() !== count($files)) {
             $book->setPageNumber(count($files));
-            $manager->flush();
+            $this->manager->flush();
         }
-        $interaction = $manager->getRepository(BookInteraction::class)->findOneBy([
+        $interaction = $this->manager->getRepository(BookInteraction::class)->findOneBy([
             'book' => $book,
             'user' => $this->getUser(),
         ]);
@@ -225,8 +226,8 @@ class BookController extends AbstractController
             $interaction->setReadStatus(ReadStatus::Started);
             $interaction->setReadPages($page);
         }
-        $manager->persist($interaction);
-        $manager->flush();
+        $this->manager->persist($interaction);
+        $this->manager->flush();
 
         if ($interaction->getReadStatus() !== ReadStatus::Finished && $page === $book->getPageNumber()) {
             $interaction->setReadStatus(ReadStatus::Finished);
@@ -235,7 +236,7 @@ class BookController extends AbstractController
 
             $interaction->setFinishedDate(new \DateTimeImmutable());
             $this->addFlash('success', 'Book finished! Congratulations!');
-            $manager->flush();
+            $this->manager->flush();
 
             return $this->redirectToRoute('app_book', [
                 'book' => $book->getId(),
@@ -260,7 +261,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/extract-cover/{id}/fromFile', name: 'app_extractCover')]
-    public function extractCover(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    public function extractCover(Request $request, Book $book): Response
     {
         if (!$this->isGranted(BookVoter::EDIT, $book)) {
             $this->addFlash('danger', 'You are not allowed to edit this book');
@@ -273,7 +274,7 @@ class BookController extends AbstractController
 
         $book = $this->fileSystemManager->extractCover($book);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $referer = $request->headers->get('referer');
 
@@ -288,10 +289,10 @@ class BookController extends AbstractController
     }
 
     #[Route('/delete/{id}/now', name: 'app_book_delete', methods: ['POST'])]
-    public function deleteBook(int $id, EntityManagerInterface $entityManager): Response
+    public function deleteBook(int $id): Response
     {
         /** @var Book $book */
-        $book = $entityManager->getRepository(Book::class)->find($id);
+        $book = $this->entityManager->getRepository(Book::class)->find($id);
 
         if (!$this->isGranted(BookVoter::EDIT, $book)) {
             $this->addFlash('danger', 'You are not allowed to delete this book');
@@ -304,9 +305,9 @@ class BookController extends AbstractController
 
         $this->fileSystemManager->deleteBookFiles($book);
 
-        $entityManager->remove($book);
+        $this->entityManager->remove($book);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $this->addFlash('success', 'Book deleted');
 
@@ -420,15 +421,15 @@ class BookController extends AbstractController
     }
 
     #[Route('/relocate/{id}/files', name: 'app_book_relocate')]
-    public function relocate(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    public function relocate(Request $request, Book $book): Response
     {
         try {
             if (!$this->isGranted(RelocationVoter::RELOCATE, $book)) {
                 throw $this->createAccessDeniedException('Book relocation is not allowed');
             }
             $book = $this->fileSystemManager->renameFiles($book);
-            $entityManager->persist($book);
-            $entityManager->flush();
+            $this->entityManager->persist($book);
+            $this->entityManager->flush();
             $this->addFlash('success', 'Book relocated.');
         } catch (\Exception $e) {
             $this->addFlash('danger', 'Error during relocation: '.$e->getMessage());

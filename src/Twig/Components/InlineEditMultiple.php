@@ -38,6 +38,10 @@ class InlineEditMultiple extends AbstractController
 
     public ?string $flashMessage = null;
 
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     #[LiveAction]
     public function activateEditing(): void
     {
@@ -49,7 +53,7 @@ class InlineEditMultiple extends AbstractController
      */
     #[LiveAction]
     #[LiveListener('submit')]
-    public function save(EntityManagerInterface $entityManager): void
+    public function save(): void
     {
         foreach ($this->books as $book) {
             switch ($this->field) {
@@ -71,11 +75,9 @@ class InlineEditMultiple extends AbstractController
                     throw new \RuntimeException('Field not implemented for multiple edition');
             }
         }
-
-        $entityManager->flush();
+        $this->entityManager->flush();
         $this->dispatchBrowserEvent('manager:flush');
         $this->isEditing = false;
-
         $this->flashMessage = 'books updated!';
     }
 }

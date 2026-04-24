@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -13,7 +15,6 @@ abstract class AbstractController extends BaseAbstractController
     private function prefixView(string $view): string
     {
         if ($this->getUser() instanceof User) {
-            /** @var User $user */
             $user = $this->getUser();
             $theme = $user->getTheme();
             if ($theme === 'default' || $theme === null) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Ai\Communicator;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;

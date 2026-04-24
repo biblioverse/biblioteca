@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Kobo\Proxy;
 
 use GuzzleHttp\Handler\CurlHandler;

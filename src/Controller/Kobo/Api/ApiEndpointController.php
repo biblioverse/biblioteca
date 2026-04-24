@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Kobo\Api;
 
 use App\Controller\Kobo\AbstractKoboController;

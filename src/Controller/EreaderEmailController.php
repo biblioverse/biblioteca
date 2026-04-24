@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[Route('/user/ereader-email')]
 class EreaderEmailController extends AbstractController
 {
-    public function __construct(private readonly EreaderEmailRepository $ereaderEmailRepository)
+    public function __construct(private readonly EreaderEmailRepository $ereaderEmailRepository, private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -33,7 +33,7 @@ class EreaderEmailController extends AbstractController
     }
 
     #[Route('/new', name: 'app_ereader_email_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -51,8 +51,8 @@ class EreaderEmailController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($ereaderEmail);
-            $entityManager->flush();
+            $this->entityManager->persist($ereaderEmail);
+            $this->entityManager->flush();
 
             $this->addFlash('success', 'E-reader email added successfully');
 
@@ -66,7 +66,7 @@ class EreaderEmailController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_ereader_email_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, EreaderEmail $ereaderEmail, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, EreaderEmail $ereaderEmail): Response
     {
         if (!$this->isGranted('EDIT', $ereaderEmail)) {
             throw $this->createAccessDeniedException('You don\'t have permission to edit this e-reader email');
@@ -76,7 +76,7 @@ class EreaderEmailController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             $this->addFlash('success', 'E-reader email updated successfully');
 
@@ -90,15 +90,15 @@ class EreaderEmailController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_ereader_email_delete', methods: ['POST'])]
-    public function delete(Request $request, EreaderEmail $ereaderEmail, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, EreaderEmail $ereaderEmail): Response
     {
         if (!$this->isGranted('DELETE', $ereaderEmail)) {
             throw $this->createAccessDeniedException();
         }
 
         if ($this->isCsrfTokenValid('delete'.$ereaderEmail->getId(), (string) $request->request->get('_token'))) {
-            $entityManager->remove($ereaderEmail);
-            $entityManager->flush();
+            $this->entityManager->remove($ereaderEmail);
+            $this->entityManager->flush();
 
             $this->addFlash('success', 'E-reader email deleted successfully');
         }
