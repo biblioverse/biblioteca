@@ -6,40 +6,40 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '15'
     orm:
-        auto_generate_proxy_classes: true
-        enable_lazy_ghost_objects: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-        report_fields_where_declared: true
+        enable_native_lazy_objects: true
         controller_resolver:
             auto_mapping: false
-        mappings:
-            App:
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
-            sluggable:
-                type: attribute # or attribute
-                alias: Gedmo
-                prefix: Gedmo\Sluggable
-                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Sluggable"
-            blameable:
-                type: attribute # or attribute
-                alias: Gedmo
-                prefix: Gedmo\Blameable
-                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Blameable"
-            timestampable:
-                type: attribute # or attribute
-                alias: Gedmo
-                prefix: Gedmo\Timestampable
-                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Timestampable"
-
-        dql:
-            string_functions:
-                JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
-                MONTH: DoctrineExtensions\Query\Mysql\Month
-                YEAR: DoctrineExtensions\Query\Mysql\Year
+        default_entity_manager: default
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                auto_mapping: true
+                mappings:
+                    App:
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
+                    sluggable:
+                        type: attribute
+                        alias: Gedmo
+                        prefix: Gedmo\Sluggable
+                        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Sluggable"
+                    blameable:
+                        type: attribute
+                        alias: Gedmo
+                        prefix: Gedmo\Blameable
+                        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Blameable"
+                    timestampable:
+                        type: attribute
+                        alias: Gedmo
+                        prefix: Gedmo\Timestampable
+                        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Timestampable"
+                dql:
+                    string_functions:
+                        JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
+                        MONTH: DoctrineExtensions\Query\Mysql\Month
+                        YEAR: DoctrineExtensions\Query\Mysql\Year
 when@test:
     doctrine:
         dbal:
@@ -49,14 +49,14 @@ when@test:
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
-            query_cache_driver:
-                type: pool
-                pool: doctrine.system_cache_pool
-            result_cache_driver:
-                type: pool
-                pool: doctrine.result_cache_pool
+            entity_managers:
+                default:
+                    query_cache_driver:
+                        type: pool
+                        pool: doctrine.system_cache_pool
+                    result_cache_driver:
+                        type: pool
+                        pool: doctrine.result_cache_pool
 
     framework:
         cache:

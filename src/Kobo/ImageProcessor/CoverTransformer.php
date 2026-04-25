@@ -120,9 +120,5 @@ class CoverTransformer
             self::WEBP => imagewebp($image),
             default => imagejpeg($image, null, 100),
         };
-
-        // Clean up resources
-        imagedestroy($image);
-        imagedestroy($originalImage);
     }
 }

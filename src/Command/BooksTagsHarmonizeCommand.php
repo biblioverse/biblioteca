@@ -129,7 +129,7 @@ class BooksTagsHarmonizeCommand extends Command
         $rows = [];
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
-            if (isset($bookResults[$bookId])) {
+            if ($bookId !== null && isset($bookResults[$bookId])) {
                 $currentTags = $book->getTags() ?? [];
                 $aiGenres = $bookResults[$bookId]['genres'];
                 $aiTags = $bookResults[$bookId]['tags'];
@@ -196,7 +196,7 @@ class BooksTagsHarmonizeCommand extends Command
 
         foreach ($booksWithTags as $book) {
             $bookId = $book->getId();
-            if (!isset($bookResults[$bookId]) || in_array($bookId, $excludedIds, true)) {
+            if ($bookId === null || !isset($bookResults[$bookId]) || in_array($bookId, $excludedIds, true)) {
                 continue;
             }
 

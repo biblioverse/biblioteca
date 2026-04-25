@@ -103,7 +103,7 @@ class BooksSeriesHarmonizeCommand extends Command
 
         foreach ($books as $book) {
             $bookId = $book->getId();
-            if (!isset($bookData[$bookId])) {
+            if ($bookId === null || !isset($bookData[$bookId])) {
                 continue;
             }
 
@@ -165,7 +165,10 @@ class BooksSeriesHarmonizeCommand extends Command
         $seriesByLang = [];
         $booksById = [];
         foreach ($books as $book) {
-            $booksById[$book->getId()] = $book;
+            $id = $book->getId();
+            if ($id !== null) {
+                $booksById[$id] = $book;
+            }
         }
         foreach ($bookData as $bookId => $info) {
             if ($info['serie'] !== null) {
@@ -200,7 +203,7 @@ class BooksSeriesHarmonizeCommand extends Command
 
         foreach ($books as $book) {
             $bookId = $book->getId();
-            if (!isset($bookData[$bookId]) || in_array($bookId, $excludedIds, true)) {
+            if ($bookId === null || !isset($bookData[$bookId]) || in_array($bookId, $excludedIds, true)) {
                 continue;
             }
 

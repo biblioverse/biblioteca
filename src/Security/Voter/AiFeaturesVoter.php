@@ -8,6 +8,7 @@ use App\Ai\Communicator\AiAction;
 use App\Ai\Communicator\AiCommunicatorInterface;
 use App\Ai\Communicator\CommunicatorDefiner;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -29,7 +30,7 @@ final class AiFeaturesVoter extends Voter
     }
 
     #[\Override]
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
