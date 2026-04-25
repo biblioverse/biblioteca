@@ -1,6 +1,6 @@
-ARG NODE_VERSION=22
+ARG NODE_VERSION=24
 
-FROM ghcr.io/biblioverse/biblioteca-docker:2.0.2 AS base
+FROM ghcr.io/biblioverse/biblioteca-docker:3.0.0 AS base
 WORKDIR /var/www/html
 
 USER root
@@ -48,19 +48,18 @@ RUN composer install --no-interaction --no-progress --no-dev --optimize-autoload
 FROM base AS dev
 USER root
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
     wget \
     git \
     curl \
     sudo \
-    vim \
-    nodejs
+    vim-tiny
 
 RUN /usr/local/bin/install-php-extensions xdebug
 
 RUN echo ' \n\
-[xdebug] \n\
-xdebug.idekey=PHPSTORM \n\
-xdebug.mode=off \n\
-xdebug.client_host=host.docker.internal\n ' >> /usr/local/etc/php/conf.d/biblioteca.ini
+    [xdebug] \n\
+    xdebug.idekey=PHPSTORM \n\
+    xdebug.mode=off \n\
+    xdebug.client_host=host.docker.internal\n ' >> /usr/local/etc/php/conf.d/biblioteca.ini
 USER www-data
