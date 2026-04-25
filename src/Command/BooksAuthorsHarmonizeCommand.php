@@ -239,6 +239,9 @@ PROMPT;
             $books = $authorBooks[$oldName] ?? [];
             foreach ($books as $book) {
                 $bookId = $book->getId();
+                if ($bookId === null) {
+                    continue;
+                }
                 if (!isset($updatedBooks[$bookId])) {
                     $updatedBooks[$bookId] = $book;
                 }

@@ -23,7 +23,10 @@ class AiModelRepository extends ServiceEntityRepository
         $allModels = $this->findAll();
         $models = [];
         foreach ($allModels as $model) {
-            $models[$model->getId()] = $model;
+            $id = $model->getId();
+            if ($id !== null) {
+                $models[$id] = $model;
+            }
         }
 
         return $models;

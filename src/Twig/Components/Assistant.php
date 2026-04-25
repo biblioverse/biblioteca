@@ -153,13 +153,15 @@ If you don\'t know the answer to the user question, mention it in your answer.
 
         $language = $user->getLanguage();
         $names = Locales::getNames();
-        $language = $names[$language] ?? $language;
+        if ($language !== null) {
+            $language = $names[$language] ?? $language;
+        }
 
-        if ($this->book->getLanguage() !== null) {
+        $bookLanguage = $this->book->getLanguage();
+        if ($bookLanguage !== null) {
             $fallback = $language;
-            $language = $this->book->getLanguage();
             $names = Locales::getNames();
-            $language = $names[$language] ?? $fallback;
+            $language = $names[$bookLanguage] ?? $fallback;
         }
 
         $prompt = match ($field) {
