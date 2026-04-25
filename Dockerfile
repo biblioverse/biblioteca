@@ -57,9 +57,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
 
 RUN /usr/local/bin/install-php-extensions xdebug
 
-RUN echo ' \n\
-    [xdebug] \n\
-    xdebug.idekey=PHPSTORM \n\
-    xdebug.mode=off \n\
-    xdebug.client_host=host.docker.internal\n ' >> /usr/local/etc/php/conf.d/biblioteca.ini
+RUN cat <<EOF >> /usr/local/etc/php/conf.d/biblioteca.ini
+[xdebug]
+xdebug.idekey=PHPSTORM
+xdebug.mode=off
+xdebug.client_host=host.docker.internal
+EOF
 USER www-data
