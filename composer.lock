@@ -10326,16 +10326,16 @@
         },
         {
             "name": "symfony/ux-autocomplete",
-            "version": "v2.35.0",
+            "version": "v2.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-autocomplete.git",
-                "reference": "3c75ece172d426553dc60a59222833e6194f645c"
+                "reference": "f493ed0f7d4685febae7695cc137937f5f275c20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/3c75ece172d426553dc60a59222833e6194f645c",
-                "reference": "3c75ece172d426553dc60a59222833e6194f645c",
+                "url": "https://api.github.com/repos/symfony/ux-autocomplete/zipball/f493ed0f7d4685febae7695cc137937f5f275c20",
+                "reference": "f493ed0f7d4685febae7695cc137937f5f275c20",
                 "shasum": ""
             },
             "require": {
@@ -10396,7 +10396,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.35.0"
+                "source": "https://github.com/symfony/ux-autocomplete/tree/v2.36.0"
             },
             "funding": [
                 {
@@ -10416,7 +10416,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-05T05:11:34+00:00"
+            "time": "2026-05-29T06:59:30+00:00"
         },
         {
             "name": "symfony/ux-live-component",
