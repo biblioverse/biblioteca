@@ -10420,16 +10420,16 @@
         },
         {
             "name": "symfony/ux-live-component",
-            "version": "v2.35.0",
+            "version": "v2.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-live-component.git",
-                "reference": "6d8ee60793415ce57806f0618e575afe67dab8e1"
+                "reference": "a3fb5f24ff430db6a78019294086c16f70c86192"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/6d8ee60793415ce57806f0618e575afe67dab8e1",
-                "reference": "6d8ee60793415ce57806f0618e575afe67dab8e1",
+                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/a3fb5f24ff430db6a78019294086c16f70c86192",
+                "reference": "a3fb5f24ff430db6a78019294086c16f70c86192",
                 "shasum": ""
             },
             "require": {
@@ -10499,7 +10499,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-live-component/tree/v2.35.0"
+                "source": "https://github.com/symfony/ux-live-component/tree/v2.36.0"
             },
             "funding": [
                 {
@@ -10519,7 +10519,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-04T16:24:09+00:00"
+            "time": "2026-05-29T06:59:30+00:00"
         },
         {
             "name": "symfony/ux-twig-component",
