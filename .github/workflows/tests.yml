@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Prepare env
         run: |
@@ -31,7 +31,7 @@ jobs:
           chmod -R 777 .
 
       - name: Install Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-compose-action@v2
 
       - name: Run docker-compose up
         run: docker compose  -f docker-compose.yml -f docker-compose.test.yml up -d --build
@@ -60,7 +60,7 @@ jobs:
 
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download previous coverage
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@v21
         continue-on-error: true
         with:
           workflow: tests.yml # this file
@@ -70,13 +70,13 @@ jobs:
 
       - if: ${{ github.event_name != 'pull_request' }}
         name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage.xml
 
       - name: Coverage Report as Comment
-        uses: lucassabreu/comment-coverage-clover@main
+        uses: lucassabreu/comment-coverage-clover@v0.17.2
         if: ${{ github.event_name == 'pull_request' }}
         with:
           file: coverage.xml
