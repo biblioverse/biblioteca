@@ -4,8 +4,7 @@
     "config:recommended",
     "schedule:weekends",
     ":dependencyDashboard",
-    ":automergeMinor",
-    "group:allNonMajor"
+    ":automergeMinor"
   ],
   "major": {
     "dependencyDashboardApproval": true
@@ -15,10 +14,68 @@
   },
   "packageRules": [
     {
+      "description": "Composer updates go through the lockfile, not composer.json ranges",
       "matchManagers": [
         "composer"
       ],
       "rangeStrategy": "update-lockfile"
+    },
+    {
+      "description": "PHP runtime and framework dependencies",
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "php dependencies"
+    },
+    {
+      "description": "Node / frontend dependencies",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "node dependencies"
+    },
+    {
+      "description": "Container images, CI actions and the Hugo docs toolchain",
+      "matchManagers": [
+        "dockerfile",
+        "docker-compose",
+        "github-actions",
+        "gomod"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "groupName": "infrastructure"
+    },
+    {
+      "description": "Static analysis and code style. These gate `composer test`, so their updates regularly require source changes - isolated so a broken analyser cannot block every other update.",
+      "matchManagers": [
+        "composer"
+      ],
+      "matchPackageNames": [
+        "friendsofphp/php-cs-fixer",
+        "nikic/php-parser",
+        "phpstan/**",
+        "phpunit/**",
+        "rector/**",
+        "staabm/phpstan-todo-by",
+        "symplify/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "php quality tooling"
     }
   ]
 }
