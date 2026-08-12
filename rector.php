@@ -9,6 +9,7 @@ use Rector\Symfony\Set\SymfonySetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\InlineClassRoutePrefixRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\ControllerMethodInjectionToConstructorRector;
+use Rector\DeadCode\Rector\Property\RemoveDefaultValueFromAssignedPropertyRector;
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/config',
@@ -37,5 +38,10 @@ return RectorConfig::configure()
     ])->withSkip([
         ControllerMethodInjectionToConstructorRector::class => [
             __DIR__ . '/src/Controller/Kobo/Api/V1/Library/StateController.php', // KoboSyncToken is not a service.
+        ],
+        RemoveDefaultValueFromAssignedPropertyRector::class => [
+            // Doctrine instantiates entities without calling the constructor, so nullable
+            // columns still need their null default to stay readable after a partial hydration.
+            __DIR__ . '/src/Entity',
         ],
     ]);

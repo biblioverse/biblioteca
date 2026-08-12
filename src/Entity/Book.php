@@ -335,8 +335,6 @@ class Book
 
     /**
      * @param array<string> $authors
-     *
-     * @return $this
      */
     public function setAuthors(array $authors): static
     {
@@ -460,8 +458,6 @@ class Book
 
     /**
      * @param array<string>|null $tags
-     *
-     * @return $this
      */
     public function setTags(?array $tags): static
     {

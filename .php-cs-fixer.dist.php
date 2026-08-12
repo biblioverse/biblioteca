@@ -23,7 +23,7 @@ $config->setRules([
     ],
     'phpdoc_separation' => false,
     'phpdoc_summary' => false,
-    'visibility_required' => [
+    'modifier_keywords' => [
         'elements' => ['property', 'method', 'const'],
     ],
     'method_argument_space' => [

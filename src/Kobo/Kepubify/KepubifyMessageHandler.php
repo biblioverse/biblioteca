@@ -103,8 +103,6 @@ class KepubifyMessageHandler
      * Create a temporary file to handle the conversion result.
      * Note that the name must be unique to handle concurrent requests
      * because the file will be deleted once the request is served.
-     *
-     * @return string|false
      */
     private function getTemporaryFilename(): string|false
     {

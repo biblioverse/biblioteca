@@ -24,7 +24,7 @@ readonly class SyncResponseFactory
         protected SerializerInterface $serializer,
         protected ReadingStateResponseFactory $readingStateResponseFactory,
         protected SyncTokenParser $syncTokenParser,
-        #[Autowire('%kernel.debug')]
+        #[Autowire('%kernel.debug%')]
         protected bool $kernelDebug,
     ) {
     }
