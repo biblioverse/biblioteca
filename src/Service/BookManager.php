@@ -32,42 +32,16 @@ class BookManager
     public function createBook(\SplFileInfo $file): Book
     {
         $book = new Book();
-
-        $extractedMetadata = $this->extractEbookMetadata($file);
-        if ('' === $extractedMetadata['title'] || '.pdf' === $extractedMetadata['title']) {
-            $extractedMetadata['title'] = $file->getBasename();
-        }
-        $book->setTitle($extractedMetadata['title']);
         $book->setChecksum($this->fileSystemManager->getFileChecksum($file));
-        if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {
-            $book->addAuthor($extractedMetadata['main_author']->getName());
-        }
+        $book->setExtension($file->getExtension());
+        $book->setBookPath('');
+        $book->setBookFilename('');
 
-        foreach ($extractedMetadata['authors'] as $author) {
-            if ($author->getName() !== null) {
-                $book->addAuthor($author->getName());
-            }
-        }
+        $this->applyMetadataToBook($book, $file);
 
         if ([] === $book->getAuthors()) {
             $book->addAuthor('unknown');
         }
-
-        $book->setSummary($extractedMetadata['description']);
-        if (null !== $extractedMetadata['serie']) {
-            $book->setSerie($extractedMetadata['serie']);
-            $book->setSerieIndex($extractedMetadata['serie_index']);
-        }
-        $book->setPublisher($extractedMetadata['publisher']);
-        if (2 === strlen($extractedMetadata['language'] ?? '')) {
-            $book->setLanguage($extractedMetadata['language']);
-        }
-
-        $book->setExtension($file->getExtension());
-        $book->setTags($extractedMetadata['tags']);
-
-        $book->setBookPath('');
-        $book->setBookFilename('');
 
         return $this->updateBookLocation($book, $file);
     }
@@ -146,7 +120,7 @@ class BookManager
         ];
     }
 
-    public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null): void
+    public function consumeBooks(array $files, ?InputInterface $input = null, ?OutputInterface $output = null, bool $force = false): void
     {
         if (!$output instanceof OutputInterface) {
             $output = new NullOutput();
@@ -166,7 +140,7 @@ class BookManager
                 $progressBar->setMessage($file->getFilename());
                 $book = null;
                 try {
-                    $book = $this->consumeBook($file);
+                    $book = $this->consumeBook($file, $force);
                 } catch (BookExtractionException $e) {
                     $book = $this->createBookWithoutMetadata($file);
                     $io->error($e->getMessage());
@@ -188,7 +162,7 @@ class BookManager
         $progressBar->finish();
     }
 
-    public function consumeBook(\SplFileInfo $file): Book
+    public function consumeBook(\SplFileInfo $file, bool $force = false): Book
     {
         $book = $this->bookRepository->findOneBy(
             [
@@ -198,13 +172,86 @@ class BookManager
         );
 
         if (null !== $book) {
+            if ($force) {
+                return $this->updateBookMetadata($book, $file);
+            }
+
             return $book;
         }
 
         $checksum = $this->fileSystemManager->getFileChecksum($file);
         $book = $this->bookRepository->findOneBy(['checksum' => $checksum]);
 
-        return null === $book ? $this->createBook($file) : $this->updateBookLocation($book, $file);
+        if (null === $book) {
+            return $this->createBook($file);
+        }
+
+        if ($force) {
+            return $this->updateBookMetadata($book, $file);
+        }
+
+        return $this->updateBookLocation($book, $file);
+    }
+
+    /**
+     * Re-extract and apply metadata from the ebook file to an existing book.
+     *
+     * @throws \Exception
+     */
+    public function updateBookMetadata(Book $book, \SplFileInfo $file): Book
+    {
+        $this->applyMetadataToBook($book, $file);
+
+        return $this->updateBookLocation($book, $file);
+    }
+
+    /**
+     * Apply extracted metadata to a book entity.
+     *
+     * @param MetadataType|null $extractedMetadata Pre-extracted metadata, or null to extract from file
+     *
+     * @throws \Exception
+     */
+    private function applyMetadataToBook(Book $book, \SplFileInfo $file, ?array $extractedMetadata = null): void
+    {
+        $extractedMetadata ??= $this->extractEbookMetadata($file);
+
+        $title = $extractedMetadata['title'];
+        if ('' === $title || '.pdf' === $title) {
+            $title = $file->getBasename();
+        }
+        $book->setTitle($title);
+
+        if (null !== $extractedMetadata['main_author'] && null !== $extractedMetadata['main_author']->getName()) {
+            $authors = [$extractedMetadata['main_author']->getName()];
+            foreach ($extractedMetadata['authors'] as $author) {
+                if ($author->getName() !== null && !\in_array($author->getName(), $authors, true)) {
+                    $authors[] = $author->getName();
+                }
+            }
+            $book->setAuthors($authors);
+        }
+
+        if (null !== $extractedMetadata['description']) {
+            $book->setSummary($extractedMetadata['description']);
+        }
+
+        if (null !== $extractedMetadata['serie']) {
+            $book->setSerie($extractedMetadata['serie']);
+            $book->setSerieIndex($extractedMetadata['serie_index']);
+        }
+
+        if (null !== $extractedMetadata['publisher']) {
+            $book->setPublisher($extractedMetadata['publisher']);
+        }
+
+        if (2 === \strlen($extractedMetadata['language'] ?? '')) {
+            $book->setLanguage($extractedMetadata['language']);
+        }
+
+        if ([] !== $extractedMetadata['tags']) {
+            $book->setTags($extractedMetadata['tags']);
+        }
     }
 
     public function save(Book $book): void
