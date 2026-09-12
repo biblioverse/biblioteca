@@ -178,8 +178,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param array<string> $roles
-     *
-     * @return $this
      */
     public function setRoles(array $roles): self
     {

@@ -36,7 +36,6 @@ class BookProgressionService
 
     /**
      * @param float|null $progress Percentage between 0 and 1
-     * @return $this
      */
     public function setProgression(Book $book, User $user, ?float $progress): self
     {

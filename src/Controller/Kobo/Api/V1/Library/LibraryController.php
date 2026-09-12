@@ -98,7 +98,7 @@ class LibraryController extends AbstractKoboController
         // Fetch the books upstream and merge the answer
         $httpResponse = new JsonResponse();
         [$shouldContinue, $upstreamSyncToken] = $this->upstreamSyncMerger->merge($koboDevice, $response, $request, $httpResponse);
-        if ($upstreamSyncToken !== null) {
+        if ($upstreamSyncToken instanceof SyncTokenInterface) {
             $syncToken = $upstreamSyncToken->withPage($syncToken->getPage());
         }
         $shouldContinue = $shouldContinue || count($books) < $count;

@@ -17,6 +17,7 @@ class JSONIsValidSyncResponse extends Constraint
     public function __construct(protected array $expectedKeysCount, protected int $pageNum = 1)
     {
         foreach ($this->expectedKeysCount as $key => $count) {
+            // @phpstan-ignore-next-line
             if (false === in_array($key, self::KNOWN_TYPES, true)) {
                 throw new \InvalidArgumentException(sprintf('The type %s is not valid', $key));
             }

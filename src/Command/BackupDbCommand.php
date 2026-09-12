@@ -59,6 +59,12 @@ class BackupDbCommand extends Command
         $io->info(sprintf('The backup %s is in progress', $backupName));
 
         $database = $connection->getDatabase();
+        if (null === $database) {
+            $io->error('Cannot determine the database name from the connection');
+
+            return Command::INVALID;
+        }
+
         if ($output->isVerbose()) {
             $io->comment("Backup for $database database has started");
         }
@@ -72,15 +78,21 @@ class BackupDbCommand extends Command
         $parser = new DsnParser();
         $params = $parser->parse($this->dsn);
 
+        if (!isset($params['user'], $params['host'], $params['port'])) {
+            $io->error('The DATABASE_URL must contain a user, a host and a port');
+
+            return Command::INVALID;
+        }
+
         $process->setPty(Process::isPtySupported());
 
         $process->run(null, [
             'MYSQL_DUMP' => $mysqldump,
             'DB_USER' => $params['user'],
             'DB_HOST' => $params['host'],
-            'DB_PORT' => $params['port'],
+            'DB_PORT' => (string) $params['port'],
             'DB_NAME' => $database,
-            'MYSQL_PWD' => $params['password'],
+            'MYSQL_PWD' => $params['password'] ?? '',
             'FILEPATH' => $filePath,
         ]);
 

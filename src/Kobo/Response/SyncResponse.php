@@ -98,7 +98,6 @@ class SyncResponse
 
     /**
      * @param Shelf[] $shelves
-     * @return $this
      */
     public function addShelves(array $shelves): self
     {
@@ -109,7 +108,6 @@ class SyncResponse
 
     /**
      * @param array<int,Book> $books
-     * @return $this
      */
     public function addBooks(array $books): self
     {

@@ -13,7 +13,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class PerplexicaContextBuilder implements ContextBuildingInterface
 {
-    private ?AiCommunicatorInterface $communicator = null;
+    private readonly ?AiCommunicatorInterface $communicator;
 
     public function __construct(CommunicatorDefiner $communicatorDefiner)
     {

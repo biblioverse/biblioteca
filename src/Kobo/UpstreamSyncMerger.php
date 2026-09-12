@@ -21,7 +21,7 @@ class UpstreamSyncMerger
         private readonly KoboStoreProxy $koboStoreProxy,
         private readonly LoggerInterface $koboSyncLogger,
         private readonly SyncTokenParser $syncTokenParser,
-        #[Autowire('%kernel.debug')]
+        #[Autowire('%kernel.debug%')]
         protected bool $kernelDebug,
     ) {
     }
@@ -110,8 +110,8 @@ class UpstreamSyncMerger
         }
 
         foreach ($response->headers->getIterator() as $name => $values) {
-            foreach (((array) $values) as $key => $value) {
-                if (is_string($key) && is_string($name) && is_string($value)) {
+            foreach ($values as $key => $value) {
+                if (is_string($value)) {
                     $httpResponse->headers->set('X-upstream-'.$key.'-'.$name, $value);
                 }
             }
