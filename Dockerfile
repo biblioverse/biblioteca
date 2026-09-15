@@ -57,7 +57,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
 
 RUN /usr/local/bin/install-php-extensions xdebug
 
-RUN cat <<EOF >> /usr/local/etc/php/conf.d/biblioteca.ini
+RUN printf '\n' >> /usr/local/etc/php/conf.d/biblioteca.ini \
+ && cat <<EOF >> /usr/local/etc/php/conf.d/biblioteca.ini
 [xdebug]
 xdebug.idekey=PHPSTORM
 xdebug.mode=off
