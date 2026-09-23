@@ -76,7 +76,7 @@ jobs:
           path: coverage.xml
 
       - name: Coverage Report as Comment
-        uses: lucassabreu/comment-coverage-clover@v0.17.2
+        uses: lucassabreu/comment-coverage-clover@v0.17.3
         if: ${{ github.event_name == 'pull_request' }}
         with:
           file: coverage.xml
