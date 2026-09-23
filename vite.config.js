@@ -20,6 +20,11 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    // The Reprise plugin resolves this virtual module; esbuild's dep pre-bundler
+    // cannot, so keep @symfony/reprise out of dependency optimization.
+    exclude: ['@symfony/reprise'],
+  },
   server: {
     host: true,
     port: 5173,
