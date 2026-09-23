@@ -2,8 +2,13 @@
 
 {% block title %}{{ "login.login"|trans }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
 {% block javascripts %}
     {{ reprise_entry_script_tags('login') }}
+    {{ parent() }}
 {% endblock %}
 
 {% block content %}
