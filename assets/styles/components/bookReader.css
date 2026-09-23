@@ -9,3 +9,32 @@
 .vue-book-reader .flex button {
   display: block;
 }
+
+/* Back-to-library navigation arrow (ReadEbook.vue .area-back button).
+   Scoped to .area-back so it never affects the vue-book-reader library's own arrows. */
+.vue-book-reader .flex .area-back {
+  display: flex;
+}
+
+.vue-book-reader .flex .area-back .arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.vue-book-reader .flex .area-back .arrow:hover,
+.vue-book-reader .flex .area-back .arrow:focus-visible {
+  background: var(--bs-tertiary-bg, rgba(0, 0, 0, 0.05));
+  color: var(--bs-body-color, #212529);
+  outline: none;
+}
