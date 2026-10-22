@@ -9,7 +9,7 @@
         <title>{{ block('title')|striptags }} - Biblioteca</title>
 
         {% block stylesheets %}
-            {{ reprise_entry_link_tags('app') }}
+            {{ reprise_entry_link_tags('styles') }}
         {% endblock %}
     </head>
     <body {{ (body_class is defined and body_class ? 'class="' ~ (body_class|e('html_attr'))~'"' : '')|raw }}>

@@ -14,6 +14,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
+        styles: './assets/styles/global.scss',
         app: './assets/app.js',
         login: './assets/login.js',
         'read-ebook': './assets/read-ebook.js',
