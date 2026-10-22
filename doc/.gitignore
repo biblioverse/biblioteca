@@ -1,7 +1,11 @@
 # Hugo build output
 public/
 resources/
+dist/
 .hugo_build.lock
+
+# Node dependencies
+node_modules/
 
 # macOS-specific files
 .DS_Store
