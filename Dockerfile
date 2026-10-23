@@ -1,6 +1,6 @@
 ARG NODE_VERSION=24
 
-FROM ghcr.io/biblioverse/biblioteca-docker:3.0.0 AS base
+FROM ghcr.io/biblioverse/biblioteca-docker:3.1.0 AS base
 WORKDIR /var/www/html
 
 USER root
